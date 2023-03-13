@@ -1,6 +1,6 @@
 import React from "react";
 import { saveAs } from "file-saver";
-import { Download } from "~/src/icons/Download";
+import { Download } from "@/icons/Download";
 import styled, { useTheme } from "styled-components";
 import { downloadAudio } from "../../api/downloadApi";
 
@@ -34,11 +34,11 @@ export function DownloadButton({
 
   return (
     <DownloadButtonStyle
-      className="flex items-center justify-center rounded-md border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50 focus-visible:outline-none"
+      className="flex items-center justify-center rounded-md border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm outline-none hover:bg-gray-50 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
       onClick={handleDownload}
     >
       <Download theme={theme} />
-      <span className="inline-block ml-2">Download</span>
+      <span className="ml-2 inline-block">Download</span>
     </DownloadButtonStyle>
   );
 }

@@ -7,8 +7,8 @@ import React, {
   ForwardedRef,
 } from "react";
 import { DropdownStyle } from "./style";
-import useDropdown from "~/src/hooks/useDropdown";
-import useClickOutsideHandler from "~/src/hooks/useClickOutside";
+import useDropdown from "@/hooks/useDropdown";
+import useClickOutsideHandler from "@/hooks/useClickOutside";
 
 interface DropdownProps {
   id: string;
@@ -58,7 +58,7 @@ function Dropdown(
       {isOpen && <div className="closeOutside" onClick={handleClose}></div>}
       <DropdownStyle>
         <button
-          className="dropdown-toggle inline-flex justify-center rounded-md shadow-md border-2 border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50 focus-visible:outline-none"
+          className="dropdown-toggle inline-flex justify-center rounded-md border-2 border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-md shadow-sm outline-none hover:bg-gray-50 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
           aria-expanded={isOpen}
           aria-haspopup="true"
           id="voices-dropdown"

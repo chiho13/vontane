@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 
 import { AudioPlayerStyle } from "./style";
 
-import { PlayIcon } from "~/src/icons/Play";
-import { PauseIcon } from "~/src/icons/Pause";
+import { PlayIcon } from "@/icons/Play";
+import { PauseIcon } from "@/icons/Pause";
 
 import { useTheme } from "styled-components";
 import React from "react";

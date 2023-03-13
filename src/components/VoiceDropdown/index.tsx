@@ -13,7 +13,7 @@ import FilterDropdown from "../FilterDropdown";
 import Dropdown from "../Dropdown";
 import ChevronDown from "../../icons/ChevronDown";
 import useClickOutsideHandler from "../../hooks/useClickOutside";
-import { flags } from "~/src/icons/flags";
+import { flags } from "@/icons/flags";
 
 import {
   fetchVoices,
@@ -79,7 +79,7 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
   const [sampleAudioElement, setSampleAudioElement] =
     useState<HTMLAudioElement | null>(null);
 
-  const [isFiltering, setIsFiltering] = useState<boolean>(false);
+  // const [isFiltering, setIsFiltering] = useState<boolean>(false);
 
   const MemoizedSampleAudioVoice = memo(SampleAudioVoice);
 
@@ -216,12 +216,13 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
     setActiveFilter("");
   }
 
-  useLayoutEffect(() => {
-    setIsFiltering(filteredVoices.length === 0 && filters.length > 0);
-  }, [filteredVoices, filters]);
+  const isFiltering = useMemo(
+    () => filteredVoices.length === 0 && filters.length > 0,
+    [filteredVoices, filters]
+  );
 
   function clearFilters(): void {
-    setIsFiltering(false);
+    // setIsFiltering(false);
     setFilters([]);
     setSelectedFilterOption({
       key: "",
@@ -326,12 +327,12 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
                     return (
                       <span
                         key={`${key}-${value}`}
-                        className="filter_pill inline-flex items-center text-sm font-medium bg-gray-100 text-gray-800 mr-2"
+                        className="filter_pill mr-2 inline-flex items-center bg-gray-100 text-sm font-medium text-gray-800"
                       >
                         {`${key}: ${value}`}
                         {/* using string interpolation */}
                         <button
-                          className="ml-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50 focus-visible:outline-none"
+                          className="ml-2 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
                           onClick={(e) => {
                             e.stopPropagation();
                             clearIndividualFilter(key, value);
@@ -343,7 +344,7 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
                             viewBox="0 0 24 24"
                             strokeWidth="1.5"
                             stroke="currentColor"
-                            className="close-icon w-4 h-4 text-gray-500 fill-current"
+                            className="close-icon h-4 w-4 fill-current text-gray-500"
                           >
                             <path
                               strokeLinecap="round"
@@ -358,7 +359,7 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
                 </div>
 
                 <button
-                  className="filter_reset inline-flex justify-center rounded-md bg-white border-2 border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50 focus-visible:outline-none"
+                  className="filter_reset inline-flex justify-center rounded-md border-2 border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm outline-none hover:bg-gray-50 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
                   onClick={(e) => {
                     e.stopPropagation();
                     clearFilters();

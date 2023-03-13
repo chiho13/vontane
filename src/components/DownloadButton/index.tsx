@@ -9,12 +9,6 @@ interface DownloadButtonProps {
   transcriptionId: string;
 }
 
-const DownloadButtonStyle = styled.button`
-  margin-left: 20px;
-  border-width: 1px;
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-`;
-
 export function DownloadButton({
   generatedAudio,
   transcriptionId,
@@ -33,12 +27,12 @@ export function DownloadButton({
   }
 
   return (
-    <DownloadButtonStyle
-      className="flex items-center justify-center rounded-md border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm outline-none hover:bg-gray-50 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
+    <button
+      className="ml-4 flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-md outline-none hover:bg-gray-50 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
       onClick={handleDownload}
     >
       <Download theme={theme} />
       <span className="ml-2 inline-block">Download</span>
-    </DownloadButtonStyle>
+    </button>
   );
 }

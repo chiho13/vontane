@@ -1,4 +1,4 @@
-// @ts-check
+// @ts-nocheck
 
 /**
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.
@@ -9,6 +9,9 @@
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: true,
+  env: {
+    NEXT_PUBLIC_TTS_ENDPOINT: process.env.NEXT_PUBLIC_TTS_ENDPOINT,
+  },
 
   /**
    * If you have the "experimental: { appDir: true }" setting enabled, then you

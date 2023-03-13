@@ -2,7 +2,9 @@ import { Voice } from "../types/voice";
 import { getUniqueValues } from "./util";
 
 export async function fetchVoices(): Promise<Voice[]> {
-  const response = await fetch("https://verbyttsapi.vercel.app/voices");
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_TTS_ENDPOINT}/voices`
+  );
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }

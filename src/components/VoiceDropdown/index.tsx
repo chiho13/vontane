@@ -311,9 +311,6 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
         selectedItemText={selectedItemText}
         ref={voicesDropdownRef}
         icon={<ChevronDown />}
-        minHeight={450}
-        isOpen={voiceDropdownIsOpen}
-        setIsOpen={setIsOpen}
       >
         <div>
           <div>

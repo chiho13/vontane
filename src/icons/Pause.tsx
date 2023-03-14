@@ -15,7 +15,7 @@ export const PauseIcon = ({ theme }: Props) => (
     xmlns="http://www.w3.org/2000/svg"
     stroke="currentColor"
     strokeWidth="1.5"
-    className="pause-icon w-10 h-10"
+    className="pause-icon h-10 w-10"
     viewBox="0 0 24 24"
   >
     <path

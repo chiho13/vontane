@@ -18,6 +18,7 @@ import Layout from "@/components/Layouts/AccountLayout";
 
 const Home: NextPage = () => {
   const hello = api.example.hello.useQuery({ text: "from tRPC" });
+
   const session = useSession();
   const [selectedVoiceId, setSelectedVoiceId] = React.useState<string>("");
 
@@ -52,6 +53,8 @@ const Home: NextPage = () => {
     }
   }, [session]);
 
+  console.log(session);
+
   async function generateAudio(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -84,6 +87,10 @@ const Home: NextPage = () => {
     }
   }, [selectedVoiceId, enteredText]);
 
+  useEffect(() => {
+    return () => setLoading(false);
+  }, []);
+
   if (loading) {
     return <div></div>;
   }
@@ -94,7 +101,7 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <Layout session={session}>
+      <Layout user={session.user.user_metadata}>
         {/* {!session ?? <Link href="/login">Login</Link>} */}
         <div className="container mx-auto mt-10  p-4 ">
           <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />

@@ -24,16 +24,6 @@ const Login: NextPage = () => {
     });
   }
 
-  useEffect(() => {
-    if (session) {
-      setLoading(false);
-    }
-  }, [session]);
-
-  if (loading) {
-    return <div></div>;
-  }
-
   if (!session) {
     return (
       <>

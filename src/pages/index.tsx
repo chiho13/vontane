@@ -24,6 +24,7 @@ const Home: NextPage = () => {
   const [enteredText, setEnteredText] = React.useState<string>("");
 
   const [audioIsLoading, setAudioIsLoading] = React.useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   function handleTextChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
     setEnteredText(event.target.value);
@@ -44,6 +45,12 @@ const Home: NextPage = () => {
   // const dummyAudioElement = new Audio(
   //   "https://peregrine-samples.s3.amazonaws.com/editor-samples/anny.wav"
   // );
+
+  useEffect(() => {
+    if (session) {
+      setLoading(false);
+    }
+  }, [session]);
 
   async function generateAudio(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -76,6 +83,10 @@ const Home: NextPage = () => {
       setIsDisabled(true);
     }
   }, [selectedVoiceId, enteredText]);
+
+  if (loading) {
+    return <div></div>;
+  }
 
   if (!session) {
     return <LoginPage />;

@@ -18,9 +18,9 @@ import LoginPage from "./login";
 const Home: NextPage = () => {
   const hello = api.example.hello.useQuery({ text: "from tRPC" });
   const session = useSession();
-
   const [selectedVoiceId, setSelectedVoiceId] = React.useState<string>("");
 
+  console.log(session);
   const [enteredText, setEnteredText] = React.useState<string>("");
 
   const [audioIsLoading, setAudioIsLoading] = React.useState<boolean>(false);

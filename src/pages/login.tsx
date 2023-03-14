@@ -1,8 +1,16 @@
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { type NextPage } from "next";
 import Head from "next/head";
 import React, { useState, useEffect } from "react";
 
 const Login: NextPage = () => {
+  const supabase = useSupabaseClient();
+
+  async function loginWithGoogle() {
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+    });
+  }
   return (
     <>
       <Head>
@@ -24,6 +32,7 @@ const Login: NextPage = () => {
             aria-label="Continue with google"
             role="button"
             className="mt-10 flex w-full items-center rounded-lg border border-gray-700 py-3.5 px-4 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-1"
+            onClick={loginWithGoogle}
           >
             <svg
               width={19}

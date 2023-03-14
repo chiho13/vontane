@@ -11,30 +11,13 @@ import GenerateButton from "@/components/GenerateButton";
 import { ttsApi } from "@/api/ttsApi";
 import React, { useState, useEffect } from "react";
 import useStatusPolling from "@/hooks/useStatusPolling";
-import { ThemeProvider } from "styled-components";
 
-interface Theme {
-  colors: {
-    brand: string;
-    white: string;
-  };
-  background: {
-    white: string;
-  };
-}
-
-const theme: Theme = {
-  colors: {
-    brand: "#f5820d",
-    white: "#ffffff",
-  },
-  background: {
-    white: "linear-gradient(120deg, #fdfbfb 0%, #f2f6f7 100%)",
-  },
-};
+import { useSession } from "@supabase/auth-helpers-react";
+import LoginPage from "./login";
 
 const Home: NextPage = () => {
   const hello = api.example.hello.useQuery({ text: "from tRPC" });
+  const session = useSession();
 
   const [selectedVoiceId, setSelectedVoiceId] = React.useState<string>("");
 
@@ -94,6 +77,10 @@ const Home: NextPage = () => {
     }
   }, [selectedVoiceId, enteredText]);
 
+  if (!session) {
+    return <LoginPage />;
+  }
+
   return (
     <>
       <Head>
@@ -102,41 +89,40 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen bg-gradient-to-b from-[#f1f1f1] to-[#e9e9e9]">
-        <ThemeProvider theme={theme}>
-          <div className="container mx-auto mt-10  p-4 ">
-            <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
+        <Link href="/login">Login</Link>
+        <div className="container mx-auto mt-10  p-4 ">
+          <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
 
-            <form id="text-form">
-              <label htmlFor="text" className="mb-2 block">
-                Enter text (max. 1000 characters):
-              </label>
-              <textarea
-                id="text"
-                name="text"
-                rows="8"
-                cols="50"
-                maxLength="1000"
-                className="textarea_input mb-4 block w-full resize-none rounded-md border-2 border-gray-100 p-4 focus:outline-none focus-visible:border-orange-500"
-                onChange={handleTextChange}
-              ></textarea>
-              <GenerateButton
-                isDisabled={isDisabled}
-                audioIsLoading={audioIsLoading}
-                onClick={generateAudio}
-              />
-            </form>
-            <div id="download-container" className="mt-4"></div>
-            {!audioIsLoading && generatedAudioElement && (
-              // <audio controls src={generatedAudioElement.src} />
-              <AudioPlayer
-                generatedAudio={generatedAudioElement}
-                transcriptionId={transcriptionId}
-              />
-            )}
-            {/* <AudioPlayer generatedAudio={dummyAudioElement} /> */}
-            {/* {audioUrl && <DownloadButton audioUrl={audioUrl} />} */}
-          </div>
-        </ThemeProvider>
+          <form id="text-form">
+            <label htmlFor="text" className="mb-2 block">
+              Enter text (max. 1000 characters):
+            </label>
+            <textarea
+              id="text"
+              name="text"
+              rows="8"
+              cols="50"
+              maxLength="1000"
+              className="textarea_input mb-4 block w-full resize-none rounded-md border-2 border-gray-100 p-4 focus:outline-none focus-visible:border-orange-500"
+              onChange={handleTextChange}
+            ></textarea>
+            <GenerateButton
+              isDisabled={isDisabled}
+              audioIsLoading={audioIsLoading}
+              onClick={generateAudio}
+            />
+          </form>
+          <div id="download-container" className="mt-4"></div>
+          {!audioIsLoading && generatedAudioElement && (
+            // <audio controls src={generatedAudioElement.src} />
+            <AudioPlayer
+              generatedAudio={generatedAudioElement}
+              transcriptionId={transcriptionId}
+            />
+          )}
+          {/* <AudioPlayer generatedAudio={dummyAudioElement} /> */}
+          {/* {audioUrl && <DownloadButton audioUrl={audioUrl} />} */}
+        </div>
       </main>
     </>
   );

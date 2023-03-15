@@ -12,9 +12,10 @@ import useClickOutsideHandler from "@/hooks/useClickOutside";
 
 interface DropdownProps {
   id: string;
-  selectedItemText: string;
+  selectedItemText?: string;
   children: React.ReactNode;
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
+  image?: React.ReactNode;
   minHeight?: number;
 }
 
@@ -24,7 +25,14 @@ export interface DropdownRef {
 }
 
 function Dropdown(
-  { id, selectedItemText, children, icon, minHeight = 0 }: DropdownProps,
+  {
+    id,
+    selectedItemText = "",
+    children,
+    icon = null,
+    image = null,
+    minHeight = 0,
+  }: DropdownProps,
   ref: ForwardedRef<DropdownRef>
 ) {
   const { isOpen, handleOpen, handleClose } = useDropdown();
@@ -61,7 +69,7 @@ function Dropdown(
           onClick={handleClose}
         ></div>
       )}
-      <DropdownStyle>
+      <DropdownStyle className="dropdown_wrapper">
         <button
           className="dropdown-toggle inline-flex justify-center rounded-md border-2 border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-md shadow-sm outline-none hover:bg-gray-50 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
           aria-expanded={isOpen}
@@ -71,6 +79,7 @@ function Dropdown(
         >
           <span> {selectedItemText}</span>
           {icon}
+          {image}
         </button>
 
         <div

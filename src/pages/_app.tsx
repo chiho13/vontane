@@ -3,6 +3,7 @@ import { type AppType } from "next/app";
 import { api } from "@/utils/api";
 import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
+import { UserContextProvider } from "@/contexts/UserContext";
 import { useState } from "react";
 
 import "@/styles/globals.css";
@@ -35,9 +36,11 @@ const MyApp: AppType = ({ Component, pageProps }) => {
       supabaseClient={supabaseClient}
       initialSession={pageProps.initialSession}
     >
-      <ThemeProvider theme={theme}>
-        <Component {...pageProps} />
-      </ThemeProvider>
+      <UserContextProvider>
+        <ThemeProvider theme={theme}>
+          <Component {...pageProps} />
+        </ThemeProvider>
+      </UserContextProvider>
     </SessionContextProvider>
   );
 };

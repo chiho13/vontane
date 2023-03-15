@@ -16,6 +16,8 @@ import { useSession } from "@supabase/auth-helpers-react";
 import LoginPage from "./login";
 import Layout from "@/components/Layouts/AccountLayout";
 
+import { useUserContext } from "@/contexts/UserContext";
+
 const Home: NextPage = () => {
   const hello = api.example.hello.useQuery({ text: "from tRPC" });
 
@@ -34,6 +36,7 @@ const Home: NextPage = () => {
   const [transcriptionId, setTranscriptionId] = useState<string>("");
   const [status, setStatus] = useState<string>("");
   const [audioUrl, setAudioUrl] = useState<string>("");
+  const { profile } = useUserContext();
 
   const [generatedAudioElement, setGeneratedAudioElement] =
     useStatusPolling<HTMLAudioElement>(
@@ -52,8 +55,6 @@ const Home: NextPage = () => {
       setLoading(false);
     }
   }, [session]);
-
-  console.log(session);
 
   async function generateAudio(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -101,7 +102,7 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <Layout user={session.user.user_metadata}>
+      <Layout profile={profile}>
         {/* {!session ?? <Link href="/login">Login</Link>} */}
         <div className="container mx-auto mt-10  p-4 ">
           <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />

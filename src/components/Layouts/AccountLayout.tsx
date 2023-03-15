@@ -34,14 +34,14 @@ const NavLink = styled.a`
 
 interface LayoutProps {
   children: React.ReactNode;
-  user: any;
+  profile: any;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, user }) => {
+const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
   const accountDropdownRef = useRef<any>({});
   const supabase = useSupabaseClient();
 
-  console.log(user);
+  console.log(profile);
 
   async function logout() {
     await supabase.auth.signOut();
@@ -54,14 +54,14 @@ const Layout: React.FC<LayoutProps> = ({ children, user }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="min-h-screen bg-gradient-to-b from-[#f1f1f1] to-[#e9e9e9]">
-        <Header>
+        <header className="flex items-center p-4">
           {/* <Link href="/">
           <a>My App</a>
         </Link> */}
 
           <Dropdown
             id="voiceDropdown"
-            selectedItemText={user.name}
+            selectedItemText={profile && profile.name}
             ref={accountDropdownRef}
             icon={<ChevronDown />}
           >
@@ -80,6 +80,13 @@ const Layout: React.FC<LayoutProps> = ({ children, user }) => {
               </button>
             </div>
           </Dropdown>
+          {profile && (
+            <img
+              src={profile.avatar || ""}
+              alt={`${profile.name}'s avatar`}
+              className="ml-4 w-12 rounded-full border border-gray-300"
+            />
+          )}
           {/* <Navbar>
           <Link href="/about">
             <NavLink>About</NavLink>
@@ -88,7 +95,7 @@ const Layout: React.FC<LayoutProps> = ({ children, user }) => {
             <NavLink>Contact</NavLink>
           </Link>
         </Navbar> */}
-        </Header>
+        </header>
 
         {children}
       </main>

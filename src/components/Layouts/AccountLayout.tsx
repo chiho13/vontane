@@ -88,7 +88,7 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
               </button>
             </div>
           </Dropdown>
-          <span className="pl-4">
+          <span className="pl-4 font-bold">
             {}
             {profile && profile.name}
           </span>

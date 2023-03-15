@@ -104,7 +104,7 @@ const Home: NextPage = () => {
     <>
       <Layout profile={profile}>
         {/* {!session ?? <Link href="/login">Login</Link>} */}
-        <div className="container mx-auto mt-10  p-4 ">
+        <div className="container mx-auto mt-4  p-4 ">
           <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
 
           <form id="text-form">

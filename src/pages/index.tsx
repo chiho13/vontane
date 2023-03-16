@@ -118,7 +118,7 @@ const Home: NextPage = () => {
                 rows="8"
                 cols="50"
                 maxLength="1000"
-                className="textarea_input mb-4 block w-full resize-none rounded-md border-2 border-gray-100 p-4 focus:outline-none focus-visible:border-orange-500"
+                className="textarea_input mb-4 block w-full resize-none rounded-md border-2 border-gray-100 p-4 focus:outline-none focus-visible:border-gray-400"
                 onChange={handleTextChange}
               ></textarea>
               <GenerateButton

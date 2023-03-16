@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const AccountLayoutStyle = styled.header`
   .dropdown_wrapper {
     line-height: 0;
-    width: auto;
+    width: 100%;
   }
   .dropdown-toggle.dropdown-toggle {
     padding: 0;
@@ -13,20 +13,28 @@ export const AccountLayoutStyle = styled.header`
     border: none;
     box-shadow: none;
     background: none;
-    padding: 5px;
+    padding: 10px;
     width: 100%;
-    height: 45px;
+    height: 47px;
     justify-content: initial;
+    transition: background 300ms ease;
 
     &:focus {
       box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.3);
     }
 
     &:hover {
-      background: #eeeeee;
+      background: ${({ theme }) => theme.colors.gray};
     }
   }
+
+  .dropdown-menu.dropdown-menu {
+    left: 18px;
+  }
+
   .dropdown_textbutton.dropdown_textbutton {
     max-width: 100px;
+    margin-right: 8px;
+    margin-left: 8px;
   }
 `;

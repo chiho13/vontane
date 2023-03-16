@@ -1,5 +1,5 @@
 import Link from "next/link";
-import styled, { keyframes } from "styled-components";
+import styled, { keyframes, useTheme } from "styled-components";
 import Dropdown from "../Dropdown";
 import Head from "next/head";
 
@@ -76,7 +76,7 @@ transform: ${(props) =>
 width: 270px;
 height: ${(props) =>
   props.isLocked && props.isOpen ? "100%" : "calc(100% - 55px)"};
-  background: radial-gradient(343px at 46.3% 47.5%, rgb(242, 242, 242) 0%, rgb(241, 241, 241) 72.9%);
+  background: rgb(251, 251, 250); 
 padding: 0;
 z-index: 10;
 
@@ -97,7 +97,27 @@ transition: transform 300ms, ${(props) =>
 // left: ${(props) => (!props.isLocked && props.isOpen ? "250px" : "0")};
 
 const SidebarItem = styled.li`
-  padding: 0.5rem 0;
+  a {
+    display: block;
+    padding: 8px 24px;
+    margin: 5px;
+    border-radius: 4px;
+    transition: background-color 300ms ease, transform 300ms;
+    color: ${({ theme }) => theme.colors.darkergray};
+
+    &:hover {
+      background-color: ${({ theme }) => theme.colors.gray};
+    }
+
+    &:active {
+      transform: scale(0.97);
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px ${({ theme }) => theme.colors.darkgray};
+    }
+  }
 `;
 
 const fadeIn = keyframes`
@@ -139,6 +159,8 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
 
   const accountDropdownRef = useRef<any>({});
   const supabase = useSupabaseClient();
+
+  const theme = useTheme();
 
   console.log(profile);
 
@@ -216,13 +238,18 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
 
         <SidebarContent isLocked={isLocked} isOpen={isOpen}>
           <AccountLayoutStyle>
-            <div className="z-10 flex items-center p-2">
+            <div className="z-10 flex items-center p-1">
               <Dropdown
                 id="voiceDropdown"
                 ref={accountDropdownRef}
                 selectedItemText={profile && profile.name}
                 image={<AvatarProfile />}
-                icon={<ChevronsUpDown className="w-6 pl-2" />}
+                icon={
+                  <ChevronsUpDown
+                    className="w-4"
+                    color={theme.colors.darkgray}
+                  />
+                }
               >
                 {/* <ul>
             <li>Logout</li>
@@ -239,18 +266,29 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
                   </button>
                 </div>
               </Dropdown>
-              <span className="z-50 pl-4 font-bold"></span>
             </div>
             <ul>
-              <SidebarItem>Item 1</SidebarItem>
-              <SidebarItem>Item 2</SidebarItem>
-              <SidebarItem>Item 3</SidebarItem>
+              <SidebarItem>
+                <a href="#" tabIndex={0}>
+                  Item 1
+                </a>
+              </SidebarItem>
+              <SidebarItem>
+                <a href="#" tabIndex={0}>
+                  Item 2
+                </a>
+              </SidebarItem>
+              <SidebarItem>
+                <a href="#" tabIndex={0}>
+                  Item 3
+                </a>
+              </SidebarItem>
             </ul>
           </AccountLayoutStyle>
         </SidebarContent>
       </SidebarContainer>
       <main
-        className="min-h-screen bg-[#fcfcfc] pl-6 pt-4 "
+        className="min-h-screen bg-white pl-6 pt-4 "
         style={{
           transform: isLocked ? "translateX(150px)" : "translateX(0)",
           transition: isLocked ? "transform 300ms" : "transform 100ms",

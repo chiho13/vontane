@@ -1,12 +1,12 @@
 import Link from "next/link";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import Dropdown from "../Dropdown";
 import Head from "next/head";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { AccountLayoutStyle } from "./style";
 import ChevronDown from "@/icons/ChevronDown";
-import { ChevronsRight, ChevronsLeft } from "lucide-react";
+import { ChevronsRight, ChevronsLeft, Menu } from "lucide-react";
 
 import { LogoutIcon } from "@/icons/Logout";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
@@ -53,19 +53,30 @@ const ToggleButton = styled.button`
 
 const SidebarContent = styled.div<{ isLocked: boolean; isOpen: boolean }>`
 position: fixed;
-top: 0;
+top: ${(props) => (props.isLocked && props.isOpen ? "0" : "40px")};
 transform: ${(props) =>
   props.isLocked || props.isOpen ? "translateX(0)" : "translateX(-270px)"};
 width: 270px;
-height: 100%;
+height: ${(props) =>
+  props.isLocked && props.isOpen ? "100%" : "calc(100% - 40px)"};
 background-color: #edf2f7;
 padding: 1rem;
 z-index: 10;
 
 box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
   0 2px 4px -1px rgba(0, 0, 0, 0.06)};
-transition: transform 300ms;
+transition: transform 300ms, ${(props) =>
+  props.isLocked && props.isOpen
+    ? "top 100ms, height 100ms"
+    : "top 1000ms, height 1000ms"};
 
+  header {
+    transition: ${(props) =>
+      props.isLocked && props.isOpen
+        ? "margin-top 100ms"
+        : "margin-top 1000ms"};
+    margin-top: ${(props) => (props.isLocked && props.isOpen ? "40px" : "0")};
+  }
 `;
 
 // left: ${(props) => (!props.isLocked && props.isOpen ? "250px" : "0")};
@@ -74,14 +85,42 @@ const SidebarItem = styled.li`
   padding: 0.5rem 0;
 `;
 
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
+const fadeOut = keyframes`
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
+const AnimatedIcon = styled.div<{ show: boolean }>`
+  animation: ${({ show }) => (show ? fadeIn : fadeOut)} 0.3s linear;
+`;
+
 interface LayoutProps {
   children: React.ReactNode;
   profile: any;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
-  const [isLocked, setIsLocked] = useState<boolean>(true);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isLocked, setIsLocked] = useState<boolean>(
+    JSON.parse(localStorage.getItem("isLocked") || "true")
+  );
+  const [isOpen, setIsOpen] = useState<boolean>(
+    JSON.parse(localStorage.getItem("isOpen") || "true")
+  );
+
+  const [showChevronRight, setShowChevronRight] = useState(false);
 
   const accountDropdownRef = useRef<any>({});
   const supabase = useSupabaseClient();
@@ -91,6 +130,14 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
   async function logout() {
     await supabase.auth.signOut();
   }
+
+  useEffect(() => {
+    localStorage.setItem("isLocked", JSON.stringify(isLocked));
+  }, [isLocked]);
+
+  useEffect(() => {
+    localStorage.setItem("isOpen", JSON.stringify(isOpen));
+  }, [isOpen]);
 
   function AvatarProfile() {
     return (
@@ -111,13 +158,23 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
   const handleMouseEnter = (): void => {
     if (!isLocked) {
       setIsOpen(true);
+      setShowChevronRight(true);
     }
   };
 
   const handleMouseLeave = (): void => {
     if (!isLocked) {
       setIsOpen(false);
+      setShowChevronRight(false);
     }
+  };
+
+  const ChevronRightToMenu = () => {
+    return (
+      <AnimatedIcon show={showChevronRight}>
+        {showChevronRight ? <ChevronsRight /> : <Menu />}
+      </AnimatedIcon>
+    );
   };
 
   return (
@@ -135,14 +192,14 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
           onClick={toggleSidebarLock}
           style={{
             transform: isLocked ? "translateX(230px)" : "translateX(0)",
-            transition: "transform 300ms",
+            transition: isLocked ? "transform 200ms" : "transform 400ms",
           }}
         >
-          {isLocked ? <ChevronsLeft /> : <ChevronsRight />}
+          {isLocked ? <ChevronsLeft /> : <ChevronRightToMenu />}
         </ToggleButton>
 
         <SidebarContent isLocked={isLocked} isOpen={isOpen}>
-          <AccountLayoutStyle className="z-10 mt-8 flex items-center p-4">
+          <AccountLayoutStyle className="z-10 flex items-center p-4">
             <Dropdown
               id="voiceDropdown"
               ref={accountDropdownRef}

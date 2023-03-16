@@ -7,6 +7,14 @@ import { useRef, useState, useEffect } from "react";
 import { AccountLayoutStyle } from "./style";
 import ChevronDown from "@/icons/ChevronDown";
 import {
+  Tooltip,
+  TooltipArrow,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+import {
   ChevronsRight,
   ChevronsLeft,
   Menu,
@@ -62,6 +70,7 @@ const ToggleButton = styled.button`
   color: ${({ theme }) => theme.colors.darkgray};
   border-radius: 0.25rem;
   transition: background-color 300ms ease;
+  height: 24px;
 
   &:hover {
     background-color: ${({ theme }) => theme.colors.gray};
@@ -213,9 +222,33 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
 
   const ChevronRightToMenu = () => {
     return (
-      <AnimatedIcon show={showChevronRight}>
-        {showChevronRight ? <ChevronsRight /> : <Menu />}
-      </AnimatedIcon>
+      <TooltipProvider delayDuration={0}>
+        <Tooltip>
+          <TooltipTrigger>
+            <AnimatedIcon show={showChevronRight}>
+              {showChevronRight ? <ChevronsRight /> : <Menu />}
+            </AnimatedIcon>
+          </TooltipTrigger>
+          <TooltipContent className="border-black" side="left">
+            <p className="text-[12px] text-white">Lock Sidebar Open</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+  };
+
+  const TooltipChevronLeft = () => {
+    return (
+      <TooltipProvider delayDuration={0}>
+        <Tooltip>
+          <TooltipTrigger>
+            <ChevronsLeft />
+          </TooltipTrigger>
+          <TooltipContent className="border-black">
+            <p className="text-[12px] text-white">Close Sidebar</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     );
   };
 
@@ -237,7 +270,7 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
           }}
         >
           <ToggleButton onClick={toggleSidebarLock}>
-            {isLocked ? <ChevronsLeft /> : <ChevronRightToMenu />}
+            {isLocked ? <TooltipChevronLeft /> : <ChevronRightToMenu />}
           </ToggleButton>
         </ToggleButtonWrapper>
 

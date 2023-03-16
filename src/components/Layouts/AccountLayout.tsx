@@ -267,7 +267,7 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
                 </div>
               </Dropdown>
             </div>
-            <ul>
+            <ul className="mt-10">
               <SidebarItem>
                 <a href="#" tabIndex={0}>
                   Item 1

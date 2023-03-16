@@ -15,6 +15,7 @@ import Dropdown from "../Dropdown";
 import { ChevronDown } from "lucide-react";
 import useClickOutsideHandler from "../../hooks/useClickOutside";
 import { flags } from "@/icons/flags";
+import { api } from "@/utils/api";
 
 import {
   fetchVoices,
@@ -113,19 +114,19 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
 
   const stopButtonRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    fetchVoices()
-      .then((voices: Voice[]) => {
-        setVoices(voices);
-        setAccents(getAccents(voices));
-        setAges(getAges(voices));
-        setVoiceStyles(getVoiceStyles(voices));
-        setTempos(getTempos(voices));
+  const queryResult = api.texttospeech.getVoices.useQuery();
+  console.log(queryResult.data);
 
-        console.log(voices);
-      })
-      .catch((error: Error) => console.error(error));
-  }, []);
+  useEffect(() => {
+    if (queryResult.data) {
+      const fetchedVoices = queryResult.data.voices || [];
+      setVoices(fetchedVoices);
+      setAccents(getAccents(fetchedVoices));
+      setAges(getAges(fetchedVoices));
+      setVoiceStyles(getVoiceStyles(fetchedVoices));
+      setTempos(getTempos(fetchedVoices));
+    }
+  }, [queryResult?.data]);
 
   function handleVoiceSelection(voice: string, name: string): void {
     setSelectedVoiceId(voice);

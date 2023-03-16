@@ -220,6 +220,14 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
     }
   };
 
+  useEffect(() => {
+    if (!isLocked || !isOpen) {
+      if (accountDropdownRef.current) {
+        accountDropdownRef.current.handleClose();
+      }
+    }
+  }, [isLocked, isOpen]);
+
   const ChevronRightToMenu = () => {
     return (
       <TooltipProvider delayDuration={0}>

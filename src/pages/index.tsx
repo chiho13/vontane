@@ -56,6 +56,13 @@ const Home: NextPage = () => {
     }
   }, [session]);
 
+  const { data, error, isLoading, refetch } =
+    api.texttospeech.startConversion.useQuery(
+      { voice: selectedVoiceId, content: [enteredText] },
+      {
+        enabled: false,
+      }
+    );
   async function generateAudio(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -64,22 +71,34 @@ const Home: NextPage = () => {
     setStatus("");
     setTranscriptionId("");
 
-    const requestBody = {
-      voice: selectedVoiceId,
-      content: [enteredText],
-    };
+    // try {
+    //   const data = await ttsApi(requestBody);
+    //   console.log(data);
+    //   setTranscriptionId(data.transcriptionId);
+    // } catch (error) {
+    //   console.error(error);
+    // }
 
-    try {
-      const data = await ttsApi(requestBody);
-      console.log(data);
-      setTranscriptionId(data.transcriptionId);
-    } catch (error) {
-      console.error(error);
-    }
+    refetch();
   }
 
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
 
+  useEffect(() => {
+    if (audioIsLoading && !isLoading) {
+      if (data) {
+        console.log(data);
+        // Handle the data as needed
+      }
+
+      if (error) {
+        console.error(error);
+        // Handle the error as needed
+      }
+
+      setAudioIsLoading(false);
+    }
+  }, [audioIsLoading, data, error, isLoading]);
   useEffect(() => {
     if (selectedVoiceId && enteredText) {
       setIsDisabled(false);

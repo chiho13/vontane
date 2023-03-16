@@ -65,7 +65,7 @@ function Dropdown(
     <>
       {isOpen && (
         <div
-          className="closeOutside fixed top-0 left-0 h-full w-full opacity-50"
+          className="closeOutside fixed top-0 left-0 h-full w-screen opacity-50"
           onClick={handleClose}
         ></div>
       )}

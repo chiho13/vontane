@@ -70,16 +70,21 @@ const ToggleButton = styled.button`
 
 const SidebarContent = styled.div<{ isLocked: boolean; isOpen: boolean }>`
 position: fixed;
-top: ${(props) => (props.isLocked && props.isOpen ? "0" : "55px")};
+top: ${(props) => (props.isLocked && props.isOpen ? "0" : "70px")};
 transform: ${(props) =>
   props.isLocked || props.isOpen ? "translateX(0)" : "translateX(-270px)"};
 width: 270px;
-height: ${(props) =>
-  props.isLocked && props.isOpen ? "100%" : "calc(100% - 55px)"};
+height: ${(props) => (props.isLocked && props.isOpen ? "100%" : "auto")};
   background: rgb(251, 251, 250); 
 padding: 0;
 z-index: 10;
-
+border: ${(props) =>
+  !props.isLocked && props.isOpen && `1px solid  ${props.theme.colors.gray}`} ;
+border-left: none;
+border-top-right-radius:  ${(props) =>
+  !props.isLocked && props.isOpen && "4px"};
+border-bottom-right-radius:  ${(props) =>
+  !props.isLocked && props.isOpen && "4px"};
 box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
   0 2px 4px -1px rgba(0, 0, 0, 0.06)};
 transition: transform 300ms, ${(props) =>
@@ -267,7 +272,7 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
                 </div>
               </Dropdown>
             </div>
-            <ul className="mt-10">
+            <ul className="mt-10 mb-10">
               <SidebarItem>
                 <a href="#" tabIndex={0}>
                   Item 1

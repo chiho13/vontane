@@ -13,17 +13,30 @@ interface Theme {
     brand: string;
     white: string;
     gray: string;
+    darkgray: string;
+    darkergray: string;
   };
   background: {
     white: string;
   };
 }
 
+declare module "styled-components" {
+  export interface DefaultTheme {
+    colors: {
+      [key: string]: string;
+    };
+    // Add other custom theme properties here
+  }
+}
+
 const theme: Theme = {
   colors: {
     brand: "#f5820d",
     white: "#ffffff",
-    gray: "#dddddd",
+    gray: "#eeeeee",
+    darkgray: "#999999",
+    darkergray: "#444444",
   },
   background: {
     white: "linear-gradient(120deg, #fdfbfb 0%, #f2f6f7 100%)",

@@ -12,7 +12,7 @@ import useClickOutsideHandler from "@/hooks/useClickOutside";
 
 interface DropdownProps {
   id: string;
-  selectedItemText?: string;
+  selectedItemText?: any;
   children: React.ReactNode;
   icon?: React.ReactNode;
   image?: React.ReactNode;
@@ -71,15 +71,15 @@ function Dropdown(
       )}
       <DropdownStyle className="dropdown_wrapper">
         <button
-          className="dropdown-toggle inline-flex justify-center rounded-md border-2 border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-md shadow-sm outline-none hover:bg-gray-50 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
+          className="dropdown-toggle inline-flex items-center justify-center rounded-md border-2 border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-md shadow-sm outline-none hover:bg-gray-50 focus-visible:border-gray-400 "
           aria-expanded={isOpen}
           aria-haspopup="true"
           id="voices-dropdown"
           onClick={handleVoicesDropdownClick}
         >
-          <span> {selectedItemText}</span>
-          {icon}
           {image}
+          <span className="dropdown_textbutton"> {selectedItemText}</span>
+          {icon}
         </button>
 
         <div

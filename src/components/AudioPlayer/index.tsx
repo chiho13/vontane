@@ -142,7 +142,7 @@ function AudioPlayer({ generatedAudio, transcriptionId }: Props): JSX.Element {
         onMouseDown={handleSeekStart}
         onMouseUp={handleSeekEnd}
         onMouseMove={handleSeekMove}
-        onMouseOver={handleMouseOver}
+        onMouseEnter={handleMouseOver}
         onMouseLeave={handleMouseLeave}
       >
         <div className="audioPlayer_timeline">

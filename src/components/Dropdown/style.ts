@@ -13,6 +13,14 @@ export const DropdownStyle: StyledComponent<"div", any> = styled.div`
       0 8px 10px -6px rgb(0 0 0 / 0.1);
   }
 
+  .dropdown_textbutton {
+    display: inline-block;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   .show {
     display: block;
   }

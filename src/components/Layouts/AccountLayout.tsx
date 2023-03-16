@@ -6,7 +6,12 @@ import Head from "next/head";
 import { useRef, useState, useEffect } from "react";
 import { AccountLayoutStyle } from "./style";
 import ChevronDown from "@/icons/ChevronDown";
-import { ChevronsRight, ChevronsLeft, Menu } from "lucide-react";
+import {
+  ChevronsRight,
+  ChevronsLeft,
+  Menu,
+  ChevronsUpDown,
+} from "lucide-react";
 
 import { LogoutIcon } from "@/icons/Logout";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
@@ -17,7 +22,6 @@ const Header = styled.header`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
   color: ${({ theme }) => theme.colors.brand};
 `;
 
@@ -40,27 +44,40 @@ const SidebarContainer = styled.div`
   position: relative;
 `;
 
-const ToggleButton = styled.button`
+const ToggleButtonWrapper = styled.div`
   position: absolute;
-  top: 0;
-  left: 0;
+  top: 5px;
+  left: 5px;
   z-index: 100;
-  background-color: white;
-  color: black;
-  padding: 0.5rem;
+  display: block;
+  height: 45px;
+  width: 45px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ToggleButton = styled.button`
+  background-color: transparent;
+  color: ${({ theme }) => theme.colors.darkgray};
   border-radius: 0.25rem;
+  transition: background-color 300ms ease;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.gray};
+  }
 `;
 
 const SidebarContent = styled.div<{ isLocked: boolean; isOpen: boolean }>`
 position: fixed;
-top: ${(props) => (props.isLocked && props.isOpen ? "0" : "40px")};
+top: ${(props) => (props.isLocked && props.isOpen ? "0" : "55px")};
 transform: ${(props) =>
   props.isLocked || props.isOpen ? "translateX(0)" : "translateX(-270px)"};
 width: 270px;
 height: ${(props) =>
-  props.isLocked && props.isOpen ? "100%" : "calc(100% - 40px)"};
-background-color: #edf2f7;
-padding: 1rem;
+  props.isLocked && props.isOpen ? "100%" : "calc(100% - 55px)"};
+  background: radial-gradient(343px at 46.3% 47.5%, rgb(242, 242, 242) 0%, rgb(241, 241, 241) 72.9%);
+padding: 0;
 z-index: 10;
 
 box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
@@ -73,7 +90,7 @@ transition: transform 300ms, ${(props) =>
   header {
     transition: ${(props) =>
       props.isLocked && props.isOpen ? "margin-top 100ms" : "margin-top 500ms"};
-    margin-top: ${(props) => (props.isLocked && props.isOpen ? "40px" : "0")};
+    margin-top: ${(props) => (props.isLocked && props.isOpen ? "0" : "0")};
   }
 `;
 
@@ -143,7 +160,7 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
         <img
           src={profile.avatar || ""}
           alt={`${profile.name}'s avatar`}
-          className="w-12 rounded-full"
+          className="mr-2 ml-2 w-9 rounded-full border border-gray-400"
         />
       )
     );
@@ -186,51 +203,54 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <ToggleButton
-          onClick={toggleSidebarLock}
+        <ToggleButtonWrapper
           style={{
-            transform: isLocked ? "translateX(230px)" : "translateX(0)",
+            transform: isLocked ? "translateX(220px)" : "translateX(0)",
             transition: isLocked ? "transform 400ms" : "transform 200ms",
           }}
         >
-          {isLocked ? <ChevronsLeft /> : <ChevronRightToMenu />}
-        </ToggleButton>
+          <ToggleButton onClick={toggleSidebarLock}>
+            {isLocked ? <ChevronsLeft /> : <ChevronRightToMenu />}
+          </ToggleButton>
+        </ToggleButtonWrapper>
 
         <SidebarContent isLocked={isLocked} isOpen={isOpen}>
-          <AccountLayoutStyle className="z-10 flex items-center p-4">
-            <Dropdown
-              id="voiceDropdown"
-              ref={accountDropdownRef}
-              image={<AvatarProfile />}
-            >
-              {/* <ul>
+          <AccountLayoutStyle>
+            <div className="z-10 flex items-center p-2">
+              <Dropdown
+                id="voiceDropdown"
+                ref={accountDropdownRef}
+                selectedItemText={profile && profile.name}
+                image={<AvatarProfile />}
+                icon={<ChevronsUpDown className="w-6 pl-2" />}
+              >
+                {/* <ul>
             <li>Logout</li>
           </ul> */}
-              <div className="p-1" role="none">
-                <button
-                  onClick={logout}
-                  className="inline-flex w-full rounded-md px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                  role="menuitem"
-                  tabIndex={-1}
-                  id="menu-item-3"
-                >
-                  <LogoutIcon /> Log out
-                </button>
-              </div>
-            </Dropdown>
-            <span className="z-50 pl-4 font-bold">
-              {profile && profile.name}
-            </span>
+                <div className="p-1" role="none">
+                  <button
+                    onClick={logout}
+                    className="inline-flex w-full rounded-md px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                    role="menuitem"
+                    tabIndex={-1}
+                    id="menu-item-3"
+                  >
+                    <LogoutIcon /> Log out
+                  </button>
+                </div>
+              </Dropdown>
+              <span className="z-50 pl-4 font-bold"></span>
+            </div>
+            <ul>
+              <SidebarItem>Item 1</SidebarItem>
+              <SidebarItem>Item 2</SidebarItem>
+              <SidebarItem>Item 3</SidebarItem>
+            </ul>
           </AccountLayoutStyle>
-          <ul>
-            <SidebarItem>Item 1</SidebarItem>
-            <SidebarItem>Item 2</SidebarItem>
-            <SidebarItem>Item 3</SidebarItem>
-          </ul>
         </SidebarContent>
       </SidebarContainer>
       <main
-        className="min-h-screen bg-gradient-to-b from-[#f1f1f1] to-[#e9e9e9] pl-6 pt-4 "
+        className="min-h-screen bg-[#fcfcfc] pl-6 pt-4 "
         style={{
           transform: isLocked ? "translateX(150px)" : "translateX(0)",
           transition: isLocked ? "transform 300ms" : "transform 100ms",

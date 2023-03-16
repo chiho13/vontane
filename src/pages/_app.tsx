@@ -13,6 +13,7 @@ interface Theme {
     brand: string;
     white: string;
     gray: string;
+    darkgray: string;
   };
   background: {
     white: string;
@@ -24,6 +25,7 @@ const theme: Theme = {
     brand: "#f5820d",
     white: "#ffffff",
     gray: "#dddddd",
+    darkgray: "#aaaaaa",
   },
   background: {
     white: "linear-gradient(120deg, #fdfbfb 0%, #f2f6f7 100%)",

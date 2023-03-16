@@ -12,7 +12,7 @@ import useClickOutsideHandler from "@/hooks/useClickOutside";
 
 interface DropdownProps {
   id: string;
-  selectedItemText?: string;
+  selectedItemText?: any;
   children: React.ReactNode;
   icon?: React.ReactNode;
   image?: React.ReactNode;
@@ -77,9 +77,9 @@ function Dropdown(
           id="voices-dropdown"
           onClick={handleVoicesDropdownClick}
         >
-          <span> {selectedItemText}</span>
-          {icon}
           {image}
+          <span className="dropdown_textbutton"> {selectedItemText}</span>
+          {icon}
         </button>
 
         <div

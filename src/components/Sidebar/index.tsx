@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
+import { ChevronsRight, ChevronsLeft } from "lucide-react";
+
 const SidebarContainer = styled.div`
   position: relative;
 `;
@@ -29,16 +31,28 @@ const SidebarContent = styled.div<{ isLocked: boolean; isOpen: boolean }>`
   transform: ${(props) =>
     props.isLocked || props.isOpen ? "translateX(0)" : "translateX(-100%)"};
   transition: transform 300ms;
+
+  ul {
+    margin-top: 100px;
+  }
 `;
 
 const SidebarItem = styled.li`
   padding: 0.5rem 0;
 `;
+interface SidebarProps {
+  isLocked: boolean;
+  setIsLocked: (locked: boolean) => void;
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+}
 
-export const Sidebar: React.FC = () => {
-  const [isLocked, setIsLocked] = useState<boolean>(true);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-
+export const Sidebar: React.FC<SidebarProps> = ({
+  isLocked,
+  setIsLocked,
+  isOpen,
+  setIsOpen,
+}) => {
   const toggleSidebarLock = (): void => {
     setIsLocked(!isLocked);
     setIsOpen(!isOpen);
@@ -62,7 +76,7 @@ export const Sidebar: React.FC = () => {
       onMouseLeave={handleMouseLeave}
     >
       <ToggleButton onClick={toggleSidebarLock}>
-        {isLocked ? "Unlock" : "Lock"} Sidebar
+        {!isLocked ? <ChevronsRight /> : <ChevronsLeft />}
       </ToggleButton>
       <SidebarContent isLocked={isLocked} isOpen={isOpen}>
         <ul>

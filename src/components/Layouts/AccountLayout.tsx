@@ -68,13 +68,11 @@ box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
 transition: transform 300ms, ${(props) =>
   props.isLocked && props.isOpen
     ? "top 100ms, height 100ms"
-    : "top 1000ms, height 1000ms"};
+    : "top 500ms, height 1000ms"};
 
   header {
     transition: ${(props) =>
-      props.isLocked && props.isOpen
-        ? "margin-top 100ms"
-        : "margin-top 1000ms"};
+      props.isLocked && props.isOpen ? "margin-top 100ms" : "margin-top 500ms"};
     margin-top: ${(props) => (props.isLocked && props.isOpen ? "40px" : "0")};
   }
 `;
@@ -192,7 +190,7 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
           onClick={toggleSidebarLock}
           style={{
             transform: isLocked ? "translateX(230px)" : "translateX(0)",
-            transition: isLocked ? "transform 200ms" : "transform 400ms",
+            transition: isLocked ? "transform 400ms" : "transform 200ms",
           }}
         >
           {isLocked ? <ChevronsLeft /> : <ChevronRightToMenu />}
@@ -235,7 +233,7 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
         className="min-h-screen bg-gradient-to-b from-[#f1f1f1] to-[#e9e9e9] pl-6 pt-4 "
         style={{
           transform: isLocked ? "translateX(150px)" : "translateX(0)",
-          transition: "transform 300ms",
+          transition: isLocked ? "transform 300ms" : "transform 100ms",
         }}
       >
         {children}

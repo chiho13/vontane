@@ -11,7 +11,8 @@ import SampleAudioVoice from "../SampleAudioVoice";
 import { VoiceDropdownStyle } from "./style";
 import FilterDropdown from "../FilterDropdown";
 import Dropdown from "../Dropdown";
-import ChevronDown from "../../icons/ChevronDown";
+// import ChevronDown from "../../icons/ChevronDown";
+import { ChevronDown } from "lucide-react";
 import useClickOutsideHandler from "../../hooks/useClickOutside";
 import { flags } from "@/icons/flags";
 
@@ -310,7 +311,7 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
         id="voiceDropdown"
         selectedItemText={selectedItemText}
         ref={voicesDropdownRef}
-        icon={<ChevronDown />}
+        icon={<ChevronDown className="ml-4 w-4" />}
       >
         <div>
           <div>

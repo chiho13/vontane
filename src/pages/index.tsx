@@ -105,37 +105,39 @@ const Home: NextPage = () => {
       <Layout profile={profile}>
         {/* {!session ?? <Link href="/login">Login</Link>} */}
         <div className="container mx-auto mt-4  p-4 ">
-          <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
+          <div className="pl-24">
+            <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
 
-          <form id="text-form">
-            <label htmlFor="text" className="mb-2 block">
-              Enter text (max. 1000 characters):
-            </label>
-            <textarea
-              id="text"
-              name="text"
-              rows="8"
-              cols="50"
-              maxLength="1000"
-              className="textarea_input mb-4 block w-full resize-none rounded-md border-2 border-gray-100 p-4 focus:outline-none focus-visible:border-orange-500"
-              onChange={handleTextChange}
-            ></textarea>
-            <GenerateButton
-              isDisabled={isDisabled}
-              audioIsLoading={audioIsLoading}
-              onClick={generateAudio}
-            />
-          </form>
-          <div id="download-container" className="mt-4"></div>
-          {!audioIsLoading && generatedAudioElement && (
-            // <audio controls src={generatedAudioElement.src} />
-            <AudioPlayer
-              generatedAudio={generatedAudioElement}
-              transcriptionId={transcriptionId}
-            />
-          )}
-          {/* <AudioPlayer generatedAudio={dummyAudioElement} /> */}
-          {/* {audioUrl && <DownloadButton audioUrl={audioUrl} />} */}
+            <form id="text-form">
+              <label htmlFor="text" className="mb-2 block">
+                Enter text (max. 1000 characters):
+              </label>
+              <textarea
+                id="text"
+                name="text"
+                rows="8"
+                cols="50"
+                maxLength="1000"
+                className="textarea_input mb-4 block w-full resize-none rounded-md border-2 border-gray-100 p-4 focus:outline-none focus-visible:border-orange-500"
+                onChange={handleTextChange}
+              ></textarea>
+              <GenerateButton
+                isDisabled={isDisabled}
+                audioIsLoading={audioIsLoading}
+                onClick={generateAudio}
+              />
+            </form>
+            <div id="download-container" className="mt-4"></div>
+            {!audioIsLoading && generatedAudioElement && (
+              // <audio controls src={generatedAudioElement.src} />
+              <AudioPlayer
+                generatedAudio={generatedAudioElement}
+                transcriptionId={transcriptionId}
+              />
+            )}
+            {/* <AudioPlayer generatedAudio={dummyAudioElement} /> */}
+            {/* {audioUrl && <DownloadButton audioUrl={audioUrl} />} */}
+          </div>
         </div>
       </Layout>
     </>

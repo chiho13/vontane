@@ -55,8 +55,8 @@ const SidebarContent = styled.div<{ isLocked: boolean; isOpen: boolean }>`
 position: fixed;
 top: 0;
 transform: ${(props) =>
-  props.isLocked || props.isOpen ? "translateX(0)" : "translateX(-250px)"};
-width: 250px;
+  props.isLocked || props.isOpen ? "translateX(0)" : "translateX(-270px)"};
+width: 270px;
 height: 100%;
 background-color: #edf2f7;
 padding: 1rem;
@@ -66,10 +66,6 @@ box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
   0 2px 4px -1px rgba(0, 0, 0, 0.06)};
 transition: transform 300ms;
 
-
-ul {
-  margin-top: 100px;
-}
 `;
 
 // left: ${(props) => (!props.isLocked && props.isOpen ? "250px" : "0")};
@@ -138,13 +134,39 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
         <ToggleButton
           onClick={toggleSidebarLock}
           style={{
-            transform: isLocked ? "translateX(210px)" : "translateX(0)",
+            transform: isLocked ? "translateX(230px)" : "translateX(0)",
             transition: "transform 300ms",
           }}
         >
           {isLocked ? <ChevronsLeft /> : <ChevronsRight />}
         </ToggleButton>
+
         <SidebarContent isLocked={isLocked} isOpen={isOpen}>
+          <AccountLayoutStyle className="z-10 mt-8 flex items-center p-4">
+            <Dropdown
+              id="voiceDropdown"
+              ref={accountDropdownRef}
+              image={<AvatarProfile />}
+            >
+              {/* <ul>
+            <li>Logout</li>
+          </ul> */}
+              <div className="p-1" role="none">
+                <button
+                  onClick={logout}
+                  className="inline-flex w-full rounded-md px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                  role="menuitem"
+                  tabIndex={-1}
+                  id="menu-item-3"
+                >
+                  <LogoutIcon /> Log out
+                </button>
+              </div>
+            </Dropdown>
+            <span className="z-50 pl-4 font-bold">
+              {profile && profile.name}
+            </span>
+          </AccountLayoutStyle>
           <ul>
             <SidebarItem>Item 1</SidebarItem>
             <SidebarItem>Item 2</SidebarItem>
@@ -155,42 +177,10 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
       <main
         className="min-h-screen bg-gradient-to-b from-[#f1f1f1] to-[#e9e9e9] pl-6 pt-4 "
         style={{
-          transform: isLocked ? "translateX(250px)" : "translateX(0)",
+          transform: isLocked ? "translateX(150px)" : "translateX(0)",
           transition: "transform 300ms",
         }}
       >
-        <AccountLayoutStyle className="ml-4 flex items-center p-4">
-          <Dropdown
-            id="voiceDropdown"
-            ref={accountDropdownRef}
-            image={<AvatarProfile />}
-          >
-            {/* <ul>
-            <li>Logout</li>
-          </ul> */}
-            <div className="p-1" role="none">
-              <button
-                onClick={logout}
-                className="inline-flex w-full rounded-md px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                role="menuitem"
-                tabIndex={-1}
-                id="menu-item-3"
-              >
-                <LogoutIcon /> Log out
-              </button>
-            </div>
-          </Dropdown>
-          <span className="z-50 pl-4 font-bold">{profile && profile.name}</span>
-          {/* <Navbar>
-          <Link href="/about">
-            <NavLink>About</NavLink>
-          </Link>
-          <Link href="/contact">
-            <NavLink>Contact</NavLink>
-          </Link>
-        </Navbar> */}
-        </AccountLayoutStyle>
-
         {children}
       </main>
     </>

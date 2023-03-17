@@ -1,68 +1,85 @@
 import { useState, useEffect, useRef, Dispatch, SetStateAction } from "react";
 import { getTextSpeechStatusPolling } from "../api/ttsStatusPolling";
 
+import { api } from "@/utils/api";
+
+type UseTextSpeechStatusPollingResult = [
+  HTMLAudioElement | null,
+  Dispatch<SetStateAction<HTMLAudioElement | null>>,
+  () => void
+];
+
 function useTextSpeechStatusPolling(
   transcriptionId: string,
-  status: string,
-  setStatus: (value: boolean) => void,
   setAudioIsLoading: (value: boolean) => void
-): (
-  | HTMLAudioElement
-  | Dispatch<SetStateAction<HTMLAudioElement | null>>
-  | null
-)[] {
+): UseTextSpeechStatusPollingResult {
   const [generatedAudioElement, setGeneratedAudioElement] =
     useState<HTMLAudioElement | null>(null);
 
   const intervalRef = useRef<NodeJS.Timer | null>(null);
 
+  const {
+    data: ttsStatusData,
+    error: ttsStatusError,
+    isLoading: ttsStatusLoading,
+    refetch: ttsStatusRefetch,
+  } = api.texttospeech.getSpeechStatus.useQuery(
+    { transcriptionId: transcriptionId },
+    {
+      enabled: !!transcriptionId, // Enable the query if transcriptionId is provided
+    }
+  );
+
+  const refetchStatus = (): void => {
+    ttsStatusRefetch();
+  };
+
   useEffect(() => {
-    // Clear previous interval
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
+    if (transcriptionId && !ttsStatusData?.transcriped) {
+      if (!intervalRef.current) {
+        intervalRef.current = setInterval(() => {
+          ttsStatusRefetch();
+        }, 1000); // Refetch every 1 second
+      }
+    } else {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
     }
 
-    // Start polling for status updates
-    intervalRef.current = setInterval(async () => {
-      if (transcriptionId.length) {
-        try {
-          const data = await getTextSpeechStatusPolling(transcriptionId);
-
-          setStatus(data.transcriped);
-          console.log(data);
-
-          if (status && data.audioUrl && data.audioUrl.length > 0) {
-            const newAudioElement = new Audio(data.audioUrl[0]);
-            newAudioElement.addEventListener("error", (e) => {
-              console.error("Error playing audio:", e);
-            });
-            // newAudioElement.play();
-            setGeneratedAudioElement(newAudioElement);
-            setAudioIsLoading(false);
-          }
-
-          // Clear the interval when transcription is complete
-          if (data.transcriped) {
-            if (intervalRef.current) {
-              clearInterval(intervalRef.current);
-            }
-          }
-        } catch (error) {
-          console.error("Error fetching transcription status:", error);
-          // TODO: Handle error (e.g. show error message to user)
+    if (!ttsStatusLoading) {
+      if (ttsStatusData) {
+        console.log(ttsStatusData);
+        if (ttsStatusData.transcriped) {
+          const newAudioElement = new Audio(ttsStatusData.audioUrl[0]);
+          newAudioElement.addEventListener("error", (e) => {
+            console.error("Error playing audio:", e);
+          });
+          // newAudioElement.play();
+          setGeneratedAudioElement(newAudioElement);
+          setAudioIsLoading(false);
+          console.log("Speech transcription completed");
         }
       }
-    }, 1000);
 
-    // Stop polling when the component unmounts or the transcriptionId or status changes
+      if (ttsStatusError) {
+        console.error(ttsStatusError);
+        // Handle the error as needed
+      }
+    }
+  }, [transcriptionId, ttsStatusData, ttsStatusError, ttsStatusLoading]);
+
+  // Cleanup
+  useEffect(() => {
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
     };
-  }, [transcriptionId, status]);
+  }, []);
 
-  return [generatedAudioElement, setGeneratedAudioElement];
+  return [generatedAudioElement, setGeneratedAudioElement, refetchStatus];
 }
 
 export default useTextSpeechStatusPolling;

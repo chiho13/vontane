@@ -9,7 +9,7 @@ import VoiceDropdown from "@/components/VoiceDropdown";
 import GenerateButton from "@/components/GenerateButton";
 
 import { ttsApi } from "@/api/ttsApi";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import useStatusPolling from "@/hooks/useStatusPolling";
 
 import { useSession } from "@supabase/auth-helpers-react";
@@ -38,14 +38,8 @@ const Home: NextPage = () => {
   const [audioUrl, setAudioUrl] = useState<string>("");
   const { profile } = useUserContext();
 
-  const [generatedAudioElement, setGeneratedAudioElement] =
-    useStatusPolling<HTMLAudioElement>(
-      transcriptionId,
-      status,
-      setStatus,
-      setAudioIsLoading
-    );
-
+  const [generatedAudioElement, setGeneratedAudioElement, refetchStatus] =
+    useStatusPolling(transcriptionId, setAudioIsLoading);
   // const dummyAudioElement = new Audio(
   //   "https://peregrine-samples.s3.amazonaws.com/editor-samples/anny.wav"
   // );
@@ -56,13 +50,30 @@ const Home: NextPage = () => {
     }
   }, [session]);
 
-  const { data, error, isLoading, refetch } =
-    api.texttospeech.startConversion.useQuery(
-      { voice: selectedVoiceId, content: [enteredText] },
-      {
-        enabled: false,
-      }
-    );
+  const {
+    data: texttospeechdata,
+    error: texttospeecherror,
+    isLoading: texttospeechloading,
+    refetch: texttospeechrefetch,
+  } = api.texttospeech.startConversion.useQuery(
+    { voice: selectedVoiceId, content: [enteredText] },
+    {
+      enabled: false,
+    }
+  );
+
+  // const {
+  //   data: ttsStatusData,
+  //   error: ttsStatusError,
+  //   isLoading: ttsStatusLoading,
+  //   refetch: ttsStatusRefetch,
+  // } = api.texttospeech.getSpeechStatus.useQuery(
+  //   { transcriptionId: transcriptionId },
+  //   {
+  //     enabled: !!transcriptionId, // Enable the query if transcriptionId is provided
+  //   }
+  // );
+
   async function generateAudio(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -71,34 +82,38 @@ const Home: NextPage = () => {
     setStatus("");
     setTranscriptionId("");
 
-    // try {
-    //   const data = await ttsApi(requestBody);
-    //   console.log(data);
-    //   setTranscriptionId(data.transcriptionId);
-    // } catch (error) {
-    //   console.error(error);
-    // }
-
-    refetch();
+    texttospeechrefetch();
   }
 
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
 
+  const intervalRef = useRef<NodeJS.Timer | null>(null);
+
   useEffect(() => {
-    if (audioIsLoading && !isLoading) {
-      if (data) {
-        console.log(data);
+    console.log(transcriptionId);
+  }, [transcriptionId]);
+
+  useEffect(() => {
+    if (audioIsLoading && !texttospeechloading) {
+      if (texttospeechdata) {
+        setTranscriptionId(texttospeechdata.transcriptionId);
+        console.log(texttospeechdata);
         // Handle the data as needed
+        refetchStatus();
       }
 
-      if (error) {
-        console.error(error);
+      if (texttospeecherror) {
+        console.error(texttospeecherror);
         // Handle the error as needed
       }
-
-      setAudioIsLoading(false);
     }
-  }, [audioIsLoading, data, error, isLoading]);
+  }, [
+    audioIsLoading,
+    texttospeechdata,
+    texttospeecherror,
+    texttospeechloading,
+  ]);
+
   useEffect(() => {
     if (selectedVoiceId && enteredText) {
       setIsDisabled(false);
@@ -148,7 +163,6 @@ const Home: NextPage = () => {
             </form>
             <div id="download-container" className="mt-4"></div>
             {!audioIsLoading && generatedAudioElement && (
-              // <audio controls src={generatedAudioElement.src} />
               <AudioPlayer
                 generatedAudio={generatedAudioElement}
                 transcriptionId={transcriptionId}

@@ -53,7 +53,7 @@ const SidebarContainer = styled.div`
 `;
 
 const ToggleButtonWrapper = styled.div`
-  position: absolute;
+  position: fixed;
   top: 5px;
   left: 5px;
   z-index: 100;

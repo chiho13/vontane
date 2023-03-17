@@ -16,7 +16,11 @@
  */
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+
 import { prisma } from "@/server/db";
+
+import { TRPCError } from "@trpc/server";
 
 type CreateContextOptions = Record<string, never>;
 
@@ -30,9 +34,19 @@ type CreateContextOptions = Record<string, never>;
  *
  * @see https://create.t3.gg/en/usage/trpc#-servertrpccontextts
  */
-const createInnerTRPCContext = (_opts: CreateContextOptions) => {
+const createInnerTRPCContext = (
+  _opts: CreateContextOptions,
+  req: NextApiRequest,
+  res: NextApiResponse
+) => {
+  const supabaseServerClient = createServerSupabaseClient({
+    req,
+    res,
+  });
+
   return {
     prisma,
+    supabaseServerClient,
   };
 };
 
@@ -43,7 +57,7 @@ const createInnerTRPCContext = (_opts: CreateContextOptions) => {
  * @see https://trpc.io/docs/context
  */
 export const createTRPCContext = (_opts: CreateNextContextOptions) => {
-  return createInnerTRPCContext({});
+  return createInnerTRPCContext({}, _opts.req, _opts.res);
 };
 
 /**
@@ -53,6 +67,7 @@ export const createTRPCContext = (_opts: CreateNextContextOptions) => {
  */
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
+import { NextApiRequest, NextApiResponse } from "next/types";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
@@ -83,4 +98,23 @@ export const createTRPCRouter = t.router;
  * are logged in.
  */
 
+const isAuthed = t.middleware(async ({ next, ctx }) => {
+  const {
+    data: { user },
+    error,
+  } = await ctx.supabaseServerClient.auth.getUser();
+
+  if (error || !user) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+
+  return next({
+    ctx: {
+      ...ctx,
+      user,
+    },
+  });
+});
+
 export const publicProcedure = t.procedure;
+export const protectedProcedure = t.procedure.use(isAuthed);

@@ -53,7 +53,7 @@ const SidebarContainer = styled.div`
 `;
 
 const ToggleButtonWrapper = styled.div`
-  position: absolute;
+  position: fixed;
   top: 5px;
   left: 5px;
   z-index: 100;
@@ -219,6 +219,14 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
       setShowChevronRight(false);
     }
   };
+
+  useEffect(() => {
+    if (!isLocked || !isOpen) {
+      if (accountDropdownRef.current) {
+        accountDropdownRef.current.handleClose();
+      }
+    }
+  }, [isLocked, isOpen]);
 
   const ChevronRightToMenu = () => {
     return (

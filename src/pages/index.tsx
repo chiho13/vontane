@@ -3,6 +3,7 @@ import Head from "next/head";
 import Link from "next/link";
 
 import { api } from "@/utils/api";
+import { io } from "socket.io-client";
 
 import AudioPlayer from "@/components/AudioPlayer";
 import VoiceDropdown from "@/components/VoiceDropdown";
@@ -18,6 +19,7 @@ import Layout from "@/components/Layouts/AccountLayout";
 
 import { useUserContext } from "@/contexts/UserContext";
 
+// const SOCKET_SERVER_URL = "https://verby-websocket-9iook.ondigitalocean.app/";
 const Home: NextPage = () => {
   const hello = api.example.hello.useQuery({ text: "from tRPC" });
 
@@ -38,8 +40,8 @@ const Home: NextPage = () => {
   const [audioUrl, setAudioUrl] = useState<string>("");
   const { profile } = useUserContext();
 
-  const [generatedAudioElement, setGeneratedAudioElement, refetchStatus] =
-    useStatusPolling(transcriptionId, setAudioIsLoading);
+  const [generatedAudioElement, setGeneratedAudioElement] =
+    useStatusPolling(setAudioIsLoading);
   // const dummyAudioElement = new Audio(
   //   "https://peregrine-samples.s3.amazonaws.com/editor-samples/anny.wav"
   // );
@@ -49,6 +51,18 @@ const Home: NextPage = () => {
       setLoading(false);
     }
   }, [session]);
+
+  // useEffect(() => {
+  //   const socket = io(SOCKET_SERVER_URL);
+
+  //   socket.on("gettexttospeechstatus", (data) => {
+  //     console.log(data);
+  //   });
+
+  //   return () => {
+  //     socket.disconnect();
+  //   };
+  // }, []);
 
   const {
     data: texttospeechdata,
@@ -99,7 +113,7 @@ const Home: NextPage = () => {
         setTranscriptionId(texttospeechdata.transcriptionId);
         console.log(texttospeechdata);
         // Handle the data as needed
-        refetchStatus();
+        // refetchStatus();
       }
 
       if (texttospeecherror) {

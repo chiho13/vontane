@@ -11,6 +11,7 @@ const config = {
   reactStrictMode: true,
   env: {
     NEXT_PUBLIC_TTS_ENDPOINT: process.env.NEXT_PUBLIC_TTS_ENDPOINT,
+    PLAYHT_SOCKET_URL: process.env.PLAYHT_SOCKET_URL,
   },
 
   /**

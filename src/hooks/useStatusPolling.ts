@@ -2,84 +2,49 @@ import { useState, useEffect, useRef, Dispatch, SetStateAction } from "react";
 import { getTextSpeechStatusPolling } from "../api/ttsStatusPolling";
 
 import { api } from "@/utils/api";
+import { io } from "socket.io-client";
 
 type UseTextSpeechStatusPollingResult = [
   HTMLAudioElement | null,
-  Dispatch<SetStateAction<HTMLAudioElement | null>>,
-  () => void
+  Dispatch<SetStateAction<HTMLAudioElement | null>>
 ];
 
 function useTextSpeechStatusPolling(
-  transcriptionId: string,
   setAudioIsLoading: (value: boolean) => void
 ): UseTextSpeechStatusPollingResult {
   const [generatedAudioElement, setGeneratedAudioElement] =
     useState<HTMLAudioElement | null>(null);
 
-  const intervalRef = useRef<NodeJS.Timer | null>(null);
-
-  const {
-    data: ttsStatusData,
-    error: ttsStatusError,
-    isLoading: ttsStatusLoading,
-    refetch: ttsStatusRefetch,
-  } = api.texttospeech.getSpeechStatus.useQuery(
-    { transcriptionId: transcriptionId },
-    {
-      enabled: !!transcriptionId, // Enable the query if transcriptionId is provided
-    }
-  );
-
-  const refetchStatus = (): void => {
-    ttsStatusRefetch();
-  };
+  const SOCKET_URL = process.env.PLAYHT_SOCKET_URL;
 
   useEffect(() => {
-    if (transcriptionId && !ttsStatusData?.transcriped) {
-      if (!intervalRef.current) {
-        intervalRef.current = setInterval(() => {
-          ttsStatusRefetch();
-        }, 1000); // Refetch every 1 second
-      }
-    } else {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    }
+    const socket = io(SOCKET_URL);
 
-    if (!ttsStatusLoading) {
-      if (ttsStatusData) {
-        console.log(ttsStatusData);
-        if (ttsStatusData.transcriped) {
-          const newAudioElement = new Audio(ttsStatusData.audioUrl[0]);
-          newAudioElement.addEventListener("error", (e) => {
-            console.error("Error playing audio:", e);
-          });
-          // newAudioElement.play();
-          setGeneratedAudioElement(newAudioElement);
-          setAudioIsLoading(false);
-          console.log("Speech transcription completed");
-        }
+    socket.on("gettexttospeechstatus", (data) => {
+      if (data.status === "SUCCESS") {
+        console.log("Received audio URL:", data.metadata.output[0]);
+
+        const newAudioElement = new Audio(data.metadata.output[0]);
+        console.log(data.metadata.progress);
+        newAudioElement.addEventListener("error", (e) => {
+          console.error("Error playing audio:", e);
+        });
+        // newAudioElement.play();
+        setGeneratedAudioElement(newAudioElement);
+        setAudioIsLoading(false);
       }
 
-      if (ttsStatusError) {
-        console.error(ttsStatusError);
-        // Handle the error as needed
+      if (data.status === "QUEUED") {
+        console.log("progress:", data.metadata.progress);
       }
-    }
-  }, [transcriptionId, ttsStatusData, ttsStatusError, ttsStatusLoading]);
+    });
 
-  // Cleanup
-  useEffect(() => {
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
+      socket.disconnect();
     };
   }, []);
 
-  return [generatedAudioElement, setGeneratedAudioElement, refetchStatus];
+  return [generatedAudioElement, setGeneratedAudioElement];
 }
 
 export default useTextSpeechStatusPolling;

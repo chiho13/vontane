@@ -1,8 +1,15 @@
 import React from "react";
 import { saveAs } from "file-saver";
-import { Download } from "@/icons/Download";
+import { Download } from "lucide-react";
 import styled, { useTheme } from "styled-components";
 import { downloadAudio } from "../../api/downloadApi";
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface DownloadButtonProps {
   generatedAudio: HTMLAudioElement | null;
@@ -27,12 +34,20 @@ export function DownloadButton({
   }
 
   return (
-    <button
-      className="ml-4 flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-md outline-none hover:bg-gray-50 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
-      onClick={handleDownload}
-    >
-      <Download theme={theme} />
-      <span className="ml-2 inline-block">Download</span>
-    </button>
+    <TooltipProvider delayDuration={0}>
+      <Tooltip>
+        <TooltipTrigger>
+          <button
+            className="ml-4 flex items-center justify-center rounded-full border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-700 outline-none hover:border-orange-500 hover:bg-gray-50 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
+            onClick={handleDownload}
+          >
+            <Download color={theme.colors.darkgray} />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent className="border-black" side="right">
+          <p className="text-[12px] text-white">Download</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }

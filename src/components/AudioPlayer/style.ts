@@ -8,6 +8,7 @@ export const AudioPlayerStyle: StyledComponent<"div", any> = styled.div`
   padding: 20px;
   border-radius: 8px;
   border: 2px solid #eeeeee;
+  z-index: -1000;
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   background: ${(props) => props.theme.background.white};}
 

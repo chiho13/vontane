@@ -128,29 +128,24 @@ const Home: NextPage = () => {
   return (
     <>
       <Layout profile={profile}>
-        <div className="mx-auto mt-4 flex justify-center p-4">
-          <div className="w-[1000px] pl-24">
+        <div className="mx-auto mt-4 flex w-[1200px] justify-center p-4">
+          <div className="w-full pl-32">
             <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
 
-            <form id="text-form">
-              <label htmlFor="text" className="mb-2 block">
-                Enter text (max. 1000 characters):
-              </label>
-              <textarea
-                id="text"
-                name="text"
-                rows="8"
-                cols="50"
-                maxLength="1000"
-                className="textarea_input mb-4 block w-full resize-none rounded-md border-2 border-gray-100 p-4 shadow-md focus:outline-none focus-visible:border-gray-400"
-                onChange={handleTextChange}
-              ></textarea>
-              <GenerateButton
-                isDisabled={isDisabled}
-                audioIsLoading={audioIsLoading}
-                onClick={generateAudio}
-              />
-            </form>
+            <textarea
+              id="text"
+              name="text"
+              rows="8"
+              cols="50"
+              maxLength="1000"
+              className="textarea_input mb-4 block w-[900px] resize-none rounded-md border-2 border-gray-100 p-4 shadow-md focus:outline-none focus-visible:border-gray-400"
+              onChange={handleTextChange}
+            ></textarea>
+            <GenerateButton
+              isDisabled={isDisabled}
+              audioIsLoading={audioIsLoading}
+              onClick={generateAudio}
+            />
 
             {!audioIsLoading && generatedAudioElement && (
               <div className="fixed bottom-0 left-0 bottom-4 right-0 mx-auto flex w-full justify-center">

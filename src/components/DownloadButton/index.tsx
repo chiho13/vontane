@@ -38,10 +38,10 @@ export function DownloadButton({
       <Tooltip>
         <TooltipTrigger>
           <button
-            className="ml-4 flex items-center justify-center rounded-full border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-700 outline-none hover:border-orange-500 hover:bg-gray-50 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
+            className="ml-4 flex h-[30px] w-[30px] items-center justify-center rounded-full border border-gray-300 bg-white px-1 py-1 text-sm font-medium text-gray-700 outline-none hover:border-orange-500 hover:bg-gray-50 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
             onClick={handleDownload}
           >
-            <Download color={theme.colors.darkgray} />
+            <Download color={theme.colors.darkgray} className="w-4" />
           </button>
         </TooltipTrigger>
         <TooltipContent className="border-black" side="right">

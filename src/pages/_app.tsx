@@ -26,6 +26,9 @@ declare module "styled-components" {
     colors: {
       [key: string]: string;
     };
+    background: {
+      [key: string]: string;
+    };
     // Add other custom theme properties here
   }
 }

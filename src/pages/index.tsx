@@ -3,13 +3,10 @@ import Head from "next/head";
 import Link from "next/link";
 
 import { api } from "@/utils/api";
-import { io } from "socket.io-client";
-
 import AudioPlayer from "@/components/AudioPlayer";
 import VoiceDropdown from "@/components/VoiceDropdown";
 import GenerateButton from "@/components/GenerateButton";
 
-import { ttsApi } from "@/api/ttsApi";
 import React, { useState, useEffect, useRef } from "react";
 import useStatusPolling from "@/hooks/useStatusPolling";
 
@@ -18,8 +15,12 @@ import LoginPage from "./login";
 import Layout from "@/components/Layouts/AccountLayout";
 
 import { useUserContext } from "@/contexts/UserContext";
+import styled from "styled-components";
 
-// const SOCKET_SERVER_URL = "https://verby-websocket-9iook.ondigitalocean.app/";
+const TextAreaInputStyle = styled.textarea`
+  background: linear-gradient(120deg, #fdfbfb 0%, #f2f6f7 100%);
+`;
+
 const Home: NextPage = () => {
   const hello = api.example.hello.useQuery({ text: "from tRPC" });
 
@@ -52,18 +53,6 @@ const Home: NextPage = () => {
     }
   }, [session]);
 
-  // useEffect(() => {
-  //   const socket = io(SOCKET_SERVER_URL);
-
-  //   socket.on("gettexttospeechstatus", (data) => {
-  //     console.log(data);
-  //   });
-
-  //   return () => {
-  //     socket.disconnect();
-  //   };
-  // }, []);
-
   const {
     data: texttospeechdata,
     error: texttospeecherror,
@@ -75,18 +64,6 @@ const Home: NextPage = () => {
       enabled: false,
     }
   );
-
-  // const {
-  //   data: ttsStatusData,
-  //   error: ttsStatusError,
-  //   isLoading: ttsStatusLoading,
-  //   refetch: ttsStatusRefetch,
-  // } = api.texttospeech.getSpeechStatus.useQuery(
-  //   { transcriptionId: transcriptionId },
-  //   {
-  //     enabled: !!transcriptionId, // Enable the query if transcriptionId is provided
-  //   }
-  // );
 
   async function generateAudio(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -151,9 +128,8 @@ const Home: NextPage = () => {
   return (
     <>
       <Layout profile={profile}>
-        {/* {!session ?? <Link href="/login">Login</Link>} */}
-        <div className="container mx-auto mt-4  p-4 ">
-          <div className="pl-24">
+        <div className="mx-auto mt-4 flex justify-center p-4">
+          <div className="w-[1000px] pl-24">
             <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
 
             <form id="text-form">
@@ -166,7 +142,7 @@ const Home: NextPage = () => {
                 rows="8"
                 cols="50"
                 maxLength="1000"
-                className="textarea_input mb-4 block w-full resize-none rounded-md border-2 border-gray-100 p-4 focus:outline-none focus-visible:border-gray-400"
+                className="textarea_input mb-4 block w-full resize-none rounded-md border-2 border-gray-100 p-4 shadow-md focus:outline-none focus-visible:border-gray-400"
                 onChange={handleTextChange}
               ></textarea>
               <GenerateButton
@@ -175,13 +151,18 @@ const Home: NextPage = () => {
                 onClick={generateAudio}
               />
             </form>
-            <div id="download-container" className="mt-4"></div>
+
             {!audioIsLoading && generatedAudioElement && (
-              <AudioPlayer
-                generatedAudio={generatedAudioElement}
-                transcriptionId={transcriptionId}
-              />
+              <div className="fixed bottom-0 left-0 bottom-4 right-0 mx-auto flex w-full justify-center">
+                <div className="w-[500px] flex-shrink-0">
+                  <AudioPlayer
+                    generatedAudio={generatedAudioElement}
+                    transcriptionId={transcriptionId}
+                  />
+                </div>
+              </div>
             )}
+
             {/* <AudioPlayer generatedAudio={dummyAudioElement} /> */}
             {/* {audioUrl && <DownloadButton audioUrl={audioUrl} />} */}
           </div>

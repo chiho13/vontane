@@ -61,34 +61,4 @@ export const texttospeechRouter = createTRPCRouter({
         });
       }
     }),
-  getSpeechStatus: protectedProcedure
-    .input(
-      z.object({
-        transcriptionId: z.string(),
-      })
-    )
-    .query(async ({ input }) => {
-      const { transcriptionId } = input;
-      const url = `https://play.ht/api/v1/articleStatus?transcriptionId=${transcriptionId}`;
-
-      try {
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: secretkey!,
-            "X-User-ID": userId!,
-          },
-        });
-
-        const data = await response.json();
-        return data;
-      } catch (error) {
-        console.error(error);
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Internal server error",
-        });
-      }
-    }),
 });

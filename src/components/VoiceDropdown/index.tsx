@@ -116,7 +116,6 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
   const stopButtonRef = useRef<HTMLDivElement>(null);
 
   const queryResult = api.texttospeech.getVoices.useQuery();
-  console.log(queryResult.data);
 
   useEffect(() => {
     if (queryResult.data) {

@@ -22,7 +22,7 @@ function useTextSpeechStatusPolling(
 
     socket.on("gettexttospeechstatus", (data) => {
       if (data.status === "SUCCESS") {
-        console.log("Received audio URL:", data.metadata.output[0]);
+        console.log("Received audio URL:", data.metadata.output);
 
         const newAudioElement = new Audio(data.metadata.output[0]);
         console.log(data.metadata.progress);

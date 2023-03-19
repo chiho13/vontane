@@ -186,10 +186,12 @@ function AudioPlayer({ generatedAudio, transcriptionId }: Props): JSX.Element {
       >
         Stop
       </button> */}
-      <DownloadButton
-        generatedAudio={generatedAudio}
-        transcriptionId={transcriptionId}
-      />
+      <div className="ml-4">
+        <DownloadButton
+          generatedAudio={generatedAudio}
+          transcriptionId={transcriptionId}
+        />
+      </div>
     </AudioPlayerStyle>
   );
 }

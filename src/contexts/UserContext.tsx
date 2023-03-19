@@ -32,7 +32,6 @@ function useUserProfile(userId: string | undefined) {
     { enabled: !!userId }
   );
   const { data: profile } = queryResult;
-  console.log(profile, "hello");
 
   return { profile };
 }

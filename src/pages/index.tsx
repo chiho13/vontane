@@ -7,7 +7,7 @@ import AudioPlayer from "@/components/AudioPlayer";
 import VoiceDropdown from "@/components/VoiceDropdown";
 import GenerateButton from "@/components/GenerateButton";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import useStatusPolling from "@/hooks/useStatusPolling";
 
 import { useSession } from "@supabase/auth-helpers-react";
@@ -29,14 +29,10 @@ const Home: NextPage = () => {
   const session = useSession();
   const [selectedVoiceId, setSelectedVoiceId] = React.useState<string>("");
 
-  const [enteredText, setEnteredText] = React.useState<string>("");
+  const [enteredText, setEnteredText] = React.useState<string[]>([]);
 
   const [audioIsLoading, setAudioIsLoading] = React.useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
-
-  function handleTextChange(value) {
-    setEnteredText(value);
-  }
 
   const [transcriptionId, setTranscriptionId] = useState<string>("");
   const [status, setStatus] = useState<string>("");
@@ -61,7 +57,7 @@ const Home: NextPage = () => {
     isLoading: texttospeechloading,
     refetch: texttospeechrefetch,
   } = api.texttospeech.startConversion.useQuery(
-    { voice: selectedVoiceId, content: [enteredText] },
+    { voice: selectedVoiceId, content: enteredText },
     {
       enabled: false,
     }
@@ -125,6 +121,14 @@ const Home: NextPage = () => {
 
   if (!session) {
     return <LoginPage />;
+  }
+
+  function handleTextChange(value: any[]) {
+    const _enteredText = value.flatMap((item) =>
+      item.children.map((child: { text: string }) => child.text)
+    );
+    setEnteredText(_enteredText);
+    console.log(_enteredText);
   }
 
   return (

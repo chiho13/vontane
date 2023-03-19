@@ -3,7 +3,7 @@ import styled, { keyframes, useTheme } from "styled-components";
 import Dropdown from "../Dropdown";
 import Head from "next/head";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 import { AccountLayoutStyle } from "./style";
 import ChevronDown from "@/icons/ChevronDown";
 import {
@@ -63,7 +63,7 @@ const ToggleButtonWrapper = styled.div`
   justify-content: center;
 `;
 
-const ToggleButton = styled.button`
+const ToggleButton = styled.a`
   background-color: transparent;
   color: ${({ theme }) => theme.colors.darkgray};
   border-radius: 0.25rem;
@@ -174,8 +174,6 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
 
   const theme = useTheme();
 
-  console.log(profile);
-
   async function logout() {
     await supabase.auth.signOut();
   }
@@ -188,7 +186,7 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
     localStorage.setItem("isOpen", JSON.stringify(isOpen));
   }, [isOpen]);
 
-  function AvatarProfile() {
+  const AvatarProfile = useMemo(() => {
     return (
       profile && (
         <img
@@ -198,7 +196,7 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
         />
       )
     );
-  }
+  }, [profile]);
 
   const toggleSidebarLock = (): void => {
     setIsLocked(!isLocked);
@@ -273,7 +271,7 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
           }}
           onMouseEnter={handleMouseEnter}
         >
-          <ToggleButton onClick={toggleSidebarLock}>
+          <ToggleButton role="button" href="#" onClick={toggleSidebarLock}>
             {isLocked ? <TooltipChevronLeft /> : <ChevronRightToMenu />}
           </ToggleButton>
         </ToggleButtonWrapper>
@@ -285,7 +283,7 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
                 id="voiceDropdown"
                 ref={accountDropdownRef}
                 selectedItemText={profile && profile.name}
-                image={<AvatarProfile />}
+                image={AvatarProfile}
                 icon={
                   <ChevronsUpDown
                     className="w-4"

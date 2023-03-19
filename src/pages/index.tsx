@@ -17,6 +17,8 @@ import Layout from "@/components/Layouts/AccountLayout";
 import { useUserContext } from "@/contexts/UserContext";
 import styled from "styled-components";
 
+import { DocumentEditor } from "@/components/DocumentEditor";
+
 const TextAreaInputStyle = styled.textarea`
   background: linear-gradient(120deg, #fdfbfb 0%, #f2f6f7 100%);
 `;
@@ -32,8 +34,8 @@ const Home: NextPage = () => {
   const [audioIsLoading, setAudioIsLoading] = React.useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
 
-  function handleTextChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
-    setEnteredText(event.target.value);
+  function handleTextChange(value) {
+    setEnteredText(value);
   }
 
   const [transcriptionId, setTranscriptionId] = useState<string>("");
@@ -132,15 +134,7 @@ const Home: NextPage = () => {
           <div className="w-full">
             <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
 
-            <textarea
-              id="text"
-              name="text"
-              rows="14"
-              cols="50"
-              maxLength="1000"
-              className="textarea_input mb-4 block w-[900px] resize-none rounded-md border-2 border-gray-100 p-4 shadow-md focus:outline-none focus-visible:border-gray-400"
-              onChange={handleTextChange}
-            ></textarea>
+            <DocumentEditor handleTextChange={handleTextChange} />
             <GenerateButton
               isDisabled={isDisabled}
               audioIsLoading={audioIsLoading}

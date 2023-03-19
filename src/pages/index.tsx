@@ -128,8 +128,8 @@ const Home: NextPage = () => {
   return (
     <>
       <Layout profile={profile}>
-        <div className="mx-auto mt-4 flex w-[1200px] justify-center p-4">
-          <div className="w-full pl-32">
+        <div className="mx-auto mt-4 flex w-[1000px] justify-center p-4">
+          <div className="w-full">
             <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
 
             <textarea

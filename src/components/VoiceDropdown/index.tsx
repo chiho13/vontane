@@ -295,7 +295,6 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
         </td>
         <td>{voice.age}</td>
         <td>{voice.style}</td>
-        <td>{voice.tempo}</td>
       </tr>
     );
   };
@@ -420,17 +419,6 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
                       ref={voiceStylesFilterRef}
                       setActiveFilter={setActiveFilter}
                       isOpen={isOpen === "style"}
-                    />
-                  </th>
-                  <th className="text-left">
-                    <FilterDropdown
-                      id="tempo"
-                      options={tempos}
-                      defaultTitle="Tempo"
-                      onChange={onFilterChange}
-                      ref={tempoFilterRef}
-                      setActiveFilter={setActiveFilter}
-                      isOpen={isOpen === "tempo"}
                     />
                   </th>
                 </tr>

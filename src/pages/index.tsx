@@ -135,7 +135,7 @@ const Home: NextPage = () => {
             <textarea
               id="text"
               name="text"
-              rows="8"
+              rows="14"
               cols="50"
               maxLength="1000"
               className="textarea_input mb-4 block w-[900px] resize-none rounded-md border-2 border-gray-100 p-4 shadow-md focus:outline-none focus-visible:border-gray-400"

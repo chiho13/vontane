@@ -14,6 +14,7 @@ import useClickOutside from "../../hooks/useClickOutside";
 import { flags } from "../../icons/flags";
 import { AnimatePresence, motion } from "framer-motion";
 import { animation_props } from "../Dropdown";
+import Image from "next/image";
 
 interface FilterProps {
   id: string;
@@ -109,7 +110,12 @@ function Filter(
                     >
                       <span className="flex items-center">
                         {option.key === "accent" && (
-                          <img src={flags[option.value]} width="24" />
+                          <Image
+                            src={flags[option.value]}
+                            width="24"
+                            height="24"
+                            alt={option.value}
+                          />
                         )}
                         {option.value}
                       </span>

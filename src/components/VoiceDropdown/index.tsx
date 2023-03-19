@@ -16,6 +16,7 @@ import { ChevronDown } from "lucide-react";
 import useClickOutsideHandler from "../../hooks/useClickOutside";
 import { flags } from "@/icons/flags";
 import { api } from "@/utils/api";
+import Image from "next/image";
 
 import {
   fetchVoices,
@@ -282,10 +283,11 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
         <td>{voice.gender}</td>
         <td>
           <span className="flex items-center">
-            <img
+            <Image
               src={flags[voice.accent]}
               alt={voice.accent}
               width={28}
+              height={28}
               className="flag-icon"
             />
             {voice.accent}

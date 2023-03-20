@@ -4,7 +4,9 @@ import React, {
   forwardRef,
   RefObject,
   ForwardedRef,
+  useImperativeHandle,
   lazy,
+  useRef,
   Suspense,
 } from "react";
 import Dropdown from "../Dropdown";
@@ -64,9 +66,17 @@ function Filter(
     setActiveFilter((prevState: string) => (prevState === id ? "" : id));
   }
 
-  useClickOutside(ref, () => {
-    setActiveFilter("");
-  });
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useClickOutside(
+    wrapperRef,
+    () => {
+      if (isOpen) {
+        setActiveFilter("");
+      }
+    },
+    (element: any) => wrapperRef.current?.contains(element) ?? false
+  );
 
   return (
     <FilterDropdownStyle>
@@ -93,7 +103,7 @@ function Filter(
               aria-orientation="vertical"
               aria-labelledby="voices-dropdown"
               tabIndex={-1}
-              ref={ref}
+              ref={wrapperRef}
             >
               <ul
                 className="filterDropdown_list py-2 text-sm text-gray-700 dark:text-gray-200"

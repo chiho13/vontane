@@ -4,7 +4,7 @@ export const LogoutIcon = () => {
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       stroke="currentColor"
-      stroke-width="1.5"
+      strokeWidth="1.5"
       className="mr-3 h-5 w-5 "
       viewBox="0 0 24 24"
     >

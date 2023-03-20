@@ -152,7 +152,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             const newPositions = new Map(prevPositions);
             newPositions.set(JSON.stringify(Path.next(path)), {
               top: targetRect.top + 40,
-              left: targetRect.left + 40 + offsetDropdownPosition,
+              left: targetRect.left + 60 + offsetDropdownPosition,
             });
             return newPositions;
           });
@@ -172,7 +172,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             const newPositions = new Map(prevPositions);
             newPositions.set(JSON.stringify(Path.next(path)), {
               top: targetRect.top + 40,
-              left: targetRect.left + 40 + offsetDropdownPosition,
+              left: targetRect.left + 60 + offsetDropdownPosition,
             });
             return newPositions;
           });
@@ -323,6 +323,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             style={{
               top: dropdownPositions.get(activePath)?.top,
               left: dropdownPositions.get(activePath)?.left,
+              transform: "translateX(20px)",
             }}
           >
             <MiniDropdown

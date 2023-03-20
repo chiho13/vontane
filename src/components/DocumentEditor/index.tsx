@@ -109,7 +109,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   const openMiniDropdown = useCallback(
     (event: React.MouseEvent, path: Path) => {
-      const currentpathString = JSON.stringify(path[0]);
+      const currentpathString = JSON.stringify(path);
 
       const offsetDropdownPosition = isLocked ? -150 : 0;
       const [currentNode] = Editor.node(editor, path);
@@ -123,61 +123,74 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         selection.anchor.path
       );
 
-      const parentpathString = JSON.stringify(parentPath[0]);
+      const parentpathString = JSON.stringify(parentPath);
 
       const [lastNode, lastPath] = Editor.last(editor, []);
 
-      const lastpathString = JSON.stringify(lastPath[0]);
-      const isEmptyNode =
+      const lastpathString = JSON.stringify(lastPath.slice(0, -1));
+      //   console.log(lastPath[0]);
+      const hasEmptyParagraphNode =
         currentNode.type === "paragraph" &&
         currentNode.children.length === 1 &&
         currentNode.children[0].text === "";
 
-      console.log("parentNode", parentpathString);
-      console.log("currentPath", currentpathString);
-      console.log("lastNode", lastpathString);
+      const hasEquationNode =
+        currentNode.type === "equation" && currentNode.latex !== "";
 
-      if (!isEmptyNode && currentpathString === lastpathString) {
+      console.log(currentNode, hasEquationNode);
+      //   console.log("hasEquationNode", hasEquationNode);
+      //   console.log("parentNode", parentpathString);
+      //   console.log("currentPath", currentpathString);
+      //   console.log("lastNode", lastpathString);
+
+      console.log("hasEmptyParagraphNode", hasEmptyParagraphNode);
+      console.log(Path.next(path));
+      if (
+        !hasEmptyParagraphNode &&
+        !hasEquationNode &&
+        parentpathString === lastpathString
+      ) {
         Transforms.insertNodes(
           editor,
           { type: "paragraph", children: [{ text: "" }] },
           { at: Path.next(path) }
         );
 
-        if (!dropdownPositions.has(currentpathString)) {
-          const target = event.currentTarget as HTMLDivElement;
-          const targetRect = target.getBoundingClientRect();
+        //   if (!dropdownPositions.has(currentpathString)) {
+        //     const target = event.currentTarget as HTMLDivElement;
+        //     const targetRect = target.getBoundingClientRect();
 
-          setDropdownPositions((prevPositions) => {
-            const newPositions = new Map(prevPositions);
-            newPositions.set(JSON.stringify(Path.next(path)), {
-              top: targetRect.top + 40,
-              left: targetRect.left + 60 + offsetDropdownPosition,
-            });
-            return newPositions;
-          });
+        //     setDropdownPositions((prevPositions) => {
+        //       const newPositions = new Map(prevPositions);
+        //       newPositions.set(JSON.stringify(Path.next(path)), {
+        //         top: targetRect.top + 40,
+        //         left: targetRect.left + 60 + offsetDropdownPosition,
+        //       });
+        //       return newPositions;
+        //     });
 
-          setAddedParagraphs((prevAdded) => {
-            const newAdded = new Set(prevAdded);
-            newAdded.add(currentpathString);
-            return newAdded;
-          });
-        }
-      } else {
-        if (!dropdownPositions.has(currentpathString)) {
-          const target = event.currentTarget as HTMLDivElement;
-          const targetRect = target.getBoundingClientRect();
-
-          setDropdownPositions((prevPositions) => {
-            const newPositions = new Map(prevPositions);
-            newPositions.set(JSON.stringify(Path.next(path)), {
-              top: targetRect.top + 40,
-              left: targetRect.left + 60 + offsetDropdownPosition,
-            });
-            return newPositions;
-          });
-        }
+        //     setAddedParagraphs((prevAdded) => {
+        //       const newAdded = new Set(prevAdded);
+        //       newAdded.add(currentpathString);
+        //       return newAdded;
+        //     });
+        //   }
       }
+      //   else {
+      //     if (!dropdownPositions.has(currentpathString)) {
+      //       const target = event.currentTarget as HTMLDivElement;
+      //       const targetRect = target.getBoundingClientRect();
+
+      //       setDropdownPositions((prevPositions) => {
+      //         const newPositions = new Map(prevPositions);
+      //         newPositions.set(JSON.stringify(Path.next(path)), {
+      //           top: targetRect.top + 40,
+      //           left: targetRect.left + 60 + offsetDropdownPosition,
+      //         });
+      //         return newPositions;
+      //       });
+      //     }
+      //   }
 
       setShowDropdown((prevState) => !prevState);
       setActivePath(currentpathString);
@@ -222,11 +235,24 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
         // Check if the first paragraph is empty
         const [currentNode] = Editor.node(editor, path);
-        if (
-          currentNode.type === "paragraph" &&
-          currentNode.children.length === 1 &&
+
+        // console.log(currentNode.children[0].children[0]);
+
+        console.log(currentNode.children[0], path);
+        console.log(
+          currentNode.children[0].type === "paragraph",
           currentNode.children[0].text === ""
-        ) {
+        );
+
+        console.log(path);
+
+        const isEmptyNode =
+          currentNode.children[0].type === "paragraph" &&
+          currentNode.children[0].text === "" &&
+          currentNode.children.length === 1;
+
+        console.log(isEmptyNode);
+        if (!isEmptyNode) {
           // Replace the first paragraph with the equation node
           Transforms.setNodes(editor, equationNode, { at: path });
 
@@ -259,7 +285,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         }
       }
     },
-    [showDropdown, slatevalue]
+    [showDropdown]
   );
 
   const renderElement = useCallback((props) => {

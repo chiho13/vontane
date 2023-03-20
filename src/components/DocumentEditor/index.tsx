@@ -4,6 +4,7 @@ import React, {
   useMemo,
   useState,
   useRef,
+  useContext,
 } from "react";
 import { createEditor, Editor, Transforms, Path, BaseEditor } from "slate";
 import { Slate, Editable, withReact, ReactEditor } from "slate-react";
@@ -13,6 +14,8 @@ import "katex/dist/katex.min.css";
 
 import { useTheme } from "styled-components";
 import useClickOutside from "@/hooks/useClickOutside";
+
+import { LayoutContext } from "../Layouts/AccountLayout";
 
 interface DocumentEditorProps {
   handleTextChange?: (value: any) => void;
@@ -75,6 +78,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   handleTextChange,
 }) => {
   const theme = useTheme();
+  const { isLocked } = useContext(LayoutContext);
   const editor = useMemo(() => withReact(createEditor()), []);
   const [slatevalue, setValue] = useState([
     {
@@ -84,6 +88,13 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   ]);
 
   const [showDropdown, setShowDropdown] = useState(false);
+  const [offsetDropdownPosition, setOffsetDropdownPosition] = useState<number>(
+    isLocked ? -150 : 0
+  );
+
+  useEffect(() => {
+    setOffsetDropdownPosition(isLocked ? -150 : 0);
+  }, [isLocked]);
 
   const [dropdownPositions, setDropdownPositions] = useState<
     Map<string, { top: number; left: number }>
@@ -100,6 +111,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     (event: React.MouseEvent, path: Path) => {
       const currentpathString = JSON.stringify(path[0]);
 
+      const offsetDropdownPosition = isLocked ? -150 : 0;
       const [currentNode] = Editor.node(editor, path);
       const { selection } = editor;
 
@@ -140,7 +152,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             const newPositions = new Map(prevPositions);
             newPositions.set(JSON.stringify(Path.next(path)), {
               top: targetRect.top + 40,
-              left: targetRect.left + 40,
+              left: targetRect.left + 40 + offsetDropdownPosition,
             });
             return newPositions;
           });
@@ -158,9 +170,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
           setDropdownPositions((prevPositions) => {
             const newPositions = new Map(prevPositions);
-            newPositions.set(currentpathString, {
+            newPositions.set(JSON.stringify(Path.next(path)), {
               top: targetRect.top + 40,
-              left: targetRect.left + 40,
+              left: targetRect.left + 40 + offsetDropdownPosition,
             });
             return newPositions;
           });
@@ -170,7 +182,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       setShowDropdown((prevState) => !prevState);
       setActivePath(currentpathString);
     },
-    [dropdownPositions]
+    [dropdownPositions, isLocked]
   );
 
   const handleKeyDown = (event: React.KeyboardEvent) => {

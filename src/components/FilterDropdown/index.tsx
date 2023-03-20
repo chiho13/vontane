@@ -67,7 +67,7 @@ function Filter(
   }
 
   const wrapperRef = useRef<HTMLDivElement>(null);
-
+  const toggleRef = useRef<HTMLButtonElement>(null);
   useClickOutside(
     wrapperRef,
     () => {
@@ -75,7 +75,7 @@ function Filter(
         setActiveFilter("");
       }
     },
-    (element: any) => wrapperRef.current?.contains(element) ?? false
+    toggleRef
   );
 
   return (
@@ -87,6 +87,7 @@ function Filter(
           aria-haspopup="true"
           id="filter-dropdown"
           onClick={handleVoicesDropdownClick}
+          ref={toggleRef}
         >
           <span> {defaultTitle}</span>
           <FilterIcon />

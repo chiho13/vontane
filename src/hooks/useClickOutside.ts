@@ -1,21 +1,24 @@
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 
 type EventHandler = (event: MouseEvent) => void;
 
 const useClickOutside = (
   ref: React.RefObject<HTMLElement>,
   callback: () => void,
-  ignoreInsideClick: (element: HTMLElement) => boolean
+  toggleRef: React.RefObject<HTMLElement>
 ) => {
-  const handleClick = (e: MouseEvent) => {
-    if (
-      ref.current &&
-      !ref.current.contains(e.target as Node) &&
-      !ignoreInsideClick(e.target as HTMLElement)
-    ) {
-      callback();
-    }
-  };
+  const handleClick = useCallback(
+    (e: MouseEvent) => {
+      if (
+        ref.current &&
+        !ref.current.contains(e.target as Node) &&
+        (!toggleRef.current || !toggleRef.current.contains(e.target as Node))
+      ) {
+        callback();
+      }
+    },
+    [ref, callback, toggleRef]
+  );
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClick);

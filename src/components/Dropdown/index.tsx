@@ -4,15 +4,48 @@ import React, {
   useEffect,
   useImperativeHandle,
   RefObject,
+  createContext,
   ForwardedRef,
+  useState,
+  useContext,
 } from "react";
 import { DropdownStyle } from "./style";
 import useDropdown from "@/hooks/useDropdown";
 import useClickOutside from "@/hooks/useClickOutside";
 import { motion, AnimatePresence, useCycle } from "framer-motion";
 
+export interface DropdownContextType {
+  activeDropdown: string | null;
+  toggleDropdown: (dropdownId: string | null) => void;
+}
+
+export const DropdownContext = createContext<DropdownContextType>({
+  activeDropdown: null,
+  toggleDropdown: () => {},
+});
+
+interface DropdownProviderProps {
+  children: React.ReactNode;
+}
+
+export const DropdownProvider: React.FC<DropdownProviderProps> = ({
+  children,
+}) => {
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+
+  function toggleDropdown(value: React.SetStateAction<string | null>) {
+    setActiveDropdown(value);
+  }
+
+  return (
+    <DropdownContext.Provider value={{ activeDropdown, toggleDropdown }}>
+      {children}
+    </DropdownContext.Provider>
+  );
+};
+
 interface DropdownProps {
-  id: string;
+  dropdownId: string;
   selectedItemText?: any;
   children: React.ReactNode;
   icon?: React.ReactNode;
@@ -82,7 +115,7 @@ const clickoutside_props = {
 
 function Dropdown(
   {
-    id,
+    dropdownId,
     selectedItemText = "",
     children,
     icon = null,
@@ -91,46 +124,62 @@ function Dropdown(
   }: DropdownProps,
   ref: ForwardedRef<DropdownRef>
 ) {
-  const { isOpen, handleOpen, handleClose } = useDropdown();
-  // const [isOpen, toggleDropdown] = useCycle(false, true);
-  function handleVoicesDropdownClick(
+  // const { isOpen, handleOpen, handleClose } = useDropdown();
+  const { activeDropdown, toggleDropdown } = useContext(DropdownContext);
+  const isOpen = activeDropdown === dropdownId;
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const handleVoicesDropdownClick = (
     event: React.MouseEvent<HTMLButtonElement>
-  ) {
+  ) => {
     event.preventDefault();
     event.stopPropagation();
-    // toggleDropdown();
-    if (isOpen) {
-      handleClose();
+    console.log(wrapperRef);
+    if (activeDropdown === dropdownId) {
+      toggleDropdown(null);
     } else {
-      handleOpen();
+      toggleDropdown(dropdownId);
     }
-  }
+  };
 
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const handleClose = () => {
+    toggleDropdown(null);
+  };
+
+  const toggleRef = useRef<HTMLButtonElement>(null);
+
+  useClickOutside(
+    wrapperRef,
+    () => {
+      if (isOpen) {
+        toggleDropdown(null);
+      }
+    },
+    toggleRef
+  );
+
+  // const handleClick = (e: MouseEvent) => {
+  //   if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+  //     handleClose();
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   document.addEventListener("mousedown", handleClick);
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClick);
+  //   };
+  // }, [ref, handleClose]);
 
   useImperativeHandle(ref, () => ({
     handleClose,
     wrapperRef,
   }));
 
-  // useClickOutsideHandler(wrapperRef, () => {
-  //   handleClose();
-  // });
-
-  useClickOutside(
-    wrapperRef,
-    () => {
-      if (isOpen) {
-        handleClose();
-      }
-    },
-    (element: any) => wrapperRef.current?.contains(element) ?? false
-  );
-
   return (
     <>
       <AnimatePresence>
-        {isOpen && (
+        {activeDropdown === dropdownId && (
           <motion.div {...clickoutside_props}>
             <div
               className="closeOutside fixed top-0 left-0 h-full w-screen opacity-50"
@@ -141,21 +190,23 @@ function Dropdown(
       </AnimatePresence>
       <DropdownStyle className="dropdown_wrapper">
         <button
+          type="button"
           className="dropdown-toggle inline-flex items-center justify-center rounded-md border-2 border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-md shadow-sm outline-none hover:bg-gray-50 focus-visible:border-gray-400 "
           aria-expanded={isOpen}
           aria-haspopup="true"
           id="voices-dropdown"
           onClick={handleVoicesDropdownClick}
+          ref={toggleRef}
         >
           {image}
           <span className="dropdown_textbutton"> {selectedItemText}</span>
           {icon}
         </button>
         <AnimatePresence>
-          {isOpen && (
+          {activeDropdown === dropdownId && (
             <motion.div {...animation_props}>
               <div
-                id={id}
+                id={dropdownId}
                 className="dropdown-menu absolute left-0 z-10 mt-2 w-full origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5"
                 role="menu"
                 aria-orientation="vertical"

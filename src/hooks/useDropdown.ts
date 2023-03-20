@@ -16,7 +16,7 @@ function useDropdown({ initialOpen = false }: UseDropdownProps = {}) {
     setIsOpen(false);
   };
 
-  return { ref, isOpen, handleOpen, handleClose };
+  return { ref, isOpen, setIsOpen };
 }
 
 export default useDropdown;

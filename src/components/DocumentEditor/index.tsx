@@ -59,7 +59,7 @@ const MiniDropdown = React.forwardRef<HTMLDivElement, MiniDropdownProps>(
     return (
       <div
         ref={ref}
-        className="rounded-md border border-gray-200 bg-white p-2 shadow-md"
+        className="dropdown-menu rounded-md border border-gray-200 bg-white p-2 shadow-md"
       >
         <textarea
           className="w-full resize-none"
@@ -138,10 +138,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         currentNode.type === "equation" && currentNode.latex !== "";
 
       console.log(currentNode, hasEquationNode);
-      //   console.log("hasEquationNode", hasEquationNode);
-      //   console.log("parentNode", parentpathString);
-      //   console.log("currentPath", currentpathString);
-      //   console.log("lastNode", lastpathString);
 
       console.log("hasEmptyParagraphNode", hasEmptyParagraphNode);
       console.log(Path.next(path));
@@ -155,42 +151,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           { type: "paragraph", children: [{ text: "" }] },
           { at: Path.next(path) }
         );
-
-        //   if (!dropdownPositions.has(currentpathString)) {
-        //     const target = event.currentTarget as HTMLDivElement;
-        //     const targetRect = target.getBoundingClientRect();
-
-        //     setDropdownPositions((prevPositions) => {
-        //       const newPositions = new Map(prevPositions);
-        //       newPositions.set(JSON.stringify(Path.next(path)), {
-        //         top: targetRect.top + 40,
-        //         left: targetRect.left + 60 + offsetDropdownPosition,
-        //       });
-        //       return newPositions;
-        //     });
-
-        //     setAddedParagraphs((prevAdded) => {
-        //       const newAdded = new Set(prevAdded);
-        //       newAdded.add(currentpathString);
-        //       return newAdded;
-        //     });
-        //   }
       }
-      //   else {
-      //     if (!dropdownPositions.has(currentpathString)) {
-      //       const target = event.currentTarget as HTMLDivElement;
-      //       const targetRect = target.getBoundingClientRect();
-
-      //       setDropdownPositions((prevPositions) => {
-      //         const newPositions = new Map(prevPositions);
-      //         newPositions.set(JSON.stringify(Path.next(path)), {
-      //           top: targetRect.top + 40,
-      //           left: targetRect.left + 60 + offsetDropdownPosition,
-      //         });
-      //         return newPositions;
-      //       });
-      //     }
-      //   }
 
       setShowDropdown((prevState) => !prevState);
       setActivePath(currentpathString);
@@ -288,9 +249,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     [showDropdown]
   );
 
+  const toggleRef = useRef<HTMLButtonElement>(null);
+
   const renderElement = useCallback((props) => {
     const { attributes, children, element } = props;
-
     return (
       <div className="group relative" {...attributes}>
         {element.type === "equation" && (
@@ -301,13 +263,15 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         {element.type === "paragraph" && (
           <p className="pl-6 leading-relaxed">{children}</p>
         )}
-        <div
-          className="absolute -left-4 top-3 -mt-5 flex h-10 w-10 cursor-pointer items-center justify-center opacity-0 group-hover:opacity-100"
-          onClick={(event) =>
-            openMiniDropdown(event, ReactEditor.findPath(editor, element))
-          }
-        >
-          <button className="rounded-md hover:bg-gray-200">
+        <div className="absolute -left-4 top-3 -mt-5 flex h-10 w-10 cursor-pointer items-center justify-center opacity-0 group-hover:opacity-100">
+          <button
+            className="rounded-md hover:bg-gray-200"
+            onClick={(event) => {
+              event.stopPropagation();
+              openMiniDropdown(event, ReactEditor.findPath(editor, element));
+            }}
+            ref={toggleRef}
+          >
             <Plus color={theme.colors.darkgray} />
           </button>
         </div>
@@ -322,7 +286,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         setShowDropdown(false);
       }
     },
-    (element) => dropdownRef.current?.contains(element) ?? false
+    toggleRef
   );
 
   return (

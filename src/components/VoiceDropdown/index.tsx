@@ -10,7 +10,7 @@ import React, {
 import SampleAudioVoice from "../SampleAudioVoice";
 import { VoiceDropdownStyle } from "./style";
 import FilterDropdown from "../FilterDropdown";
-import Dropdown from "../Dropdown";
+import Dropdown, { DropdownProvider } from "../Dropdown";
 // import ChevronDown from "../../icons/ChevronDown";
 import { ChevronDown } from "lucide-react";
 import useClickOutside from "../../hooks/useClickOutside";
@@ -42,7 +42,7 @@ interface VoiceDropdownProps {
 }
 
 function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
-  const voicesDropdownRef = useRef<any>({});
+  const voicesDropdownRef = useRef(null);
   const [voiceDropdownIsOpen, setIsOpen] = useState(false);
 
   const genderFilterRef = useRef<any>({});
@@ -302,162 +302,160 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
   //   console.log(voicesDropdownRef.current.isOpen);
   // }, [voicesDropdownRef.current.isOpen]);
 
-  function closeDropdown() {
-    voicesDropdownRef.current.handleClose();
-  }
-
   return (
     <VoiceDropdownStyle>
-      <Dropdown
-        id="voiceDropdown"
-        selectedItemText={selectedItemText}
-        ref={voicesDropdownRef}
-        icon={<ChevronDown className="ml-4 w-4" />}
-      >
-        <div>
+      <DropdownProvider>
+        <Dropdown
+          dropdownId="voiceDropdown"
+          selectedItemText={selectedItemText}
+          ref={voicesDropdownRef}
+          icon={<ChevronDown className="ml-4 w-4" />}
+        >
           <div>
-            {filters.length > 0 && (
-              <div className="filter_label inline-flex justify-center bg-white px-4 py-2 text-sm font-medium text-gray-700 ">
-                <div>
-                  <span>Filters:</span>
+            <div>
+              {filters.length > 0 && (
+                <div className="filter_label inline-flex justify-center bg-white px-4 py-2 text-sm font-medium text-gray-700 ">
+                  <div>
+                    <span>Filters:</span>
 
-                  {filters.map((filter) => {
-                    const { key, value } = filter;
-                    return (
-                      <span
-                        key={`${key}-${value}`}
-                        className="filter_pill mr-2 inline-flex items-center bg-gray-100 text-sm font-medium text-gray-800"
-                      >
-                        {`${key}: ${value}`}
-                        {/* using string interpolation */}
-                        <button
-                          className="ml-2 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            clearIndividualFilter(key, value);
-                          }}
-                          aria-label={`"Clear Filter" ${value} ${key}`}
+                    {filters.map((filter) => {
+                      const { key, value } = filter;
+                      return (
+                        <span
+                          key={`${key}-${value}`}
+                          className="filter_pill mr-2 inline-flex items-center bg-gray-100 text-sm font-medium text-gray-800"
                         >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            strokeWidth="1.5"
-                            stroke="currentColor"
-                            className="close-icon h-4 w-4 fill-current text-gray-500"
+                          {`${key}: ${value}`}
+                          {/* using string interpolation */}
+                          <button
+                            className="ml-2 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              clearIndividualFilter(key, value);
+                            }}
+                            aria-label={`"Clear Filter" ${value} ${key}`}
                           >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M6 18L18 6M6 6l12 12"
-                            />
-                          </svg>
-                        </button>
-                      </span>
-                    );
-                  })}
-                </div>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 24 24"
+                              strokeWidth="1.5"
+                              stroke="currentColor"
+                              className="close-icon h-4 w-4 fill-current text-gray-500"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M6 18L18 6M6 6l12 12"
+                              />
+                            </svg>
+                          </button>
+                        </span>
+                      );
+                    })}
+                  </div>
 
-                <button
-                  className="filter_reset inline-flex justify-center rounded-md border-2 border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm outline-none hover:bg-gray-50 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    clearFilters();
-                  }}
-                  aria-label="Clear Filters"
-                  title="Click to clear all applied filters"
-                >
-                  Clear Filters
-                </button>
-              </div>
-            )}
-          </div>
-          <div className="dropdown_table_wrapper">
-            <table className="dropdown_table w-full table-auto">
-              <thead className="voiceTitles w-full p-4">
-                <tr>
-                  <th className="nameHeader text-left">Name</th>
-                  <th className="text-left">
-                    <FilterDropdown
-                      id="gender"
-                      options={genders}
-                      defaultTitle="Gender"
-                      onChange={onFilterChange}
-                      ref={genderFilterRef}
-                      setActiveFilter={setActiveFilter}
-                      isOpen={isOpen === "gender"}
-                    />
-                  </th>
-                  <th className="text-left">
-                    <FilterDropdown
-                      id="accent"
-                      options={accents}
-                      defaultTitle="Accent"
-                      onChange={onFilterChange}
-                      ref={accentFilterRef}
-                      setActiveFilter={setActiveFilter}
-                      isOpen={isOpen === "accent"}
-                    />
-                  </th>
-                  <th className="text-left">
-                    <FilterDropdown
-                      id="age"
-                      options={ages}
-                      defaultTitle="Age"
-                      onChange={onFilterChange}
-                      ref={ageFilterRef}
-                      setActiveFilter={setActiveFilter}
-                      isOpen={isOpen === "age"}
-                    />
-                  </th>
-                  <th className="text-left">
-                    <FilterDropdown
-                      id="style"
-                      options={voiceStyles}
-                      defaultTitle="Style"
-                      onChange={onFilterChange}
-                      ref={voiceStylesFilterRef}
-                      setActiveFilter={setActiveFilter}
-                      isOpen={isOpen === "style"}
-                    />
-                  </th>
-                </tr>
-              </thead>
-
-              <tbody className="w-full">
-                {filteredVoices &&
-                  filteredVoices.map((voice, index) => (
-                    <VoiceRow
-                      voice={voice}
-                      key={index}
-                      index={index}
-                      playAudio={playAudio}
-                      stopAudio={stopAudio}
-                    />
-                  ))}
-
-                {!isFiltering &&
-                  filters.length === 0 &&
-                  voices.map((voice, index) => (
-                    <VoiceRow
-                      voice={voice}
-                      key={index}
-                      index={index}
-                      playAudio={playAudio}
-                      stopAudio={stopAudio}
-                    />
-                  ))}
-              </tbody>
-            </table>
-
-            {isFiltering &&
-              !(filters.length > 0 && filteredVoices.length > 0) && (
-                <div className="filter_noResult">
-                  No Voices found for selected filters
+                  <button
+                    className="filter_reset inline-flex justify-center rounded-md border-2 border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm outline-none hover:bg-gray-50 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      clearFilters();
+                    }}
+                    aria-label="Clear Filters"
+                    title="Click to clear all applied filters"
+                  >
+                    Clear Filters
+                  </button>
                 </div>
               )}
+            </div>
+            <div className="dropdown_table_wrapper">
+              <table className="dropdown_table w-full table-auto">
+                <thead className="voiceTitles w-full p-4">
+                  <tr>
+                    <th className="nameHeader text-left">Name</th>
+                    <th className="text-left">
+                      <FilterDropdown
+                        id="gender"
+                        options={genders}
+                        defaultTitle="Gender"
+                        onChange={onFilterChange}
+                        ref={genderFilterRef}
+                        setActiveFilter={setActiveFilter}
+                        isOpen={isOpen === "gender"}
+                      />
+                    </th>
+                    <th className="text-left">
+                      <FilterDropdown
+                        id="accent"
+                        options={accents}
+                        defaultTitle="Accent"
+                        onChange={onFilterChange}
+                        ref={accentFilterRef}
+                        setActiveFilter={setActiveFilter}
+                        isOpen={isOpen === "accent"}
+                      />
+                    </th>
+                    <th className="text-left">
+                      <FilterDropdown
+                        id="age"
+                        options={ages}
+                        defaultTitle="Age"
+                        onChange={onFilterChange}
+                        ref={ageFilterRef}
+                        setActiveFilter={setActiveFilter}
+                        isOpen={isOpen === "age"}
+                      />
+                    </th>
+                    <th className="text-left">
+                      <FilterDropdown
+                        id="style"
+                        options={voiceStyles}
+                        defaultTitle="Style"
+                        onChange={onFilterChange}
+                        ref={voiceStylesFilterRef}
+                        setActiveFilter={setActiveFilter}
+                        isOpen={isOpen === "style"}
+                      />
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody className="w-full">
+                  {filteredVoices &&
+                    filteredVoices.map((voice, index) => (
+                      <VoiceRow
+                        voice={voice}
+                        key={index}
+                        index={index}
+                        playAudio={playAudio}
+                        stopAudio={stopAudio}
+                      />
+                    ))}
+
+                  {!isFiltering &&
+                    filters.length === 0 &&
+                    voices.map((voice, index) => (
+                      <VoiceRow
+                        voice={voice}
+                        key={index}
+                        index={index}
+                        playAudio={playAudio}
+                        stopAudio={stopAudio}
+                      />
+                    ))}
+                </tbody>
+              </table>
+
+              {isFiltering &&
+                !(filters.length > 0 && filteredVoices.length > 0) && (
+                  <div className="filter_noResult">
+                    No Voices found for selected filters
+                  </div>
+                )}
+            </div>
           </div>
-        </div>
-      </Dropdown>
+        </Dropdown>
+      </DropdownProvider>
     </VoiceDropdownStyle>
   );
 }

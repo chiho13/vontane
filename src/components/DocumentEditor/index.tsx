@@ -92,27 +92,47 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const [activePath, setActivePath] = useState<string | null>(null);
 
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const [addedParagraphs, setAddedParagraphs] = useState<Set<string>>(
+    new Set()
+  );
 
   const openMiniDropdown = useCallback(
     (event: React.MouseEvent, path: Path) => {
-      const pathString = JSON.stringify(path);
+      const currentpathString = JSON.stringify(path[0]);
 
-      const pathNum = path[0];
       const [currentNode] = Editor.node(editor, path);
+      const { selection } = editor;
 
+      //   const lastNode = Editor.node(editor, selection.focus);
+      if (!selection) return;
+
+      const [parentNode, parentPath] = Editor.parent(
+        editor,
+        selection.anchor.path
+      );
+
+      const parentpathString = JSON.stringify(parentPath[0]);
+
+      const [lastNode, lastPath] = Editor.last(editor, []);
+
+      const lastpathString = JSON.stringify(lastPath[0]);
       const isEmptyNode =
         currentNode.type === "paragraph" &&
         currentNode.children.length === 1 &&
         currentNode.children[0].text === "";
 
-      console.log(isEmptyNode);
-      if (!isEmptyNode) {
+      console.log("parentNode", parentpathString);
+      console.log("currentPath", currentpathString);
+      console.log("lastNode", lastpathString);
+
+      if (!isEmptyNode && currentpathString === lastpathString) {
         Transforms.insertNodes(
           editor,
           { type: "paragraph", children: [{ text: "" }] },
           { at: Path.next(path) }
         );
-        if (!dropdownPositions.has(pathString)) {
+
+        if (!dropdownPositions.has(currentpathString)) {
           const target = event.currentTarget as HTMLDivElement;
           const targetRect = target.getBoundingClientRect();
 
@@ -124,15 +144,21 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             });
             return newPositions;
           });
+
+          setAddedParagraphs((prevAdded) => {
+            const newAdded = new Set(prevAdded);
+            newAdded.add(currentpathString);
+            return newAdded;
+          });
         }
       } else {
-        if (!dropdownPositions.has(pathString)) {
+        if (!dropdownPositions.has(currentpathString)) {
           const target = event.currentTarget as HTMLDivElement;
           const targetRect = target.getBoundingClientRect();
 
           setDropdownPositions((prevPositions) => {
             const newPositions = new Map(prevPositions);
-            newPositions.set(pathString, {
+            newPositions.set(currentpathString, {
               top: targetRect.top + 40,
               left: targetRect.left + 40,
             });
@@ -142,7 +168,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       }
 
       setShowDropdown((prevState) => !prevState);
-      setActivePath(pathString);
+      setActivePath(currentpathString);
     },
     [dropdownPositions]
   );

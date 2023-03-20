@@ -8,6 +8,8 @@ import React, {
 import { createEditor, Editor, Transforms, Path, BaseEditor } from "slate";
 import { Slate, Editable, withReact, ReactEditor } from "slate-react";
 import { Plus } from "lucide-react";
+import { BlockMath } from "react-katex";
+import "katex/dist/katex.min.css";
 
 import { useTheme } from "styled-components";
 import useClickOutside from "@/hooks/useClickOutside";
@@ -17,8 +19,9 @@ interface DocumentEditorProps {
 }
 
 type CustomElement = {
-  type: "paragraph";
+  type: "paragraph" | "equation";
   children: CustomText[];
+  latex?: string; // Add this line for the latex string
 };
 
 type CustomText = {
@@ -34,17 +37,33 @@ declare module "slate" {
 }
 
 interface MiniDropdownProps {
-  innerRef?: React.Ref<HTMLDivElement>;
+  isOpen: boolean;
+  onSubmit: (latex: string) => void;
 }
 
 const MiniDropdown = React.forwardRef<HTMLDivElement, MiniDropdownProps>(
-  (props, ref) => {
+  ({ isOpen, onSubmit }, ref) => {
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+    const handleKeyDown = (event: React.KeyboardEvent) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        if (textareaRef.current) {
+          onSubmit(textareaRef.current.value);
+        }
+      }
+    };
     return (
       <div
         ref={ref}
         className="rounded-md border border-gray-200 bg-white p-2 shadow-md"
       >
-        <input />
+        <textarea
+          className="w-full resize-none"
+          ref={textareaRef}
+          autoFocus
+          onKeyDown={handleKeyDown}
+        />
       </div>
     );
   }
@@ -57,7 +76,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 }) => {
   const theme = useTheme();
   const editor = useMemo(() => withReact(createEditor()), []);
-  const [value, setValue] = useState([
+  const [slatevalue, setValue] = useState([
     {
       type: "paragraph",
       children: [{ text: "" }],
@@ -72,24 +91,56 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   const [activePath, setActivePath] = useState<string | null>(null);
 
-  const handleAddEquation = useCallback(
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
+
+  const openMiniDropdown = useCallback(
     (event: React.MouseEvent, path: Path) => {
       const pathString = JSON.stringify(path);
 
-      console.log(pathString);
-      if (!dropdownPositions.has(pathString)) {
-        const target = event.currentTarget as HTMLDivElement;
-        const targetRect = target.getBoundingClientRect();
+      const pathNum = path[0];
+      const [currentNode] = Editor.node(editor, path);
 
-        setDropdownPositions((prevPositions) => {
-          const newPositions = new Map(prevPositions);
-          newPositions.set(pathString, {
-            top: targetRect.top + 40,
-            left: targetRect.left + 40,
+      const isEmptyNode =
+        currentNode.type === "paragraph" &&
+        currentNode.children.length === 1 &&
+        currentNode.children[0].text === "";
+
+      console.log(isEmptyNode);
+      if (!isEmptyNode) {
+        Transforms.insertNodes(
+          editor,
+          { type: "paragraph", children: [{ text: "" }] },
+          { at: Path.next(path) }
+        );
+        if (!dropdownPositions.has(pathString)) {
+          const target = event.currentTarget as HTMLDivElement;
+          const targetRect = target.getBoundingClientRect();
+
+          setDropdownPositions((prevPositions) => {
+            const newPositions = new Map(prevPositions);
+            newPositions.set(JSON.stringify(Path.next(path)), {
+              top: targetRect.top + 40,
+              left: targetRect.left + 40,
+            });
+            return newPositions;
           });
-          return newPositions;
-        });
+        }
+      } else {
+        if (!dropdownPositions.has(pathString)) {
+          const target = event.currentTarget as HTMLDivElement;
+          const targetRect = target.getBoundingClientRect();
+
+          setDropdownPositions((prevPositions) => {
+            const newPositions = new Map(prevPositions);
+            newPositions.set(pathString, {
+              top: targetRect.top + 40,
+              left: targetRect.left + 40,
+            });
+            return newPositions;
+          });
+        }
       }
+
       setShowDropdown((prevState) => !prevState);
       setActivePath(pathString);
     },
@@ -122,32 +173,83 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     }
   };
 
+  const handleAddEquation = useCallback(
+    (latex: string, path: Path) => {
+      if (showDropdown) {
+        const equationNode: CustomElement = {
+          type: "equation",
+          latex,
+          children: [{ text: "" }],
+        };
+
+        // Check if the first paragraph is empty
+        const [currentNode] = Editor.node(editor, path);
+        if (
+          currentNode.type === "paragraph" &&
+          currentNode.children.length === 1 &&
+          currentNode.children[0].text === ""
+        ) {
+          // Replace the first paragraph with the equation node
+          Transforms.setNodes(editor, equationNode, { at: path });
+
+          // Insert an empty paragraph after the equation node
+          Transforms.insertNodes(
+            editor,
+            { type: "paragraph", children: [{ text: "" }] },
+            { at: Path.next(path) }
+          );
+
+          // Set the selection to the start of the new paragraph
+          const newPath = Path.next(path);
+          const newSelection = Editor.start(editor, newPath);
+          Transforms.select(editor, newSelection);
+        } else {
+          // Insert the equation node after the current node
+          Transforms.insertNodes(editor, equationNode, { at: Path.next(path) });
+
+          // Insert an empty paragraph after the equation node
+          Transforms.insertNodes(
+            editor,
+            { type: "paragraph", children: [{ text: "" }] },
+            { at: Path.next(Path.next(path)) }
+          );
+
+          // Set the selection to the start of the new paragraph
+          const newPath = Path.next(Path.next(path));
+          const newSelection = Editor.start(editor, newPath);
+          Transforms.select(editor, newSelection);
+        }
+      }
+    },
+    [showDropdown, slatevalue]
+  );
+
   const renderElement = useCallback((props) => {
     const { attributes, children, element } = props;
-    const index = props.element.children[0].text.charCodeAt(0);
 
-    if (element.type === "paragraph") {
-      return (
-        <div className="group relative" {...attributes}>
+    return (
+      <div className="group relative" {...attributes}>
+        {element.type === "equation" && (
+          <span contentEditable={false}>
+            <BlockMath math={element.latex || ""} />
+          </span>
+        )}
+        {element.type === "paragraph" && (
           <p className="pl-6 leading-relaxed">{children}</p>
-          <div
-            className="absolute -left-4 top-3 -mt-5 flex h-10 w-10 cursor-pointer items-center justify-center opacity-0 group-hover:opacity-100"
-            onClick={(event) =>
-              handleAddEquation(event, ReactEditor.findPath(editor, element))
-            }
-          >
-            <button className="rounded-md hover:bg-gray-200">
-              <Plus color={theme.colors.darkgray} />
-            </button>
-          </div>
+        )}
+        <div
+          className="absolute -left-4 top-3 -mt-5 flex h-10 w-10 cursor-pointer items-center justify-center opacity-0 group-hover:opacity-100"
+          onClick={(event) =>
+            openMiniDropdown(event, ReactEditor.findPath(editor, element))
+          }
+        >
+          <button className="rounded-md hover:bg-gray-200">
+            <Plus color={theme.colors.darkgray} />
+          </button>
         </div>
-      );
-    }
-
-    return <div {...attributes}>{children}</div>;
+      </div>
+    );
   }, []);
-
-  const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   useClickOutside(
     dropdownRef,
@@ -166,9 +268,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     >
       <Slate
         editor={editor}
-        value={value}
+        value={slatevalue}
         onChange={(newValue) => {
           setValue(newValue);
+
+          console.log(newValue);
           if (handleTextChange) {
             handleTextChange(newValue);
           }
@@ -177,13 +281,20 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         <Editable renderElement={renderElement} onKeyDown={handleKeyDown} />
         {showDropdown && activePath && (
           <div
-            className="fixed z-10 mt-2"
+            className="fixed z-10 mt-2 w-[400px]"
             style={{
               top: dropdownPositions.get(activePath)?.top,
               left: dropdownPositions.get(activePath)?.left,
             }}
           >
-            <MiniDropdown ref={dropdownRef} />
+            <MiniDropdown
+              ref={dropdownRef}
+              isOpen={showDropdown}
+              onSubmit={(latex) => {
+                handleAddEquation(latex, JSON.parse(activePath));
+                setShowDropdown(false);
+              }}
+            />
           </div>
         )}
       </Slate>

@@ -2,21 +2,27 @@ import { useEffect } from "react";
 
 type EventHandler = (event: MouseEvent) => void;
 
-function useClickOutsideHandler(
+const useClickOutside = (
   ref: React.RefObject<HTMLElement>,
-  handleClickOutside: EventHandler
-) {
+  callback: () => void,
+  ignoreInsideClick: (element: HTMLElement) => boolean
+) => {
+  const handleClick = (e: MouseEvent) => {
+    if (
+      ref.current &&
+      !ref.current.contains(e.target as Node) &&
+      !ignoreInsideClick(e.target as HTMLElement)
+    ) {
+      callback();
+    }
+  };
+
   useEffect(() => {
-    const handleDocumentClick = (event: MouseEvent) => {
-      handleClickOutside(event);
-    };
-
-    document.addEventListener("click", handleDocumentClick);
-
+    document.addEventListener("mousedown", handleClick);
     return () => {
-      document.removeEventListener("click", handleDocumentClick);
+      document.removeEventListener("mousedown", handleClick);
     };
-  }, [ref, handleClickOutside]);
-}
+  }, [ref, callback]);
+};
 
-export default useClickOutsideHandler;
+export default useClickOutside;

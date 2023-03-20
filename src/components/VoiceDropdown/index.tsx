@@ -13,7 +13,7 @@ import FilterDropdown from "../FilterDropdown";
 import Dropdown from "../Dropdown";
 // import ChevronDown from "../../icons/ChevronDown";
 import { ChevronDown } from "lucide-react";
-import useClickOutsideHandler from "../../hooks/useClickOutside";
+import useClickOutside from "../../hooks/useClickOutside";
 import { flags } from "@/icons/flags";
 import { api } from "@/utils/api";
 import Image from "next/image";
@@ -116,7 +116,6 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
   const stopButtonRef = useRef<HTMLDivElement>(null);
 
   const queryResult = api.texttospeech.getVoices.useQuery();
-  console.log(queryResult.data);
 
   useEffect(() => {
     if (queryResult.data) {
@@ -299,9 +298,9 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
     );
   };
 
-  useEffect(() => {
-    console.log(voicesDropdownRef.current.isOpen);
-  }, [voicesDropdownRef.current.isOpen]);
+  // useEffect(() => {
+  //   console.log(voicesDropdownRef.current.isOpen);
+  // }, [voicesDropdownRef.current.isOpen]);
 
   function closeDropdown() {
     voicesDropdownRef.current.handleClose();

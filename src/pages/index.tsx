@@ -7,7 +7,7 @@ import AudioPlayer from "@/components/AudioPlayer";
 import VoiceDropdown from "@/components/VoiceDropdown";
 import GenerateButton from "@/components/GenerateButton";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import useStatusPolling from "@/hooks/useStatusPolling";
 
 import { useSession } from "@supabase/auth-helpers-react";
@@ -16,6 +16,8 @@ import Layout from "@/components/Layouts/AccountLayout";
 
 import { useUserContext } from "@/contexts/UserContext";
 import styled from "styled-components";
+
+import { DocumentEditor } from "@/components/DocumentEditor";
 
 const TextAreaInputStyle = styled.textarea`
   background: linear-gradient(120deg, #fdfbfb 0%, #f2f6f7 100%);
@@ -27,14 +29,10 @@ const Home: NextPage = () => {
   const session = useSession();
   const [selectedVoiceId, setSelectedVoiceId] = React.useState<string>("");
 
-  const [enteredText, setEnteredText] = React.useState<string>("");
+  const [enteredText, setEnteredText] = React.useState<string[]>([]);
 
   const [audioIsLoading, setAudioIsLoading] = React.useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
-
-  function handleTextChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
-    setEnteredText(event.target.value);
-  }
 
   const [transcriptionId, setTranscriptionId] = useState<string>("");
   const [status, setStatus] = useState<string>("");
@@ -59,7 +57,7 @@ const Home: NextPage = () => {
     isLoading: texttospeechloading,
     refetch: texttospeechrefetch,
   } = api.texttospeech.startConversion.useQuery(
-    { voice: selectedVoiceId, content: [enteredText] },
+    { voice: selectedVoiceId, content: enteredText },
     {
       enabled: false,
     }
@@ -125,6 +123,14 @@ const Home: NextPage = () => {
     return <LoginPage />;
   }
 
+  function handleTextChange(value: any[]) {
+    const _enteredText = value.flatMap((item) =>
+      item.children.map((child: { text: string }) => child.text)
+    );
+    setEnteredText(_enteredText);
+    console.log(_enteredText);
+  }
+
   return (
     <>
       <Layout profile={profile}>
@@ -132,15 +138,7 @@ const Home: NextPage = () => {
           <div className="w-full">
             <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
 
-            <textarea
-              id="text"
-              name="text"
-              rows="14"
-              cols="50"
-              maxLength="1000"
-              className="textarea_input mb-4 block w-[900px] resize-none rounded-md border-2 border-gray-100 p-4 shadow-md focus:outline-none focus-visible:border-gray-400"
-              onChange={handleTextChange}
-            ></textarea>
+            <DocumentEditor handleTextChange={handleTextChange} />
             <GenerateButton
               isDisabled={isDisabled}
               audioIsLoading={audioIsLoading}

@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { DropdownStyle } from "./style";
 import useDropdown from "@/hooks/useDropdown";
-import useClickOutsideHandler from "@/hooks/useClickOutside";
+import useClickOutside from "@/hooks/useClickOutside";
 import { motion, AnimatePresence, useCycle } from "framer-motion";
 
 interface DropdownProps {
@@ -117,6 +117,16 @@ function Dropdown(
   //   handleClose();
   // });
 
+  useClickOutside(
+    wrapperRef,
+    () => {
+      if (isOpen) {
+        handleClose();
+      }
+    },
+    (element: any) => wrapperRef.current?.contains(element) ?? false
+  );
+
   return (
     <>
       <AnimatePresence>
@@ -124,7 +134,7 @@ function Dropdown(
           <motion.div {...clickoutside_props}>
             <div
               className="closeOutside fixed top-0 left-0 h-full w-screen opacity-50"
-              onClick={handleClose}
+              // onClick={handleClose}
             ></div>
           </motion.div>
         )}
@@ -151,6 +161,7 @@ function Dropdown(
                 aria-orientation="vertical"
                 aria-labelledby="voices-dropdown"
                 tabIndex={-1}
+                ref={wrapperRef}
               >
                 {children}
               </div>

@@ -1,13 +1,13 @@
 import Link from "next/link";
 import styled, { keyframes, useTheme } from "styled-components";
-import Dropdown from "../Dropdown";
+import Dropdown, { DropdownProvider } from "../Dropdown";
 import Head from "next/head";
 
 import { useRef, useState, useEffect, useMemo, createContext } from "react";
 import { AccountLayoutStyle } from "./style";
 import ChevronDown from "@/icons/ChevronDown";
 
-import { breakpoints } from "@/utils/breakpoints";
+import { mq, breakpoints } from "@/utils/breakpoints";
 import {
   Tooltip,
   TooltipContent,
@@ -59,10 +59,14 @@ const ToggleButtonWrapper = styled.div`
   left: 5px;
   z-index: 100;
   display: block;
-  height: 100%;
+  height: 45px;
   width: 45px;
   display: flex;
   justify-content: center;
+
+  ${mq.lg`
+    height: 100%;
+  `}
 `;
 
 const ToggleButton = styled.a`
@@ -79,13 +83,11 @@ const ToggleButton = styled.a`
 
 const SidebarContent = styled.div<{ isLocked: boolean; isOpen: boolean }>`
 position: fixed;
-top: ${(props) => (props.isLocked && props.isOpen ? "0" : "70px")};
-transform: ${(props) =>
-  props.isLocked || props.isOpen ? "translateX(0)" : "translateX(-270px)"};
-
-  
+top: 0;
+height: 100%;
 width: 270px;
-height: ${(props) => (props.isLocked && props.isOpen ? "100%" : "auto")};
+transform: ${(props) =>
+  props.isLocked && props.isOpen ? "translateX(0)" : "translateX(-270px)"};
   background: rgb(251, 251, 250); 
 padding: 0;
 z-index: 10;
@@ -108,6 +110,13 @@ transition: transform 300ms, ${(props) =>
       props.isLocked && props.isOpen ? "margin-top 100ms" : "margin-top 500ms"};
     margin-top: ${(props) => (props.isLocked && props.isOpen ? "0" : "0")};
   }
+
+  ${mq.lg`
+  top: ${(props) => (props.isLocked && props.isOpen ? "0" : "70px")};
+  transform: ${(props) =>
+    props.isLocked || props.isOpen ? "translateX(0)" : "translateX(-270px)"};
+    height: ${(props) => (props.isLocked && props.isOpen ? "100%" : "auto")};
+  `}
 `;
 
 // left: ${(props) => (!props.isLocked && props.isOpen ? "250px" : "0")};
@@ -210,17 +219,22 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
 
   const toggleSidebarLock = (): void => {
     setIsLocked(!isLocked);
+
+    if (!desktopbreakpoint) {
+      setIsLocked(!isLocked);
+      setIsOpen(!isOpen);
+    }
   };
 
   const handleMouseEnter = (): void => {
-    if (!isLocked) {
+    if (!isLocked && desktopbreakpoint) {
       setIsOpen(true);
       setShowChevronRight(true);
     }
   };
 
   const handleMouseLeave = (): void => {
-    if (!isLocked) {
+    if (!isLocked && desktopbreakpoint) {
       setIsOpen(false);
       setShowChevronRight(false);
     }
@@ -240,7 +254,11 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
         <Tooltip>
           <TooltipTrigger>
             <AnimatedIcon show={showChevronRight}>
-              {showChevronRight ? <ChevronsRight /> : <Menu />}
+              {showChevronRight && desktopbreakpoint ? (
+                <ChevronsRight />
+              ) : (
+                <Menu />
+              )}
             </AnimatedIcon>
           </TooltipTrigger>
           <TooltipContent className="border-black" side="left">
@@ -295,33 +313,35 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
           <SidebarContent isLocked={isLocked} isOpen={isOpen}>
             <AccountLayoutStyle>
               <div className="z-10 flex items-center p-1">
-                <Dropdown
-                  dropdownId="sideBarDropdown"
-                  ref={accountDropdownRef}
-                  selectedItemText={profile && profile.name}
-                  image={AvatarProfile}
-                  icon={
-                    <ChevronsUpDown
-                      className="w-4"
-                      color={theme.colors.darkgray}
-                    />
-                  }
-                >
-                  {/* <ul>
+                <DropdownProvider>
+                  <Dropdown
+                    dropdownId="sideBarDropdown"
+                    ref={accountDropdownRef}
+                    selectedItemText={profile && profile.name}
+                    image={AvatarProfile}
+                    icon={
+                      <ChevronsUpDown
+                        className="w-4"
+                        color={theme.colors.darkgray}
+                      />
+                    }
+                  >
+                    {/* <ul>
             <li>Logout</li>
           </ul> */}
-                  <div className="p-1" role="none">
-                    <button
-                      onClick={logout}
-                      className="inline-flex w-full rounded-md px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                      role="menuitem"
-                      tabIndex={-1}
-                      id="menu-item-3"
-                    >
-                      <LogoutIcon /> Log out
-                    </button>
-                  </div>
-                </Dropdown>
+                    <div className="p-1" role="none">
+                      <button
+                        onClick={logout}
+                        className="inline-flex w-full rounded-md px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                        role="menuitem"
+                        tabIndex={-1}
+                        id="menu-item-3"
+                      >
+                        <LogoutIcon /> Log out
+                      </button>
+                    </div>
+                  </Dropdown>
+                </DropdownProvider>
               </div>
               <ul className="mt-10 mb-10">
                 <SidebarItem>
@@ -344,7 +364,7 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
           </SidebarContent>
         </SidebarContainer>
         <main
-          className="min-h-screen bg-white pl-6 pt-4 "
+          className="min-h-screen bg-white pt-4 lg:pl-6 "
           style={{
             transform:
               isLocked && desktopbreakpoint

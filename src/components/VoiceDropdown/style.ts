@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { mq } from "@/utils/breakpoints";
 
 export const VoiceDropdownStyle = styled.div`
   position: relative;
@@ -24,12 +25,12 @@ export const VoiceDropdownStyle = styled.div`
   .filter_pill {
     padding: 5px 9px;
   }
- 
+
   .close-icon:hover path {
     stroke: #888888;
     transition: stroke 0.3s ease;
   }
-  
+
   .filter_noResult {
     display: flex;
     justify-content: center;
@@ -40,14 +41,17 @@ export const VoiceDropdownStyle = styled.div`
   .dropdown_table {
     border-collapse: separate;
     border-spacing: 0;
-   
   }
 
   .dropdown_table_wrapper {
     display: block;
-    min-height 450px;
-    max-height: 500px;
+    max-height: 60vh;
     overflow-y: scroll;
+
+    ${mq.lg`
+      min-height 450px;
+      max-height: 500px;
+      `}
   }
 
   .dropdown_table_wrapper::-webkit-scrollbar {
@@ -55,17 +59,17 @@ export const VoiceDropdownStyle = styled.div`
     height: 10px;
     border-radius: 5px;
   }
-  
+
   .dropdown_table_wrapper::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 5px;
   }
-  
+
   .dropdown_table_wrapper::-webkit-scrollbar-thumb {
     background: #aaaaaa;
     border-radius: 5px;
   }
-  
+
   .dropdown_table_wrapper::-webkit-scrollbar-thumb:hover {
     background: #555;
   }
@@ -152,12 +156,10 @@ export const VoiceDropdownStyle = styled.div`
     }
 
     tr:first-child th:first-child {
-      
       border-top-left-radius: 4px;
     }
 
     tr:first-child th:last-child {
-      
       border-top-right-radius: 4px;
     }
 
@@ -180,7 +182,11 @@ export const VoiceDropdownStyle = styled.div`
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(109.6deg, rgb(20, 30, 48) 11.2%, rgb(36, 59, 85) 91.1%);
-    opacity: 0.5;
+    background: none;
+
+    ${mq.lg`
+      background: linear-gradient(109.6deg, rgb(20, 30, 48) 11.2%, rgb(36, 59, 85) 91.1%);
+      opacity: 0.5;
+      `}
   }
 `;

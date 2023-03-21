@@ -134,7 +134,7 @@ const Home: NextPage = () => {
   return (
     <>
       <Layout profile={profile}>
-        <div className="mx-auto mt-4 flex w-[1000px] justify-center p-4">
+        <div className="mx-auto mt-10 flex justify-center p-4 lg:mt-4 lg:w-[1000px] ">
           <div className="w-full">
             <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
 
@@ -146,8 +146,8 @@ const Home: NextPage = () => {
             />
 
             {!audioIsLoading && generatedAudioElement && (
-              <div className="fixed bottom-0 left-0 bottom-4 right-0 mx-auto flex w-full justify-center">
-                <div className="w-[500px] flex-shrink-0">
+              <div className="fixed bottom-0 left-0 bottom-4 right-0 mx-auto flex w-full justify-center ">
+                <div className="w-[94%] flex-shrink-0 lg:w-[500px] ">
                   <AudioPlayer
                     generatedAudio={generatedAudioElement}
                     transcriptionId={transcriptionId}

@@ -45,12 +45,11 @@ export const VoiceDropdownStyle = styled.div`
 
   .dropdown_table_wrapper {
     display: block;
-    max-height: 60vh;
+    height: 60vh;
     overflow-y: scroll;
 
     ${mq.lg`
-      min-height 450px;
-      max-height: 500px;
+      height: 500px;
       `}
   }
 
@@ -188,5 +187,29 @@ export const VoiceDropdownStyle = styled.div`
       background: linear-gradient(109.6deg, rgb(20, 30, 48) 11.2%, rgb(36, 59, 85) 91.1%);
       opacity: 0.5;
       `}
+  }
+
+  .mobileFilters {
+    position: absolute;
+    background: white;
+    height: 270px;
+    z-index: 100;
+    overflow-y: scroll;
+    border-bottom: 1px solid #e6ebf4;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mobileFilters::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mobileFilters_container {
+    overflow-x: scroll;
+    padding-bottom: 20px;
+    width: 100vw;
+  }
+
+  .mobileFilters_container::-webkit-scrollbar {
+    display: none;
   }
 `;

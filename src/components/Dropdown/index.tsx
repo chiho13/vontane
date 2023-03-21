@@ -222,16 +222,18 @@ function Dropdown(
 
   return (
     <>
-      <AnimatePresence>
-        {activeDropdown === dropdownId && (
-          <motion.div {...clickoutside_props}>
-            <div
-              className="closeOutside fixed top-0 left-0 h-full w-screen opacity-50"
-              // onClick={handleClose}
-            ></div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {desktopbreakpoint && (
+        <AnimatePresence>
+          {activeDropdown === dropdownId && (
+            <motion.div {...clickoutside_props}>
+              <div
+                className="closeOutside fixed top-0 left-0 h-full w-screen opacity-50"
+                // onClick={handleClose}
+              ></div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      )}
       <DropdownStyle className="dropdown_wrapper">
         <button
           type="button"
@@ -251,7 +253,7 @@ function Dropdown(
             <motion.div
               {...animation_props}
               id={dropdownId}
-              className="dropdown-menu z-1000 fixed  bottom-0 left-0 mt-2 w-full origin-top-right border-2 bg-white shadow-lg ring-1 ring-black ring-opacity-5 lg:absolute lg:rounded-md"
+              className="dropdown-menu z-1000 fixed left-0  mt-2 w-full origin-top-right border-2 bg-white shadow-lg ring-1 ring-black ring-opacity-5 lg:absolute lg:rounded-md"
               role="menu"
               aria-orientation="vertical"
               aria-labelledby="voices-dropdown"

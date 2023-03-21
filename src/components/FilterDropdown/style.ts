@@ -3,10 +3,11 @@ import styled, { StyledComponent } from "styled-components";
 export const FilterDropdownStyle: StyledComponent<"div", any> = styled.div`
   position: relative;
 
-  .dropdown-menu {
+  .dropdown-menu.dropdown-menu {
     z-index: 1000;
     max-height: none !important;
     overflow-y: visible !important;
+    bottom: revert;
   }
 
   button.dropdown-toggle {

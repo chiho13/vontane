@@ -12,12 +12,13 @@ import { VoiceDropdownStyle } from "./style";
 import FilterDropdown from "../FilterDropdown";
 import Dropdown, { DropdownProvider } from "../Dropdown";
 // import ChevronDown from "../../icons/ChevronDown";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Filter } from "lucide-react";
 import useClickOutside from "../../hooks/useClickOutside";
 import { flags } from "@/icons/flags";
 import { api } from "@/utils/api";
 import Image from "next/image";
-
+import { mq, breakpoints } from "@/utils/breakpoints";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   fetchVoices,
   getAccents,
@@ -41,6 +42,41 @@ interface VoiceDropdownProps {
   setSelectedVoiceId: (voice: string) => void;
 }
 
+const mobile_filter_animation_props = {
+  animate: {
+    opacity: 1,
+    height: 270,
+  },
+  initial: {
+    opacity: 0,
+    height: 0,
+  },
+  transition: {
+    duration: 0.2,
+  },
+  enter: {
+    opacity: 1,
+    display: "block",
+    height: 270,
+    transition: {
+      duration: 0.4,
+    },
+    transitionEnd: {
+      display: "none",
+    },
+  },
+  exit: {
+    opacity: 0,
+    height: 0,
+    transition: {
+      duration: 0.3,
+    },
+    transitionEnd: {
+      display: "none",
+    },
+  },
+};
+
 function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
   const voicesDropdownRef = useRef(null);
   const [voiceDropdownIsOpen, setIsOpen] = useState(false);
@@ -60,6 +96,9 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
   const [voiceStyles, setVoiceStyles] = useState<string[]>([]);
   const [tempos, setTempos] = useState<string[]>([]);
   const [filters, setFilters] = useState<Filter[]>([]);
+
+  const [isOpenMobileFilterDropdown, setIsOpenMobileFilterDropdown] =
+    useState(false);
 
   const genders = [
     {
@@ -100,7 +139,11 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
       });
     });
 
-    if (selectedFilterOption.key !== "" && selectedFilterOption.value !== "") {
+    if (
+      selectedFilterOption &&
+      selectedFilterOption.key !== "" &&
+      selectedFilterOption.value !== ""
+    ) {
       filtered = filtered.filter((voice) => {
         return (
           voice[selectedFilterOption.key] ===
@@ -116,6 +159,7 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
   const stopButtonRef = useRef<HTMLDivElement>(null);
 
   const queryResult = api.texttospeech.getVoices.useQuery();
+  const desktopbreakpoint = window.screen.width > breakpoints.lg;
 
   useEffect(() => {
     if (queryResult.data) {
@@ -199,7 +243,7 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
     value: string;
   }
 
-  function onFilterChange(option: FilterOption, ref: any): void {
+  function onFilterChange(option: FilterOption): void {
     setSelectedFilterOption(option);
     setFilters((prevFilters: FilterOption[]) => {
       const newFilters = [...prevFilters];
@@ -212,6 +256,53 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
       } else {
         newFilters.push({ key, value });
       }
+      return newFilters;
+    });
+
+    setActiveFilter("");
+  }
+
+  const [lastClickedOptions, setLastClickedOptions] = useState<{
+    [key: string]: FilterOption;
+  }>({});
+
+  function onMobileFilterChange(option: FilterOption): void {
+    setFilters((prevFilters: FilterOption[]) => {
+      const newFilters = [...prevFilters];
+      const { key, value } = option;
+      const existingFilterIndex = newFilters.findIndex(
+        (filter) => filter.key === key
+      );
+
+      if (existingFilterIndex !== -1) {
+        if (
+          lastClickedOptions[key] &&
+          lastClickedOptions[key].value === value
+        ) {
+          // Remove the filter if the option is already active
+          newFilters.splice(existingFilterIndex, 1);
+          setLastClickedOptions((prevLastClickedOptions) => {
+            const updatedLastClickedOptions = { ...prevLastClickedOptions };
+            delete updatedLastClickedOptions[key];
+            return updatedLastClickedOptions;
+          });
+        } else {
+          // Update the filter value
+          newFilters[existingFilterIndex].value = value;
+          setLastClickedOptions((prevLastClickedOptions) => ({
+            ...prevLastClickedOptions,
+            [key]: option,
+          }));
+        }
+      } else {
+        // Add the new filter
+        newFilters.push({ key, value });
+        setLastClickedOptions((prevLastClickedOptions) => ({
+          ...prevLastClickedOptions,
+          [key]: option,
+        }));
+      }
+
       return newFilters;
     });
 
@@ -265,7 +356,7 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
         role="row"
         aria-label={`Selected Voice: ${voice.name}, ${voice.accent} accent, ${voice.age} age, ${voice.style} style, ${voice.tempo} tempo`}
       >
-        <td className="voiceSampleAndName flex items-center">
+        <td className="voiceSampleAndName flex items-center text-sm sm:text-base">
           <MemoizedSampleAudioVoice
             isPlaying={playingStates[index]}
             playAudio={(e) => {
@@ -281,7 +372,7 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
         </td>
         <td>{voice.gender}</td>
         <td>
-          <span className="flex items-center">
+          <span className="flex items-center text-sm sm:text-base">
             <Image
               src={flags[voice.accent]}
               alt={voice.accent}
@@ -289,11 +380,16 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
               height={28}
               className="flag-icon"
             />
-            {voice.accent}
+
+            {desktopbreakpoint && voice.accent}
           </span>
         </td>
-        <td>{voice.age}</td>
-        <td>{voice.style}</td>
+        {desktopbreakpoint && (
+          <>
+            <td className="text-sm sm:text-base">{voice.age}</td>
+            <td className="text-sm sm:text-base">{voice.style}</td>
+          </>
+        )}
       </tr>
     );
   };
@@ -301,6 +397,17 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
   // useEffect(() => {
   //   console.log(voicesDropdownRef.current.isOpen);
   // }, [voicesDropdownRef.current.isOpen]);
+
+  const mobile_filterDropdownOpen = () => {
+    setIsOpenMobileFilterDropdown(!isOpenMobileFilterDropdown);
+  };
+
+  const closeMobileVoiceDropdown = () => {
+    if (voicesDropdownRef.current) {
+      voicesDropdownRef.current.handleClose();
+    }
+    setIsOpenMobileFilterDropdown(false);
+  };
 
   return (
     <VoiceDropdownStyle>
@@ -312,111 +419,271 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
           icon={<ChevronDown className="ml-4 w-4" />}
         >
           <div>
-            <div>
-              {filters.length > 0 && (
-                <div className="filter_label inline-flex justify-center bg-white px-4 py-2 text-sm font-medium text-gray-700 ">
-                  <div>
-                    <span>Filters:</span>
+            {desktopbreakpoint && (
+              <div>
+                {filters.length > 0 && (
+                  <div className="filter_label inline-flex justify-center bg-white px-4 py-2 text-sm font-medium text-gray-700 ">
+                    <div>
+                      <span>Filters:</span>
 
-                    {filters.map((filter) => {
-                      const { key, value } = filter;
-                      return (
-                        <span
-                          key={`${key}-${value}`}
-                          className="filter_pill mr-2 inline-flex items-center bg-gray-100 text-sm font-medium text-gray-800"
-                        >
-                          {`${key}: ${value}`}
-                          {/* using string interpolation */}
-                          <button
-                            className="ml-2 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              clearIndividualFilter(key, value);
-                            }}
-                            aria-label={`"Clear Filter" ${value} ${key}`}
+                      {filters.map((filter) => {
+                        const { key, value } = filter;
+                        return (
+                          <span
+                            key={`${key}-${value}`}
+                            className="filter_pill mr-2 inline-flex items-center bg-gray-100 text-sm font-medium text-gray-800"
                           >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 24 24"
-                              strokeWidth="1.5"
-                              stroke="currentColor"
-                              className="close-icon h-4 w-4 fill-current text-gray-500"
+                            {`${key}: ${value}`}
+                            {/* using string interpolation */}
+                            <button
+                              className="ml-2 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                clearIndividualFilter(key, value);
+                              }}
+                              aria-label={`"Clear Filter" ${value} ${key}`}
                             >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M6 18L18 6M6 6l12 12"
-                              />
-                            </svg>
-                          </button>
-                        </span>
-                      );
-                    })}
-                  </div>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                strokeWidth="1.5"
+                                stroke="currentColor"
+                                className="close-icon h-4 w-4 fill-current text-gray-500"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M6 18L18 6M6 6l12 12"
+                                />
+                              </svg>
+                            </button>
+                          </span>
+                        );
+                      })}
+                    </div>
 
+                    <button
+                      className="filter_reset inline-flex justify-center rounded-md border-2 border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm outline-none hover:bg-gray-50 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        clearFilters();
+                      }}
+                      aria-label="Clear Filters"
+                      title="Click to clear all applied filters"
+                    >
+                      Clear Filters
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {!desktopbreakpoint && (
+              <div className="grid grid-cols-3 border-b border-gray-400">
+                <div className="flex justify-start p-3">
                   <button
-                    className="filter_reset inline-flex justify-center rounded-md border-2 border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm outline-none hover:bg-gray-50 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      clearFilters();
-                    }}
-                    aria-label="Clear Filters"
-                    title="Click to clear all applied filters"
+                    className="flex text-[#007AFF]"
+                    onClick={mobile_filterDropdownOpen}
                   >
-                    Clear Filters
+                    <span className="mr-2">Filters</span>
+                    <Filter color="#007AFF" className="w-4" />
                   </button>
                 </div>
-              )}
-            </div>
+
+                <div className="text-bold flex items-center justify-center">
+                  Choose a Voice
+                </div>
+                <div className="flex justify-end p-2">
+                  <button
+                    className="text-[#007AFF]"
+                    onClick={closeMobileVoiceDropdown}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+            {!desktopbreakpoint && (
+              <AnimatePresence>
+                {isOpenMobileFilterDropdown && (
+                  <motion.div
+                    {...mobile_filter_animation_props}
+                    className="mobileFilters pt-6 shadow-sm "
+                  >
+                    <div className="mobileFilters_container px-4 pb-8">
+                      <div className="mr-4 flex items-center ">
+                        <span className="text-bold text-sm">Genders: </span>
+                        {genders.map((gender, index) => {
+                          return (
+                            <button
+                              className={`ml-2 box-border rounded-md border-2 bg-gray-100 px-4 py-1 text-sm font-medium text-gray-800 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50 ${
+                                filters.some(
+                                  (filter) =>
+                                    filter.key === gender.key &&
+                                    filter.value === gender.value
+                                )
+                                  ? "border-2 border-[#007AFF]"
+                                  : ""
+                              }`}
+                              aria-label={gender.value}
+                              onClick={() => onMobileFilterChange(gender)}
+                            >
+                              {gender.value}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    <div className="mobileFilters_container mr-4 flex items-center px-4 ">
+                      <div className="mr-4 flex items-center ">
+                        <span className="text-bold text-sm">Accents: </span>
+                        {accents.map((accent, index) => {
+                          return (
+                            <button
+                              className={`ml-2 box-border rounded-md border-2 bg-gray-100 px-4 py-1 text-sm font-medium text-gray-800 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50 ${
+                                filters.some(
+                                  (filter) =>
+                                    filter.key === accent.key &&
+                                    filter.value === accent.value
+                                )
+                                  ? "border-2 border-[#007AFF]"
+                                  : ""
+                              }`}
+                              aria-label={accent.value}
+                              onClick={() => onMobileFilterChange(accent)}
+                            >
+                              {accent.value}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    <div className="mobileFilters_container mr-4 flex items-center px-4 ">
+                      <div className="mr-4 flex items-center ">
+                        <span className="text-bold text-sm">Ages: </span>
+                        {ages.map((age, index) => {
+                          return (
+                            <button
+                              className={`ml-2 box-border rounded-md border-2 bg-gray-100 px-4 py-1 text-sm font-medium text-gray-800 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50 ${
+                                filters.some(
+                                  (filter) =>
+                                    filter.key === age.key &&
+                                    filter.value === age.value
+                                )
+                                  ? "border-2 border-[#007AFF]"
+                                  : ""
+                              }`}
+                              aria-label={age.value}
+                              onClick={() => onMobileFilterChange(age)}
+                            >
+                              {age.value}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    <div className="mobileFilters_container mr-4 flex items-center px-4 ">
+                      <div className="mr-4 flex items-center ">
+                        <span className="text-bold text-sm">Styles: </span>
+                        {voiceStyles.map((voiceStyle, index) => {
+                          return (
+                            <button
+                              className={`ml-2 box-border rounded-md border-2 bg-gray-100 px-4 py-1 text-sm font-medium text-gray-800 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50 ${
+                                filters.some(
+                                  (filter) =>
+                                    filter.key === voiceStyle.key &&
+                                    filter.value === voiceStyle.value
+                                )
+                                  ? "border-2 border-[#007AFF]"
+                                  : ""
+                              }`}
+                              aria-label={voiceStyle.value}
+                              onClick={() => onMobileFilterChange(voiceStyle)}
+                            >
+                              {voiceStyle.value}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                    {filters.length > 0 && (
+                      <div className="absolute bottom-0 flex w-full justify-center p-4">
+                        <button
+                          className="justify-center bg-white px-2 text-[#007AFF] outline-none hover:bg-gray-50 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            clearFilters();
+                          }}
+                          aria-label="Clear Filters"
+                          title="Click to clear all applied filters"
+                        >
+                          Clear All Filters
+                        </button>
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            )}
+
             <div className="dropdown_table_wrapper table-responsive">
               <table className="dropdown_table w-full table-auto">
                 <thead className="voiceTitles w-full p-4">
                   <tr>
-                    <th className="nameHeader text-left">Name</th>
-                    <th className="text-left">
-                      <FilterDropdown
-                        id="gender"
-                        options={genders}
-                        defaultTitle="Gender"
-                        onChange={onFilterChange}
-                        ref={genderFilterRef}
-                        setActiveFilter={setActiveFilter}
-                        isOpen={isOpen === "gender"}
-                      />
-                    </th>
-                    <th className="text-left">
-                      <FilterDropdown
-                        id="accent"
-                        options={accents}
-                        defaultTitle="Accent"
-                        onChange={onFilterChange}
-                        ref={accentFilterRef}
-                        setActiveFilter={setActiveFilter}
-                        isOpen={isOpen === "accent"}
-                      />
-                    </th>
-                    <th className="text-left">
-                      <FilterDropdown
-                        id="age"
-                        options={ages}
-                        defaultTitle="Age"
-                        onChange={onFilterChange}
-                        ref={ageFilterRef}
-                        setActiveFilter={setActiveFilter}
-                        isOpen={isOpen === "age"}
-                      />
-                    </th>
-                    <th className="text-left">
-                      <FilterDropdown
-                        id="style"
-                        options={voiceStyles}
-                        defaultTitle="Style"
-                        onChange={onFilterChange}
-                        ref={voiceStylesFilterRef}
-                        setActiveFilter={setActiveFilter}
-                        isOpen={isOpen === "style"}
-                      />
-                    </th>
+                    {desktopbreakpoint && (
+                      <>
+                        <th className="nameHeader text-left text-sm sm:text-base">
+                          Name
+                        </th>
+                        <th className="text-left">
+                          <FilterDropdown
+                            id="gender"
+                            options={genders}
+                            defaultTitle="Gender"
+                            onChange={onFilterChange}
+                            ref={genderFilterRef}
+                            setActiveFilter={setActiveFilter}
+                            isOpen={isOpen === "gender"}
+                          />
+                        </th>
+                        <th className="text-left">
+                          <FilterDropdown
+                            id="accent"
+                            options={accents}
+                            defaultTitle="Accent"
+                            onChange={onFilterChange}
+                            ref={accentFilterRef}
+                            setActiveFilter={setActiveFilter}
+                            isOpen={isOpen === "accent"}
+                          />
+                        </th>
+                        <th className="text-left">
+                          <FilterDropdown
+                            id="age"
+                            options={ages}
+                            defaultTitle="Age"
+                            onChange={onFilterChange}
+                            ref={ageFilterRef}
+                            setActiveFilter={setActiveFilter}
+                            isOpen={isOpen === "age"}
+                          />
+                        </th>
+                        <th className="text-left">
+                          <FilterDropdown
+                            id="style"
+                            options={voiceStyles}
+                            defaultTitle="Style"
+                            onChange={onFilterChange}
+                            ref={voiceStylesFilterRef}
+                            setActiveFilter={setActiveFilter}
+                            isOpen={isOpen === "style"}
+                          />
+                        </th>{" "}
+                      </>
+                    )}
                   </tr>
                 </thead>
 

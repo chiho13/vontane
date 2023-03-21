@@ -21,10 +21,7 @@ import Image from "next/image";
 interface FilterProps {
   id: string;
   options: { key: string; value: string };
-  onChange: (
-    option: { value: string },
-    ref: ForwardedRef<HTMLDivElement>
-  ) => void;
+  onChange: (option: { value: string }) => void;
   defaultTitle: string;
   isOpen?: boolean;
   setActiveFilter: any;
@@ -51,11 +48,11 @@ function Filter(
   function handleOptionChange(option: { value: string }) {
     if (option.value === "All") {
       // setSelectedOption(defaultTitle);
-      onChange({ value: "All" }, ref);
+      onChange({ value: "All" });
       return;
     }
     // setSelectedOption(option.value);
-    onChange(option, ref);
+    onChange(option);
   }
 
   function handleVoicesDropdownClick(
@@ -89,7 +86,7 @@ function Filter(
           onClick={handleVoicesDropdownClick}
           ref={toggleRef}
         >
-          <span> {defaultTitle}</span>
+          <span className="text-sm sm:text-base"> {defaultTitle}</span>
           <FilterIcon />
         </button>
       </div>
@@ -119,7 +116,7 @@ function Filter(
                         handleOptionChange(option);
                       }}
                     >
-                      <span className="flex items-center">
+                      <span className="flex items-center text-sm sm:text-base">
                         {option.key === "accent" && (
                           <Image
                             src={flags[option.value]}

@@ -368,7 +368,7 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
                 </div>
               )}
             </div>
-            <div className="dropdown_table_wrapper">
+            <div className="dropdown_table_wrapper table-responsive">
               <table className="dropdown_table w-full table-auto">
                 <thead className="voiceTitles w-full p-4">
                   <tr>

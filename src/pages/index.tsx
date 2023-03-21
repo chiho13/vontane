@@ -146,8 +146,8 @@ const Home: NextPage = () => {
             />
 
             {!audioIsLoading && generatedAudioElement && (
-              <div className="fixed bottom-0 left-0 bottom-4 right-0 mx-auto flex w-full justify-center">
-                <div className="w-[500px] flex-shrink-0">
+              <div className="fixed bottom-0 left-0 bottom-4 right-0 mx-auto flex w-full justify-center ">
+                <div className="w-[94%] flex-shrink-0 lg:w-[500px] ">
                   <AudioPlayer
                     generatedAudio={generatedAudioElement}
                     transcriptionId={transcriptionId}

@@ -10,7 +10,6 @@ import React, {
   useContext,
 } from "react";
 import { DropdownStyle } from "./style";
-import useDropdown from "@/hooks/useDropdown";
 import useClickOutside from "@/hooks/useClickOutside";
 import { motion, AnimatePresence, useCycle } from "framer-motion";
 import { mq, breakpoints } from "@/utils/breakpoints";
@@ -163,7 +162,6 @@ function Dropdown(
   }: DropdownProps,
   ref: ForwardedRef<DropdownRef>
 ) {
-  // const { isOpen, handleOpen, handleClose } = useDropdown();
   const { activeDropdown, toggleDropdown } = useContext(DropdownContext);
   const isOpen = activeDropdown === dropdownId;
   const wrapperRef = useRef<HTMLDivElement>(null);

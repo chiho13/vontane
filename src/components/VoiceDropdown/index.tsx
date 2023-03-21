@@ -19,6 +19,9 @@ import { api } from "@/utils/api";
 import Image from "next/image";
 import { mq, breakpoints } from "@/utils/breakpoints";
 import { motion, AnimatePresence } from "framer-motion";
+
+import MobileFilterDropdown from "../MobileFilterDropdown";
+
 import {
   fetchVoices,
   getAccents,
@@ -91,9 +94,9 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
     useState<string>("Choose a voice");
 
   const [voices, setVoices] = useState<Voice[]>([]);
-  const [accents, setAccents] = useState<string[]>([]);
-  const [ages, setAges] = useState<string[]>([]);
-  const [voiceStyles, setVoiceStyles] = useState<string[]>([]);
+  const [accents, setAccents] = useState<Filter[]>([]);
+  const [ages, setAges] = useState<Filter[]>([]);
+  const [voiceStyles, setVoiceStyles] = useState<Filter[]>([]);
   const [tempos, setTempos] = useState<string[]>([]);
   const [filters, setFilters] = useState<Filter[]>([]);
 
@@ -504,129 +507,16 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
               </div>
             )}
             {!desktopbreakpoint && (
-              <AnimatePresence>
-                {isOpenMobileFilterDropdown && (
-                  <motion.div
-                    {...mobile_filter_animation_props}
-                    className="mobileFilters pt-6 shadow-sm "
-                  >
-                    <div className="mobileFilters_container px-4 pb-8">
-                      <div className="mr-4 flex items-center ">
-                        <span className="text-bold text-sm">Genders: </span>
-                        {genders.map((gender, index) => {
-                          return (
-                            <button
-                              className={`ml-2 box-border rounded-md border-2 bg-gray-100 px-4 py-1 text-sm font-medium text-gray-800 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50 ${
-                                filters.some(
-                                  (filter) =>
-                                    filter.key === gender.key &&
-                                    filter.value === gender.value
-                                )
-                                  ? "border-2 border-[#007AFF]"
-                                  : ""
-                              }`}
-                              aria-label={gender.value}
-                              onClick={() => onMobileFilterChange(gender)}
-                            >
-                              {gender.value}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    <div className="mobileFilters_container mr-4 flex items-center px-4 ">
-                      <div className="mr-4 flex items-center ">
-                        <span className="text-bold text-sm">Accents: </span>
-                        {accents.map((accent, index) => {
-                          return (
-                            <button
-                              className={`ml-2 box-border rounded-md border-2 bg-gray-100 px-4 py-1 text-sm font-medium text-gray-800 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50 ${
-                                filters.some(
-                                  (filter) =>
-                                    filter.key === accent.key &&
-                                    filter.value === accent.value
-                                )
-                                  ? "border-2 border-[#007AFF]"
-                                  : ""
-                              }`}
-                              aria-label={accent.value}
-                              onClick={() => onMobileFilterChange(accent)}
-                            >
-                              {accent.value}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    <div className="mobileFilters_container mr-4 flex items-center px-4 ">
-                      <div className="mr-4 flex items-center ">
-                        <span className="text-bold text-sm">Ages: </span>
-                        {ages.map((age, index) => {
-                          return (
-                            <button
-                              className={`ml-2 box-border rounded-md border-2 bg-gray-100 px-4 py-1 text-sm font-medium text-gray-800 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50 ${
-                                filters.some(
-                                  (filter) =>
-                                    filter.key === age.key &&
-                                    filter.value === age.value
-                                )
-                                  ? "border-2 border-[#007AFF]"
-                                  : ""
-                              }`}
-                              aria-label={age.value}
-                              onClick={() => onMobileFilterChange(age)}
-                            >
-                              {age.value}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    <div className="mobileFilters_container mr-4 flex items-center px-4 ">
-                      <div className="mr-4 flex items-center ">
-                        <span className="text-bold text-sm">Styles: </span>
-                        {voiceStyles.map((voiceStyle, index) => {
-                          return (
-                            <button
-                              className={`ml-2 box-border rounded-md border-2 bg-gray-100 px-4 py-1 text-sm font-medium text-gray-800 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50 ${
-                                filters.some(
-                                  (filter) =>
-                                    filter.key === voiceStyle.key &&
-                                    filter.value === voiceStyle.value
-                                )
-                                  ? "border-2 border-[#007AFF]"
-                                  : ""
-                              }`}
-                              aria-label={voiceStyle.value}
-                              onClick={() => onMobileFilterChange(voiceStyle)}
-                            >
-                              {voiceStyle.value}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                    {filters.length > 0 && (
-                      <div className="absolute bottom-0 flex w-full justify-center p-4">
-                        <button
-                          className="justify-center bg-white px-2 text-[#007AFF] outline-none hover:bg-gray-50 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            clearFilters();
-                          }}
-                          aria-label="Clear Filters"
-                          title="Click to clear all applied filters"
-                        >
-                          Clear All Filters
-                        </button>
-                      </div>
-                    )}
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              <MobileFilterDropdown
+                isOpenMobileFilterDropdown={isOpenMobileFilterDropdown}
+                filters={filters}
+                onMobileFilterChange={onMobileFilterChange}
+                clearFilters={clearFilters}
+                genders={genders}
+                accents={accents}
+                ages={ages}
+                voiceStyles={voiceStyles}
+              />
             )}
 
             <div className="dropdown_table_wrapper table-responsive">

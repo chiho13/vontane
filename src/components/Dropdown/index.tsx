@@ -13,6 +13,7 @@ import { DropdownStyle } from "./style";
 import useDropdown from "@/hooks/useDropdown";
 import useClickOutside from "@/hooks/useClickOutside";
 import { motion, AnimatePresence, useCycle } from "framer-motion";
+import { mq, breakpoints } from "@/utils/breakpoints";
 
 export interface DropdownContextType {
   activeDropdown: string | null;
@@ -58,7 +59,7 @@ export interface DropdownRef {
   wrapperRef: React.RefObject<HTMLElement>;
 }
 
-export const animation_props = {
+export const desktop_animation_props = {
   animate: {
     opacity: 1,
     y: 0,
@@ -83,6 +84,44 @@ export const animation_props = {
   exit: {
     opacity: 0,
     y: "-10px",
+    transition: {
+      duration: 0.2,
+    },
+    transitionEnd: {
+      display: "none",
+    },
+  },
+};
+
+const mobile_animation_props = {
+  animate: {
+    opacity: 1,
+    y: 0,
+  },
+  initial: {
+    opacity: 0,
+    y: "100%",
+    zIndex: 1000,
+  },
+  transition: {
+    duration: 0.2,
+  },
+  enter: {
+    opacity: 1,
+    y: 0,
+    zIndex: 1000,
+    display: "block",
+    transition: {
+      duration: 0.6,
+    },
+    transitionEnd: {
+      display: "none",
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: "100%",
+    zIndex: 1000,
     transition: {
       duration: 0.2,
     },
@@ -129,6 +168,11 @@ function Dropdown(
   const isOpen = activeDropdown === dropdownId;
   const wrapperRef = useRef<HTMLDivElement>(null);
 
+  const desktopbreakpoint = window.screen.width > breakpoints.lg;
+
+  const animation_props = desktopbreakpoint
+    ? desktop_animation_props
+    : mobile_animation_props;
   const handleVoicesDropdownClick = (
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
@@ -204,18 +248,17 @@ function Dropdown(
         </button>
         <AnimatePresence>
           {activeDropdown === dropdownId && (
-            <motion.div {...animation_props}>
-              <div
-                id={dropdownId}
-                className="dropdown-menu absolute left-0 z-10 mt-2 w-full origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5"
-                role="menu"
-                aria-orientation="vertical"
-                aria-labelledby="voices-dropdown"
-                tabIndex={-1}
-                ref={wrapperRef}
-              >
-                {children}
-              </div>
+            <motion.div
+              {...animation_props}
+              id={dropdownId}
+              className="dropdown-menu z-1000 fixed  bottom-0 left-0 mt-2 w-full origin-top-right border-2 bg-white shadow-lg ring-1 ring-black ring-opacity-5 lg:absolute lg:rounded-md"
+              role="menu"
+              aria-orientation="vertical"
+              aria-labelledby="voices-dropdown"
+              tabIndex={-1}
+              ref={wrapperRef}
+            >
+              {children}
             </motion.div>
           )}
         </AnimatePresence>

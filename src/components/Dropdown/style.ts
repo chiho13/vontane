@@ -4,10 +4,7 @@ export const DropdownStyle: StyledComponent<"div", any> = styled.div`
   position: relative;
 
   .dropdown-menu {
-    position: absolute;
-    z-index: 1;
-    background-color: white;
-    border: 1px solid #ccc;
+    border: 1px solid #aaaaaa;
     box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1),
       0 8px 10px -6px rgb(0 0 0 / 0.1);
   }

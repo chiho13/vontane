@@ -10,7 +10,6 @@ import React, {
   useContext,
 } from "react";
 import { DropdownStyle } from "./style";
-import useDropdown from "@/hooks/useDropdown";
 import useClickOutside from "@/hooks/useClickOutside";
 import { motion, AnimatePresence, useCycle } from "framer-motion";
 import { mq, breakpoints } from "@/utils/breakpoints";
@@ -163,7 +162,6 @@ function Dropdown(
   }: DropdownProps,
   ref: ForwardedRef<DropdownRef>
 ) {
-  // const { isOpen, handleOpen, handleClose } = useDropdown();
   const { activeDropdown, toggleDropdown } = useContext(DropdownContext);
   const isOpen = activeDropdown === dropdownId;
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -222,16 +220,18 @@ function Dropdown(
 
   return (
     <>
-      <AnimatePresence>
-        {activeDropdown === dropdownId && (
-          <motion.div {...clickoutside_props}>
-            <div
-              className="closeOutside fixed top-0 left-0 h-full w-screen opacity-50"
-              // onClick={handleClose}
-            ></div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {desktopbreakpoint && (
+        <AnimatePresence>
+          {activeDropdown === dropdownId && (
+            <motion.div {...clickoutside_props}>
+              <div
+                className="closeOutside fixed top-0 left-0 h-full w-screen opacity-50"
+                // onClick={handleClose}
+              ></div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      )}
       <DropdownStyle className="dropdown_wrapper">
         <button
           type="button"
@@ -251,7 +251,7 @@ function Dropdown(
             <motion.div
               {...animation_props}
               id={dropdownId}
-              className="dropdown-menu z-1000 fixed  bottom-0 left-0 mt-2 w-full origin-top-right border-2 bg-white shadow-lg ring-1 ring-black ring-opacity-5 lg:absolute lg:rounded-md"
+              className="dropdown-menu z-1000 fixed left-0  mt-2 w-full origin-top-right border-2 bg-white shadow-lg ring-1 ring-black ring-opacity-5 lg:absolute lg:rounded-md"
               role="menu"
               aria-orientation="vertical"
               aria-labelledby="voices-dropdown"

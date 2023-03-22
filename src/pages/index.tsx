@@ -134,16 +134,20 @@ const Home: NextPage = () => {
   return (
     <>
       <Layout profile={profile}>
-        <div className="mx-auto mt-10 flex justify-center p-4 lg:mt-4 lg:w-[1000px] ">
+        <div className="mx-auto mt-10 flex justify-center p-4 lg:mt-4">
           <div className="w-full">
-            <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
+            <div className="mx-auto lg:w-[1000px]">
+              <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
+            </div>
 
             <DocumentEditor handleTextChange={handleTextChange} />
-            <GenerateButton
-              isDisabled={isDisabled}
-              audioIsLoading={audioIsLoading}
-              onClick={generateAudio}
-            />
+            <div className="mx-auto lg:w-[1000px]">
+              <GenerateButton
+                isDisabled={isDisabled}
+                audioIsLoading={audioIsLoading}
+                onClick={generateAudio}
+              />
+            </div>
 
             {!audioIsLoading && generatedAudioElement && (
               <div className="fixed bottom-0 left-0 bottom-4 right-0 mx-auto flex w-full justify-center ">

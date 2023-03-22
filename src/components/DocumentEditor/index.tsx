@@ -270,8 +270,14 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       }
     }
 
-    if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
-      const direction = event.key === "ArrowLeft" ? "left" : "right";
+    if (
+      event.key === "ArrowLeft" ||
+      event.key === "ArrowRight" ||
+      event.key === "ArrowUp" ||
+      event.key === "ArrowDown"
+    ) {
+      const directionH = event.key === "ArrowLeft" ? "left" : "right";
+      const directionV = event.key === "ArrowUp" ? "up" : "down";
 
       const currentPosition = selection.anchor;
       const currentParagraph = Editor.node(editor, currentPosition.path);
@@ -287,7 +293,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         currentNodePath
       );
       let nextParagraph =
-        direction === "right"
+        directionH === "right"
           ? Editor.next(editor, {
               at: currentParagraph[1],
               match: (n) => n.type === "paragraph",
@@ -300,23 +306,27 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       while (nextParagraph) {
         const [nextNode, nextPath] = nextParagraph;
 
+        const prevSiblingNode = Editor.previous(editor, {
+          at: nextPath,
+        });
+
+        if (prevSiblingNode) {
+          console.log(prevSiblingNode[0]);
+          setPrevNode(prevSiblingNode[0]);
+        }
+
         if (
           nextNode.type !== "equation" &&
-          ((isStartofBlock && direction === "left") ||
-            (isEndofBlock && direction === "right"))
+          ((isStartofBlock && directionH === "left") ||
+            (isEndofBlock && directionH === "right"))
         ) {
+          const [currentNode, currentNodePath] = Editor.node(editor, nextPath);
+          const isEmpty = currentNode.children[0].text === "";
+
           const targetPosition =
-            direction === "left"
+            directionH === "left"
               ? Editor.end(editor, nextPath)
               : Editor.start(editor, nextPath);
-
-          const prevSiblingNode = Editor.previous(editor, {
-            at: nextPath,
-          });
-          if (prevSiblingNode) {
-            console.log(prevSiblingNode[0]);
-            setPrevNode(prevSiblingNode[0]);
-          }
 
           event.preventDefault();
           Transforms.select(editor, targetPosition);
@@ -324,7 +334,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         }
 
         nextParagraph =
-          direction === "left"
+          directionH === "left"
             ? Editor.previous(editor, {
                 at: nextPath,
                 match: (n) => n.type === "paragraph",
@@ -518,7 +528,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           <span
             {...attributes}
             contentEditable={false}
-            className="mx-auto block w-[90%] rounded-md py-2 hover:bg-gray-100"
+            className="my-2 block w-full rounded-md py-2 hover:bg-gray-100"
           >
             <BlockMath math={element.latex || ""} />
             <span style={{ display: "none" }}>{children}</span>

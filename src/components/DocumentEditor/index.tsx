@@ -14,6 +14,7 @@ import {
   Path,
   BaseEditor,
   Range,
+  Node,
   Element,
 } from "slate";
 import { Slate, Editable, withReact, ReactEditor } from "slate-react";
@@ -231,12 +232,20 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     [dropdownPositions, isLocked]
   );
 
+  const [prevNode, setPrevNode] = useState<Node | null>(null);
+
   const handleKeyDown = (event: React.KeyboardEvent) => {
     const { selection } = editor;
 
     if (!selection || !ReactEditor.isFocused(editor)) {
       return;
     }
+
+    const startPosition = selection.anchor;
+    const [currentNode, currentNodePath] = Editor.parent(
+      editor,
+      startPosition.path
+    );
 
     if (event.key === "Enter") {
       event.preventDefault();
@@ -267,6 +276,16 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       const currentPosition = selection.anchor;
       const currentParagraph = Editor.node(editor, currentPosition.path);
 
+      const isStartofBlock = Editor.isStart(
+        editor,
+        currentPosition,
+        currentNodePath
+      );
+      const isEndofBlock = Editor.isEnd(
+        editor,
+        currentPosition,
+        currentNodePath
+      );
       let nextParagraph =
         direction === "right"
           ? Editor.next(editor, {
@@ -281,11 +300,23 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       while (nextParagraph) {
         const [nextNode, nextPath] = nextParagraph;
 
-        if (nextNode.type !== "equation") {
+        if (
+          nextNode.type !== "equation" &&
+          ((isStartofBlock && direction === "left") ||
+            (isEndofBlock && direction === "right"))
+        ) {
           const targetPosition =
-            direction === "right"
+            direction === "left"
               ? Editor.end(editor, nextPath)
               : Editor.start(editor, nextPath);
+
+          const prevSiblingNode = Editor.previous(editor, {
+            at: nextPath,
+          });
+          if (prevSiblingNode) {
+            console.log(prevSiblingNode[0]);
+            setPrevNode(prevSiblingNode[0]);
+          }
 
           event.preventDefault();
           Transforms.select(editor, targetPosition);
@@ -293,18 +324,79 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         }
 
         nextParagraph =
-          direction === "right"
-            ? Editor.next(editor, {
+          direction === "left"
+            ? Editor.previous(editor, {
                 at: nextPath,
                 match: (n) => n.type === "paragraph",
               })
-            : Editor.previous(editor, {
+            : Editor.next(editor, {
                 at: nextPath,
                 match: (n) => n.type === "paragraph",
               });
       }
     }
+
+    if (event.key === "Backspace") {
+      if (
+        prevNode &&
+        prevNode.type === "equation" &&
+        currentNode.type === "paragraph" &&
+        Editor.isStart(editor, startPosition, currentNodePath)
+      ) {
+        // Move the cursor between paragraphs while skipping equation nodes, just like when the user hits the left arrow key
+        const currentPosition = selection.anchor;
+        const currentParagraph = Editor.node(editor, currentPosition.path);
+
+        const nextParagraph = Editor.previous(editor, {
+          at: currentParagraph[1],
+          match: (n) => n.type === "paragraph",
+        });
+
+        if (nextParagraph) {
+          const [nextNode, nextPath] = nextParagraph;
+          const targetPosition = Editor.end(editor, nextPath);
+          event.preventDefault();
+          Transforms.select(editor, targetPosition);
+        }
+        return;
+      } else {
+        // If the current node is a paragraph and the previous node is not an equation or the cursor is not at the start of the paragraph, delete the character
+        event.preventDefault();
+        Transforms.delete(editor, { unit: "character", reverse: true });
+      }
+    }
   };
+
+  function handleCursorClick(event, editor) {
+    const { selection } = editor;
+    if (selection) {
+      const startPosition = selection.anchor;
+      const [currentNode, currentNodePath] = Editor.parent(
+        editor,
+        startPosition.path
+      );
+
+      console.log(currentNode);
+      console.log(
+        "start",
+        Editor.isStart(editor, startPosition, currentNodePath)
+      );
+      // If the cursor is at the start of a paragraph
+      if (
+        currentNode.type === "paragraph" &&
+        Editor.isStart(editor, startPosition, currentNodePath)
+      ) {
+        const prevSiblingNode = Editor.previous(editor, {
+          at: currentNodePath,
+        });
+
+        if (prevSiblingNode) {
+          console.log(prevSiblingNode[0]);
+          setPrevNode(prevSiblingNode[0]);
+        }
+      }
+    }
+  }
 
   const handleAddEquation = useCallback(
     (latex: string, path: Path) => {
@@ -474,7 +566,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         onChange={(newValue) => {
           setValue(newValue);
 
-          console.log(newValue);
           if (handleTextChange) {
             handleTextChange(newValue);
           }
@@ -482,6 +573,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       >
         <Editable
           renderElement={renderElement}
+          onClick={(event) => handleCursorClick(event, editor)}
           onKeyDown={handleKeyDown}
           style={{
             height: "400px",

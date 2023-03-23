@@ -65,6 +65,7 @@ const MiniDropdown = React.forwardRef<HTMLDivElement, MiniDropdownProps>(
     const addBlock = (event: React.KeyboardEvent) => {
       onClick();
     };
+
     return (
       <div
         ref={ref}
@@ -72,7 +73,7 @@ const MiniDropdown = React.forwardRef<HTMLDivElement, MiniDropdownProps>(
       >
         <motion.button
           whileTap={{ scale: 0.97 }}
-          className="flex w-full items-center rounded-md border-2 border-gray-100 p-3 shadow-sm hover:bg-gray-100"
+          className="flex w-full items-center rounded-md border-2 border-gray-100 p-3 shadow-sm transition duration-300 hover:bg-gray-100"
           onClick={addBlock}
         >
           <Image
@@ -106,11 +107,6 @@ const EditBlockPopup = React.forwardRef<HTMLDivElement, EditBlockPopupProps>(
       setValue(latexValue);
     }, [latexValue]);
 
-    const isChemicalEquation = (input) => {
-      const regex = /\\text{\\ce}/;
-      return regex.test(input);
-    };
-
     const onEquationChange = (e) => {
       console.log(e.target.value);
       setValue(e.target.value);
@@ -131,7 +127,7 @@ const EditBlockPopup = React.forwardRef<HTMLDivElement, EditBlockPopupProps>(
         />
         <div>
           <button
-            className="flex items-center rounded-md bg-[#444444] px-2 py-1 text-sm text-white"
+            className="flex items-center rounded-md bg-[#007AFF] px-2 py-1  text-sm text-white  shadow-sm transition duration-300 hover:bg-[#006EE6] "
             onClick={onClick}
           >
             <span className="mr-1">Done</span>
@@ -215,10 +211,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       const hasEquationNode =
         currentNode.type === "equation" && currentNode.latex !== "";
 
-      console.log(currentNode, hasEquationNode);
+      const target = event.currentTarget as HTMLDivElement;
+      const targetRect = target.getBoundingClientRect();
 
-      console.log("hasEmptyParagraphNode", hasEmptyParagraphNode);
-      console.log(Path.next(path));
       if (
         !hasEmptyParagraphNode &&
         !hasEquationNode &&
@@ -229,13 +224,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           { type: "paragraph", children: [{ text: "" }] },
           { at: Path.next(path) }
         );
+        setDropdownTop(targetRect.top + 60);
+        setDropdownLeft(targetRect.left + 60);
+      } else {
+        setDropdownTop(targetRect.top + 30);
+        setDropdownLeft(targetRect.left + 60);
       }
-
-      const target = event.currentTarget as HTMLDivElement;
-      const targetRect = target.getBoundingClientRect();
-
-      setDropdownTop(targetRect.top + 60);
-      setDropdownLeft(targetRect.left + 60);
 
       setShowDropdown((prevState) => !prevState);
       setActivePath(currentpathString);
@@ -452,70 +446,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     setDropdownLeft(targetRect.left + 60);
   };
 
-  const handleAddEquation = useCallback(
-    (latex: string, path: Path) => {
-      if (showDropdown) {
-        const equationNode: CustomElement = {
-          type: "equation",
-          latex,
-          children: [{ text: "" }],
-        };
-
-        // Check if the first paragraph is empty
-        const [currentNode] = Editor.node(editor, path);
-
-        // console.log(currentNode.children[0].children[0]);
-
-        console.log(currentNode.children[0], path);
-        console.log(
-          currentNode.children[0].type === "paragraph",
-          currentNode.children[0].text === ""
-        );
-
-        console.log(path);
-
-        const isEmptyNode =
-          currentNode.children[0].type === "paragraph" &&
-          currentNode.children[0].text === "" &&
-          currentNode.children.length === 1;
-
-        console.log(isEmptyNode);
-        if (!isEmptyNode) {
-          // Replace the first paragraph with the equation node
-          Transforms.setNodes(editor, equationNode, { at: path });
-
-          // Insert an empty paragraph after the equation node
-          Transforms.insertNodes(
-            editor,
-            { type: "paragraph", children: [{ text: "" }] },
-            { at: Path.next(path) }
-          );
-
-          // Set the selection to the start of the new paragraph
-          const newPath = Path.next(path);
-          const newSelection = Editor.start(editor, newPath);
-          Transforms.select(editor, newSelection);
-        } else {
-          // Insert the equation node after the current node
-          Transforms.insertNodes(editor, equationNode, { at: Path.next(path) });
-
-          // Insert an empty paragraph after the equation node
-          Transforms.insertNodes(
-            editor,
-            { type: "paragraph", children: [{ text: "" }] },
-            { at: Path.next(Path.next(path)) }
-          );
-
-          // Set the selection to the start of the new paragraph
-          const newPath = Path.next(Path.next(path));
-          const newSelection = Editor.start(editor, newPath);
-          Transforms.select(editor, newSelection);
-        }
-      }
-    },
-    [showDropdown]
-  );
-
   const toggleRef = useRef<HTMLButtonElement>(null);
   const toggleEditBlockRef = useRef<HTMLElement>(null);
 
@@ -633,15 +563,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       setactiveEditEquationPath(null);
     }
   };
-  //   useEffect(() => {
-  //     if (activeEditEquationPath) {
-  //       const [currentNode] = Editor.node(
-  //         editor,
-  //         JSON.parse(activeEditEquationPath)
-  //       );
-  //       console.log(currentNode);
-  //     }
-  //   }, [activeEditEquationPath]);
 
   return (
     <div

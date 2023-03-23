@@ -110,7 +110,7 @@ const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({
                 <span className="text-bold text-sm">{label}: </span>
                 {items.map((item) => (
                   <FilterButton
-                    key={item.key}
+                    key={item.value}
                     filter={item}
                     onFilterChange={onMobileFilterChange}
                     filters={filters}

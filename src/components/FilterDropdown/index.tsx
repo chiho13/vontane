@@ -15,7 +15,7 @@ import FilterIcon from "../../icons/FilterIcon";
 import useClickOutside from "../../hooks/useClickOutside";
 import { flags } from "../../icons/flags";
 import { AnimatePresence, motion } from "framer-motion";
-import { animation_props } from "../Dropdown";
+import { y_animation_props } from "../Dropdown";
 import Image from "next/image";
 
 interface FilterProps {
@@ -93,7 +93,7 @@ function Filter(
 
       <AnimatePresence>
         {isOpen && (
-          <motion.div {...animation_props}>
+          <motion.div {...y_animation_props}>
             <div
               id={id}
               className="dropdown-menu absolute left-0 z-10 mt-2 w-full origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5"

@@ -117,14 +117,15 @@ const EditBlockPopup = React.forwardRef<HTMLDivElement, EditBlockPopupProps>(
       >
         <textarea
           value={value}
-          className="h-full w-[240px] resize-none bg-transparent p-1 focus:outline-none focus-visible:border-gray-400"
+          className="h-full w-[230px] resize-none bg-transparent p-1 focus:outline-none focus-visible:border-gray-400"
           onChange={onEquationChange}
           autoFocus
           onKeyDown={onEnterClose}
         />
         <div>
-          <button className="rounded-md bg-[#444444] px-2 py-1 text-sm text-white">
-            Done
+          <button className="flex items-center rounded-md bg-[#444444] px-2 py-1 text-sm text-white">
+            <span className="mr-1">Done</span>
+            <CornerDownLeft color="white" width={16} />
           </button>
         </div>
       </div>

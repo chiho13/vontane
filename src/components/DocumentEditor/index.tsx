@@ -21,6 +21,7 @@ import { Slate, Editable, withReact, ReactEditor } from "slate-react";
 import { Plus, CornerDownLeft } from "lucide-react";
 import { BlockMath } from "react-katex";
 import "katex/dist/katex.min.css";
+import "katex/dist/contrib/mhchem.min.js";
 import { AnimatePresence, motion } from "framer-motion";
 
 import Image from "next/image";
@@ -75,7 +76,7 @@ const MiniDropdown = React.forwardRef<HTMLDivElement, MiniDropdownProps>(
           onClick={addBlock}
         >
           <Image
-            src="/images/latex.png"
+            src="/images/tex.png"
             alt="add latex block equation"
             width={60}
             height={60}
@@ -92,17 +93,23 @@ MiniDropdown.displayName = "MiniDropdown";
 
 interface EditBlockPopupProps {
   onChange: (value: string) => void;
+  onClick: () => void;
   onEnterClose: (e: React.KeyboardEvent) => void;
   latexValue: string;
 }
 
 const EditBlockPopup = React.forwardRef<HTMLDivElement, EditBlockPopupProps>(
-  ({ onChange, onEnterClose, latexValue }, ref) => {
+  ({ onChange, onClick, onEnterClose, latexValue }, ref) => {
     const [value, setValue] = useState(latexValue);
 
     useEffect(() => {
       setValue(latexValue);
     }, [latexValue]);
+
+    const isChemicalEquation = (input) => {
+      const regex = /\\text{\\ce}/;
+      return regex.test(input);
+    };
 
     const onEquationChange = (e) => {
       console.log(e.target.value);
@@ -123,7 +130,10 @@ const EditBlockPopup = React.forwardRef<HTMLDivElement, EditBlockPopupProps>(
           onKeyDown={onEnterClose}
         />
         <div>
-          <button className="flex items-center rounded-md bg-[#444444] px-2 py-1 text-sm text-white">
+          <button
+            className="flex items-center rounded-md bg-[#444444] px-2 py-1 text-sm text-white"
+            onClick={onClick}
+          >
             <span className="mr-1">Done</span>
             <CornerDownLeft color="white" width={16} />
           </button>
@@ -573,7 +583,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             {element.latex.length === 0 && (
               <div className="flex items-center">
                 <Image
-                  src="/images/latex.png"
+                  src="/images/tex.png"
                   alt="add latex block equation"
                   width={50}
                   height={50}
@@ -696,6 +706,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     handleEditLatex(value, JSON.parse(activeEditEquationPath))
                   }
                   latexValue={getCurrentLatex}
+                  onClick={closeEditableDropdown}
                   onEnterClose={(event) => {
                     if (event.key === "Enter" && !event.shiftKey) {
                       event.preventDefault();

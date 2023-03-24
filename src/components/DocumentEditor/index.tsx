@@ -22,7 +22,7 @@ import {
   Editable,
   withReact,
   ReactEditor,
-  useEditor,
+  DefaultElement,
 } from "slate-react";
 import { Plus, CornerDownLeft } from "lucide-react";
 import { BlockMath } from "react-katex";
@@ -40,10 +40,14 @@ import { y_animation_props } from "../Dropdown";
 
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 import { createPortal } from "react-dom";
+
+import { makeNodeId, withNodeId } from "@/utils/nodeId";
+
 import {
   SortableContext,
   useSortable,
   AnimateLayoutChanges,
+  verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 
 interface DocumentEditorProps {
@@ -51,6 +55,7 @@ interface DocumentEditorProps {
 }
 
 type CustomElement = {
+  id: string;
   type: "paragraph" | "equation";
   children: CustomText[];
   isEditable: boolean;
@@ -73,6 +78,9 @@ interface MiniDropdownProps {
   isOpen: boolean;
   onClick: () => void;
 }
+
+const useEditor = () =>
+  useMemo(() => withNodeId(withReact(createEditor())), []);
 
 const MiniDropdown = React.forwardRef<HTMLDivElement, MiniDropdownProps>(
   ({ isOpen, onClick }, ref) => {
@@ -113,625 +121,101 @@ interface EditBlockPopupProps {
   latexValue: string;
 }
 
-const EditBlockPopup = React.forwardRef<HTMLDivElement, EditBlockPopupProps>(
-  ({ onChange, onClick, onEnterClose, latexValue }, ref) => {
-    const [value, setValue] = useState(latexValue);
-
-    useEffect(() => {
-      setValue(latexValue);
-    }, [latexValue]);
-
-    const onEquationChange = (e) => {
-      console.log(e.target.value);
-      setValue(e.target.value);
-      onChange(e.target.value);
-    };
-
-    return (
-      <div
-        ref={ref}
-        className="flex h-[100px] justify-between rounded-md border border-gray-200 bg-gray-100 p-2 shadow-md"
-      >
-        <textarea
-          value={value}
-          className="h-full w-[230px] resize-none bg-transparent p-1 focus:outline-none focus-visible:border-gray-400"
-          onChange={onEquationChange}
-          autoFocus
-          onKeyDown={onEnterClose}
-        />
-        <div>
-          <button
-            className="flex items-center rounded-md bg-[#007AFF] px-2 py-1  text-sm text-white  shadow-sm transition duration-300 hover:bg-[#006EE6] "
-            onClick={onClick}
-          >
-            <span className="mr-1">Done</span>
-            <CornerDownLeft color="white" width={16} />
-          </button>
-        </div>
-      </div>
-    );
-  }
-);
-
-const renderElementContent = (props) => {
-  const { attributes, children, element } = props;
-  if (element.type === "equation") {
-    return (
-      <div
-        tabIndex={0}
-        className={`my-2 flex w-full items-center rounded-md p-2 ${
-          element.latex.length === 0 ? "bg-gray-100" : "justify-center"
-        } cursor-pointer transition duration-300 hover:bg-gray-200 focus:bg-gray-200 active:bg-gray-200`}
-        onClick={(event) =>
-          openEditBlockPopup(event, ReactEditor.findPath(editor, element))
-        }
-        contentEditable={false}
-        ref={toggleEditBlockRef}
-      >
-        <BlockMath math={element.latex || ""} />
-
-        {element.latex.length === 0 && (
-          <div className="flex items-center">
-            <Image
-              src="/images/tex.png"
-              alt="add latex block equation"
-              width={50}
-              height={50}
-              className="opacity-30"
-            />
-            <span className="ml-4 opacity-30">Add Block Equation</span>
-          </div>
-        )}
-
-        <span style={{ display: "none" }}>{children}</span>
-      </div>
-    );
-  } else if (element.type === "paragraph") {
-    return (
-      <p {...attributes} className=" mx-auto block leading-relaxed">
-        {children}
-      </p>
-    );
-  }
-};
-
-const DragOverlayContent = ({ element }) => {
+export default function App() {
   const editor = useEditor();
-  const [value] = useState([JSON.parse(JSON.stringify(element))]); // clone
 
-  return (
-    <div className="drag-overlay">
-      <button>⠿</button>
-      <Slate editor={editor} value={value}>
-        <Editable readOnly={true} renderElement={renderElementContent} />
-      </Slate>
-    </div>
-  );
-};
-
-export const DocumentEditor: React.FC<DocumentEditorProps> = ({
-  handleTextChange,
-}) => {
-  const theme = useTheme();
-  const { isLocked } = useContext(LayoutContext);
-  const editor = useMemo(() => withReact(createEditor()), []);
-  const [slatevalue, setValue] = useState([
+  const [value, setValue] = useState([
     {
-      type: "paragraph",
-      children: [{ text: "" }],
+      id: makeNodeId(),
+      children: [
+        {
+          text: "Interval (music)",
+        },
+      ],
+    },
+    {
+      id: makeNodeId(),
+      children: [
+        {
+          text: "In music theory, an interval is a difference in pitch between two sounds. An interval may be described as horizontal, linear, or melodic if it refers to successively sounding tones, such as two adjacent pitches in a melody, and vertical or harmonic if it pertains to simultaneously sounding tones, such as in a chord.",
+        },
+      ],
     },
   ]);
-
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [showEditBlockPopup, setShowEditBlockPopup] = useState(false);
-
-  const [offsetDropdownPosition, setOffsetDropdownPosition] = useState<number>(
-    isLocked ? -150 : 0
-  );
-
-  useEffect(() => {
-    setOffsetDropdownPosition(isLocked ? -150 : 0);
-  }, [isLocked]);
-
-  const [dropdownPositions, setDropdownPositions] = useState<
-    Map<string, { top: number; left: number }>
-  >(new Map());
-
-  const [activePath, setActivePath] = useState<string | null>(null);
-  const [activeEditEquationPath, setactiveEditEquationPath] = useState<
-    string | null
-  >(null);
-
-  const addSomethingDropdownRef = useRef<HTMLDivElement | null>(null);
-  const editBlockDropdownRef = useRef<HTMLDivElement | null>(null);
-  const [addedParagraphs, setAddedParagraphs] = useState<Set<string>>(
-    new Set()
-  );
-
-  const [dropdownTop, setDropdownTop] = useState<number | null>(null);
-  const [dropdownLeft, setDropdownLeft] = useState<number | null>(null);
-
   const [activeId, setActiveId] = useState(null);
   const activeElement = editor.children.find((x) => x.id === activeId);
 
-  const openMiniDropdown = useCallback(
-    (event: React.MouseEvent, path: Path) => {
-      const currentpathString = JSON.stringify(path);
-
-      const offsetDropdownPosition = isLocked ? -150 : 0;
-      const [currentNode] = Editor.node(editor, path);
-      const { selection } = editor;
-
-      //   const lastNode = Editor.node(editor, selection.focus);
-      if (!selection) return;
-
-      const [parentNode, parentPath] = Editor.parent(
-        editor,
-        selection.anchor.path
-      );
-
-      const parentpathString = JSON.stringify(parentPath);
-
-      const [lastNode, lastPath] = Editor.last(editor, []);
-
-      const lastpathString = JSON.stringify(lastPath.slice(0, -1));
-      //   console.log(lastPath[0]);
-      const hasEmptyParagraphNode =
-        currentNode.type === "paragraph" &&
-        currentNode.children.length === 1 &&
-        currentNode.children[0].text === "";
-
-      const hasEquationNode =
-        currentNode.type === "equation" && currentNode.latex !== "";
-
-      const target = event.currentTarget as HTMLDivElement;
-      const targetRect = target.getBoundingClientRect();
-
-      if (
-        !hasEmptyParagraphNode &&
-        !hasEquationNode &&
-        parentpathString === lastpathString
-      ) {
-        Transforms.insertNodes(
-          editor,
-          { type: "paragraph", children: [{ text: "" }] },
-          { at: Path.next(path) }
-        );
-        setDropdownTop(targetRect.top + 60);
-        setDropdownLeft(targetRect.left + 60);
-      } else {
-        setDropdownTop(targetRect.top + 30);
-        setDropdownLeft(targetRect.left + 60);
-      }
-
-      setShowDropdown((prevState) => !prevState);
-      setActivePath(currentpathString);
-    },
-    [dropdownPositions, isLocked]
-  );
-
-  const [prevNode, setPrevNode] = useState<Node | null>(null);
-
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    const { selection } = editor;
-
-    if (!selection || !ReactEditor.isFocused(editor)) {
-      return;
-    }
-
-    const startPosition = selection.anchor;
-    const [currentNode, currentNodePath] = Editor.parent(
-      editor,
-      startPosition.path
-    );
-
-    if (event.key === "Enter") {
-      event.preventDefault();
-
-      if (selection) {
-        const [parentNode, parentPath] = Editor.parent(
-          editor,
-          selection.anchor.path
-        );
-        if (parentNode.type === "paragraph") {
-          const newPath = Path.next(parentPath);
-          Transforms.insertNodes(
-            editor,
-            {
-              type: "paragraph",
-              children: [{ text: "" }],
-            },
-            { at: newPath }
-          );
-          Transforms.select(editor, Editor.start(editor, newPath));
-        }
-      }
-    }
-
-    if (
-      event.key === "ArrowLeft" ||
-      event.key === "ArrowRight" ||
-      event.key === "ArrowUp" ||
-      event.key === "ArrowDown"
-    ) {
-      const directionH = event.key === "ArrowLeft" ? "left" : "right";
-      const directionV = event.key === "ArrowUp" ? "up" : "down";
-
-      const currentPosition = selection.anchor;
-      const currentParagraph = Editor.node(editor, currentPosition.path);
-
-      const isStartofBlock = Editor.isStart(
-        editor,
-        currentPosition,
-        currentNodePath
-      );
-      const isEndofBlock = Editor.isEnd(
-        editor,
-        currentPosition,
-        currentNodePath
-      );
-      let nextParagraph =
-        directionH === "right"
-          ? Editor.next(editor, {
-              at: currentParagraph[1],
-              match: (n) => n.type === "paragraph",
-            })
-          : Editor.previous(editor, {
-              at: currentParagraph[1],
-              match: (n) => n.type === "paragraph",
-            });
-
-      while (nextParagraph) {
-        const [nextNode, nextPath] = nextParagraph;
-
-        const prevSiblingNode = Editor.previous(editor, {
-          at: nextPath,
-        });
-
-        if (prevSiblingNode) {
-          console.log(prevSiblingNode[0]);
-          setPrevNode(prevSiblingNode[0]);
-        }
-
-        if (
-          nextNode.type !== "equation" &&
-          ((isStartofBlock && directionH === "left") ||
-            (isEndofBlock && directionH === "right"))
-        ) {
-          const [currentNode, currentNodePath] = Editor.node(editor, nextPath);
-          const isEmpty = currentNode.children[0].text === "";
-
-          const targetPosition =
-            directionH === "left"
-              ? Editor.end(editor, nextPath)
-              : Editor.start(editor, nextPath);
-
-          event.preventDefault();
-          Transforms.select(editor, targetPosition);
-          return;
-        }
-
-        nextParagraph =
-          directionH === "left"
-            ? Editor.previous(editor, {
-                at: nextPath,
-                match: (n) => n.type === "paragraph",
-              })
-            : Editor.next(editor, {
-                at: nextPath,
-                match: (n) => n.type === "paragraph",
-              });
-      }
-    }
-
-    if (event.key === "Backspace") {
-      console.log("sdfsdf", currentNode);
-      if (
-        currentNode.type === "paragraph" &&
-        Editor.isStart(editor, startPosition, currentNodePath)
-      ) {
-        // Move the cursor between paragraphs while skipping equation nodes, just like when the user hits the left arrow key
-        const currentPosition = selection.anchor;
-        const currentParagraph = Editor.node(editor, currentPosition.path);
-
-        if (prevNode && prevNode.type === "equation") {
-          event.preventDefault();
-          const nextParagraph = Editor.previous(editor, {
-            at: currentParagraph[1],
-            match: (n) => n.type === "paragraph",
-          });
-
-          if (nextParagraph) {
-            const [nextNode, nextPath] = nextParagraph;
-            const targetPosition = Editor.end(editor, nextPath);
-            Transforms.select(editor, targetPosition);
-          }
-        }
-      } else {
-        // If the current node is a paragraph and the previous node is not an equation or the cursor is not at the start of the paragraph, delete the character
-        event.preventDefault();
-        Transforms.delete(editor, { unit: "character", reverse: true });
-      }
+  const handleDragStart = (event) => {
+    if (event.active) {
+      clearSelection();
+      setActiveId(event.active.id);
     }
   };
 
-  function handleCursorClick(event, editor) {
-    const { selection } = editor;
-    if (selection) {
-      const startPosition = selection.anchor;
-      const [currentNode, currentNodePath] = Editor.parent(
-        editor,
-        startPosition.path
-      );
+  const handleDragEnd = (event) => {
+    const overId = event.over?.id;
+    const overIndex = editor.children.findIndex((x) => x.id === overId);
 
-      console.log(currentNode);
-      console.log(
-        "start",
-        Editor.isStart(editor, startPosition, currentNodePath)
-      );
-      // If the cursor is at the start of a paragraph
-      if (
-        currentNode.type === "paragraph" &&
-        Editor.isStart(editor, startPosition, currentNodePath)
-      ) {
-        const prevSiblingNode = Editor.previous(editor, {
-          at: currentNodePath,
-        });
-
-        if (prevSiblingNode) {
-          console.log(prevSiblingNode[0]);
-          setPrevNode(prevSiblingNode[0]);
-        }
-      }
+    if (overId !== activeId && overIndex !== -1) {
+      Transforms.moveNodes(editor, {
+        at: [],
+        match: (node) => node.id === activeId,
+        to: [overIndex],
+      });
     }
-  }
 
-  const handleEditLatex = (value: string, path: Path) => {
-    console.log(value);
-    const latex = value;
-    const equationNode: CustomElement = {
-      type: "equation",
-      latex,
-      isEditable: true, // Add this line to make the equation editable
-      children: [{ text: "" }],
-    };
-
-    Transforms.setNodes(editor, equationNode, { at: path });
+    setActiveId(null);
   };
 
-  const [getCurrentLatex, setCurrentLatex] = useState("");
-
-  const openEditBlockPopup = (event: React.MouseEvent, path: Path) => {
-    event.stopPropagation();
-    const target = event.currentTarget as HTMLDivElement;
-    const targetRect = target.getBoundingClientRect();
-
-    const currentPathString = JSON.stringify(path);
-    setactiveEditEquationPath((prevPath) =>
-      prevPath === currentPathString ? null : currentPathString
-    );
-
-    const [currentNode] = Editor.node(editor, path);
-    setCurrentLatex(currentNode.latex);
-
-    setShowEditBlockPopup(true);
-    setDropdownTop(targetRect.top + 60);
-    setDropdownLeft(targetRect.left + 60);
+  const handleDragCancel = () => {
+    setActiveId(null);
   };
 
-  const toggleRef = useRef<HTMLButtonElement>(null);
-  const toggleEditBlockRef = useRef<HTMLElement>(null);
-
-  const handleAddEditableEquationBlock = useCallback(
-    (latex: string, path: Path) => {
-      if (showDropdown) {
-        const equationNode: CustomElement = {
-          type: "equation",
-          latex,
-          isEditable: true, // Add this line to make the equation editable
-          children: [{ text: "" }],
-        };
-
-        const [currentNode] = Editor.node(editor, path);
-        const isEmptyNode =
-          (currentNode.type === "paragraph" &&
-            currentNode.children[0].text === "") ||
-          currentNode.children[0].text === " ";
-
-        if (isEmptyNode) {
-          Transforms.setNodes(editor, equationNode, { at: path });
-
-          Transforms.insertNodes(
-            editor,
-            { type: "paragraph", children: [{ text: "" }] },
-            { at: Path.next(path) }
-          );
-          setactiveEditEquationPath(JSON.stringify(path));
-          const newPath = Path.next(path);
-          const newSelection = Editor.start(editor, newPath);
-          Transforms.select(editor, newSelection);
-        } else {
-          Transforms.insertNodes(editor, equationNode, { at: Path.next(path) });
-          setactiveEditEquationPath(JSON.stringify(Path.next(path)));
-        }
-
-        // const target = toggleEditBlockRef.current;
-        // const targetOffset = target && target.getBoundingClientRect();
-        // console.log(toggleEditBlockRef);
-        setShowEditBlockPopup(true);
-      }
-    },
-    [showDropdown, toggleEditBlockRef]
-  );
+  const clearSelection = () => {
+    ReactEditor.blur(editor);
+    Transforms.deselect(editor);
+    window.getSelection()?.empty();
+  };
 
   const renderElement = useCallback((props) => {
-    const { attributes, children, element } = props;
-    const path = ReactEditor.findPath(editor, element);
+    const isTopLevel = ReactEditor.findPath(editor, props.element).length === 1;
 
-    const isTopLevel = Path.parent(path).length === 0;
-    const draggableElement = isTopLevel ? (
-      <SortableElement {...props} />
+    return isTopLevel ? (
+      <SortableElement {...props} renderElement={renderElementContent} />
     ) : (
-      <div {...attributes}>{children}</div>
-    );
-
-    return (
-      <div className="group relative" {...attributes}>
-        {element.type === "equation" && (
-          <div
-            tabIndex={0}
-            className={`my-2 flex w-full items-center rounded-md p-2 ${
-              element.latex.length === 0 ? "bg-gray-100" : "justify-center"
-            } cursor-pointer transition duration-300 hover:bg-gray-200 focus:bg-gray-200 active:bg-gray-200`}
-            onClick={(event) =>
-              openEditBlockPopup(event, ReactEditor.findPath(editor, element))
-            }
-            contentEditable={false}
-            ref={toggleEditBlockRef}
-          >
-            <BlockMath math={element.latex || ""} />
-
-            {element.latex.length === 0 && (
-              <div className="flex items-center">
-                <Image
-                  src="/images/tex.png"
-                  alt="add latex block equation"
-                  width={50}
-                  height={50}
-                  className="opacity-30"
-                />
-                <span className="ml-4 opacity-30">Add Block Equation</span>
-              </div>
-            )}
-
-            <span style={{ display: "none" }}>{children}</span>
-          </div>
-        )}
-        {element.type === "paragraph" && (
-          <p {...attributes} className=" mx-auto block leading-relaxed">
-            {children}
-          </p>
-        )}
-        <div className="absolute -left-16 top-3 -mt-5 flex h-10 w-10 cursor-pointer items-center justify-center opacity-0 group-hover:opacity-100">
-          <button
-            className="rounded-md hover:bg-gray-200"
-            onClick={(event) => {
-              event.stopPropagation();
-              openMiniDropdown(event, ReactEditor.findPath(editor, element));
-            }}
-            ref={toggleRef}
-          >
-            <Plus color={theme.colors.darkgray} />
-          </button>
-        </div>
-      </div>
+      renderElementContent(props)
     );
   }, []);
 
-  useClickOutside(
-    addSomethingDropdownRef,
-    () => {
-      if (showDropdown) {
-        setShowDropdown(false);
-      }
-    },
-    toggleRef
+  const items = useMemo(
+    () => editor.children.map((element) => element.id),
+    [editor.children]
   );
-
-  const closeEditableDropdown = () => {
-    if (showEditBlockPopup) {
-      setShowEditBlockPopup(false);
-      setactiveEditEquationPath(null);
-    }
-  };
 
   return (
-    <div
-      tabIndex={0}
-      className="relative mb-2 mt-5 block h-[400px] rounded-md border-2 border-gray-100 bg-white p-4 focus:outline-none focus-visible:border-gray-300 lg:w-[750px]"
-    >
-      <Slate value={slatevalue}>
-        <DndContext>
-          <SortableContext>
-            <Editable renderElement={renderElement} />
-            {createPortal(
-              <DragOverlay>
-                {activeElement && (
-                  <DragOverlayContent element={activeElement} />
-                )}
-              </DragOverlay>,
-              document.body
-            )}
-          </SortableContext>
-        </DndContext>
-      </Slate>
-
-      <AnimatePresence>
-        {showDropdown && activePath && (
-          <motion.div
-            {...y_animation_props}
-            className="fixed z-10 mt-2 w-[320px]"
-            style={{
-              top: `${dropdownTop}px`,
-              left: `${dropdownLeft}px`,
-              transform: "translateX(20px)",
-            }}
-          >
-            <MiniDropdown
-              ref={addSomethingDropdownRef}
-              isOpen={showDropdown}
-              onClick={() => {
-                handleAddEditableEquationBlock("", JSON.parse(activePath));
-                setShowDropdown(false);
-              }}
-            />
-          </motion.div>
+    <Slate editor={editor} value={value} onChange={setValue}>
+      <DndContext
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        onDragCancel={handleDragCancel}
+      >
+        <SortableContext items={items} strategy={verticalListSortingStrategy}>
+          <Editable renderElement={renderElement} />
+        </SortableContext>
+        {createPortal(
+          <DragOverlay adjustScale={false}>
+            {activeElement && <DragOverlayContent element={activeElement} />}
+          </DragOverlay>,
+          document.body
         )}
-      </AnimatePresence>
-      <AnimatePresence>
-        {showEditBlockPopup && activeEditEquationPath && (
-          <>
-            <motion.div
-              {...y_animation_props}
-              className="fixed z-10 mt-2 w-[320px]"
-              style={{
-                top: `${dropdownTop}px`,
-                right: `${dropdownLeft}px`,
-              }}
-            >
-              <EditBlockPopup
-                ref={editBlockDropdownRef}
-                onChange={(value) =>
-                  handleEditLatex(value, JSON.parse(activeEditEquationPath))
-                }
-                latexValue={getCurrentLatex}
-                onClick={closeEditableDropdown}
-                onEnterClose={(event) => {
-                  if (event.key === "Enter" && !event.shiftKey) {
-                    event.preventDefault();
-                    closeEditableDropdown();
-                  }
-                }}
-              />
-            </motion.div>
-            <div
-              tabIndex={0}
-              onClick={closeEditableDropdown}
-              className="closeOutside fixed bottom-0 left-0 h-screen w-screen opacity-50"
-              style={{
-                height: "calc(100vh - 50px",
-              }}
-            ></div>
-          </>
-        )}
-      </AnimatePresence>
-    </div>
+      </DndContext>
+    </Slate>
   );
-};
+}
 
-export default DocumentEditor;
+const renderElementContent = (props) => <DefaultElement {...props} />;
 
-const SortableElement = ({ attributes, element, children }) => {
+const SortableElement = ({ attributes, element, children, renderElement }) => {
   const sortable = useSortable({ id: element.id });
 
   return (
@@ -740,14 +224,13 @@ const SortableElement = ({ attributes, element, children }) => {
         <button contentEditable={false} {...sortable.listeners}>
           ⠿
         </button>
-        <div>{children}</div>
+        <div>{renderElement({ element, children })}</div>
       </Sortable>
     </div>
   );
 };
 
 const Sortable = ({ sortable, children }) => {
-  const toPx = (value) => (value ? `${Math.round(value)}px` : undefined);
   return (
     <div
       className="sortable"
@@ -761,6 +244,20 @@ const Sortable = ({ sortable, children }) => {
       }}
     >
       {children}
+    </div>
+  );
+};
+
+const DragOverlayContent = ({ element }) => {
+  const editor = useEditor();
+  const [value] = useState([JSON.parse(JSON.stringify(element))]); // clone
+
+  return (
+    <div className="drag-overlay">
+      <button>⠿</button>
+      <Slate editor={editor} value={value}>
+        <Editable readOnly={true} renderElement={renderElementContent} />
+      </Slate>
     </div>
   );
 };

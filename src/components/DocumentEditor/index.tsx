@@ -588,66 +588,66 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             height: "400px",
           }}
         />
-        <AnimatePresence>
-          {showDropdown && activePath && (
+      </Slate>
+      <AnimatePresence>
+        {showDropdown && activePath && (
+          <motion.div
+            {...y_animation_props}
+            className="fixed z-10 mt-2 w-[320px]"
+            style={{
+              top: `${dropdownTop}px`,
+              left: `${dropdownLeft}px`,
+              transform: "translateX(20px)",
+            }}
+          >
+            <MiniDropdown
+              ref={addSomethingDropdownRef}
+              isOpen={showDropdown}
+              onClick={() => {
+                handleAddEditableEquationBlock("", JSON.parse(activePath));
+                setShowDropdown(false);
+              }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {showEditBlockPopup && activeEditEquationPath && (
+          <>
             <motion.div
               {...y_animation_props}
               className="fixed z-10 mt-2 w-[320px]"
               style={{
                 top: `${dropdownTop}px`,
-                left: `${dropdownLeft}px`,
-                transform: "translateX(20px)",
+                right: `${dropdownLeft}px`,
               }}
             >
-              <MiniDropdown
-                ref={addSomethingDropdownRef}
-                isOpen={showDropdown}
-                onClick={() => {
-                  handleAddEditableEquationBlock("", JSON.parse(activePath));
-                  setShowDropdown(false);
+              <EditBlockPopup
+                ref={editBlockDropdownRef}
+                onChange={(value) =>
+                  handleEditLatex(value, JSON.parse(activeEditEquationPath))
+                }
+                latexValue={getCurrentLatex}
+                onClick={closeEditableDropdown}
+                onEnterClose={(event) => {
+                  if (event.key === "Enter" && !event.shiftKey) {
+                    event.preventDefault();
+                    closeEditableDropdown();
+                  }
                 }}
               />
             </motion.div>
-          )}
-        </AnimatePresence>
-        <AnimatePresence>
-          {showEditBlockPopup && activeEditEquationPath && (
-            <>
-              <motion.div
-                {...y_animation_props}
-                className="fixed z-10 mt-2 w-[320px]"
-                style={{
-                  top: `${dropdownTop}px`,
-                  right: `${dropdownLeft}px`,
-                }}
-              >
-                <EditBlockPopup
-                  ref={editBlockDropdownRef}
-                  onChange={(value) =>
-                    handleEditLatex(value, JSON.parse(activeEditEquationPath))
-                  }
-                  latexValue={getCurrentLatex}
-                  onClick={closeEditableDropdown}
-                  onEnterClose={(event) => {
-                    if (event.key === "Enter" && !event.shiftKey) {
-                      event.preventDefault();
-                      closeEditableDropdown();
-                    }
-                  }}
-                />
-              </motion.div>
-              <div
-                tabIndex={0}
-                onClick={closeEditableDropdown}
-                className="closeOutside fixed bottom-0 left-0 h-screen w-screen opacity-50"
-                style={{
-                  height: "calc(100vh - 50px",
-                }}
-              ></div>
-            </>
-          )}
-        </AnimatePresence>
-      </Slate>
+            <div
+              tabIndex={0}
+              onClick={closeEditableDropdown}
+              className="closeOutside fixed bottom-0 left-0 h-screen w-screen opacity-50"
+              style={{
+                height: "calc(100vh - 50px",
+              }}
+            ></div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

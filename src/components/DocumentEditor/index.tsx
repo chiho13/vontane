@@ -17,7 +17,13 @@ import {
   Node,
   Element,
 } from "slate";
-import { Slate, Editable, withReact, ReactEditor } from "slate-react";
+import {
+  Slate,
+  Editable,
+  withReact,
+  ReactEditor,
+  useEditor,
+} from "slate-react";
 import { Plus, CornerDownLeft } from "lucide-react";
 import { BlockMath } from "react-katex";
 import "katex/dist/katex.min.css";
@@ -31,6 +37,14 @@ import useClickOutside from "@/hooks/useClickOutside";
 
 import { LayoutContext } from "../Layouts/AccountLayout";
 import { y_animation_props } from "../Dropdown";
+
+import { DndContext, DragOverlay } from "@dnd-kit/core";
+import { createPortal } from "react-dom";
+import {
+  SortableContext,
+  useSortable,
+  AnimateLayoutChanges,
+} from "@dnd-kit/sortable";
 
 interface DocumentEditorProps {
   handleTextChange?: (value: any) => void;
@@ -139,6 +153,62 @@ const EditBlockPopup = React.forwardRef<HTMLDivElement, EditBlockPopupProps>(
   }
 );
 
+const renderElementContent = (props) => {
+  const { attributes, children, element } = props;
+  if (element.type === "equation") {
+    return (
+      <div
+        tabIndex={0}
+        className={`my-2 flex w-full items-center rounded-md p-2 ${
+          element.latex.length === 0 ? "bg-gray-100" : "justify-center"
+        } cursor-pointer transition duration-300 hover:bg-gray-200 focus:bg-gray-200 active:bg-gray-200`}
+        onClick={(event) =>
+          openEditBlockPopup(event, ReactEditor.findPath(editor, element))
+        }
+        contentEditable={false}
+        ref={toggleEditBlockRef}
+      >
+        <BlockMath math={element.latex || ""} />
+
+        {element.latex.length === 0 && (
+          <div className="flex items-center">
+            <Image
+              src="/images/tex.png"
+              alt="add latex block equation"
+              width={50}
+              height={50}
+              className="opacity-30"
+            />
+            <span className="ml-4 opacity-30">Add Block Equation</span>
+          </div>
+        )}
+
+        <span style={{ display: "none" }}>{children}</span>
+      </div>
+    );
+  } else if (element.type === "paragraph") {
+    return (
+      <p {...attributes} className=" mx-auto block leading-relaxed">
+        {children}
+      </p>
+    );
+  }
+};
+
+const DragOverlayContent = ({ element }) => {
+  const editor = useEditor();
+  const [value] = useState([JSON.parse(JSON.stringify(element))]); // clone
+
+  return (
+    <div className="drag-overlay">
+      <button>⠿</button>
+      <Slate editor={editor} value={value}>
+        <Editable readOnly={true} renderElement={renderElementContent} />
+      </Slate>
+    </div>
+  );
+};
+
 export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   handleTextChange,
 }) => {
@@ -180,6 +250,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   const [dropdownTop, setDropdownTop] = useState<number | null>(null);
   const [dropdownLeft, setDropdownLeft] = useState<number | null>(null);
+
+  const [activeId, setActiveId] = useState(null);
+  const activeElement = editor.children.find((x) => x.id === activeId);
 
   const openMiniDropdown = useCallback(
     (event: React.MouseEvent, path: Path) => {
@@ -494,6 +567,14 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const renderElement = useCallback((props) => {
     const { attributes, children, element } = props;
     const path = ReactEditor.findPath(editor, element);
+
+    const isTopLevel = Path.parent(path).length === 0;
+    const draggableElement = isTopLevel ? (
+      <SortableElement {...props} />
+    ) : (
+      <div {...attributes}>{children}</div>
+    );
+
     return (
       <div className="group relative" {...attributes}>
         {element.type === "equation" && (
@@ -569,87 +650,117 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       tabIndex={0}
       className="relative mb-2 mt-5 block h-[400px] rounded-md border-2 border-gray-100 bg-white p-4 focus:outline-none focus-visible:border-gray-300 lg:w-[750px]"
     >
-      <Slate
-        editor={editor}
-        value={slatevalue}
-        onChange={(newValue) => {
-          setValue(newValue);
+      <Slate value={slatevalue}>
+        <DndContext>
+          <SortableContext>
+            <Editable renderElement={renderElement} />
+            {createPortal(
+              <DragOverlay>
+                {activeElement && (
+                  <DragOverlayContent element={activeElement} />
+                )}
+              </DragOverlay>,
+              document.body
+            )}
+          </SortableContext>
+        </DndContext>
+      </Slate>
 
-          if (handleTextChange) {
-            handleTextChange(newValue);
-          }
-        }}
-      >
-        <Editable
-          renderElement={renderElement}
-          onClick={(event) => handleCursorClick(event, editor)}
-          onKeyDown={handleKeyDown}
-          style={{
-            height: "400px",
-          }}
-        />
-        <AnimatePresence>
-          {showDropdown && activePath && (
+      <AnimatePresence>
+        {showDropdown && activePath && (
+          <motion.div
+            {...y_animation_props}
+            className="fixed z-10 mt-2 w-[320px]"
+            style={{
+              top: `${dropdownTop}px`,
+              left: `${dropdownLeft}px`,
+              transform: "translateX(20px)",
+            }}
+          >
+            <MiniDropdown
+              ref={addSomethingDropdownRef}
+              isOpen={showDropdown}
+              onClick={() => {
+                handleAddEditableEquationBlock("", JSON.parse(activePath));
+                setShowDropdown(false);
+              }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {showEditBlockPopup && activeEditEquationPath && (
+          <>
             <motion.div
               {...y_animation_props}
               className="fixed z-10 mt-2 w-[320px]"
               style={{
                 top: `${dropdownTop}px`,
-                left: `${dropdownLeft}px`,
-                transform: "translateX(20px)",
+                right: `${dropdownLeft}px`,
               }}
             >
-              <MiniDropdown
-                ref={addSomethingDropdownRef}
-                isOpen={showDropdown}
-                onClick={() => {
-                  handleAddEditableEquationBlock("", JSON.parse(activePath));
-                  setShowDropdown(false);
+              <EditBlockPopup
+                ref={editBlockDropdownRef}
+                onChange={(value) =>
+                  handleEditLatex(value, JSON.parse(activeEditEquationPath))
+                }
+                latexValue={getCurrentLatex}
+                onClick={closeEditableDropdown}
+                onEnterClose={(event) => {
+                  if (event.key === "Enter" && !event.shiftKey) {
+                    event.preventDefault();
+                    closeEditableDropdown();
+                  }
                 }}
               />
             </motion.div>
-          )}
-        </AnimatePresence>
-        <AnimatePresence>
-          {showEditBlockPopup && activeEditEquationPath && (
-            <>
-              <motion.div
-                {...y_animation_props}
-                className="fixed z-10 mt-2 w-[320px]"
-                style={{
-                  top: `${dropdownTop}px`,
-                  right: `${dropdownLeft}px`,
-                }}
-              >
-                <EditBlockPopup
-                  ref={editBlockDropdownRef}
-                  onChange={(value) =>
-                    handleEditLatex(value, JSON.parse(activeEditEquationPath))
-                  }
-                  latexValue={getCurrentLatex}
-                  onClick={closeEditableDropdown}
-                  onEnterClose={(event) => {
-                    if (event.key === "Enter" && !event.shiftKey) {
-                      event.preventDefault();
-                      closeEditableDropdown();
-                    }
-                  }}
-                />
-              </motion.div>
-              <div
-                tabIndex={0}
-                onClick={closeEditableDropdown}
-                className="closeOutside fixed bottom-0 left-0 h-screen w-screen opacity-50"
-                style={{
-                  height: "calc(100vh - 50px",
-                }}
-              ></div>
-            </>
-          )}
-        </AnimatePresence>
-      </Slate>
+            <div
+              tabIndex={0}
+              onClick={closeEditableDropdown}
+              className="closeOutside fixed bottom-0 left-0 h-screen w-screen opacity-50"
+              style={{
+                height: "calc(100vh - 50px",
+              }}
+            ></div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
 
 export default DocumentEditor;
+
+const SortableElement = ({ attributes, element, children }) => {
+  const sortable = useSortable({ id: element.id });
+
+  return (
+    <div {...attributes}>
+      <Sortable sortable={sortable}>
+        <button contentEditable={false} {...sortable.listeners}>
+          ⠿
+        </button>
+        <div>{children}</div>
+      </Sortable>
+    </div>
+  );
+};
+
+const Sortable = ({ sortable, children }) => {
+  const toPx = (value) => (value ? `${Math.round(value)}px` : undefined);
+  return (
+    <div
+      className="sortable"
+      {...sortable.attributes}
+      ref={sortable.setNodeRef}
+      style={{
+        transition: sortable.transition,
+        "--translate-y": toPx(sortable.transform?.y),
+        pointerEvents: sortable.isSorting ? "none" : undefined,
+        opacity: sortable.isDragging ? 0 : 1,
+      }}
+    >
+      {children}
+    </div>
+  );
+};

@@ -6,6 +6,8 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import classes from "./styles/SortableElement.module.css";
 import { default as classNames } from "classnames";
+import { GripVertical } from "lucide-react";
+import { useTheme } from "styled-components";
 
 export function SortableElement({
   attributes,
@@ -15,6 +17,8 @@ export function SortableElement({
 }) {
   const { activeIndex } = useActiveElement();
   const readOnly = useReadOnly();
+
+  const theme = useTheme();
   const {
     attributes: sortableAttributes,
     listeners,
@@ -49,7 +53,7 @@ export function SortableElement({
             className={classes.handle}
             contentEditable={false}
           >
-            ⠿
+            <GripVertical color={theme.colors.darkgray} width={20} />
           </button>
         )}
         <div
@@ -64,6 +68,7 @@ export function SortableElement({
         >
           {renderElement({ attributes, children, element })}
         </div>
+        <div className="w-[20px]"></div>
       </div>
     </div>
   );

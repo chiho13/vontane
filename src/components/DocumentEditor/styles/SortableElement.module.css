@@ -4,6 +4,9 @@
   background: none;
   width: 20px;
   user-select: none;
+  border-radius: 4px;
+  transition: all 100ms ease-in-out;
+  cursor: grab;
 }
 
 .handle:hover {
@@ -16,6 +19,7 @@
   position: relative;
   align-items: flex-start;
   outline: none;
+  cursor: text;
 }
 
 .sortableElement:hover .handle {
@@ -29,7 +33,7 @@
 
 .sortableElement:not(.active) .insertBefore:before,
 .sortableElement:not(.active) .insertAfter:before {
-  height: 4px;
+  height: 3px;
   position: absolute;
   content: "";
   left: 0;
@@ -38,9 +42,9 @@
 }
 
 .insertAfter:before {
-  bottom: 5px;
+  bottom: 0;
 }
 
 .insertBefore:before {
-  top: -10px;
+  top: 0;
 }

@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
 
-const ActiveContext = createContext({ activeIndex: 0 });
+const ActiveContext = createContext({});
 
 export function ActiveElementProvider({ activeIndex, children }) {
   return (

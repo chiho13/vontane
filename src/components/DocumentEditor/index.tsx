@@ -1,3 +1,17 @@
+// import {
+//   React,
+//   useState,
+//   useCallback,
+//   Transforms,
+//   Slate,
+//   Editable,
+//   ReactEditor,
+//   DndContext,
+//   SortableContext,
+//   verticalListSortingStrategy,
+//   DragOverlay,
+// } from '../deps';
+
 import React, {
   useEffect,
   useCallback,
@@ -31,6 +45,16 @@ import useClickOutside from "@/hooks/useClickOutside";
 
 import { LayoutContext } from "../Layouts/AccountLayout";
 import { y_animation_props } from "../Dropdown";
+
+import { DndContext } from "@dnd-kit/core";
+import {
+  useSortable,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+
+import { useEditor } from "@/hooks/useEditor";
 
 interface DocumentEditorProps {
   handleTextChange?: (value: any) => void;
@@ -144,7 +168,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 }) => {
   const theme = useTheme();
   const { isLocked } = useContext(LayoutContext);
-  const editor = useMemo(() => withReact(createEditor()), []);
+  const editor = useEditor();
   const [slatevalue, setValue] = useState([
     {
       type: "paragraph",

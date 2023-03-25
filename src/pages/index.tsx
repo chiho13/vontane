@@ -135,7 +135,7 @@ const Home: NextPage = () => {
     <>
       <Layout profile={profile}>
         <div className="mx-auto mt-10 flex justify-center p-4 lg:mt-4">
-          <div className="w-full">
+          <div className="linear-gradient w-full rounded-md border-2 border-gray-300 px-2 py-8 lg:w-[980px] lg:px-0">
             <div className="mx-auto lg:w-[900px]">
               <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
             </div>
@@ -143,7 +143,7 @@ const Home: NextPage = () => {
             <div className="block  lg:w-full">
               <DocumentEditor handleTextChange={handleTextChange} />
             </div>
-            <div className="mx-auto lg:w-[900px]">
+            <div className="mx-auto flex justify-center lg:w-[900px]">
               <GenerateButton
                 isDisabled={isDisabled}
                 audioIsLoading={audioIsLoading}

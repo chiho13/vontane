@@ -268,13 +268,13 @@ function Dropdown(
           )}
         </AnimatePresence>
       )}
-      <DropdownStyle className="dropdown_wrapper">
+      <DropdownStyle className="dropdown_wrapper relative flex justify-end">
         <button
           type="button"
           className="dropdown-toggle inline-flex items-center justify-center rounded-md border-2 border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-md shadow-sm outline-none hover:bg-gray-50 focus-visible:border-gray-400 "
           aria-expanded={isOpen}
           aria-haspopup="true"
-          id="voices-dropdown"
+          id="dropdown"
           onClick={handleVoicesDropdownClick}
           ref={toggleRef}
         >
@@ -287,7 +287,7 @@ function Dropdown(
             <motion.div
               {...animation_props}
               id={dropdownId}
-              className="dropdown-menu z-1000 fixed left-0  mt-2 w-full origin-top-right border-2 bg-white shadow-lg ring-1 ring-black ring-opacity-5 lg:absolute lg:rounded-md"
+              className="dropdown-menu z-1000 fixed left-0  top-10 mt-2 w-full origin-top-right border-2 bg-white shadow-lg ring-1 ring-black ring-opacity-5 lg:absolute lg:rounded-md"
               role="menu"
               aria-orientation="vertical"
               aria-labelledby="voices-dropdown"

@@ -31,6 +31,8 @@ import {
   Node,
   Element,
 } from "slate";
+
+import { createPortal } from "react-dom";
 import { Slate, Editable, withReact, ReactEditor } from "slate-react";
 import { Plus, CornerDownLeft } from "lucide-react";
 import { BlockMath } from "react-katex";
@@ -179,12 +181,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     {
       id: genNodeId(),
       type: "paragraph",
-      children: [{ text: "lolol" }],
-    },
-    {
-      id: genNodeId(),
-      type: "paragraph",
-      children: [{ text: "testsdjf" }],
+      children: [{ text: "" }],
     },
   ]);
 
@@ -275,10 +272,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           { at: Path.next(path) }
         );
         setDropdownTop(targetRect.top + 60);
-        setDropdownLeft(targetRect.left + 60);
+        setDropdownLeft(targetRect.right + 60);
       } else {
         setDropdownTop(targetRect.top + 30);
-        setDropdownLeft(targetRect.left + 60);
+        setDropdownLeft(targetRect.right + 60);
       }
 
       setShowDropdown((prevState) => !prevState);
@@ -549,7 +546,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     const isRoot = elementPath.length === 1;
 
     const addButton = (
-      <div className="absolute left-0 top-3 -mt-5 flex h-10 w-10 cursor-pointer items-center justify-center group-hover:opacity-100">
+      <div className="z-100 absolute right-0 top-3 -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center opacity-0 group-hover:opacity-100">
         <button
           className="rounded-md hover:bg-gray-200"
           onClick={(event) => {
@@ -575,7 +572,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     return (
       <div className="group relative">
         {content}
-        {/* {addButton} */}
+        {addButton}
       </div>
     );
   }, []);
@@ -681,7 +678,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   return (
     <div
       tabIndex={0}
-      className="relative mx-auto mb-2 mt-5 block h-[400px] rounded-md bg-white p-4 focus:outline-none focus-visible:border-gray-300"
+      className="relative mx-auto mb-2 mt-5 block h-[400px] rounded-md p-4 focus:outline-none focus-visible:border-gray-300"
     >
       <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
         <SortableContext
@@ -701,8 +698,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               }}
             >
               <Editable
-                className="relative -left-[25px] mx-auto h-[450px] overflow-auto lg:w-[900px]"
-                placeholder="Enter some plain text..."
+                className="relative mx-auto h-[400px] overflow-auto lg:w-[900px]"
+                placeholder="Press '/ for prompts"
                 renderElement={renderElement}
                 onKeyDown={handleKeyDown}
               />
@@ -717,6 +714,63 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           ) : null}
         </DragOverlay>
       </DndContext>
+      <AnimatePresence>
+        {showDropdown && activePath && (
+          <motion.div
+            {...y_animation_props}
+            className="fixed fixed bottom-0 right-0 left-0 z-10 mx-auto mt-2 w-[320px]"
+            style={{
+              top: `${dropdownTop}px`,
+            }}
+          >
+            <MiniDropdown
+              ref={addSomethingDropdownRef}
+              isOpen={showDropdown}
+              onClick={() => {
+                handleAddEditableEquationBlock("", JSON.parse(activePath));
+                setShowDropdown(false);
+              }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {showEditBlockPopup && activeEditEquationPath && (
+          <>
+            <motion.div
+              {...y_animation_props}
+              className="fixed z-10 mt-2 w-[320px]"
+              style={{
+                top: `${dropdownTop}px`,
+                right: `${dropdownLeft}px`,
+              }}
+            >
+              <EditBlockPopup
+                ref={editBlockDropdownRef}
+                onChange={(value) =>
+                  handleEditLatex(value, JSON.parse(activeEditEquationPath))
+                }
+                latexValue={getCurrentLatex}
+                onClick={closeEditableDropdown}
+                onEnterClose={(event) => {
+                  if (event.key === "Enter" && !event.shiftKey) {
+                    event.preventDefault();
+                    closeEditableDropdown();
+                  }
+                }}
+              />
+            </motion.div>
+            <div
+              tabIndex={0}
+              onClick={closeEditableDropdown}
+              className="closeOutside fixed bottom-0 left-0 h-screen w-screen opacity-50"
+              style={{
+                height: "calc(100vh - 50px",
+              }}
+            ></div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
     // <div
     //   tabIndex={0}
@@ -742,66 +796,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     //       }}
     //     />
     //   </Slate>
-    //   <AnimatePresence>
-    //     {showDropdown && activePath && (
-    //       <motion.div
-    //         {...y_animation_props}
-    //         className="fixed z-10 mt-2 w-[320px]"
-    //         style={{
-    //           top: `${dropdownTop}px`,
-    //           left: `${dropdownLeft}px`,
-    //           transform: "translateX(20px)",
-    //         }}
-    //       >
-    //         <MiniDropdown
-    //           ref={addSomethingDropdownRef}
-    //           isOpen={showDropdown}
-    //           onClick={() => {
-    //             handleAddEditableEquationBlock("", JSON.parse(activePath));
-    //             setShowDropdown(false);
-    //           }}
-    //         />
-    //       </motion.div>
-    //     )}
-    //   </AnimatePresence>
-    //   <AnimatePresence>
-    //     {showEditBlockPopup && activeEditEquationPath && (
-    //       <>
-    //         <motion.div
-    //           {...y_animation_props}
-    //           className="fixed z-10 mt-2 w-[320px]"
-    //           style={{
-    //             top: `${dropdownTop}px`,
-    //             right: `${dropdownLeft}px`,
-    //           }}
-    //         >
-    //           <EditBlockPopup
-    //             ref={editBlockDropdownRef}
-    //             onChange={(value) =>
-    //               handleEditLatex(value, JSON.parse(activeEditEquationPath))
-    //             }
-    //             latexValue={getCurrentLatex}
-    //             onClick={closeEditableDropdown}
-    //             onEnterClose={(event) => {
-    //               if (event.key === "Enter" && !event.shiftKey) {
-    //                 event.preventDefault();
-    //                 closeEditableDropdown();
-    //               }
-    //             }}
-    //           />
-    //         </motion.div>
-    //         <div
-    //           tabIndex={0}
-    //           onClick={closeEditableDropdown}
-    //           className="closeOutside fixed bottom-0 left-0 h-screen w-screen opacity-50"
-    //           style={{
-    //             height: "calc(100vh - 50px",
-    //           }}
-    //         ></div>
-    //       </>
-    //     )}
-    //   </AnimatePresence>
-    // </div>
   );
 };
 

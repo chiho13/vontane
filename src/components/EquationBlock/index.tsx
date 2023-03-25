@@ -9,6 +9,7 @@ interface EquationBlockProps {
 }
 
 const EquationBlock: React.FC<EquationBlockProps> = ({ equation, isBlock }) => {
+  console.log("lol");
   return isBlock ? (
     <BlockMath math={equation} />
   ) : (

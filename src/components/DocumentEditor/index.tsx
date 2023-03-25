@@ -63,6 +63,7 @@ import { useEditor } from "@/hooks/useEditor";
 import { ActiveElementProvider } from "@/contexts/ActiveElementContext";
 import { SortableElement } from "./SortableElement";
 import { ElementSelector } from "./EditorElements";
+import { EquationProvider } from "@/contexts/EquationEditContext";
 
 interface DocumentEditorProps {
   handleTextChange?: (value: any) => void;
@@ -86,6 +87,8 @@ declare module "slate" {
     Text: CustomText;
   }
 }
+
+const EquationContext = createContext(null);
 
 interface MiniDropdownProps {
   isOpen: boolean;
@@ -686,24 +689,29 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           strategy={verticalListSortingStrategy}
         >
           <ActiveElementProvider activeIndex={activeIndex}>
-            <Slate
+            <EquationProvider
+              openEditBlockPopup={openEditBlockPopup}
               editor={editor}
-              value={slatevalue}
-              onChange={(newValue) => {
-                setValue(newValue);
-
-                if (handleTextChange) {
-                  handleTextChange(newValue);
-                }
-              }}
             >
-              <Editable
-                className="relative mx-auto h-[400px] overflow-auto lg:w-[900px]"
-                placeholder="Press '/ for prompts"
-                renderElement={renderElement}
-                onKeyDown={handleKeyDown}
-              />
-            </Slate>
+              <Slate
+                editor={editor}
+                value={slatevalue}
+                onChange={(newValue) => {
+                  setValue(newValue);
+
+                  if (handleTextChange) {
+                    handleTextChange(newValue);
+                  }
+                }}
+              >
+                <Editable
+                  className="relative mx-auto h-[400px] overflow-auto lg:w-[900px]"
+                  placeholder="Press '/' for prompts"
+                  renderElement={renderElement}
+                  onKeyDown={handleKeyDown}
+                />
+              </Slate>
+            </EquationProvider>
           </ActiveElementProvider>
         </SortableContext>
         <DragOverlay>

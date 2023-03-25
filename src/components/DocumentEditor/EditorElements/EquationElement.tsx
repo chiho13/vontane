@@ -1,6 +1,7 @@
-import { React } from "react";
+import { useContext } from "react";
 import Image from "next/image";
 import { BlockMath } from "react-katex";
+import { EquationContext } from "@/contexts/EquationEditContext";
 
 export function EquationElement(props) {
   const { attributes, children, element } = props;

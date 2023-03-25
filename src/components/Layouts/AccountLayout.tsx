@@ -211,7 +211,7 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
         <img
           src={profile.avatar || ""}
           alt={`${profile.name}'s avatar`}
-          className="mr-2 ml-2 w-9 rounded-full border border-gray-400"
+          className="mr-2 ml-2 h-9 w-9 rounded-full border border-gray-400"
         />
       )
     );

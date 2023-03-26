@@ -134,7 +134,7 @@ const Home: NextPage = () => {
   return (
     <>
       <Layout profile={profile}>
-        <div className="mx-auto mt-10 flex justify-center p-4 lg:mt-4">
+        <div className="mx-auto mt-10 flex justify-center p-4 lg:mt-14">
           <div className="linear-gradient w-full rounded-md border-2 border-gray-300 px-2 py-8 lg:w-[980px] lg:px-0">
             <div className="mx-auto lg:w-[900px]">
               <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />

@@ -109,8 +109,6 @@ const isAuthed = t.middleware(async ({ next, ctx }) => {
     error,
   } = await ctx.supabaseServerClient.auth.getUser();
 
-  console.log("isAuthed middleware: User:", user, "Error:", error);
-
   if (error || !user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
@@ -135,7 +133,6 @@ const rateLimiter = new Ratelimit({
 
 const rateLimiterMiddleware = t.middleware(async ({ next, ctx }) => {
   const ip = ctx.req.socket.remoteAddress ?? "127.0.0.1";
-  console.log("Rate limiter middleware: IP:", ip);
 
   const { success, remaining } = await rateLimiter.limit(`mw_${ip}`);
   console.log(

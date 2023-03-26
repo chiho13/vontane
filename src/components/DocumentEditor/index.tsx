@@ -65,6 +65,21 @@ import { SortableElement } from "./SortableElement";
 import { ElementSelector } from "./EditorElements";
 import { EquationProvider } from "@/contexts/EquationEditContext";
 
+import { findAncestorWithClass } from "@/utils/findAncestors";
+
+const useMutationObserver = (
+  targetNode: HTMLElement | null,
+  config: MutationObserverInit,
+  callback: (mutationsList: MutationRecord[]) => void
+) => {
+  useEffect(() => {
+    if (!targetNode) return;
+    const observer = new MutationObserver(callback);
+    observer.observe(targetNode, config);
+    return () => observer.disconnect();
+  }, [targetNode, config, callback]);
+};
+
 interface DocumentEditorProps {
   handleTextChange?: (value: any) => void;
 }
@@ -220,8 +235,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     new Set()
   );
 
-  const [dropdownTop, setDropdownTop] = useState<number | null>(null);
-  const [dropdownLeft, setDropdownLeft] = useState<number | null>(null);
+  const [dropdownTop, setDropdownTop] = useState<number | null>(0);
+  const [dropdownLeft, setDropdownLeft] = useState<number | null>(0);
+
+  const [dropdownEditBlockTop, setDropdownEditBlockTop] = useState<
+    number | null
+  >(0);
 
   const slatePathToNumber = (path: number[]): number => {
     const pathStr = path.map((num) => num.toString()).join("");
@@ -271,13 +290,16 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       ) {
         Transforms.insertNodes(
           editor,
-          { type: "paragraph", children: [{ text: "" }] },
+          { id: genNodeId(), type: "paragraph", children: [{ text: "" }] },
           { at: Path.next(path) }
         );
-        setDropdownTop(targetRect.top + 60);
+        setDropdownTop(targetRect.top + 30);
+        setDropdownEditBlockTop(targetRect.top + 90);
+
         setDropdownLeft(targetRect.right + 60);
       } else {
         setDropdownTop(targetRect.top + 30);
+        setDropdownEditBlockTop(targetRect.top + 90);
         setDropdownLeft(targetRect.right + 60);
       }
 
@@ -443,10 +465,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       );
 
       console.log(currentNode);
-      console.log(
-        "start",
-        Editor.isStart(editor, startPosition, currentNodePath)
-      );
       // If the cursor is at the start of a paragraph
       if (
         currentNode.type === "paragraph" &&
@@ -457,8 +475,23 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         });
 
         if (prevSiblingNode) {
-          console.log(prevSiblingNode[0]);
+          // console.log(prevSiblingNode[0]);
           setPrevNode(prevSiblingNode[0]);
+        }
+      }
+
+      const equationElement = findAncestorWithClass(
+        event.target,
+        "equation-element"
+      );
+
+      if (equationElement) {
+        // Get the path from the data-path attribute
+        const pathString = equationElement.getAttribute("data-path");
+        if (pathString) {
+          console.log(pathString);
+          const path: Path = JSON.parse(pathString);
+          openEditBlockPopup(equationElement, event, path);
         }
       }
     }
@@ -468,9 +501,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     console.log(value);
     const latex = value;
     const equationNode: CustomElement = {
+      id: genNodeId(),
       type: "equation",
       latex,
-      isEditable: true, // Add this line to make the equation editable
       children: [{ text: "" }],
     };
 
@@ -479,10 +512,13 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   const [getCurrentLatex, setCurrentLatex] = useState("");
 
-  const openEditBlockPopup = (event: React.MouseEvent, path: Path) => {
+  const openEditBlockPopup = (
+    _element: HTMLElement,
+    event: React.MouseEvent,
+    path: Path
+  ) => {
     event.stopPropagation();
-    const target = event.currentTarget as HTMLDivElement;
-    const targetRect = target.getBoundingClientRect();
+    const targetRect = _element.getBoundingClientRect();
 
     const currentPathString = JSON.stringify(path);
     setactiveEditEquationPath((prevPath) =>
@@ -493,20 +529,24 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     setCurrentLatex(currentNode.latex);
 
     setShowEditBlockPopup(true);
-    setDropdownTop(targetRect.top + 60);
-    setDropdownLeft(targetRect.left + 60);
+    setDropdownEditBlockTop(targetRect.top + 60);
+    // setDropdownLeft(targetRect.left + 60);
   };
 
   const toggleRef = useRef<HTMLButtonElement>(null);
   const toggleEditBlockRef = useRef<HTMLElement>(null);
 
+  const [_equationId, setEquationId] = useState("");
+
   const handleAddEditableEquationBlock = useCallback(
     (latex: string, path: Path) => {
       if (showDropdown) {
+        const equationId = genNodeId();
+
         const equationNode: CustomElement = {
+          id: equationId,
           type: "equation",
           latex,
-          isEditable: true, // Add this line to make the equation editable
           children: [{ text: "" }],
         };
 
@@ -516,31 +556,54 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             currentNode.children[0].text === "") ||
           currentNode.children[0].text === " ";
 
+        let newPath: Path;
+
         if (isEmptyNode) {
           Transforms.setNodes(editor, equationNode, { at: path });
-
+          newPath = path;
           Transforms.insertNodes(
             editor,
-            { type: "paragraph", children: [{ text: "" }] },
+            { id: genNodeId(), type: "paragraph", children: [{ text: "" }] },
             { at: Path.next(path) }
           );
-          setactiveEditEquationPath(JSON.stringify(path));
-          const newPath = Path.next(path);
-          const newSelection = Editor.start(editor, newPath);
-          Transforms.select(editor, newSelection);
         } else {
           Transforms.insertNodes(editor, equationNode, { at: Path.next(path) });
-          setactiveEditEquationPath(JSON.stringify(Path.next(path)));
+          newPath = Path.next(path);
         }
 
-        // const target = toggleEditBlockRef.current;
-        // const targetOffset = target && target.getBoundingClientRect();
-        // console.log(toggleEditBlockRef);
-        setShowEditBlockPopup(true);
+        const [insertedEquationNode] = Editor.nodes(editor, {
+          at: newPath,
+          match: (n) => n.type === "equation",
+        });
+
+        if (insertedEquationNode) {
+          const { id } = insertedEquationNode[0] as CustomElement;
+          setEquationId(id);
+          setactiveEditEquationPath(JSON.stringify(newPath));
+        }
       }
     },
     [showDropdown, toggleEditBlockRef]
   );
+
+  const findEquationElementById = (id: string) => {
+    return document.querySelector(`[data-id="${id}"]`);
+  };
+
+  useEffect(() => {
+    if (_equationId && slatevalue) {
+      const equationElement = findEquationElementById(_equationId);
+      console.log(equationElement);
+      console.log(_equationId, "equationId");
+      if (equationElement) {
+        // Get the position of the newly added equation element
+        const targetRect = equationElement.getBoundingClientRect();
+        // Open the edit block dropdown and set its position
+        setShowEditBlockPopup(true);
+        setDropdownEditBlockTop(targetRect.top + 60);
+      }
+    }
+  }, [slatevalue, _equationId]);
 
   const renderElement = useCallback((props) => {
     const { attributes, children, element } = props;
@@ -678,6 +741,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     }
   };
 
+  const editorContainerRef = useRef<HTMLElement | null>(null);
+
   return (
     <div
       tabIndex={0}
@@ -694,6 +759,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               editor={editor}
             >
               <Slate
+                ref={editorContainerRef}
                 editor={editor}
                 value={slatevalue}
                 onChange={(newValue) => {
@@ -709,6 +775,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                   placeholder="Press '/' for prompts"
                   renderElement={renderElement}
                   onKeyDown={handleKeyDown}
+                  onClick={(event) => handleCursorClick(event, editor)}
                 />
               </Slate>
             </EquationProvider>
@@ -726,7 +793,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         {showDropdown && activePath && (
           <motion.div
             {...y_animation_props}
-            className="fixed fixed bottom-0 right-0 left-0 z-10 mx-auto mt-2 w-[320px]"
+            className="fixed right-0 left-0 z-10 mx-auto mt-2 w-[320px]"
             style={{
               top: `${dropdownTop}px`,
             }}
@@ -747,10 +814,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           <>
             <motion.div
               {...y_animation_props}
-              className="fixed z-10 mt-2 w-[320px]"
+              className="fixed right-0 left-0 z-10 z-10 mx-auto mt-2 mt-2 w-[320px] w-[320px]"
               style={{
-                top: `${dropdownTop}px`,
-                right: `${dropdownLeft}px`,
+                top: `${dropdownEditBlockTop}px`,
               }}
             >
               <EditBlockPopup
@@ -813,9 +879,17 @@ const DragOverlayContent = ({ element }) => {
   const editor = useEditor();
   const [value] = useState([{ ...element }]);
 
+  const { isLocked } = useContext(LayoutContext);
+
   return (
     <Slate editor={editor} value={value}>
-      <div style={{ paddingLeft: 30 }}>
+      <div
+        style={{
+          paddingLeft: 30,
+          transform: isLocked ? "translateX(-150px)" : "initial",
+          opacity: 0.6,
+        }}
+      >
         <Editable
           readOnly
           renderElement={(props) => <ElementSelector {...props} />}

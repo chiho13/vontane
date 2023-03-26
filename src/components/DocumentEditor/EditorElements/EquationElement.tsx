@@ -2,14 +2,18 @@ import { useContext } from "react";
 import Image from "next/image";
 import { BlockMath } from "react-katex";
 import { EquationContext } from "@/contexts/EquationEditContext";
+import { ReactEditor } from "slate-react";
 
 export function EquationElement(props) {
   const { attributes, children, element } = props;
-
+  const { openEditBlockPopup, editor } = useContext(EquationContext);
+  const path = ReactEditor.findPath(editor, element);
   return (
     <div
       tabIndex={0}
-      className={`my-2 flex w-full items-center rounded-md p-2 ${
+      data-path={JSON.stringify(path)}
+      data-id={element.id}
+      className={`equation-element my-2 flex w-[98%] items-center rounded-md p-2 ${
         element.latex.length === 0 ? "bg-gray-100" : "justify-center"
       } cursor-pointer transition duration-300 hover:bg-gray-200 focus:bg-gray-200 active:bg-gray-200`}
       //   onClick={(event) =>

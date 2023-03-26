@@ -22,6 +22,10 @@ import { prisma } from "@/server/db";
 
 import { TRPCError } from "@trpc/server";
 
+// import { rateLimiter } from "./middleware";
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
+
 type CreateContextOptions = Record<string, never>;
 
 /**
@@ -47,6 +51,7 @@ const createInnerTRPCContext = (
   return {
     prisma,
     supabaseServerClient,
+    req,
   };
 };
 
@@ -104,6 +109,8 @@ const isAuthed = t.middleware(async ({ next, ctx }) => {
     error,
   } = await ctx.supabaseServerClient.auth.getUser();
 
+  console.log("isAuthed middleware: User:", user, "Error:", error);
+
   if (error || !user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
@@ -116,5 +123,40 @@ const isAuthed = t.middleware(async ({ next, ctx }) => {
   });
 });
 
-export const publicProcedure = t.procedure;
-export const protectedProcedure = t.procedure.use(isAuthed);
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+});
+
+const rateLimiter = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(5, "1 s"),
+});
+
+const rateLimiterMiddleware = t.middleware(async ({ next, ctx }) => {
+  const ip = ctx.req.socket.remoteAddress ?? "127.0.0.1";
+  console.log("Rate limiter middleware: IP:", ip);
+
+  const { success, remaining } = await rateLimiter.limit(`mw_${ip}`);
+  console.log(
+    "Rate limiter middleware: Success:",
+    success,
+    "Remaining:",
+    remaining
+  );
+
+  if (!success) {
+    throw new TRPCError({
+      code: "CUSTOM",
+      message: "Too many requests, please try again later.",
+      status: 429,
+    });
+  }
+
+  return next();
+});
+
+export const publicProcedure = t.procedure.use(rateLimiterMiddleware);
+export const protectedProcedure = t.procedure
+  .use(isAuthed)
+  .use(rateLimiterMiddleware);

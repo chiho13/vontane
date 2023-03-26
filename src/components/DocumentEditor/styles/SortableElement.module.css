@@ -1,0 +1,51 @@
+.handle {
+  visibility: hidden;
+  border: none;
+  background: none;
+  width: 20px;
+  user-select: none;
+  border-radius: 4px;
+  transition: all 100ms ease-in-out;
+  cursor: grab;
+}
+
+.handle:hover {
+  background: #f0f0f0;
+}
+
+.sortableElement {
+  display: flex;
+  gap: 10px;
+  position: relative;
+  align-items: center;
+  outline: none;
+  cursor: text;
+  width: 100%;
+}
+
+.sortableElement:hover .handle {
+  visibility: visible;
+}
+
+.elementWrapper {
+  position: relative;
+  flex: 1;
+}
+
+.sortableElement:not(.active) .insertBefore:before,
+.sortableElement:not(.active) .insertAfter:before {
+  height: 3px;
+  position: absolute;
+  content: "";
+  left: 0;
+  right: 0;
+  background-color: #7bb9ff;
+}
+
+.insertAfter:before {
+  bottom: 0;
+}
+
+.insertBefore:before {
+  top: 0;
+}

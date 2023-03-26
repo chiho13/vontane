@@ -22,3 +22,15 @@ main {
 .textarea_input {
   background: linear-gradient(120deg, #fdfbfb 0%, #f2f6f7 100%);
 }
+
+.radial-gradient {
+  background: radial-gradient(
+    1043px at 46.3% 47.5%,
+    rgb(254, 254, 255) 0%,
+    rgb(220, 249, 250) 72.9%
+  );
+}
+
+.linear-gradient {
+  background: linear-gradient(to top, #f7f7f8 0%, #fbfdff 100%);
+}

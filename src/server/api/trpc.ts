@@ -22,6 +22,8 @@ import { prisma } from "@/server/db";
 
 import { TRPCError } from "@trpc/server";
 
+import { trpcRateLimiter } from "@/middlewares/trpcRateLimiter";
+
 type CreateContextOptions = Record<string, never>;
 
 /**
@@ -116,5 +118,5 @@ const isAuthed = t.middleware(async ({ next, ctx }) => {
   });
 });
 
-export const publicProcedure = t.procedure;
+export const publicProcedure = t.procedure.use;
 export const protectedProcedure = t.procedure.use(isAuthed);

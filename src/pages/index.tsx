@@ -157,7 +157,7 @@ const Home: NextPage = () => {
             {/* <AudioPlayer generatedAudio={dummyAudioElement} /> */}
             {/* {audioUrl && <DownloadButton audioUrl={audioUrl} />} */}
           </div>
-          <div className="mx-auto flex justify-center lg:w-[980px]">
+          <div className="mx-auto flex justify-end lg:w-[980px]">
             <GenerateButton
               isDisabled={isDisabled}
               audioIsLoading={audioIsLoading}

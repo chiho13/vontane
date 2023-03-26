@@ -494,10 +494,24 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     };
 
     Transforms.setNodes(editor, equationNode, { at: path });
+    console.log(path);
+    const currentElement = document.querySelector(
+      `[data-path="${JSON.stringify(path)}"]`
+    );
+    console.log(currentElement);
+    if (currentElement) {
+      setTimeout(() => {
+        const targetRect = currentElement.getBoundingClientRect();
+        const height = currentElement.offsetHeight;
+        console.log(height);
+
+        setDropdownEditBlockTop(targetRect.bottom);
+      }, 0);
+    }
   };
 
   const [getCurrentLatex, setCurrentLatex] = useState("");
-
+  const [equationHeight, setEquationHeight] = useState<number | null>(null);
   const openEditBlockPopup = (
     _element: HTMLElement,
     event: React.MouseEvent,
@@ -512,10 +526,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     );
 
     const [currentNode] = Editor.node(editor, path);
+    console.log(currentNode);
     setCurrentLatex(currentNode.latex);
 
     setShowEditBlockPopup(true);
-    setDropdownEditBlockTop(targetRect.top + 60);
+    const equationHeight = _element.offsetHeight;
+    setDropdownEditBlockTop(targetRect.top + equationHeight);
     // setDropdownLeft(targetRect.left + 60);
   };
 
@@ -584,6 +600,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       if (equationElement) {
         // Get the position of the newly added equation element
         const targetRect = equationElement.getBoundingClientRect();
+        console.log(equationElement);
         // Open the edit block dropdown and set its position
         setShowEditBlockPopup(true);
         setDropdownEditBlockTop(targetRect.top + 60);
@@ -598,7 +615,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     const isRoot = elementPath.length === 1;
 
     const addButton = (
-      <div className="z-100 absolute right-0 top-1/2 -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center opacity-0 group-hover:opacity-100">
+      <div className="z-100 absolute top-1/2 right-0 -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center opacity-0 group-hover:opacity-100">
         <button
           className="rounded-md hover:bg-gray-200"
           onClick={(event) => {
@@ -684,10 +701,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           strategy={verticalListSortingStrategy}
         >
           <ActiveElementProvider activeIndex={activeIndex}>
-            <EquationProvider
-              openEditBlockPopup={openEditBlockPopup}
-              editor={editor}
-            >
+            <EquationProvider editor={editor}>
               <Slate
                 ref={editorContainerRef}
                 editor={editor}

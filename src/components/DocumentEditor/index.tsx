@@ -693,7 +693,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   return (
     <div
       tabIndex={0}
-      className="relative mx-auto mb-2 mt-5 block h-[400px] rounded-md p-4 focus:outline-none focus-visible:border-gray-300"
+      className="relative mx-auto mt-2 block h-[550px] rounded-md p-4 focus:outline-none focus-visible:border-gray-300"
     >
       <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
         <SortableContext
@@ -715,7 +715,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 }}
               >
                 <Editable
-                  className="relative mx-auto h-[400px] overflow-auto lg:w-[900px]"
+                  className="relative h-full overflow-auto"
                   placeholder="Press '/' for prompts"
                   renderElement={renderElement}
                   onKeyDown={handleKeyDown}

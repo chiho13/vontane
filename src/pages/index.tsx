@@ -134,21 +134,13 @@ const Home: NextPage = () => {
   return (
     <>
       <Layout profile={profile}>
-        <div className="mx-auto mt-10 flex justify-center p-4 lg:mt-14">
-          <div className="linear-gradient w-full rounded-md border-2 border-gray-300 px-2 py-8 lg:w-[980px] lg:px-0">
-            <div className="mx-auto lg:w-[900px]">
-              <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
-            </div>
-
+        <div className="mx-auto mt-10 justify-center p-4 lg:mt-14">
+          <div className="mx-auto lg:w-[980px]">
+            <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
+          </div>
+          <div className="linear-gradient mx-auto w-full rounded-md border-2 border-gray-300 px-2 lg:w-[980px] lg:px-0">
             <div className="block  lg:w-full">
               <DocumentEditor handleTextChange={handleTextChange} />
-            </div>
-            <div className="mx-auto flex justify-center lg:w-[900px]">
-              <GenerateButton
-                isDisabled={isDisabled}
-                audioIsLoading={audioIsLoading}
-                onClick={generateAudio}
-              />
             </div>
 
             {!audioIsLoading && generatedAudioElement && (
@@ -164,6 +156,13 @@ const Home: NextPage = () => {
 
             {/* <AudioPlayer generatedAudio={dummyAudioElement} /> */}
             {/* {audioUrl && <DownloadButton audioUrl={audioUrl} />} */}
+          </div>
+          <div className="mx-auto flex justify-center lg:w-[980px]">
+            <GenerateButton
+              isDisabled={isDisabled}
+              audioIsLoading={audioIsLoading}
+              onClick={generateAudio}
+            />
           </div>
         </div>
       </Layout>

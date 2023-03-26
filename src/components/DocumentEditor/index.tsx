@@ -1,17 +1,3 @@
-// import {
-//   React,
-//   useState,
-//   useCallback,
-//   Transforms,
-//   Slate,
-//   Editable,
-//   ReactEditor,
-//   DndContext,
-//   SortableContext,
-//   verticalListSortingStrategy,
-//   DragOverlay,
-// } from '../deps';
-
 import React, {
   useEffect,
   useCallback,
@@ -612,7 +598,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     const isRoot = elementPath.length === 1;
 
     const addButton = (
-      <div className="z-100 absolute right-0 top-3 -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center opacity-0 group-hover:opacity-100">
+      <div className="z-100 absolute right-0 top-1/2 -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center opacity-0 group-hover:opacity-100">
         <button
           className="rounded-md hover:bg-gray-200"
           onClick={(event) => {
@@ -667,62 +653,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const handleDragStart = useCallback(function ({ active }) {
     setActiveId(active.id);
   }, []);
-
-  // const renderElement = useCallback((props) => {
-  //   const { attributes, children, element } = props;
-  //   const path = ReactEditor.findPath(editor, element);
-  //   return (
-  //     <div className="group relative" {...attributes}>
-  //       {element.type === "equation" && (
-  //         <div
-  //           tabIndex={0}
-  //           className={`my-2 flex w-full items-center rounded-md p-2 ${
-  //             element.latex.length === 0 ? "bg-gray-100" : "justify-center"
-  //           } cursor-pointer transition duration-300 hover:bg-gray-200 focus:bg-gray-200 active:bg-gray-200`}
-  //           onClick={(event) =>
-  //             openEditBlockPopup(event, ReactEditor.findPath(editor, element))
-  //           }
-  //           contentEditable={false}
-  //           ref={toggleEditBlockRef}
-  //         >
-  //           <BlockMath math={element.latex || ""} />
-
-  //           {element.latex.length === 0 && (
-  //             <div className="flex items-center">
-  //               <Image
-  //                 src="/images/tex.png"
-  //                 alt="add latex block equation"
-  //                 width={50}
-  //                 height={50}
-  //                 className="opacity-30"
-  //               />
-  //               <span className="ml-4 opacity-30">Add Block Equation</span>
-  //             </div>
-  //           )}
-
-  //           <span style={{ display: "none" }}>{children}</span>
-  //         </div>
-  //       )}
-  //       {element.type === "paragraph" && (
-  //         <p {...attributes} className=" mx-auto block leading-relaxed">
-  //           {children}
-  //         </p>
-  //       )}
-  // <div className="absolute -left-16 top-3 -mt-5 flex h-10 w-10 cursor-pointer items-center justify-center opacity-0 group-hover:opacity-100">
-  //   <button
-  //     className="rounded-md hover:bg-gray-200"
-  //     onClick={(event) => {
-  //       event.stopPropagation();
-  //       openMiniDropdown(event, ReactEditor.findPath(editor, element));
-  //     }}
-  //     ref={toggleRef}
-  //   >
-  //     <Plus color={theme.colors.darkgray} />
-  //   </button>
-  //       </div>
-  //     </div>
-  //   );
-  // }, []);
 
   useClickOutside(
     addSomethingDropdownRef,
@@ -846,30 +776,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         )}
       </AnimatePresence>
     </div>
-    // <div
-    //   tabIndex={0}
-    //   className="relative mb-2 mt-5 block h-[400px] rounded-md border-2 border-gray-100 bg-white p-4 focus:outline-none focus-visible:border-gray-300 lg:w-[750px]"
-    // >
-    //   <Slate
-    //     editor={editor}
-    //     value={slatevalue}
-    //     onChange={(newValue) => {
-    //       setValue(newValue);
-
-    //       if (handleTextChange) {
-    //         handleTextChange(newValue);
-    //       }
-    //     }}
-    //   >
-    //     <Editable
-    //       renderElement={renderElement}
-    //       onClick={(event) => handleCursorClick(event, editor)}
-    //       onKeyDown={handleKeyDown}
-    //       style={{
-    //         height: "400px",
-    //       }}
-    //     />
-    //   </Slate>
   );
 };
 

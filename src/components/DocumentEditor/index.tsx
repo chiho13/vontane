@@ -169,6 +169,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const [dropdownEditBlockTop, setDropdownEditBlockTop] = useState<
     number | null
   >(0);
+  const [dropdownEditBlockLeft, setDropdownEditBlockLeft] = useState<
+    number | null
+  >(0);
 
   const [editorKey, setEditorKey] = useState(Date.now());
 
@@ -225,14 +228,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         );
 
         setDropdownTop(targetRect.bottom + 50);
-        setDropdownEditBlockTop(targetRect.bottom + 50);
-        setDropdownLeft(targetRect.right + 60);
       } else {
         setDropdownTop(targetRect.bottom + 30);
-        setDropdownEditBlockTop(targetRect.bottom + 90);
-        setDropdownLeft(targetRect.right + 60);
       }
 
+      setDropdownLeft(targetRect.left + 60);
       setShowDropdown((prevState) => !prevState);
       setActivePath(currentpathString);
     },
@@ -464,6 +464,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     event.stopPropagation();
     const targetRect = _element.getBoundingClientRect();
 
+    console.log(targetRect.left);
     const currentPathString = JSON.stringify(path);
     setactiveEditEquationPath((prevPath) =>
       prevPath === currentPathString ? null : currentPathString
@@ -475,7 +476,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
     setShowEditBlockPopup(true);
     const equationHeight = _element.offsetHeight;
-    setDropdownEditBlockTop(targetRect.top + equationHeight);
+    setDropdownEditBlockTop(targetRect.bottom + 60);
+    setDropdownEditBlockLeft(targetRect.left);
   };
 
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -525,6 +527,17 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           const { id } = insertedEquationNode[0] as CustomElement;
           setEquationId(id);
           setactiveEditEquationPath(JSON.stringify(newPath));
+
+          setTimeout(() => {
+            const currentElement = document.querySelector(`[data-id="${id}"]`);
+            console.log(currentElement);
+            if (currentElement) {
+              const targetRect = currentElement.getBoundingClientRect();
+              setDropdownEditBlockLeft(targetRect.left);
+              setDropdownEditBlockTop(targetRect.bottom + 60);
+              console.log(targetRect.left);
+            }
+          }, 0);
         }
       }
     },
@@ -545,7 +558,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         console.log(equationElement);
         // Open the edit block dropdown and set its position
         setShowEditBlockPopup(true);
-        setDropdownEditBlockTop(targetRect.top + 60);
+        setDropdownEditBlockTop(targetRect.bottom);
       }
     }
   }, [slatevalue, _equationId]);
@@ -557,7 +570,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     const isRoot = elementPath.length === 1;
 
     const addButton = (
-      <div className="z-100 absolute top-1/2 right-0 -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center opacity-0 group-hover:opacity-100">
+      <div className="z-100 absolute top-1/2 left-0 -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center opacity-0 group-hover:opacity-100">
         <button
           className="rounded-md hover:bg-gray-200"
           onClick={(event) => {
@@ -640,7 +653,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   return (
     <div
       tabIndex={0}
-      className="relative mx-auto mt-2 block h-[550px] rounded-md p-4 focus:outline-none focus-visible:border-gray-300"
+      className="relative mx-auto mt-2 block h-[550px] rounded-md pt-4 pr-4 pb-4 pl-2 focus:outline-none focus-visible:border-gray-300"
     >
       <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
         <SortableContext
@@ -684,9 +697,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         {showDropdown && activePath && (
           <motion.div
             {...y_animation_props}
-            className="fixed right-[120px] z-10 mx-auto mt-2 w-[320px]"
+            className="fixed left-[120px] z-10 mx-auto mt-2 w-[320px]"
             style={{
               top: `${dropdownTop}px`,
+              left: `${dropdownLeft}px`,
             }}
           >
             <MiniDropdown
@@ -705,9 +719,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           <>
             <motion.div
               {...y_animation_props}
-              className="fixed right-[100px] z-10 z-10 mx-auto mt-2 mt-2 w-[380px]"
+              className="fixed  z-10 z-10 mx-auto mt-2 mt-2 w-[380px]"
               style={{
                 top: `${dropdownEditBlockTop}px`,
+                left: `${dropdownEditBlockLeft}px`,
               }}
             >
               <EditBlockPopup
@@ -718,11 +733,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 latexValue={getCurrentLatex}
                 onClick={closeEditableDropdown}
                 insertText={(note) => {
-                  // if (event.key === "Enter" && !event.shiftKey) {
-                  //   event.preventDefault();
-                  //   closeEditableDropdown();
-                  // }
-
                   Transforms.insertNodes(
                     editor,
                     {

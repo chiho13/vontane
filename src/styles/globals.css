@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 main {
-  overflow: hidden;
+  overflow-y: auto;
 }
 .container {
   max-width: 1200px;

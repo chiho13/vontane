@@ -47,14 +47,16 @@ export function SortableElement({
         }}
       >
         {readOnly ? null : (
-          <button
-            ref={setActivatorNodeRef}
-            {...listeners}
-            className={classes.handle}
-            contentEditable={false}
-          >
-            <GripVertical color={theme.colors.darkgray} width={20} />
-          </button>
+          <div className="flex w-[60px] justify-end">
+            <button
+              ref={setActivatorNodeRef}
+              {...listeners}
+              className={classes.handle}
+              contentEditable={false}
+            >
+              <GripVertical color={theme.colors.darkgray} width={20} />
+            </button>
+          </div>
         )}
         <div
           className={classNames(
@@ -68,7 +70,6 @@ export function SortableElement({
         >
           {renderElement({ attributes, children, element })}
         </div>
-        <div className="w-[20px]"></div>
       </div>
     </div>
   );

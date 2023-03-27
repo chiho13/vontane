@@ -22,7 +22,7 @@ function GenerateButton({
       {audioIsLoading ? (
         <>
           <LoadingSpinner />
-          <div>Generating...</div>
+          <div className="ml-2">Generating...</div>
         </>
       ) : (
         <div>Generate</div>

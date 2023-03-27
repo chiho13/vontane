@@ -53,19 +53,6 @@ import { EquationProvider } from "@/contexts/EquationEditContext";
 
 import { findAncestorWithClass } from "@/utils/findAncestors";
 
-const useMutationObserver = (
-  targetNode: HTMLElement | null,
-  config: MutationObserverInit,
-  callback: (mutationsList: MutationRecord[]) => void
-) => {
-  useEffect(() => {
-    if (!targetNode) return;
-    const observer = new MutationObserver(callback);
-    observer.observe(targetNode, config);
-    return () => observer.disconnect();
-  }, [targetNode, config, callback]);
-};
-
 interface DocumentEditorProps {
   handleTextChange?: (value: any) => void;
 }
@@ -128,52 +115,7 @@ const MiniDropdown = React.forwardRef<HTMLDivElement, MiniDropdownProps>(
 
 MiniDropdown.displayName = "MiniDropdown";
 
-interface EditBlockPopupProps {
-  onChange: (value: string) => void;
-  onClick: () => void;
-  onEnterClose: (e: React.KeyboardEvent) => void;
-  latexValue: string;
-}
-
-const EditBlockPopup = React.forwardRef<HTMLDivElement, EditBlockPopupProps>(
-  ({ onChange, onClick, onEnterClose, latexValue }, ref) => {
-    const [value, setValue] = useState(latexValue);
-
-    useEffect(() => {
-      setValue(latexValue);
-    }, [latexValue]);
-
-    const onEquationChange = (e) => {
-      console.log(e.target.value);
-      setValue(e.target.value);
-      onChange(e.target.value);
-    };
-
-    return (
-      <div
-        ref={ref}
-        className="flex h-[100px] justify-between rounded-md border border-gray-200 bg-gray-100 p-2 shadow-md"
-      >
-        <textarea
-          value={value}
-          className="h-full w-[230px] resize-none bg-transparent p-1 focus:outline-none focus-visible:border-gray-400"
-          onChange={onEquationChange}
-          autoFocus
-          onKeyDown={onEnterClose}
-        />
-        <div>
-          <button
-            className="flex items-center rounded-md bg-[#007AFF] px-2 py-1  text-sm text-white  shadow-sm transition duration-300 hover:bg-[#006EE6] "
-            onClick={onClick}
-          >
-            <span className="mr-1">Done</span>
-            <CornerDownLeft color="white" width={16} />
-          </button>
-        </div>
-      </div>
-    );
-  }
-);
+import { EditBlockPopup } from "../EditEquationBlock";
 
 export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   handleTextChange,
@@ -708,7 +650,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           <ActiveElementProvider activeIndex={activeIndex}>
             <EquationProvider editor={editor}>
               <Slate
-                ref={editorContainerRef}
                 editor={editor}
                 value={slatevalue}
                 key={editorKey}
@@ -764,7 +705,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           <>
             <motion.div
               {...y_animation_props}
-              className="fixed right-0 left-0 z-10 z-10 mx-auto mt-2 mt-2 w-[320px] w-[320px]"
+              className="fixed right-0 left-0 z-10 z-10 mx-auto mt-2 mt-2 w-[380px]"
               style={{
                 top: `${dropdownEditBlockTop}px`,
               }}
@@ -777,10 +718,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 latexValue={getCurrentLatex}
                 onClick={closeEditableDropdown}
                 onEnterClose={(event) => {
-                  if (event.key === "Enter" && !event.shiftKey) {
-                    event.preventDefault();
-                    closeEditableDropdown();
-                  }
+                  // if (event.key === "Enter" && !event.shiftKey) {
+                  //   event.preventDefault();
+                  //   closeEditableDropdown();
+                  // }
                 }}
               />
             </motion.div>

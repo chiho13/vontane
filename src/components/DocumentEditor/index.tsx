@@ -805,7 +805,7 @@ const DragOverlayContent = ({ element }) => {
     <Slate editor={editor} value={value}>
       <div
         style={{
-          paddingLeft: 30,
+          paddingLeft: 70,
           transform: isLocked ? "translateX(-150px)" : "initial",
           opacity: 0.6,
         }}

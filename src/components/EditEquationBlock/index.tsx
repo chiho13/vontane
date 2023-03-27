@@ -154,7 +154,8 @@ export const EditBlockPopup = React.forwardRef<
     getEquationRefetch();
   };
 
-  const _insertNoteText = () => {
+  const _insertNoteText = (e) => {
+    e.stopPropagation();
     if (noteResults) {
       insertText(noteResults);
       setNoteInserted(true);
@@ -173,6 +174,7 @@ export const EditBlockPopup = React.forwardRef<
         >
           <InfoToolTip />
           <input
+            autoFocus
             onChange={onChangeFindEquation}
             className="indent-text block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500  focus:outline-none focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
             placeholder="Search equations, formulas, reactions..."
@@ -207,7 +209,6 @@ export const EditBlockPopup = React.forwardRef<
           className="w-full resize-none rounded-md border border-gray-200 bg-transparent p-2 focus:border-[#007AFF] focus:outline-none"
           onChange={onEquationChange}
           placeholder="TEX code"
-          autoFocus
         />
       </div>
       {noteResults && (

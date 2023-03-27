@@ -278,111 +278,152 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       }
     }
 
-    if (
-      event.key === "ArrowLeft" ||
-      event.key === "ArrowRight" ||
-      event.key === "ArrowUp" ||
-      event.key === "ArrowDown"
-    ) {
-      const directionH = event.key === "ArrowLeft" ? "left" : "right";
-      const directionV = event.key === "ArrowUp" ? "up" : "down";
+    // if (
+    //   event.key === "ArrowLeft" ||
+    //   event.key === "ArrowRight" ||
+    //   event.key === "ArrowUp" ||
+    //   event.key === "ArrowDown"
+    // ) {
+    //   const directionH = event.key === "ArrowLeft" ? "left" : "right";
+    //   const directionV = event.key === "ArrowUp" ? "up" : "down";
 
-      const currentPosition = selection.anchor;
-      const currentParagraph = Editor.node(editor, currentPosition.path);
+    //   const currentPosition = selection.anchor;
+    //   const currentParagraph = Editor.node(editor, currentPosition.path);
 
-      const isStartofBlock = Editor.isStart(
-        editor,
-        currentPosition,
-        currentNodePath
-      );
-      const isEndofBlock = Editor.isEnd(
-        editor,
-        currentPosition,
-        currentNodePath
-      );
-      let nextParagraph =
-        directionH === "right"
-          ? Editor.next(editor, {
-              at: currentParagraph[1],
-              match: (n) => n.type === "paragraph",
-            })
-          : Editor.previous(editor, {
-              at: currentParagraph[1],
-              match: (n) => n.type === "paragraph",
-            });
+    //   const isStartofBlock = Editor.isStart(
+    //     editor,
+    //     currentPosition,
+    //     currentNodePath
+    //   );
+    //   const isEndofBlock = Editor.isEnd(
+    //     editor,
+    //     currentPosition,
+    //     currentNodePath
+    //   );
+    //   let nextParagraph =
+    //     directionH === "right" || directionV === "down"
+    //       ? Editor.next(editor, {
+    //           at: currentParagraph[1],
+    //           match: (n) => n.type === "paragraph",
+    //         })
+    //       : Editor.previous(editor, {
+    //           at: currentParagraph[1],
+    //           match: (n) => n.type === "paragraph",
+    //         });
 
-      while (nextParagraph) {
-        const [nextNode, nextPath] = nextParagraph;
+    //   while (nextParagraph) {
+    //     const [nextNode, nextPath] = nextParagraph;
 
-        const prevSiblingNode = Editor.previous(editor, {
-          at: nextPath,
-        });
+    //     const prevSiblingNode = Editor.previous(editor, {
+    //       at: nextPath,
+    //     });
 
-        if (prevSiblingNode) {
-          console.log(prevSiblingNode[0]);
-          setPrevNode(prevSiblingNode[0]);
-        }
+    //     console.log(prevSiblingNode);
 
-        if (
-          nextNode.type !== "equation" &&
-          ((isStartofBlock && directionH === "left") ||
-            (isEndofBlock && directionH === "right"))
-        ) {
-          const [currentNode, currentNodePath] = Editor.node(editor, nextPath);
-          const isEmpty = currentNode.children[0].text === "";
+    //     if (prevSiblingNode) {
+    //       console.log(prevSiblingNode[0]);
+    //       setPrevNode(prevSiblingNode[0]);
+    //     }
 
-          const targetPosition =
-            directionH === "left"
-              ? Editor.end(editor, nextPath)
-              : Editor.start(editor, nextPath);
+    //     if (
+    //       nextNode.type !== "equation" &&
+    //       ((isStartofBlock && directionH === "left") ||
+    //         (isEndofBlock && directionH === "right"))
+    //     ) {
+    //       const [currentNode, currentNodePath] = Editor.node(editor, nextPath);
+    //       const isEmpty = currentNode.children[0].text === "";
 
-          event.preventDefault();
-          Transforms.select(editor, targetPosition);
-          return;
-        }
+    //       const targetPosition =
+    //         directionH === "left"
+    //           ? Editor.end(editor, nextPath)
+    //           : Editor.start(editor, nextPath);
 
-        nextParagraph =
-          directionH === "left"
-            ? Editor.previous(editor, {
-                at: nextPath,
-                match: (n) => n.type === "paragraph",
-              })
-            : Editor.next(editor, {
-                at: nextPath,
-                match: (n) => n.type === "paragraph",
-              });
-      }
-    }
+    //       event.preventDefault();
+    //       Transforms.select(editor, targetPosition);
+    //       return;
+    //     }
+
+    //     nextParagraph =
+    //       directionH === "left"
+    //         ? Editor.previous(editor, {
+    //             at: nextPath,
+    //             match: (n) => n.type === "paragraph",
+    //           })
+    //         : Editor.next(editor, {
+    //             at: nextPath,
+    //             match: (n) => n.type === "paragraph",
+    //           });
+    //   }
+    // }
 
     if (event.key === "Backspace") {
-      console.log("sdfsdf", currentNode);
-      if (
-        currentNode.type === "paragraph" &&
-        Editor.isStart(editor, startPosition, currentNodePath)
-      ) {
-        // Move the cursor between paragraphs while skipping equation nodes, just like when the user hits the left arrow key
-        const currentPosition = selection.anchor;
-        const currentParagraph = Editor.node(editor, currentPosition.path);
+      const { selection } = editor;
 
-        if (prevNode && prevNode.type === "equation") {
+      if (selection && Range.isCollapsed(selection)) {
+        const _currentNodePath = selection.anchor.path.slice(0, -1);
+        const currentNode = Node.get(editor, currentNodePath);
+        const currentParagraph = Editor.node(editor, currentNodePath);
+        // Check if currentNode is an equation
+        if (currentNode.type === "equation") {
           event.preventDefault();
-          const nextParagraph = Editor.previous(editor, {
-            at: currentParagraph[1],
-            match: (n) => n.type === "paragraph",
+        } else {
+          // Check if the previous node is an equation
+          const prevNodeEntry = Editor.previous(editor, {
+            at: currentNodePath,
           });
 
-          if (nextParagraph) {
-            const [nextNode, nextPath] = nextParagraph;
-            const targetPosition = Editor.end(editor, nextPath);
-            Transforms.select(editor, targetPosition);
+          if (prevNodeEntry) {
+            const [_prevNode] = prevNodeEntry;
+
+            if (
+              _prevNode.type === "equation" &&
+              Editor.isStart(editor, selection.anchor, _currentNodePath)
+            ) {
+              event.preventDefault();
+              const nextParagraph = Editor.previous(editor, {
+                at: currentParagraph[1],
+                match: (n) => n.type === "paragraph",
+              });
+              if (nextParagraph) {
+                const [nextNode, nextPath] = nextParagraph;
+                const targetPosition = Editor.end(editor, nextPath);
+                Transforms.select(editor, targetPosition);
+              }
+            }
           }
         }
-      } else {
-        // If the current node is a paragraph and the previous node is not an equation or the cursor is not at the start of the paragraph, delete the character
-        event.preventDefault();
-        Transforms.delete(editor, { unit: "character", reverse: true });
       }
     }
+
+    // if (event.key === "Backspace") {
+    //   console.log("sdfsdf", currentNode);
+    //   if (
+    //     currentNode.type === "paragraph" &&
+    //     Editor.isStart(editor, startPosition, currentNodePath)
+    //   ) {
+    //     // Move the cursor between paragraphs while skipping equation nodes, just like when the user hits the left arrow key
+    //     const currentPosition = selection.anchor;
+    //     const currentParagraph = Editor.node(editor, currentPosition.path);
+
+    //     if (prevNode && prevNode.type === "equation") {
+    //       event.preventDefault();
+    //       const nextParagraph = Editor.previous(editor, {
+    //         at: currentParagraph[1],
+    //         match: (n) => n.type === "paragraph",
+    //       });
+
+    //       if (nextParagraph) {
+    //         const [nextNode, nextPath] = nextParagraph;
+    //         const targetPosition = Editor.end(editor, nextPath);
+    //         Transforms.select(editor, targetPosition);
+    //       }
+    //     }
+    //   } else {
+    //     // If the current node is a paragraph and the previous node is not an equation or the cursor is not at the start of the paragraph, delete the character
+    //     event.preventDefault();
+    //     Transforms.delete(editor, { unit: "character", reverse: true });
+    //   }
+    // }
   };
 
   function handleCursorClick(event, editor) {
@@ -397,15 +438,15 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       console.log(currentNode);
       // If the cursor is at the start of a paragraph
       if (
-        currentNode.type === "paragraph" &&
-        Editor.isStart(editor, startPosition, currentNodePath)
+        currentNode.type === "paragraph"
+        // Editor.isStart(editor, startPosition, currentNodePath)
       ) {
         const prevSiblingNode = Editor.previous(editor, {
           at: currentNodePath,
         });
 
         if (prevSiblingNode) {
-          // console.log(prevSiblingNode[0]);
+          console.log(prevSiblingNode[0]);
           setPrevNode(prevSiblingNode[0]);
         }
       }
@@ -430,8 +471,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const handleEditLatex = (value: string, path: Path) => {
     console.log(value);
     const latex = value;
-    const equationNode: CustomElement = {
-      id: genNodeId(),
+    const equationNode = {
       type: "equation",
       latex,
       children: [{ text: "" }],
@@ -449,7 +489,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         const height = currentElement.offsetHeight;
         console.log(height);
 
-        setDropdownEditBlockTop(targetRect.bottom);
+        setDropdownEditBlockTop(targetRect.bottom + 60);
       }, 0);
     }
   };
@@ -527,7 +567,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           const { id } = insertedEquationNode[0] as CustomElement;
           setEquationId(id);
           setactiveEditEquationPath(JSON.stringify(newPath));
-
+          setCurrentLatex("");
           setTimeout(() => {
             const currentElement = document.querySelector(`[data-id="${id}"]`);
             console.log(currentElement);
@@ -558,7 +598,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         console.log(equationElement);
         // Open the edit block dropdown and set its position
         setShowEditBlockPopup(true);
-        setDropdownEditBlockTop(targetRect.bottom);
+        setDropdownEditBlockTop(targetRect.bottom + 60);
       }
     }
   }, [slatevalue, _equationId]);
@@ -643,17 +683,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     }
   };
 
-  const editorContainerRef = useRef<HTMLElement | null>(null);
-  useEffect(() => {
-    return () => {
-      setEditorKey(Date.now());
-    };
-  }, []);
-
   return (
     <div
       tabIndex={0}
-      className="relative mx-auto mt-2 block h-[550px] rounded-md pt-4 pr-4 pb-4 pl-2 focus:outline-none focus-visible:border-gray-300"
+      className="relative mx-auto mt-3 block h-[550px] rounded-md pt-4 pr-4 pb-4 pl-2 focus:outline-none focus-visible:border-gray-300"
     >
       <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
         <SortableContext

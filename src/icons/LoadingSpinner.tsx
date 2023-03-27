@@ -6,7 +6,6 @@ const LoadingSpinnerSVG = styled.svg`
   z-index: 2;
   width: 24px;
   height: 24px;
-  margin-right: 10px;
 
   & .path {
     stroke: #aaaaaa;

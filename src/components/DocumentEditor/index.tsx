@@ -228,6 +228,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     number | null
   >(0);
 
+  const [editorKey, setEditorKey] = useState(Date.now());
+
   const slatePathToNumber = (path: number[]): number => {
     const pathStr = path.map((num) => num.toString()).join("");
     return parseInt(pathStr, 10);
@@ -279,13 +281,13 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           { id: genNodeId(), type: "paragraph", children: [{ text: "" }] },
           { at: Path.next(path) }
         );
-        setDropdownTop(targetRect.top + 30);
-        setDropdownEditBlockTop(targetRect.top + 90);
 
+        setDropdownTop(targetRect.bottom + 50);
+        setDropdownEditBlockTop(targetRect.bottom + 50);
         setDropdownLeft(targetRect.right + 60);
       } else {
-        setDropdownTop(targetRect.top + 30);
-        setDropdownEditBlockTop(targetRect.top + 90);
+        setDropdownTop(targetRect.bottom + 30);
+        setDropdownEditBlockTop(targetRect.bottom + 90);
         setDropdownLeft(targetRect.right + 60);
       }
 
@@ -532,7 +534,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     setShowEditBlockPopup(true);
     const equationHeight = _element.offsetHeight;
     setDropdownEditBlockTop(targetRect.top + equationHeight);
-    // setDropdownLeft(targetRect.left + 60);
   };
 
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -595,8 +596,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   useEffect(() => {
     if (_equationId && slatevalue) {
       const equationElement = findEquationElementById(_equationId);
-      console.log(equationElement);
-      console.log(_equationId, "equationId");
+
       if (equationElement) {
         // Get the position of the newly added equation element
         const targetRect = equationElement.getBoundingClientRect();
@@ -689,6 +689,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   };
 
   const editorContainerRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    return () => {
+      setEditorKey(Date.now());
+    };
+  }, []);
 
   return (
     <div
@@ -706,6 +711,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 ref={editorContainerRef}
                 editor={editor}
                 value={slatevalue}
+                key={editorKey}
                 onChange={(newValue) => {
                   setValue(newValue);
 

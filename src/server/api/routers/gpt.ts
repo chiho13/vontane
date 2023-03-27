@@ -34,7 +34,7 @@ export const GPTRouter = createTRPCRouter({
                 `,
 
               max_tokens: 400,
-              temperature: 0.5,
+              temperature: 0.2,
             }),
           }
         );

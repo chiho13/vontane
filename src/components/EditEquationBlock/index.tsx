@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CornerDownLeft, Send, Info } from "lucide-react";
+import { CornerDownLeft, Send, Info, FileText } from "lucide-react";
 import { useTheme } from "styled-components";
 import { api } from "@/utils/api";
 import LoadingSpinner from "@/icons/LoadingSpinner";
@@ -19,12 +19,25 @@ const EditBlockPopupStyle = styled.div`
   .indent-text {
     text-indent: 24px;
   }
+
+  .insert-text {
+    background-color: #f1f1f1;
+  }
+
+  .insert-text:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  .insert-text:not([disabled]):hover {
+    background-color: #ffffff;
+  }
 `;
 
 interface EditBlockPopupProps {
   onChange: (value: string) => void;
   onClick: () => void;
-  onEnterClose: (e: React.KeyboardEvent) => void;
+  insertText: (note: string) => void;
   latexValue: string;
 }
 
@@ -63,11 +76,14 @@ function preprocessResponse(responseString: string) {
 export const EditBlockPopup = React.forwardRef<
   HTMLDivElement,
   EditBlockPopupProps
->(({ onChange, onClick, onEnterClose, latexValue }, ref) => {
+>(({ onChange, onClick, insertText, latexValue }, ref) => {
   const [value, setValue] = useState(latexValue);
   const [findEquation, setFindEquation] = useState("");
   const theme = useTheme();
   const [isLoading, setIsLoading] = useState(false);
+
+  const [noteResults, setNoteResults] = useState(null);
+  const [noteInserted, setNoteInserted] = useState(false);
 
   useEffect(() => {
     setValue(latexValue);
@@ -106,6 +122,7 @@ export const EditBlockPopup = React.forwardRef<
           jsonData = JSON.parse(processedString);
           setValue(jsonData.result);
           onChange(jsonData.result);
+          setNoteResults(jsonData.note);
         } catch (error) {
           console.error("Failed to parse JSON:", error);
           // You can set parsedJson to a default value or handle the error in a different way
@@ -133,13 +150,21 @@ export const EditBlockPopup = React.forwardRef<
   const getEquation = (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setNoteInserted(false);
     getEquationRefetch();
+  };
+
+  const _insertNoteText = () => {
+    if (noteResults) {
+      insertText(noteResults);
+      setNoteInserted(true);
+    }
   };
 
   return (
     <EditBlockPopupStyle
       ref={ref}
-      className="block h-[200px] rounded-md border border-gray-200 bg-gray-100 p-2 shadow-md"
+      className="block rounded-md border border-gray-200 bg-gray-100 p-2 shadow-md"
     >
       <div className="flex">
         <form
@@ -149,8 +174,8 @@ export const EditBlockPopup = React.forwardRef<
           <InfoToolTip />
           <input
             onChange={onChangeFindEquation}
-            className="indent-text block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-            placeholder="Search equation"
+            className="indent-text block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500  focus:outline-none focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+            placeholder="Search equations, formulas, reactions..."
           />
           <div className="group flex items-center">
             <div className="absolute right-[6px] ">
@@ -179,20 +204,38 @@ export const EditBlockPopup = React.forwardRef<
       <div className="mt-2 flex h-[130px] justify-between">
         <textarea
           value={value}
-          className="w-[270px] resize-none bg-transparent p-1 focus:outline-none focus-visible:border-gray-400"
+          className="w-full resize-none rounded-md border border-gray-200 bg-transparent p-2 focus:border-[#007AFF] focus:outline-none"
           onChange={onEquationChange}
+          placeholder="TEX code"
           autoFocus
-          onKeyDown={onEnterClose}
         />
-        <div className="flex items-end">
-          <button
-            className="flex items-center rounded-md bg-[#007AFF] px-2 py-1  text-sm text-white  shadow-sm transition duration-300 hover:bg-[#006EE6] "
-            onClick={onClick}
-          >
-            <span className="mr-1">Done</span>
-            <CornerDownLeft color="white" width={16} />
-          </button>
+      </div>
+      {noteResults && (
+        <div className="relative mt-2">
+          <textarea
+            readOnly={true}
+            value={noteResults}
+            className="h-[130px] w-full resize-none rounded-md border border-gray-200 bg-transparent p-2  focus:border-[#007AFF] focus:outline-none"
+          />
+          <div className="absolute bottom-4 right-2">
+            <button
+              className="insert-text flex items-center rounded-md border border-[#007AFF] bg-white px-1 py-[2px]  text-sm text-[#007AFF]   shadow-sm transition duration-300 "
+              disabled={noteInserted}
+              onClick={_insertNoteText}
+            >
+              <FileText color="#007AFF" width={16} />
+            </button>
+          </div>
         </div>
+      )}
+      <div className="mt-3 flex justify-end">
+        <button
+          className="flex items-center rounded-md bg-[#007AFF] px-2 py-1  text-sm text-white  shadow-sm transition duration-300 hover:bg-[#006EE6] "
+          onClick={onClick}
+        >
+          <span className="mr-1">Done</span>
+          <CornerDownLeft color="white" width={16} />
+        </button>
       </div>
     </EditBlockPopupStyle>
   );

@@ -684,7 +684,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         {showDropdown && activePath && (
           <motion.div
             {...y_animation_props}
-            className="fixed right-0 left-0 z-10 mx-auto mt-2 w-[320px]"
+            className="fixed right-[120px] z-10 mx-auto mt-2 w-[320px]"
             style={{
               top: `${dropdownTop}px`,
             }}
@@ -705,7 +705,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           <>
             <motion.div
               {...y_animation_props}
-              className="fixed right-0 left-0 z-10 z-10 mx-auto mt-2 mt-2 w-[380px]"
+              className="fixed right-[100px] z-10 z-10 mx-auto mt-2 mt-2 w-[380px]"
               style={{
                 top: `${dropdownEditBlockTop}px`,
               }}
@@ -717,11 +717,21 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 }
                 latexValue={getCurrentLatex}
                 onClick={closeEditableDropdown}
-                onEnterClose={(event) => {
+                insertText={(note) => {
                   // if (event.key === "Enter" && !event.shiftKey) {
                   //   event.preventDefault();
                   //   closeEditableDropdown();
                   // }
+
+                  Transforms.insertNodes(
+                    editor,
+                    {
+                      id: genNodeId(),
+                      type: "paragraph",
+                      children: [{ text: note }],
+                    },
+                    { at: Path.next(JSON.parse(activeEditEquationPath)) }
+                  );
                 }}
               />
             </motion.div>

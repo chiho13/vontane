@@ -6,6 +6,7 @@ import React, {
   useRef,
   useContext,
   createContext,
+  MouseEventHandler,
 } from "react";
 import {
   createEditor,
@@ -37,7 +38,7 @@ import { y_animation_props } from "../Dropdown";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 
 import { genNodeId } from "@/hoc/withID";
-
+import { TwoColumnElement } from "./EditorElements";
 import {
   useSortable,
   SortableContext,
@@ -80,13 +81,14 @@ const EquationContext = createContext(null);
 
 interface MiniDropdownProps {
   isOpen: boolean;
-  onClick: () => void;
+  addEquationBlockClick: () => void;
+  addTwoColumnBlockClick: () => void;
 }
 
 const MiniDropdown = React.forwardRef<HTMLDivElement, MiniDropdownProps>(
-  ({ isOpen, onClick }, ref) => {
-    const addBlock = (event: React.KeyboardEvent) => {
-      onClick();
+  ({ isOpen, addEquationBlockClick, addTwoColumnBlockClick }, ref) => {
+    const addBlock = () => {
+      addEquationBlockClick();
     };
 
     return (
@@ -108,6 +110,13 @@ const MiniDropdown = React.forwardRef<HTMLDivElement, MiniDropdownProps>(
           />
           <span className="ml-4 ">Add Block Equation</span>
         </motion.button>
+        <motion.button
+          whileTap={{ scale: 0.97 }}
+          className="flex w-full items-center rounded-md border-2 border-gray-100 p-3 shadow-sm transition duration-300 hover:bg-gray-100"
+          onClick={addBlock}
+        >
+          <span className="ml-4 ">Add Block Equation</span>
+        </motion.button>
       </div>
     );
   }
@@ -126,8 +135,31 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const [slatevalue, setValue] = useState([
     {
       id: genNodeId(),
-      type: "paragraph",
-      children: [{ text: "" }],
+      type: "twoColumn",
+      children: [
+        {
+          id: genNodeId(),
+          type: "column",
+          children: [
+            {
+              id: genNodeId(),
+              type: "paragraph",
+              children: [{ text: "hello" }],
+            },
+          ],
+        },
+        {
+          id: genNodeId(),
+          type: "column",
+          children: [
+            {
+              id: genNodeId(),
+              type: "paragraph",
+              children: [{ text: "good morning" }],
+            },
+          ],
+        },
+      ],
     },
   ]);
 
@@ -623,14 +655,22 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       </div>
     );
 
-    const content = isRoot ? (
-      <SortableElement
-        {...props}
-        renderElement={(props) => <ElementSelector {...props} />}
-      />
-    ) : (
-      <ElementSelector {...props} />
-    );
+    const content =
+      element.type === "twoColumn" ? (
+        <TwoColumnElement
+          {...props}
+          handleDragEnd={handleDragEnd}
+          handleDragStart={handleDragStart}
+          DragOverlayContent={DragOverlayContent}
+        />
+      ) : isRoot ? (
+        <SortableElement
+          {...props}
+          renderElement={(props) => <ElementSelector {...props} />}
+        />
+      ) : (
+        <ElementSelector {...props} />
+      );
 
     return (
       <div className="group relative">
@@ -738,9 +778,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             <MiniDropdown
               ref={addSomethingDropdownRef}
               isOpen={showDropdown}
-              onClick={() => {
+              addEquationBlockClick={() => {
                 handleAddEditableEquationBlock("", JSON.parse(activePath));
                 setShowDropdown(false);
+              }}
+              addTwoColumnBlockClick={() => {
+                console.log("add two column block");
               }}
             />
           </motion.div>

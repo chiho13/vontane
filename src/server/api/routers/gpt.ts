@@ -35,7 +35,7 @@ export const GPTRouter = createTRPCRouter({
               `,
             },
           ],
-          temperature: 0.6,
+          temperature: 0.2,
         });
 
         const data = completion.data.choices[0].message.content;

@@ -18,6 +18,7 @@ import { useUserContext } from "@/contexts/UserContext";
 import styled from "styled-components";
 
 import { DocumentEditor } from "@/components/DocumentEditor";
+import { SlateValueProvider } from "@/contexts/SlateValueContext";
 
 const TextAreaInputStyle = styled.textarea`
   background: linear-gradient(120deg, #fdfbfb 0%, #f2f6f7 100%);
@@ -136,7 +137,9 @@ const Home: NextPage = () => {
           </div>
           <div className="linear-gradient mx-auto w-full rounded-md border-2 border-gray-300 px-2 lg:w-[980px] lg:px-0">
             <div className="block  lg:w-full">
-              <DocumentEditor handleTextChange={handleTextChange} />
+              <SlateValueProvider>
+                <DocumentEditor handleTextChange={handleTextChange} />
+              </SlateValueProvider>
             </div>
 
             {!audioIsLoading && generatedAudioElement && (

@@ -116,6 +116,7 @@ const MiniDropdown = React.forwardRef<HTMLDivElement, MiniDropdownProps>(
 MiniDropdown.displayName = "MiniDropdown";
 
 import { EditBlockPopup } from "../EditEquationBlock";
+import { useSlateValue } from "@/contexts/SlateValueContext";
 
 export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   handleTextChange,
@@ -123,18 +124,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const theme = useTheme();
   const { isLocked } = useContext(LayoutContext);
   const editor = useEditor();
-  const [slatevalue, setValue] = useState([
-    {
-      id: genNodeId(),
-      type: "paragraph",
-      children: [{ text: "" }],
-    },
-  ]);
+  const { slateValue, setValue } = useSlateValue();
 
   const [activeId, setActiveId] = useState(null);
 
   const activeIndex = activeId
-    ? slatevalue.findIndex((el) => el.id === activeId)
+    ? slateValue.findIndex((el) => el.id === activeId)
     : -1;
 
   const [showDropdown, setShowDropdown] = useState(false);
@@ -588,7 +583,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   };
 
   useEffect(() => {
-    if (_equationId && slatevalue) {
+    if (_equationId && slateValue) {
       const equationElement = findEquationElementById(_equationId);
 
       if (equationElement) {
@@ -600,7 +595,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         setDropdownEditBlockTop(targetRect.bottom + 60);
       }
     }
-  }, [slatevalue, _equationId]);
+  }, [slateValue, _equationId]);
 
   const renderElement = useCallback((props) => {
     const { attributes, children, element } = props;
@@ -689,14 +684,14 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     >
       <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
         <SortableContext
-          items={slatevalue}
+          items={slateValue}
           strategy={verticalListSortingStrategy}
         >
           <ActiveElementProvider activeIndex={activeIndex}>
             <EquationProvider editor={editor}>
               <Slate
                 editor={editor}
-                value={slatevalue}
+                value={slateValue}
                 key={editorKey}
                 onChange={(newValue) => {
                   setValue(newValue);

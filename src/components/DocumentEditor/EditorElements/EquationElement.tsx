@@ -14,13 +14,13 @@ export function EquationElement(props) {
       data-path={JSON.stringify(path)}
       data-id={element.id}
       className={`equation-element my-2 mr-2 flex w-auto items-center rounded-md p-2 ${
-        element.latex.trim() === "" ? "bg-gray-100" : "justify-center"
+        element.latex?.trim() === "" ? "bg-gray-100" : "justify-center"
       } cursor-pointer transition duration-300 hover:bg-gray-200 focus:bg-gray-200 active:bg-gray-200`}
       contentEditable={false}
     >
       <BlockMath math={element.latex || ""} />
 
-      {element.latex.trim() === "" && (
+      {element.latex?.trim() === "" && (
         <div className="flex items-center">
           <Image
             src="/images/tex.png"

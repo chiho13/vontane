@@ -76,8 +76,6 @@ const Home: NextPage = () => {
 
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
 
-  const intervalRef = useRef<NodeJS.Timer | null>(null);
-
   useEffect(() => {
     console.log(transcriptionId);
   }, [transcriptionId]);
@@ -87,8 +85,6 @@ const Home: NextPage = () => {
       if (texttospeechdata) {
         setTranscriptionId(texttospeechdata.transcriptionId);
         console.log(texttospeechdata);
-        // Handle the data as needed
-        // refetchStatus();
       }
 
       if (texttospeecherror) {
@@ -153,9 +149,6 @@ const Home: NextPage = () => {
                 </div>
               </div>
             )}
-
-            {/* <AudioPlayer generatedAudio={dummyAudioElement} /> */}
-            {/* {audioUrl && <DownloadButton audioUrl={audioUrl} />} */}
           </div>
           <div className="mx-auto flex justify-center lg:w-[980px]">
             <GenerateButton

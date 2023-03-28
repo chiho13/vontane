@@ -128,8 +128,7 @@ export const EditBlockPopup = React.forwardRef<
           // You can set parsedJson to a default value or handle the error in a different way
           jsonData = null;
         }
-        // Handle the data as needed
-        // refetchStatus();
+
         setIsLoading(false);
       }
 

@@ -469,7 +469,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   }
 
   const handleEditLatex = (value: string, path: Path) => {
-    console.log(value);
     const latex = value;
     const equationNode = {
       type: "equation",
@@ -511,7 +510,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     );
 
     const [currentNode] = Editor.node(editor, path);
-    console.log(currentNode);
+
     setCurrentLatex(currentNode.latex);
 
     setShowEditBlockPopup(true);

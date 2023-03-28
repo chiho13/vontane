@@ -676,53 +676,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                                 renderElement={(_props) => {
                                   console.log(_props);
 
-                                  // return <p>{item.children[0].text}</p>;
-                                  return (
-                                    <ParagraphElement
-                                      {...props}
-                                      element={item}
-                                      attributes={attributes}
-                                      children={item.children}
-                                      onInput={(event) => {
-                                        const path = ReactEditor.findPath(
-                                          editor,
-                                          item
-                                        );
-                                        const offset = Editor.offset(
-                                          editor,
-                                          path
-                                        );
-                                        const { value } = editor;
-                                        const pathToNode = path.slice(
-                                          0,
-                                          path.length - 1
-                                        );
-                                        const parentNode = Node.get(
-                                          value,
-                                          pathToNode
-                                        );
-
-                                        Transforms.select(editor, {
-                                          anchor: { path, offset },
-                                          focus: { path, offset },
-                                        });
-                                        Transforms.insertText(
-                                          editor,
-                                          event.currentTarget.textContent
-                                        );
-                                        Transforms.select(editor, {
-                                          anchor: {
-                                            path: pathToNode,
-                                            offset: parentNode.children.length,
-                                          },
-                                          focus: {
-                                            path: pathToNode,
-                                            offset: parentNode.children.length,
-                                          },
-                                        });
-                                      }}
-                                    />
-                                  );
+                                  return <p>{item.children[0].text}</p>;
                                 }}
                               />
                             );

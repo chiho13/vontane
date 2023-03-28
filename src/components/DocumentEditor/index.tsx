@@ -312,36 +312,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         }
       }
     }
-
-    // if (event.key === "Backspace") {
-    //   console.log("sdfsdf", currentNode);
-    //   if (
-    //     currentNode.type === "paragraph" &&
-    //     Editor.isStart(editor, startPosition, currentNodePath)
-    //   ) {
-    //     // Move the cursor between paragraphs while skipping equation nodes, just like when the user hits the left arrow key
-    //     const currentPosition = selection.anchor;
-    //     const currentParagraph = Editor.node(editor, currentPosition.path);
-
-    //     if (prevNode && prevNode.type === "equation") {
-    //       event.preventDefault();
-    //       const nextParagraph = Editor.previous(editor, {
-    //         at: currentParagraph[1],
-    //         match: (n) => n.type === "paragraph",
-    //       });
-
-    //       if (nextParagraph) {
-    //         const [nextNode, nextPath] = nextParagraph;
-    //         const targetPosition = Editor.end(editor, nextPath);
-    //         Transforms.select(editor, targetPosition);
-    //       }
-    //     }
-    //   } else {
-    //     // If the current node is a paragraph and the previous node is not an equation or the cursor is not at the start of the paragraph, delete the character
-    //     event.preventDefault();
-    //     Transforms.delete(editor, { unit: "character", reverse: true });
-    //   }
-    // }
   };
 
   function handleCursorClick(event, editor) {
@@ -536,6 +506,16 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     </SortableContext>
   );
 
+  const handleBlur = (event, path) => {
+    event.preventDefault();
+    const newText = event.target.innerText;
+    Transforms.setNodes(
+      editor,
+      { children: [{ text: newText }] },
+      { at: path }
+    );
+  };
+
   const renderElement = useCallback((props) => {
     const { attributes, children, element } = props;
 
@@ -574,7 +554,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               items={element.children.map((col) => col.id)}
               strategy={horizontalListSortingStrategy}
             >
-              {element.children.map((col) => {
+              {element.children.map((col, colIndex) => {
                 return (
                   <SortableElement
                     key={col.id}
@@ -588,7 +568,14 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                           items={col.children?.map((item) => item.id)}
                           strategy={verticalListSortingStrategy}
                         >
-                          {col.children.map((item) => {
+                          {col.children.map((item, itemIndex) => {
+                            const itemPath = [
+                              1,
+                              "children",
+                              colIndex,
+                              "children",
+                              itemIndex,
+                            ];
                             console.log(item);
                             return (
                               <SortableElement
@@ -598,7 +585,14 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                                 renderElement={(_props) => {
                                   console.log(_props);
 
-                                  return <p>{item.children[0].text}</p>;
+                                  return (
+                                    <p
+                                      contentEditable={true}
+                                      onBlur={(e) => handleBlur(e, itemPath)}
+                                    >
+                                      {item.children[0].text}
+                                    </p>
+                                  );
                                 }}
                               />
                             );

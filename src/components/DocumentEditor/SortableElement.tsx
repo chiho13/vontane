@@ -33,7 +33,7 @@ export function SortableElement({
   } = useSortable({ id: element.id });
 
   return (
-    <div>
+    <div className="w-full">
       <div
         className={classNames(
           classes.sortableElement,

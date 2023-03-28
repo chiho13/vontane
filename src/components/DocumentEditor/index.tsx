@@ -43,6 +43,7 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
+  horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
 
 import { useEditor } from "@/hooks/useEditor";
@@ -50,7 +51,7 @@ import { ActiveElementProvider } from "@/contexts/ActiveElementContext";
 import { SortableElement } from "./SortableElement";
 import { ElementSelector } from "./EditorElements";
 import { EquationProvider } from "@/contexts/EquationEditContext";
-
+import { ParagraphElement } from "./EditorElements";
 import { findAncestorWithClass } from "@/utils/findAncestors";
 
 interface DocumentEditorProps {
@@ -597,6 +598,22 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     }
   }, [slateValue, _equationId]);
 
+  const SortableHandler = ({ children }) => (
+    <SortableContext
+      items={children.map((item) => item.id)}
+      strategy={verticalListSortingStrategy}
+    >
+      {children.map((item) => (
+        <SortableElement
+          key={item.id}
+          id={item.id}
+          element={item}
+          renderElement={(props) => <ElementSelector {...props} />}
+        />
+      ))}
+    </SortableContext>
+  );
+
   const renderElement = useCallback((props) => {
     const { attributes, children, element } = props;
 
@@ -627,13 +644,147 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       <ElementSelector {...props} />
     );
 
+    if (element.type === "twoColumns") {
+      return (
+        <div className="group relative" contentEditable={false}>
+          <div className="grid grid-cols-2 gap-1">
+            <SortableContext
+              items={element.children.map((col) => col.id)}
+              strategy={horizontalListSortingStrategy}
+            >
+              {element.children.map((col) => {
+                return (
+                  <SortableElement
+                    key={col.id}
+                    element={col}
+                    renderElement={(props) => (
+                      <div
+                        {...attributes}
+                        className="group relative rounded-md border border-gray-200 py-2"
+                      >
+                        <SortableContext
+                          items={col.children?.map((item) => item.id)}
+                          strategy={verticalListSortingStrategy}
+                        >
+                          {col.children.map((item) => {
+                            console.log(item);
+                            return (
+                              <SortableElement
+                                key={item.id}
+                                element={item}
+                                children={item.children}
+                                renderElement={(_props) => {
+                                  console.log(_props);
+
+                                  // return <p>{item.children[0].text}</p>;
+                                  return (
+                                    <ParagraphElement
+                                      {...props}
+                                      element={item}
+                                      attributes={attributes}
+                                      children={item.children}
+                                      onInput={(event) => {
+                                        const path = ReactEditor.findPath(
+                                          editor,
+                                          item
+                                        );
+                                        const offset = Editor.offset(
+                                          editor,
+                                          path
+                                        );
+                                        const { value } = editor;
+                                        const pathToNode = path.slice(
+                                          0,
+                                          path.length - 1
+                                        );
+                                        const parentNode = Node.get(
+                                          value,
+                                          pathToNode
+                                        );
+
+                                        Transforms.select(editor, {
+                                          anchor: { path, offset },
+                                          focus: { path, offset },
+                                        });
+                                        Transforms.insertText(
+                                          editor,
+                                          event.currentTarget.textContent
+                                        );
+                                        Transforms.select(editor, {
+                                          anchor: {
+                                            path: pathToNode,
+                                            offset: parentNode.children.length,
+                                          },
+                                          focus: {
+                                            path: pathToNode,
+                                            offset: parentNode.children.length,
+                                          },
+                                        });
+                                      }}
+                                    />
+                                  );
+                                }}
+                              />
+                            );
+                          })}
+                        </SortableContext>
+                      </div>
+                    )}
+                  />
+                );
+              })}
+            </SortableContext>
+          </div>
+          {isRoot && addButton}
+        </div>
+      );
+    }
+
     return (
       <div className="group relative">
         {content}
-        {addButton}
+        {isRoot && addButton}
       </div>
     );
   }, []);
+
+  // const renderElement = useCallback((props) => {
+  //   const { attributes, children, element } = props;
+
+  //   const elementPath = ReactEditor.findPath(editor, element);
+  //   const isRoot = elementPath.length === 1;
+
+  //   const addButton = (
+  //     <div className="z-100 absolute top-1/2 left-0 -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center opacity-0 group-hover:opacity-100">
+  //       <button
+  //         className="rounded-md hover:bg-gray-200"
+  //         onClick={(event) => {
+  //           event.stopPropagation();
+  //           openMiniDropdown(event, ReactEditor.findPath(editor, element));
+  //         }}
+  //         ref={toggleRef}
+  //       >
+  //         <Plus color={theme.colors.darkgray} />
+  //       </button>
+  //     </div>
+  //   );
+
+  //   const content = isRoot ? (
+  //     <SortableElement
+  //       {...props}
+  //       renderElement={(props) => <ElementSelector {...props} />}
+  //     />
+  //   ) : (
+  //     <ElementSelector {...props} />
+  //   );
+
+  //   return (
+  //     <div className="group relative">
+  //       {content}
+  //       {addButton}
+  //     </div>
+  //   );
+  // }, []);
 
   const handleDragEnd = useCallback(
     function (event) {
@@ -657,7 +808,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   );
 
   const handleDragStart = useCallback(function ({ active }) {
-    setActiveId(active.id);
+    // setActiveId(active.id);
+    console.log(active);
   }, []);
 
   useClickOutside(
@@ -715,7 +867,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         <DragOverlay>
           {activeId ? (
             <DragOverlayContent
-              element={slatevalue.find((el) => el.id === activeId)}
+              element={slateValue.find((el) => el.id === activeId)}
             />
           ) : null}
         </DragOverlay>

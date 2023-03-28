@@ -3,7 +3,7 @@ import {
   DefaultElement,
   EquationElement,
   TwoColumnElement,
-  ColumnElement, // Import the ColumnElement component
+  ColumnContainer, // Import the ColumnElement component
 } from "./index";
 
 export function ElementSelector(props) {
@@ -14,10 +14,10 @@ export function ElementSelector(props) {
       return <ParagraphElement {...props} />;
     case "equation":
       return <EquationElement {...props} />;
-    case "twoColumn": // Add the case for the twoColumn type
+    case "column-container":
+      return <ColumnContainer {...props} />;
+    case "column":
       return <TwoColumnElement {...props} />;
-    case "column": // Add the case for the column type
-      return <ColumnElement {...props} />;
     default:
       return <DefaultElement {...props} />;
   }

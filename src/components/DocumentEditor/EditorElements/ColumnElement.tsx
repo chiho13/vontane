@@ -1,9 +1,13 @@
-import { ReactNode } from "react";
+// ColumnContainer.js
+import { SortableContext } from "@dnd-kit/sortable";
+import { verticalListSortingStrategy } from "@dnd-kit/sortable";
 
-interface ColumnElementProps {
-  children: ReactNode;
-}
-
-export function ColumnElement({ children }: ColumnElementProps) {
-  return <div>{children}</div>;
-}
+export const ColumnContainer = ({ attributes, children, elements }) => {
+  return (
+    <div {...attributes} className="column-container">
+      <SortableContext items={elements} strategy={verticalListSortingStrategy}>
+        {children}
+      </SortableContext>
+    </div>
+  );
+};

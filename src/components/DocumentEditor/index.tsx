@@ -134,17 +134,21 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const editor = useEditor();
   const [slatevalue, setValue] = useState([
     {
-      id: genNodeId(),
-      type: "twoColumn",
+      type: "column-container",
       children: [
         {
-          id: genNodeId(),
           type: "column",
+          id: genNodeId(),
           children: [
             {
               id: genNodeId(),
               type: "paragraph",
-              children: [{ text: "hello" }],
+              children: [{ text: "Item 1" }],
+            },
+            {
+              id: genNodeId(),
+              type: "paragraph",
+              children: [{ text: "Item 2" }],
             },
           ],
         },
@@ -155,7 +159,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             {
               id: genNodeId(),
               type: "paragraph",
-              children: [{ text: "good morning" }],
+              children: [{ text: "Item 3" }],
+            },
+            {
+              id: genNodeId(),
+              type: "paragraph",
+              children: [{ text: "Item 4" }],
             },
           ],
         },
@@ -655,22 +664,14 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       </div>
     );
 
-    const content =
-      element.type === "twoColumn" ? (
-        <TwoColumnElement
-          {...props}
-          handleDragEnd={handleDragEnd}
-          handleDragStart={handleDragStart}
-          DragOverlayContent={DragOverlayContent}
-        />
-      ) : isRoot ? (
-        <SortableElement
-          {...props}
-          renderElement={(props) => <ElementSelector {...props} />}
-        />
-      ) : (
-        <ElementSelector {...props} />
-      );
+    const content = isRoot ? (
+      <SortableElement
+        {...props}
+        renderElement={(props) => <ElementSelector {...props} />}
+      />
+    ) : (
+      <ElementSelector {...props} />
+    );
 
     return (
       <div className="group relative">

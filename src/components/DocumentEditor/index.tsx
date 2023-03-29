@@ -490,22 +490,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     }
   }, [slateValue, _equationId]);
 
-  const SortableHandler = ({ children }) => (
-    <SortableContext
-      items={children.map((item) => item.id)}
-      strategy={verticalListSortingStrategy}
-    >
-      {children.map((item) => (
-        <SortableElement
-          key={item.id}
-          id={item.id}
-          element={item}
-          renderElement={(props) => <ElementSelector {...props} />}
-        />
-      ))}
-    </SortableContext>
-  );
-
   const handleBlur = (event, path) => {
     event.preventDefault();
     const newText = event.target.innerText;
@@ -617,44 +601,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       </div>
     );
   }, []);
-
-  // const renderElement = useCallback((props) => {
-  //   const { attributes, children, element } = props;
-
-  //   const elementPath = ReactEditor.findPath(editor, element);
-  //   const isRoot = elementPath.length === 1;
-
-  //   const addButton = (
-  //     <div className="z-100 absolute top-1/2 left-0 -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center opacity-0 group-hover:opacity-100">
-  //       <button
-  //         className="rounded-md hover:bg-gray-200"
-  //         onClick={(event) => {
-  //           event.stopPropagation();
-  //           openMiniDropdown(event, ReactEditor.findPath(editor, element));
-  //         }}
-  //         ref={toggleRef}
-  //       >
-  //         <Plus color={theme.colors.darkgray} />
-  //       </button>
-  //     </div>
-  //   );
-
-  //   const content = isRoot ? (
-  //     <SortableElement
-  //       {...props}
-  //       renderElement={(props) => <ElementSelector {...props} />}
-  //     />
-  //   ) : (
-  //     <ElementSelector {...props} />
-  //   );
-
-  //   return (
-  //     <div className="group relative">
-  //       {content}
-  //       {addButton}
-  //     </div>
-  //   );
-  // }, []);
 
   const handleDragEnd = useCallback(
     function (event) {

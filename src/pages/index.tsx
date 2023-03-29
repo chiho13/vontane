@@ -18,6 +18,7 @@ import { useUserContext } from "@/contexts/UserContext";
 import styled from "styled-components";
 
 import { DocumentEditor } from "@/components/DocumentEditor";
+import TablesExample from "@/components/TableExample";
 
 const TextAreaInputStyle = styled.textarea`
   background: linear-gradient(120deg, #fdfbfb 0%, #f2f6f7 100%);
@@ -136,6 +137,7 @@ const Home: NextPage = () => {
           </div>
           <div className="linear-gradient mx-auto w-full rounded-md border-2 border-gray-300 px-2 lg:w-[980px] lg:px-0">
             <div className="block  lg:w-full">
+              <TablesExample />
               <DocumentEditor handleTextChange={handleTextChange} />
             </div>
 

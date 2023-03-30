@@ -492,6 +492,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   const handleBlur = (event, path) => {
     event.preventDefault();
+    event.stopPropagation();
     const newText = event.target.innerText;
     Transforms.setNodes(
       editor,
@@ -548,40 +549,42 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                         {...attributes}
                         className="group relative rounded-md border border-gray-200 py-2"
                       >
-                        <SortableContext
-                          items={col.children?.map((item) => item.id)}
-                          strategy={verticalListSortingStrategy}
-                        >
-                          {col.children.map((item, itemIndex) => {
-                            const itemPath = [
-                              1,
-                              "children",
-                              colIndex,
-                              "children",
-                              itemIndex,
-                            ];
-                            console.log(item);
-                            return (
-                              <SortableElement
-                                key={item.id}
-                                element={item}
-                                children={item.children}
-                                renderElement={(_props) => {
-                                  console.log(_props);
+                        {col.children && (
+                          <SortableContext
+                            items={col.children?.map((item) => item.id)}
+                            strategy={verticalListSortingStrategy}
+                          >
+                            {col.children.map((item, itemIndex) => {
+                              const itemPath = [
+                                1,
+                                "children",
+                                colIndex,
+                                "children",
+                                itemIndex,
+                              ];
+                              console.log(item);
+                              return (
+                                <SortableElement
+                                  key={item.id}
+                                  element={item}
+                                  children={item.children}
+                                  renderElement={(_props) => {
+                                    console.log(_props);
 
-                                  return (
-                                    <p
-                                      contentEditable={true}
-                                      onBlur={(e) => handleBlur(e, itemPath)}
-                                    >
-                                      {item.children[0].text}
-                                    </p>
-                                  );
-                                }}
-                              />
-                            );
-                          })}
-                        </SortableContext>
+                                    return (
+                                      <p
+                                        contentEditable={true}
+                                        onBlur={(e) => handleBlur(e, itemPath)}
+                                      >
+                                        {item.children[0].text}
+                                      </p>
+                                    );
+                                  }}
+                                />
+                              );
+                            })}
+                          </SortableContext>
+                        )}
                       </div>
                     )}
                   />

@@ -29,3 +29,4 @@ Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/ver
 
 currently under development
 [x] search equations
+[] drag element to create columns

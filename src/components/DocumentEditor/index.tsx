@@ -34,7 +34,12 @@ import useClickOutside from "@/hooks/useClickOutside";
 import { LayoutContext } from "../Layouts/AccountLayout";
 import { y_animation_props } from "../Dropdown";
 
-import { DndContext, DragOverlay } from "@dnd-kit/core";
+import {
+  DndContext,
+  DragOverlay,
+  useDroppable,
+  useDndMonitor,
+} from "@dnd-kit/core";
 
 import { genNodeId } from "@/hoc/withID";
 
@@ -50,10 +55,11 @@ import { ActiveElementProvider } from "@/contexts/ActiveElementContext";
 import { SortableElement } from "./SortableElement";
 import { ElementSelector } from "./EditorElements";
 import { EquationProvider } from "@/contexts/EquationEditContext";
+import { DragOverlayContent } from "./DragOverlayContent";
 
 import { findAncestorWithClass } from "@/utils/findAncestors";
 
-import { NewColumnProvider } from "@/contexts/NewColumnContext";
+import { useNewColumn } from "@/contexts/NewColumnContext";
 import { useSensor, useSensors, MouseSensor } from "@dnd-kit/core";
 
 interface DocumentEditorProps {
@@ -175,6 +181,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       type: "paragraph",
       children: [{ text: "gloovi9e" }],
     },
+    {
+      id: genNodeId(),
+      type: "paragraph",
+      children: [{ text: "lolololol" }],
+    },
   ]);
 
   const [activeId, setActiveId] = useState(null);
@@ -220,6 +231,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   >(0);
 
   const [editorKey, setEditorKey] = useState(Date.now());
+
+  const { creatingNewColumn, setCreatingNewColumn } = useNewColumn();
 
   const slatePathToNumber = (path: number[]): number => {
     const pathStr = path.map((num) => num.toString()).join("");
@@ -362,36 +375,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         }
       }
     }
-
-    // if (event.key === "Backspace") {
-    //   console.log("sdfsdf", currentNode);
-    //   if (
-    //     currentNode.type === "paragraph" &&
-    //     Editor.isStart(editor, startPosition, currentNodePath)
-    //   ) {
-    //     // Move the cursor between paragraphs while skipping equation nodes, just like when the user hits the left arrow key
-    //     const currentPosition = selection.anchor;
-    //     const currentParagraph = Editor.node(editor, currentPosition.path);
-
-    //     if (prevNode && prevNode.type === "equation") {
-    //       event.preventDefault();
-    //       const nextParagraph = Editor.previous(editor, {
-    //         at: currentParagraph[1],
-    //         match: (n) => n.type === "paragraph",
-    //       });
-
-    //       if (nextParagraph) {
-    //         const [nextNode, nextPath] = nextParagraph;
-    //         const targetPosition = Editor.end(editor, nextPath);
-    //         Transforms.select(editor, targetPosition);
-    //       }
-    //     }
-    //   } else {
-    //     // If the current node is a paragraph and the previous node is not an equation or the cursor is not at the start of the paragraph, delete the character
-    //     event.preventDefault();
-    //     Transforms.delete(editor, { unit: "character", reverse: true });
-    //   }
-    // }
   };
 
   function handleCursorClick(event, editor) {
@@ -402,22 +385,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         editor,
         startPosition.path
       );
-
-      console.log(currentNodePath);
-      // If the cursor is at the start of a paragraph
-      if (
-        currentNode.type === "paragraph"
-        // Editor.isStart(editor, startPosition, currentNodePath)
-      ) {
-        const prevSiblingNode = Editor.previous(editor, {
-          at: currentNodePath,
-        });
-
-        if (prevSiblingNode) {
-          console.log(prevSiblingNode[0]);
-          setPrevNode(prevSiblingNode[0]);
-        }
-      }
 
       const equationElement = findAncestorWithClass(
         event.target,
@@ -613,6 +580,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           className="group relative"
           onMouseEnter={() => setAddButtonHoveredId(element.id)}
           onMouseLeave={() => setAddButtonHoveredId(null)}
+          onKeyDown={() => setAddButtonHoveredId(null)}
         >
           {content}
           {addButton}
@@ -633,6 +601,38 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     }
 
     return foundPath;
+  };
+
+  const [insertDirection, setInsertDirection] = useState(null);
+
+  const createColumns = (fromPath, over) => {
+    // Remove the dragged node
+    const [draggedNode] = Editor.node(editor, fromPath);
+    const overPath = over.path;
+
+    const [droppedNode] = Editor.node(editor, overPath);
+
+    // Create a new column with the dragged node and the target node
+    const newColumn = {
+      type: "column",
+      children: [
+        { type: "column-cell", children: [draggedNode] },
+        { type: "column-cell", children: [droppedNode] },
+      ],
+    };
+
+    // Find the target node's path
+    const toPath = findPathById(editor, over.id);
+
+    // Insert the new column before or after the target node
+    Transforms.insertNodes(editor, newColumn, {
+      at: insertDirection === "left" ? toPath : Path.next(toPath),
+      select: true,
+    });
+
+    Transforms.removeNodes(editor, { at: overPath });
+
+    Transforms.removeNodes(editor, { at: fromPath });
   };
 
   const handleDragEnd = useCallback(
@@ -660,7 +660,23 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           ? 1
           : 0;
 
-      if (
+      const isRootLevel = fromPath.length === 1 && toPath.length === 1;
+
+      console.log(fromPath, toPath);
+      // console.log(isRootLevel, creatingNewColumn);
+      if (isRootLevel && creatingNewColumn) {
+        // Adjust the over object according to the insertDirection
+        const targetPath =
+          insertDirection === "left"
+            ? toPath.slice(0, -1)
+            : insertDirection === "right"
+            ? toPath
+            : toPath
+                .slice(0, -1)
+                .concat(toPath[toPath.length - 1] + toIndexOffset);
+
+        createColumns(fromPath, { id: over.id, path: targetPath });
+      } else if (
         fromParentElement.type === "column-cell" &&
         toParentElement.type === "column-cell"
       ) {
@@ -677,10 +693,71 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         });
       }
 
+      setCreatingNewColumn(false);
       setActiveId(null);
     },
-    [editor]
+    [editor, creatingNewColumn]
   );
+
+  function Droppable({ children }) {
+    const droppable = useDroppable({
+      id: "droppable-area",
+    });
+
+    const findPathById = (editor, id) => {
+      try {
+        const [nodeEntry] = Editor.nodes(editor, {
+          match: (n) => n.id === id,
+          at: [],
+        });
+        if (nodeEntry) {
+          return ReactEditor.findPath(editor, nodeEntry[0]);
+        }
+      } catch (err) {
+        // Log the error if necessary
+      }
+      return null;
+    };
+
+    useDndMonitor({
+      onDragOver(event) {
+        const { active, over } = event;
+        if (!over) {
+          setCreatingNewColumn(false);
+          setInsertDirection(null);
+          return;
+        }
+
+        const activePath = findPathById(editor, active.id);
+        const overPath = findPathById(editor, over.id);
+
+        console.log("activePath:", activePath);
+        console.log("overPath:", overPath);
+
+        if (activePath && overPath) {
+          const isNearRoot = activePath.length === 1 && overPath.length === 1;
+          console.log("isNearRoot:", isNearRoot);
+          setCreatingNewColumn(isNearRoot);
+
+          if (isNearRoot) {
+            const insertToLeft = activePath[0] < overPath[0];
+            setInsertDirection(insertToLeft ? "left" : "right");
+          } else {
+            setInsertDirection(null);
+          }
+        } else {
+          setCreatingNewColumn(false);
+          setInsertDirection(null);
+        }
+      },
+    });
+
+    return (
+      <div ref={droppable.setNodeRef} {...droppable.attributes}>
+        {children}
+      </div>
+    );
+  }
 
   const handleDragStart = useCallback(function ({ active }) {
     setActiveId(active.id);
@@ -741,32 +818,32 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           items={slatevalue}
           strategy={verticalListSortingStrategy}
         >
-          <NewColumnProvider>
-            <ActiveElementProvider activeIndex={activeIndex}>
-              <EquationProvider editor={editor}>
-                <Slate
-                  editor={editor}
-                  value={slatevalue}
-                  key={editorKey}
-                  onChange={(newValue) => {
-                    setValue(newValue);
+          <ActiveElementProvider activeIndex={activeIndex}>
+            <EquationProvider editor={editor}>
+              <Slate
+                editor={editor}
+                value={slatevalue}
+                key={editorKey}
+                onChange={(newValue) => {
+                  setValue(newValue);
 
-                    if (handleTextChange) {
-                      handleTextChange(newValue);
-                    }
-                  }}
-                >
+                  if (handleTextChange) {
+                    handleTextChange(newValue);
+                  }
+                }}
+              >
+                <Droppable>
                   <Editable
-                    className="relative h-full overflow-auto"
+                    className="relative h-[520px]"
                     placeholder="Press '/' for prompts"
                     renderElement={renderElement}
                     onKeyDown={handleKeyDown}
                     onClick={(event) => handleCursorClick(event, editor)}
                   />
-                </Slate>
-              </EquationProvider>
-            </ActiveElementProvider>
-          </NewColumnProvider>
+                </Droppable>
+              </Slate>
+            </EquationProvider>
+          </ActiveElementProvider>
         </SortableContext>
         <DragOverlay>
           {activeId ? (
@@ -844,27 +921,3 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 };
 
 export default DocumentEditor;
-
-const DragOverlayContent = ({ element }) => {
-  const editor = useEditor();
-  const [value] = useState([{ ...element }]);
-
-  const { isLocked } = useContext(LayoutContext);
-
-  return (
-    <Slate editor={editor} value={value}>
-      <div
-        style={{
-          paddingLeft: 70,
-          transform: isLocked ? "translateX(-150px)" : "initial",
-          opacity: 0.6,
-        }}
-      >
-        <Editable
-          readOnly
-          renderElement={(props) => <ElementSelector {...props} />}
-        />
-      </div>
-    </Slate>
-  );
-};

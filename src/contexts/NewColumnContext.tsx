@@ -1,12 +1,26 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
 
-const NewColumnContext = createContext({});
+interface NewColumnContextType {
+  creatingNewColumn: boolean;
+  setCreatingNewColumn: (creatingNewColumn: boolean) => void;
+}
 
-export const useNewColumn = () => {
+const NewColumnContext = createContext<NewColumnContextType>({
+  creatingNewColumn: false,
+  setCreatingNewColumn: () => {},
+});
+
+export const useNewColumn = (): NewColumnContextType => {
   return useContext(NewColumnContext);
 };
 
-export const NewColumnProvider = ({ children }) => {
+interface NewColumnProviderProps {
+  children: ReactNode;
+}
+
+export const NewColumnProvider: React.FC<NewColumnProviderProps> = ({
+  children,
+}) => {
   const [creatingNewColumn, setCreatingNewColumn] = useState(false);
 
   return (

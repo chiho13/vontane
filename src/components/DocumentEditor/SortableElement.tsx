@@ -9,8 +9,23 @@ import { default as classNames } from "classnames";
 import { GripVertical } from "lucide-react";
 import { useTheme } from "styled-components";
 import { EquationContext } from "@/contexts/EquationEditContext";
-import { useContext, useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 import { Editor } from "slate";
+import { useNewColumn } from "@/contexts/NewColumnContext";
+
+const SortableHandle = ({ setActivatorNodeRef, listeners, color, width }) => (
+  <div className="flex w-[60px] justify-end">
+    <button
+      ref={setActivatorNodeRef}
+      {...listeners}
+      className={classes.handle}
+      contentEditable={false}
+    >
+      <GripVertical color={color} width={width} />
+    </button>
+  </div>
+);
+
 export function SortableElement({
   attributes,
   children,
@@ -21,6 +36,9 @@ export function SortableElement({
   const readOnly = useReadOnly();
 
   const theme = useTheme();
+
+  const { creatingNewColumn } = useNewColumn();
+
   const {
     attributes: sortableAttributes,
     listeners,
@@ -34,7 +52,10 @@ export function SortableElement({
     isDragging,
   } = useSortable({ id: element.id });
 
-  const { editor } = useContext(EquationContext);
+  const showCreateNewColumnLeft =
+    creatingNewColumn && over?.id !== element.id && index < activeIndex;
+  const showCreateNewColumnRight =
+    creatingNewColumn && over?.id !== element.id && index > activeIndex;
 
   return (
     <div>
@@ -69,7 +90,9 @@ export function SortableElement({
               ? index > activeIndex
                 ? classes.insertAfter
                 : classes.insertBefore
-              : undefined
+              : undefined,
+            showCreateNewColumnRight && classes.createNewColumnRight,
+            showCreateNewColumnLeft && classes.createNewColumnLeft
           )}
         >
           {renderElement({ attributes, children, element })}

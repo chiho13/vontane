@@ -8,5 +8,5 @@ import { withID } from "@/hoc/withID";
 import { withColumns } from "@/hoc/withColumns";
 
 export function useEditor() {
-  return useMemo(() => withColumns(withReact(createEditor())), []);
+  return useMemo(() => withColumns(withID(withReact(createEditor()))), []);
 }

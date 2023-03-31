@@ -4,7 +4,11 @@ export function ColumnCellElement(props) {
   const { attributes, children, element } = props;
 
   return (
-    <div {...attributes} className="flex-1 rounded pb-2 pt-2">
+    <div
+      {...attributes}
+      data-id={element.id}
+      className="flex-1 rounded pb-2 pt-2"
+    >
       {children}
     </div>
   );

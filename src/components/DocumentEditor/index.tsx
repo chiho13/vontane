@@ -201,6 +201,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     isLocked ? -150 : 0
   );
 
+  const sensors = useSensors(useSensor(MouseSensor));
   useEffect(() => {
     setOffsetDropdownPosition(isLocked ? -150 : 0);
   }, [isLocked]);
@@ -606,6 +607,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const [insertDirection, setInsertDirection] = useState(null);
 
   const createColumns = (fromPath, over) => {
+    if (Path.equals(fromPath, over.path)) {
+      return; // Do nothing if they are the same
+    }
     // Remove the dragged node
     const [draggedNode] = Editor.node(editor, fromPath);
     const overPath = over.path;
@@ -616,8 +620,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     const newColumn = {
       type: "column",
       children: [
-        { type: "column-cell", children: [draggedNode] },
         { type: "column-cell", children: [droppedNode] },
+        { type: "column-cell", children: [draggedNode] },
       ],
     };
 
@@ -633,6 +637,20 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     Transforms.removeNodes(editor, { at: overPath });
 
     Transforms.removeNodes(editor, { at: fromPath });
+
+    setTimeout(() => {
+      const [_, newColumnPath] = Editor.last(editor, []);
+      const lastCell = [...Editor.nodes(editor, { at: newColumnPath })]
+        .reverse()
+        .find(([node]) => node.type === "column-cell");
+      const lastCellId = lastCell[0].id;
+      console.log(lastCellId);
+      const lastColumnCell = findEquationElementById(lastCellId);
+      console.log(lastColumnCell);
+      if (lastColumnCell) {
+        lastColumnCell.style.backgroundColor = "#e3ecf7";
+      }
+    }, 100);
   };
 
   const handleDragEnd = useCallback(
@@ -731,19 +749,39 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         const activePath = findPathById(editor, active.id);
         const overPath = findPathById(editor, over.id);
 
-        console.log("activePath:", activePath);
-        console.log("overPath:", overPath);
-
         if (activePath && overPath) {
           const isNearRoot = activePath.length === 1 && overPath.length === 1;
-          console.log("isNearRoot:", isNearRoot);
-          setCreatingNewColumn(isNearRoot);
 
           if (isNearRoot) {
-            const insertToLeft = activePath[0] < overPath[0];
-            setInsertDirection(insertToLeft ? "left" : "right");
-          } else {
-            setInsertDirection(null);
+            const overElement = document.querySelector(
+              `[data-id="${over.id}"]`
+            );
+
+            if (!overElement) return;
+            const overRect = overElement.getBoundingClientRect();
+
+            const cursorX = event.delta.x;
+
+            // const isCloseToLeft =
+            //   cursorX < overRect.left + overRect.width * 0.5;
+            const isCloseToRight =
+              cursorX > overRect.left + overRect.width * 0.4;
+
+            console.log(cursorX, overRect.left + overRect.width * 0.4);
+
+            if (isCloseToRight) {
+              setCreatingNewColumn(true);
+              // setInsertDirection("right");
+            } else {
+              setCreatingNewColumn(false);
+            }
+            // if (isCloseToLeft || isCloseToRight) {
+            //   setCreatingNewColumn(true);
+            //   setInsertDirection(isCloseToLeft ? "left" : "right");
+            // } else {
+            //   setCreatingNewColumn(false);
+            //   setInsertDirection(null);
+            // }
           }
         } else {
           setCreatingNewColumn(false);
@@ -813,7 +851,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       tabIndex={0}
       className="relative mx-auto mt-3 block h-[550px] rounded-md pt-4 pr-4 pb-4 pl-2 focus:outline-none focus-visible:border-gray-300"
     >
-      <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
+      <DndContext
+        onDragEnd={handleDragEnd}
+        onDragStart={handleDragStart}
+        sensors={sensors}
+      >
         <SortableContext
           items={slatevalue}
           strategy={verticalListSortingStrategy}

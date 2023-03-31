@@ -618,10 +618,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
     // Create a new column with the dragged node and the target node
     const newColumn = {
+      id: genNodeId(),
       type: "column",
       children: [
-        { type: "column-cell", children: [droppedNode] },
-        { type: "column-cell", children: [draggedNode] },
+        { id: genNodeId(), type: "column-cell", children: [droppedNode] },
+        { id: genNodeId(), type: "column-cell", children: [draggedNode] },
       ],
     };
 
@@ -638,19 +639,19 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
     Transforms.removeNodes(editor, { at: fromPath });
 
-    setTimeout(() => {
-      const [_, newColumnPath] = Editor.last(editor, []);
-      const lastCell = [...Editor.nodes(editor, { at: newColumnPath })]
-        .reverse()
-        .find(([node]) => node.type === "column-cell");
-      const lastCellId = lastCell[0].id;
-      console.log(lastCellId);
-      const lastColumnCell = findEquationElementById(lastCellId);
-      console.log(lastColumnCell);
-      if (lastColumnCell) {
-        lastColumnCell.style.backgroundColor = "#e3ecf7";
-      }
-    }, 100);
+    // setTimeout(() => {
+    //   const [_, newColumnPath] = Editor.last(editor, []);
+    //   const lastCell = [...Editor.nodes(editor, { at: newColumnPath })]
+    //     .reverse()
+    //     .find(([node]) => node.type === "column-cell");
+    //   const lastCellId = lastCell[0].id;
+    //   console.log(lastCellId);
+    //   const lastColumnCell = findEquationElementById(lastCellId);
+    //   console.log(lastColumnCell);
+    //   if (lastColumnCell) {
+    //     lastColumnCell.style.backgroundColor = "#e3ecf7";
+    //   }
+    // }, 100);
   };
 
   const handleDragEnd = useCallback(

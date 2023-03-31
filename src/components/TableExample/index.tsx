@@ -1,6 +1,13 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { Slate, Editable, withReact } from "slate-react";
-import { createEditor, Transforms, Editor, Range, Point } from "slate";
+import {
+  createEditor,
+  Transforms,
+  Editor,
+  Range,
+  Point,
+  Element as SlateElement,
+} from "slate";
 import { withHistory } from "slate-history";
 
 const ColumnLayoutExample = () => {
@@ -90,12 +97,8 @@ const Element = (props) => {
       );
     case "column-cell":
       return (
-        <div
-          {...attributes}
-          className="flex-1 rounded border p-2"
-          contentEditable={false}
-        >
-          <Editable {...props} />
+        <div {...attributes} className="flex-1 rounded border p-2">
+          {children}
         </div>
       );
     default:
@@ -122,22 +125,12 @@ const initialValue = [
             type: "paragraph",
             children: [{ text: "Paragraph 1 in column 1" }],
           },
-        ],
-      },
-      {
-        type: "column-cell",
-        children: [
           {
             type: "paragraph",
             children: [{ text: "Paragraph 2 in column 1" }],
           },
         ],
       },
-    ],
-  },
-  {
-    type: "column",
-    children: [
       {
         type: "column-cell",
         children: [
@@ -145,11 +138,6 @@ const initialValue = [
             type: "paragraph",
             children: [{ text: "Paragraph 1 in column 2" }],
           },
-        ],
-      },
-      {
-        type: "column-cell",
-        children: [
           {
             type: "paragraph",
             children: [{ text: "Paragraph 2 in column 2" }],

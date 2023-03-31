@@ -1,14 +1,16 @@
 // import { React, useSortable, CSS, classNames } from "../deps";
 import { useActiveElement } from "@/contexts/ActiveElementContext";
 
-import { useReadOnly } from "slate-react";
+import { ReactEditor, useReadOnly } from "slate-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import classes from "./styles/SortableElement.module.css";
 import { default as classNames } from "classnames";
 import { GripVertical } from "lucide-react";
 import { useTheme } from "styled-components";
-
+import { EquationContext } from "@/contexts/EquationEditContext";
+import { useContext, useMemo } from "react";
+import { Editor } from "slate";
 export function SortableElement({
   attributes,
   children,
@@ -31,6 +33,8 @@ export function SortableElement({
     isSorting,
     isDragging,
   } = useSortable({ id: element.id });
+
+  const { editor } = useContext(EquationContext);
 
   return (
     <div>

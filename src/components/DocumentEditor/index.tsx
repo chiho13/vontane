@@ -127,7 +127,50 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     {
       id: genNodeId(),
       type: "paragraph",
-      children: [{ text: "" }],
+      children: [{ text: "sdfsfdsf" }],
+    },
+    {
+      id: genNodeId(),
+      type: "column",
+      children: [
+        {
+          id: genNodeId(),
+          type: "column-cell",
+          children: [
+            {
+              id: genNodeId(),
+              type: "paragraph",
+              children: [{ text: "Paragraph 1 in column 1" }],
+            },
+            {
+              id: genNodeId(),
+              type: "paragraph",
+              children: [{ text: "Paragraph 2 in column 1" }],
+            },
+          ],
+        },
+        {
+          id: genNodeId(),
+          type: "column-cell",
+          children: [
+            {
+              id: genNodeId(),
+              type: "paragraph",
+              children: [{ text: "Paragraph 1 in column 2" }],
+            },
+            {
+              id: genNodeId(),
+              type: "paragraph",
+              children: [{ text: "Paragraph 2 in column 2" }],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: genNodeId(),
+      type: "paragraph",
+      children: [{ text: "gloovi9e" }],
     },
   ]);
 
@@ -357,7 +400,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         startPosition.path
       );
 
-      console.log(currentNode);
+      console.log(currentNodePath);
       // If the cursor is at the start of a paragraph
       if (
         currentNode.type === "paragraph"
@@ -445,6 +488,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const toggleEditBlockRef = useRef<HTMLElement>(null);
 
   const [_equationId, setEquationId] = useState("");
+  const [addButtonHoveredId, setAddButtonHoveredId] = useState(null);
 
   const handleAddEditableEquationBlock = useCallback(
     (latex: string, path: Path) => {
@@ -524,43 +568,69 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     }
   }, [slatevalue, _equationId]);
 
-  const renderElement = useCallback((props) => {
-    const { attributes, children, element } = props;
+  const renderElement = useCallback(
+    (props) => {
+      const { attributes, children, element } = props;
 
-    const elementPath = ReactEditor.findPath(editor, element);
-    const isRoot = elementPath.length === 1;
+      const elementPath = ReactEditor.findPath(editor, element);
+      const isRoot = elementPath.length === 1;
 
-    const addButton = (
-      <div className="z-100 absolute top-1/2 left-0 -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center opacity-0 group-hover:opacity-100">
-        <button
-          className="rounded-md hover:bg-gray-200"
-          onClick={(event) => {
-            event.stopPropagation();
-            openMiniDropdown(event, ReactEditor.findPath(editor, element));
-          }}
-          ref={toggleRef}
+      const [parentElement, parentPath] = Editor.parent(editor, elementPath);
+      const isInsideColumnCell = parentElement.type === "column-cell";
+      const addButton =
+        (isRoot && element.type !== "column") || isInsideColumnCell ? (
+          <div className="z-100 absolute top-1/2 left-0 -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center">
+            <button
+              className={`rounded-md hover:bg-gray-200 ${
+                addButtonHoveredId === element.id ? "opacity-100" : "opacity-0"
+              }`}
+              onClick={(event) => {
+                event.stopPropagation();
+                openMiniDropdown(event, ReactEditor.findPath(editor, element));
+              }}
+              ref={toggleRef}
+            >
+              <Plus color={theme.colors.darkgray} />
+            </button>
+          </div>
+        ) : null;
+
+      const content =
+        (isRoot && element.type !== "column") || isInsideColumnCell ? (
+          <SortableElement
+            {...props}
+            renderElement={(props) => <ElementSelector {...props} />}
+          />
+        ) : (
+          <ElementSelector {...props} />
+        );
+
+      return (
+        <div
+          className="group relative"
+          onMouseEnter={() => setAddButtonHoveredId(element.id)}
+          onMouseLeave={() => setAddButtonHoveredId(null)}
         >
-          <Plus color={theme.colors.darkgray} />
-        </button>
-      </div>
-    );
+          {content}
+          {addButton}
+        </div>
+      );
+    },
+    [addButtonHoveredId]
+  );
 
-    const content = isRoot ? (
-      <SortableElement
-        {...props}
-        renderElement={(props) => <ElementSelector {...props} />}
-      />
-    ) : (
-      <ElementSelector {...props} />
-    );
+  const findPathById = (editor, id) => {
+    let foundPath = null;
 
-    return (
-      <div className="group relative">
-        {content}
-        {addButton}
-      </div>
-    );
-  }, []);
+    for (const [node, path] of Node.nodes(editor, { at: [] })) {
+      if (node.id === id) {
+        foundPath = path;
+        break;
+      }
+    }
+
+    return foundPath;
+  };
 
   const handleDragEnd = useCallback(
     function (event) {
@@ -568,24 +638,78 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       if (!over) {
         return;
       }
-      const overIndex = editor.children.findIndex((el) => el.id === over.id);
 
-      if (active.id !== over.id) {
+      // Find the nodes using their IDs
+      const fromPath = findPathById(editor, active.id);
+      const toPath = findPathById(editor, over.id);
+
+      const [fromParentElement, fromParentPath] = Editor.parent(
+        editor,
+        fromPath
+      );
+      const [toParentElement, toParentPath] = Editor.parent(editor, toPath);
+
+      // Check if the dragged element should be inserted before or after the target element
+      const toIndexOffset =
+        fromParentPath.join() === toParentPath.join() &&
+        fromParentPath[fromParentPath.length - 1] <
+          toParentPath[toParentPath.length - 1]
+          ? 1
+          : 0;
+
+      if (
+        fromParentElement.type === "column-cell" &&
+        toParentElement.type === "column-cell"
+      ) {
         Transforms.moveNodes(editor, {
-          at: [],
-          match: (node) => node.id === active.id,
-          to: [overIndex],
+          at: fromPath,
+          to: toPath
+            .slice(0, -1)
+            .concat(toPath[toPath.length - 1] + toIndexOffset),
+        });
+      } else {
+        Transforms.moveNodes(editor, {
+          at: fromPath,
+          to: toParentPath.concat(toPath[toPath.length - 1] + toIndexOffset),
         });
       }
 
       setActiveId(null);
     },
-    [editor, editor.children]
+    [editor]
   );
 
   const handleDragStart = useCallback(function ({ active }) {
     setActiveId(active.id);
   }, []);
+
+  function findElementById(node, id) {
+    if (node.id === id) {
+      return node;
+    }
+
+    if (node.children) {
+      for (const child of node.children) {
+        const found = findElementById(child, id);
+        if (found) {
+          return found;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  function findElementInSlateValue(slateValue, id) {
+    for (const node of slateValue) {
+      const found = findElementById(node, id);
+      if (found) {
+        return found;
+      }
+    }
+
+    return null;
+  }
 
   useClickOutside(
     addSomethingDropdownRef,
@@ -642,7 +766,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         <DragOverlay>
           {activeId ? (
             <DragOverlayContent
-              element={slatevalue.find((el) => el.id === activeId)}
+              element={findElementInSlateValue(slatevalue, activeId)}
             />
           ) : null}
         </DragOverlay>

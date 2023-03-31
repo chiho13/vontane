@@ -53,6 +53,9 @@ import { EquationProvider } from "@/contexts/EquationEditContext";
 
 import { findAncestorWithClass } from "@/utils/findAncestors";
 
+import { NewColumnProvider } from "@/contexts/NewColumnContext";
+import { useSensor, useSensors, MouseSensor } from "@dnd-kit/core";
+
 interface DocumentEditorProps {
   handleTextChange?: (value: any) => void;
 }
@@ -738,30 +741,32 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           items={slatevalue}
           strategy={verticalListSortingStrategy}
         >
-          <ActiveElementProvider activeIndex={activeIndex}>
-            <EquationProvider editor={editor}>
-              <Slate
-                editor={editor}
-                value={slatevalue}
-                key={editorKey}
-                onChange={(newValue) => {
-                  setValue(newValue);
+          <NewColumnProvider>
+            <ActiveElementProvider activeIndex={activeIndex}>
+              <EquationProvider editor={editor}>
+                <Slate
+                  editor={editor}
+                  value={slatevalue}
+                  key={editorKey}
+                  onChange={(newValue) => {
+                    setValue(newValue);
 
-                  if (handleTextChange) {
-                    handleTextChange(newValue);
-                  }
-                }}
-              >
-                <Editable
-                  className="relative h-full overflow-auto"
-                  placeholder="Press '/' for prompts"
-                  renderElement={renderElement}
-                  onKeyDown={handleKeyDown}
-                  onClick={(event) => handleCursorClick(event, editor)}
-                />
-              </Slate>
-            </EquationProvider>
-          </ActiveElementProvider>
+                    if (handleTextChange) {
+                      handleTextChange(newValue);
+                    }
+                  }}
+                >
+                  <Editable
+                    className="relative h-full overflow-auto"
+                    placeholder="Press '/' for prompts"
+                    renderElement={renderElement}
+                    onKeyDown={handleKeyDown}
+                    onClick={(event) => handleCursorClick(event, editor)}
+                  />
+                </Slate>
+              </EquationProvider>
+            </ActiveElementProvider>
+          </NewColumnProvider>
         </SortableContext>
         <DragOverlay>
           {activeId ? (

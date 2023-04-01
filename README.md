@@ -30,4 +30,4 @@ Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/ver
 currently under development
 [x] search equations
 [x] drag and drop elements between columns
-[] drag element to create columns
+[x] drag element to create columns

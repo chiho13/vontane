@@ -405,10 +405,17 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     }
   };
 
+  function getLastElement(editor) {
+    const lastPath = [editor.children.length - 1];
+    const lastElement = editor.children[lastPath[0]];
+    return { lastElement, path: lastPath };
+  }
+
   function handleCursorClick(event, editor) {
     event.preventDefault();
     event.stopPropagation();
     const { selection } = editor;
+
     if (selection) {
       const startPosition = selection.anchor;
       const [currentNode, currentNodePath] = Editor.parent(
@@ -420,8 +427,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         event.target,
         "equation-element"
       );
-
-      console.log(equationElement);
 
       if (equationElement) {
         // Get the path from the data-path attribute
@@ -827,6 +832,46 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       setactiveEditEquationPath(null);
     }
   };
+  function handleEditorMouseUp(event, editor) {
+    const selection = document.getSelection();
+
+    // If there's no selection, or if the selection's anchorNode is null, or if the selection is not within the editor, return early
+    if (
+      !selection ||
+      !selection.anchorNode ||
+      !ReactEditor.hasDOMNode(editor, selection.anchorNode)
+    ) {
+      return;
+    }
+
+    // Check if the clicked position is below the last node
+    const lastNode = editor.children[editor.children.length - 1];
+    const lastNodeDOM = ReactEditor.toDOMNode(editor, lastNode);
+    const lastNodeRect = lastNodeDOM.getBoundingClientRect();
+    const clickedY = event.clientY;
+
+    if (clickedY > lastNodeRect.bottom) {
+      const lastNodePath = ReactEditor.findPath(editor, lastNode);
+
+      const newParagraph = {
+        type: "paragraph",
+        children: [{ text: "" }],
+      };
+      const newPath = lastNodePath
+        .slice(0, -1)
+        .concat(lastNodePath[lastNodePath.length - 1] + 1);
+      Transforms.insertNodes(editor, newParagraph, { at: newPath });
+
+      // Set the selection to the correct leaf node (text node) within the new paragraph
+      const leafNodePath = newPath.concat(0);
+      Transforms.setSelection(editor, {
+        anchor: { path: leafNodePath, offset: 0 },
+        focus: { path: leafNodePath, offset: 0 },
+      });
+
+      event.stopPropagation();
+    }
+  }
 
   return (
     <div
@@ -862,6 +907,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     placeholder="Press '/' for prompts"
                     renderElement={renderElement}
                     onKeyDown={handleKeyDown}
+                    onMouseUp={(event) => handleEditorMouseUp(event, editor)}
                     onClick={(event) => handleCursorClick(event, editor)}
                   />
                 </Droppable>

@@ -421,6 +421,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         "equation-element"
       );
 
+      console.log(equationElement);
+
       if (equationElement) {
         // Get the path from the data-path attribute
         const pathString = equationElement.getAttribute("data-path");
@@ -447,15 +449,15 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       `[data-path="${JSON.stringify(path)}"]`
     );
     console.log(currentElement);
-    if (currentElement) {
-      setTimeout(() => {
-        const targetRect = currentElement.getBoundingClientRect();
-        const height = currentElement.offsetHeight;
-        console.log(height);
+    // if (currentElement) {
+    //   setTimeout(() => {
+    //     const targetRect = currentElement.getBoundingClientRect();
+    //     const height = currentElement.offsetHeight;
+    //     console.log(height);
 
-        setDropdownEditBlockTop(targetRect.bottom + 60);
-      }, 0);
-    }
+    //     setDropdownEditBlockTop(targetRect.bottom + 60);
+    //   }, 0);
+    // }
   };
 
   const [getCurrentLatex, setCurrentLatex] = useState("");
@@ -563,7 +565,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         console.log(equationElement);
         // Open the edit block dropdown and set its position
         setShowEditBlockPopup(true);
-        setDropdownEditBlockTop(targetRect.bottom + 60);
+        setDropdownEditBlockTop(targetRect.bottom + 40);
       }
     }
   }, [slatevalue, _equationId]);
@@ -629,7 +631,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const handleDragEnd = useCallback(
     function (event) {
       const { active, over } = event;
-      if (!over) {
+      if (!over || active.id === over.id) {
         return;
       }
 
@@ -696,6 +698,22 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         fromParentElement.children.length === 1
       ) {
         Transforms.removeNodes(editor, { at: newParentPath });
+
+        const [columnElement, columnPath] = Editor.parent(
+          editor,
+          newParentPath
+        );
+
+        console.log(columnPath);
+
+        console.log(columnElement.children);
+        if (
+          columnElement.type === "column" &&
+          columnElement.children.length === 1 &&
+          columnElement.children[0]?.text === ""
+        ) {
+          Transforms.removeNodes(editor, { at: columnPath });
+        }
       }
       setCheckEmptyColumnCells((prevCheck) => !prevCheck);
       setActiveId(null);
@@ -746,13 +764,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             } else {
               setCreatingNewColumn(false);
             }
-            // if (isCloseToLeft || isCloseToRight) {
-            //   setCreatingNewColumn(true);
-            //   setInsertDirection(isCloseToLeft ? "left" : "right");
-            // } else {
-            //   setCreatingNewColumn(false);
-            //   setInsertDirection(null);
-            // }
           }
         } else {
           setCreatingNewColumn(false);

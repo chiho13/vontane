@@ -1,13 +1,17 @@
 // import { React, useSortable, CSS, classNames } from "../deps";
 import { useActiveElement } from "@/contexts/ActiveElementContext";
 
-import { useReadOnly } from "slate-react";
+import { ReactEditor, useReadOnly } from "slate-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import classes from "./styles/SortableElement.module.css";
 import { default as classNames } from "classnames";
 import { GripVertical } from "lucide-react";
 import { useTheme } from "styled-components";
+import { EquationContext } from "@/contexts/EquationEditContext";
+import React, { useContext, useMemo, useState } from "react";
+import { Editor } from "slate";
+import { useNewColumn } from "@/contexts/NewColumnContext";
 
 export function SortableElement({
   attributes,
@@ -19,6 +23,9 @@ export function SortableElement({
   const readOnly = useReadOnly();
 
   const theme = useTheme();
+
+  const { creatingNewColumn } = useNewColumn();
+
   const {
     attributes: sortableAttributes,
     listeners,
@@ -61,11 +68,14 @@ export function SortableElement({
         <div
           className={classNames(
             classes.elementWrapper,
-            over?.id === element.id
+            over?.id === element.id && !creatingNewColumn
               ? index > activeIndex
                 ? classes.insertAfter
                 : classes.insertBefore
-              : undefined
+              : undefined,
+            over?.id === element.id &&
+              creatingNewColumn &&
+              classes.createNewColumnRight
           )}
         >
           {renderElement({ attributes, children, element })}

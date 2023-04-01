@@ -126,7 +126,7 @@ const Home: NextPage = () => {
       item.children.map((child: { text: string }) => child.text)
     );
     setEnteredText(_enteredText);
-    console.log(_enteredText);
+    // console.log(_enteredText);
   }
 
   return (

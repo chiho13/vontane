@@ -1,9 +1,9 @@
 import { React, useContext } from "react";
-import { EquationContext } from "@/contexts/EquationEditContext";
+import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor } from "slate-react";
 
 export function ParagraphElement(props) {
-  const { editor } = useContext(EquationContext);
+  const { editor } = useContext(EditorContext);
   const { attributes, children, element } = props;
   const path = ReactEditor.findPath(editor, element);
 

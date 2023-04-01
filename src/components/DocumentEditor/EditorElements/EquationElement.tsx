@@ -1,12 +1,12 @@
 import { useContext } from "react";
 import Image from "next/image";
 import { BlockMath } from "react-katex";
-import { EquationContext } from "@/contexts/EquationEditContext";
+import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor } from "slate-react";
 
 export function EquationElement(props) {
   const { attributes, children, element } = props;
-  const { editor } = useContext(EquationContext);
+  const { editor } = useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);
   return (
     <div

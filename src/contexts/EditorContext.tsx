@@ -3,8 +3,8 @@ import { MouseEvent } from "react";
 import { Path } from "slate";
 import { Editor } from "slate";
 
-// Create the EquationContext with the correct function signature
-const EquationContext = createContext<{
+// Create the EditorContext with the correct function signature
+const EditorContext = createContext<{
   editor: Editor;
 }>({
   editor: null as any,
@@ -16,16 +16,16 @@ type EquationProviderProps = PropsWithChildren<{
 }>;
 
 // Create an EquationProvider component that accepts a `children` prop and the `openEditBlockPopup` function
-const EquationProvider: React.FC<EquationProviderProps> = ({
+const EditorProvider: React.FC<EquationProviderProps> = ({
   children,
   editor,
 }) => {
   return (
-    <EquationContext.Provider value={{ editor }}>
+    <EditorContext.Provider value={{ editor }}>
       {children}
-    </EquationContext.Provider>
+    </EditorContext.Provider>
   );
 };
 
-// Export the EquationProvider and the EquationContext
-export { EquationProvider, EquationContext };
+// Export the EquationProvider and the EditorContext
+export { EditorProvider, EditorContext };

@@ -1,11 +1,11 @@
 import { useContext } from "react";
-import { EquationContext } from "@/contexts/EquationEditContext";
+import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor } from "slate-react";
 
 export function ColumnCellElement(props) {
   const { attributes, children, element } = props;
 
-  const { editor } = useContext(EquationContext);
+  const { editor } = useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);
   return (
     <div

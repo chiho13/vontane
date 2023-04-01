@@ -54,13 +54,14 @@ import { useEditor } from "@/hooks/useEditor";
 import { ActiveElementProvider } from "@/contexts/ActiveElementContext";
 import { SortableElement } from "./SortableElement";
 import { ElementSelector } from "./EditorElements";
-import { EquationProvider } from "@/contexts/EquationEditContext";
+import { EditorProvider } from "@/contexts/EditorContext";
 import { DragOverlayContent } from "./DragOverlayContent";
 
 import { findAncestorWithClass } from "@/utils/findAncestors";
 
 import { useNewColumn } from "@/contexts/NewColumnContext";
 import { useSensor, useSensors, MouseSensor } from "@dnd-kit/core";
+import { findPathById, createColumns } from "./helpers/createColumns";
 
 interface DocumentEditorProps {
   handleTextChange?: (value: any) => void;
@@ -84,8 +85,6 @@ declare module "slate" {
     Text: CustomText;
   }
 }
-
-const EquationContext = createContext(null);
 
 interface MiniDropdownProps {
   isOpen: boolean;
@@ -244,28 +243,53 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   const openMiniDropdown = useCallback(
     (event: React.MouseEvent, path: Path) => {
-      const currentpathString = JSON.stringify(path);
+      // console.log("clicked second time");
+      // console.log("Current dropdown state:", showDropdown);
 
+      const currentpathString = JSON.stringify(path);
+      console.log(event);
       const offsetDropdownPosition = isLocked ? -150 : 0;
       const [currentNode] = Editor.node(editor, path);
       const { selection } = editor;
 
       //   const lastNode = Editor.node(editor, selection.focus);
-      if (!selection) return;
+      // if (!selection) return;
 
-      const [parentNode, parentPath] = Editor.parent(
-        editor,
-        selection.anchor.path
-      );
-      const numPath = slatePathToNumber(path);
-      console.log(numPath);
-      const nextNumPath = slatePathToNumber(Path.next(path));
-      console.log(nextNumPath);
-      const parentpathString = JSON.stringify(parentPath);
+      console.log(currentNode);
+      console.log(event.currentTarget);
+      console.log("current path string", currentpathString);
+      // const [parentNode, parentPath] = Editor.parent(
+      //   editor,
+      //   selection.anchor.path
+      // );
+      // const numPath = slatePathToNumber(path);
+
+      // const nextNumPath = slatePathToNumber(Path.next(path));
+      // const parentpathString = JSON.stringify(parentPath);
 
       const [lastNode, lastPath] = Editor.last(editor, []);
 
       const lastpathString = JSON.stringify(lastPath.slice(0, -1));
+      let hasNextEmptyParagraphNode = false;
+
+      try {
+        // Get the next path after the current node
+        const nextPath = Path.next(path);
+
+        // Get the next node from the editor
+        const [nextNode] = Editor.node(editor, nextPath);
+
+        // Check if the next node is a paragraph and has an empty text
+        hasNextEmptyParagraphNode =
+          nextNode.type === "paragraph" &&
+          nextNode.children.length === 1 &&
+          nextNode.children[0].text === "";
+      } catch (error) {
+        console.log(error);
+      }
+
+      // Get the next node from the editor
+
       //   console.log(lastPath[0]);
       const hasEmptyParagraphNode =
         currentNode.type === "paragraph" &&
@@ -278,10 +302,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       const target = event.currentTarget as HTMLDivElement;
       const targetRect = target.getBoundingClientRect();
 
+      // console.log(target);
       if (
         !hasEmptyParagraphNode &&
         !hasEquationNode &&
-        parentpathString === lastpathString
+        !hasNextEmptyParagraphNode
       ) {
         Transforms.insertNodes(
           editor,
@@ -381,6 +406,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   };
 
   function handleCursorClick(event, editor) {
+    event.preventDefault();
+    event.stopPropagation();
     const { selection } = editor;
     if (selection) {
       const startPosition = selection.anchor;
@@ -552,13 +579,18 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       const isInsideColumnCell = parentElement.type === "column-cell";
       const addButton =
         (isRoot && element.type !== "column") || isInsideColumnCell ? (
-          <div className="z-100 absolute top-1/2 left-0 -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center">
+          <div
+            className="z-100 absolute top-1/2 left-0 -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center"
+            contentEditable={false}
+          >
             <button
-              className={`rounded-md hover:bg-gray-200 ${
+              className={`addButton rounded-md hover:bg-gray-200 ${
                 addButtonHoveredId === element.id ? "opacity-100" : "opacity-0"
               }`}
               onClick={(event) => {
+                event.preventDefault();
                 event.stopPropagation();
+                console.log("addButton clicked");
                 openMiniDropdown(event, ReactEditor.findPath(editor, element));
               }}
               ref={toggleRef}
@@ -582,7 +614,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         <div
           className="group relative"
           onMouseEnter={() => setAddButtonHoveredId(element.id)}
-          onMouseLeave={() => setAddButtonHoveredId(null)}
           onKeyDown={() => setAddButtonHoveredId(null)}
         >
           {content}
@@ -593,68 +624,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     [addButtonHoveredId]
   );
 
-  const findPathById = (editor, id) => {
-    let foundPath = null;
-
-    for (const [node, path] of Node.nodes(editor, { at: [] })) {
-      if (node.id === id) {
-        foundPath = path;
-        break;
-      }
-    }
-
-    return foundPath;
-  };
-
   const [insertDirection, setInsertDirection] = useState(null);
-
-  const createColumns = (fromPath, over) => {
-    if (Path.equals(fromPath, over.path)) {
-      return; // Do nothing if they are the same
-    }
-    // Remove the dragged node
-    const [draggedNode] = Editor.node(editor, fromPath);
-    const overPath = over.path;
-
-    const [droppedNode] = Editor.node(editor, overPath);
-
-    // Create a new column with the dragged node and the target node
-    const newColumn = {
-      id: genNodeId(),
-      type: "column",
-      children: [
-        { id: genNodeId(), type: "column-cell", children: [droppedNode] },
-        { id: genNodeId(), type: "column-cell", children: [draggedNode] },
-      ],
-    };
-
-    // Find the target node's path
-    const toPath = findPathById(editor, over.id);
-
-    // Insert the new column before or after the target node
-    Transforms.insertNodes(editor, newColumn, {
-      at: insertDirection === "left" ? toPath : Path.next(toPath),
-      select: true,
-    });
-
-    Transforms.removeNodes(editor, { at: overPath });
-
-    Transforms.removeNodes(editor, { at: fromPath });
-
-    // setTimeout(() => {
-    //   const [_, newColumnPath] = Editor.last(editor, []);
-    //   const lastCell = [...Editor.nodes(editor, { at: newColumnPath })]
-    //     .reverse()
-    //     .find(([node]) => node.type === "column-cell");
-    //   const lastCellId = lastCell[0].id;
-    //   console.log(lastCellId);
-    //   const lastColumnCell = findEquationElementById(lastCellId);
-    //   console.log(lastColumnCell);
-    //   if (lastColumnCell) {
-    //     lastColumnCell.style.backgroundColor = "#e3ecf7";
-    //   }
-    // }, 100);
-  };
 
   const handleDragEnd = useCallback(
     function (event) {
@@ -698,7 +668,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 .slice(0, -1)
                 .concat(toPath[toPath.length - 1] + toIndexOffset);
 
-        createColumns(fromPath, { id: over.id, path: targetPath });
+        createColumns(fromPath, { id: over.id, path: targetPath }, editor);
       } else if (
         fromParentElement.type === "column-cell" &&
         toParentElement.type === "column-cell"
@@ -715,11 +685,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           to: toParentPath.concat(toPath[toPath.length - 1] + toIndexOffset),
         });
       }
-
-      // const [latestFromParentElement, latestFromParentPath] = Editor.node(
-      //   editor,
-      //   fromParentPath
-      // );
 
       const ifParentPathIsGreater = fromPath[0] > toPath[0];
 
@@ -742,21 +707,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     const droppable = useDroppable({
       id: "droppable-area",
     });
-
-    const findPathById = (editor, id) => {
-      try {
-        const [nodeEntry] = Editor.nodes(editor, {
-          match: (n) => n.id === id,
-          at: [],
-        });
-        if (nodeEntry) {
-          return ReactEditor.findPath(editor, nodeEntry[0]);
-        }
-      } catch (err) {
-        // Log the error if necessary
-      }
-      return null;
-    };
 
     useDndMonitor({
       onDragOver(event) {
@@ -867,27 +817,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     }
   };
 
-  function ensureEmptyParagraphs() {
-    if (!editor) return;
-
-    const columnCells = Array.from(
-      Editor.nodes(editor, {
-        at: [],
-        match: (n) => n.type === "column-cell",
-      })
-    );
-
-    columnCells.forEach(([cellNode, cellPath]) => {
-      if (cellNode.children.length === 0) {
-        Transforms.insertNodes(
-          editor,
-          { id: genNodeId(), type: "paragraph", children: [{ text: "" }] },
-          { at: cellPath.concat(cellNode.children.length) }
-        );
-      }
-    });
-  }
-
   return (
     <div
       tabIndex={0}
@@ -903,7 +832,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           strategy={verticalListSortingStrategy}
         >
           <ActiveElementProvider activeIndex={activeIndex}>
-            <EquationProvider editor={editor}>
+            <EditorProvider editor={editor}>
               <Slate
                 editor={editor}
                 value={slatevalue}
@@ -926,7 +855,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                   />
                 </Droppable>
               </Slate>
-            </EquationProvider>
+            </EditorProvider>
           </ActiveElementProvider>
         </SortableContext>
         <DragOverlay>

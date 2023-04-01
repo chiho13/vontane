@@ -8,7 +8,7 @@ import classes from "./styles/SortableElement.module.css";
 import { default as classNames } from "classnames";
 import { GripVertical } from "lucide-react";
 import { useTheme } from "styled-components";
-import { EquationContext } from "@/contexts/EquationEditContext";
+import { EditorContext } from "@/contexts/EditorContext";
 import React, { useContext, useMemo, useState } from "react";
 import { Editor } from "slate";
 import { useNewColumn } from "@/contexts/NewColumnContext";

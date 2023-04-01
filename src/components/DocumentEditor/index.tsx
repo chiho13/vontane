@@ -240,6 +240,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     return parseInt(pathStr, 10);
   };
 
+  const [checkEmptyColumnCells, setCheckEmptyColumnCells] = useState(false);
+
   const openMiniDropdown = useCallback(
     (event: React.MouseEvent, path: Path) => {
       const currentpathString = JSON.stringify(path);
@@ -669,6 +671,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         editor,
         fromPath
       );
+
+      // console.log(fromParentPath);
       const [toParentElement, toParentPath] = Editor.parent(editor, toPath);
 
       // Check if the dragged element should be inserted before or after the target element
@@ -681,7 +685,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
       const isRootLevel = fromPath.length === 1 && toPath.length === 1;
 
-      console.log(fromPath, toPath);
+      console.log(fromPath[0], toPath[0]);
       // console.log(isRootLevel, creatingNewColumn);
       if (isRootLevel && creatingNewColumn) {
         // Adjust the over object according to the insertDirection
@@ -712,7 +716,23 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         });
       }
 
-      setCreatingNewColumn(false);
+      // const [latestFromParentElement, latestFromParentPath] = Editor.node(
+      //   editor,
+      //   fromParentPath
+      // );
+
+      const ifParentPathIsGreater = fromPath[0] > toPath[0];
+
+      const newParentPath = ifParentPathIsGreater
+        ? [fromParentPath[0] + 1, ...fromParentPath.slice(1)]
+        : fromParentPath;
+      if (
+        fromParentElement.type === "column-cell" &&
+        fromParentElement.children.length === 1
+      ) {
+        Transforms.removeNodes(editor, { at: newParentPath });
+      }
+      setCheckEmptyColumnCells((prevCheck) => !prevCheck);
       setActiveId(null);
     },
     [editor, creatingNewColumn]
@@ -846,6 +866,27 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       setactiveEditEquationPath(null);
     }
   };
+
+  function ensureEmptyParagraphs() {
+    if (!editor) return;
+
+    const columnCells = Array.from(
+      Editor.nodes(editor, {
+        at: [],
+        match: (n) => n.type === "column-cell",
+      })
+    );
+
+    columnCells.forEach(([cellNode, cellPath]) => {
+      if (cellNode.children.length === 0) {
+        Transforms.insertNodes(
+          editor,
+          { id: genNodeId(), type: "paragraph", children: [{ text: "" }] },
+          { at: cellPath.concat(cellNode.children.length) }
+        );
+      }
+    });
+  }
 
   return (
     <div

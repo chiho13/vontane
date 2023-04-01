@@ -33,6 +33,7 @@ import useClickOutside from "@/hooks/useClickOutside";
 
 import { LayoutContext } from "../Layouts/AccountLayout";
 import { y_animation_props } from "../Dropdown";
+import { EditorDropdown } from "./EditorDropdown";
 
 import {
   DndContext,
@@ -866,7 +867,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           ) : null}
         </DragOverlay>
       </DndContext>
-      <AnimatePresence>
+      {/* <AnimatePresence>
         {showDropdown && activePath && (
           <motion.div
             {...y_animation_props}
@@ -886,49 +887,55 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             />
           </motion.div>
         )}
-      </AnimatePresence>
-      <AnimatePresence>
-        {showEditBlockPopup && activeEditEquationPath && (
-          <>
-            <motion.div
-              {...y_animation_props}
-              className="fixed  z-10 z-10 mx-auto mt-2 mt-2 w-[380px]"
-              style={{
-                top: `${dropdownEditBlockTop}px`,
-                left: `${dropdownEditBlockLeft}px`,
-              }}
-            >
-              <EditBlockPopup
-                ref={editBlockDropdownRef}
-                onChange={(value) =>
-                  handleEditLatex(value, JSON.parse(activeEditEquationPath))
-                }
-                latexValue={getCurrentLatex}
-                onClick={closeEditableDropdown}
-                insertText={(note) => {
-                  Transforms.insertNodes(
-                    editor,
-                    {
-                      id: genNodeId(),
-                      type: "paragraph",
-                      children: [{ text: note }],
-                    },
-                    { at: Path.next(JSON.parse(activeEditEquationPath)) }
-                  );
-                }}
-              />
-            </motion.div>
-            <div
-              tabIndex={0}
-              onClick={closeEditableDropdown}
-              className="closeOutside fixed bottom-0 left-0 h-screen w-screen opacity-50"
-              style={{
-                height: "calc(100vh - 50px",
-              }}
-            ></div>
-          </>
-        )}
-      </AnimatePresence>
+      </AnimatePresence> */}
+      <EditorDropdown
+        showDropdown={showDropdown}
+        setShowDropdown={setShowDropdown}
+        dropdownTop={dropdownTop}
+        dropdownLeft={dropdownLeft}
+        activePath={activePath}
+      >
+        <div className="w-[320px]">
+          <MiniDropdown
+            ref={addSomethingDropdownRef}
+            isOpen={showDropdown}
+            onClick={() => {
+              activePath &&
+                handleAddEditableEquationBlock("", JSON.parse(activePath));
+              setShowDropdown(false);
+            }}
+          />
+        </div>
+      </EditorDropdown>
+      <EditorDropdown
+        showDropdown={showEditBlockPopup}
+        setShowDropdown={setShowEditBlockPopup}
+        dropdownTop={dropdownEditBlockTop}
+        dropdownLeft={dropdownEditBlockLeft}
+        activePath={activeEditEquationPath}
+      >
+        <div className="w-[420px]">
+          <EditBlockPopup
+            ref={editBlockDropdownRef}
+            onChange={(value) =>
+              handleEditLatex(value, JSON.parse(activeEditEquationPath))
+            }
+            latexValue={getCurrentLatex}
+            onClick={closeEditableDropdown}
+            insertText={(note) => {
+              Transforms.insertNodes(
+                editor,
+                {
+                  id: genNodeId(),
+                  type: "paragraph",
+                  children: [{ text: note }],
+                },
+                { at: Path.next(JSON.parse(activeEditEquationPath)) }
+              );
+            }}
+          />
+        </div>
+      </EditorDropdown>
     </div>
   );
 };

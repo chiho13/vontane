@@ -656,10 +656,21 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       math: mathContent,
     };
 
+    const emptyTextNode = { text: "" };
+
     // Insert the inline math block
     Transforms.insertNodes(editor, mathLeaf);
 
-    Editor.insertText(editor, " ");
+    // Calculate the path where the empty text node should be inserted
+    const selection = editor.selection;
+    const parentPath = Path.parent(selection.anchor.path);
+    const newPath = Path.next(parentPath);
+
+    // Insert the empty text node after the math block
+    Transforms.insertNodes(editor, emptyTextNode, { at: newPath });
+
+    // Collapse the selection to the end of the inserted text node
+    Transforms.collapse(editor, { edge: "end" });
   };
 
   const [insertDirection, setInsertDirection] = useState(null);

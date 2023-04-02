@@ -203,14 +203,14 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const [showDropdown, setShowDropdown] = useState(false);
   const [showEditBlockPopup, setShowEditBlockPopup] = useState(false);
 
-  const [offsetDropdownPosition, setOffsetDropdownPosition] = useState<number>(
-    isLocked ? -150 : 0
-  );
+  // const [offsetDropdownPosition, setOffsetDropdownPosition] = useState<number>(
+  //   isLocked ? -150 : 0
+  // );
 
+  // useEffect(() => {
+  //   setOffsetDropdownPosition(isLocked ? -150 : 0);
+  // }, [isLocked]);
   const sensors = useSensors(useSensor(MouseSensor));
-  useEffect(() => {
-    setOffsetDropdownPosition(isLocked ? -150 : 0);
-  }, [isLocked]);
 
   const [dropdownPositions, setDropdownPositions] = useState<
     Map<string, { top: number; left: number }>
@@ -255,13 +255,14 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
       const currentpathString = JSON.stringify(path);
       console.log(event);
-      const offsetDropdownPosition = isLocked ? -150 : 0;
+      // const offsetDropdownPosition = isLocked ? -150 : 0;
       const [currentNode] = Editor.node(editor, path);
       const { selection } = editor;
 
       //   const lastNode = Editor.node(editor, selection.focus);
       // if (!selection) return;
 
+      const sideBarOffset = isLocked ? -150 : 0;
       console.log(currentNode);
       console.log(event.currentTarget);
       console.log("current path string", currentpathString);
@@ -326,7 +327,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         setDropdownTop(targetRect.bottom + 30);
       }
 
-      setDropdownLeft(targetRect.left + 60);
+      setDropdownLeft(targetRect.left + 60 + sideBarOffset);
       setShowDropdown((prevState) => !prevState);
       setActivePath(currentpathString);
     },
@@ -412,12 +413,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     }
   };
 
-  function getLastElement(editor) {
-    const lastPath = [editor.children.length - 1];
-    const lastElement = editor.children[lastPath[0]];
-    return { lastElement, path: lastPath };
-  }
-
   function handleCursorClick(event, editor) {
     event.preventDefault();
     event.stopPropagation();
@@ -429,21 +424,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         editor,
         startPosition.path
       );
-
-      const equationElement = findAncestorWithClass(
-        event.target,
-        "equation-element"
-      );
-
-      if (equationElement) {
-        // Get the path from the data-path attribute
-        const pathString = equationElement.getAttribute("data-path");
-        if (pathString) {
-          console.log(pathString);
-          const path: Path = JSON.parse(pathString);
-          openEditBlockPopup(equationElement, event, path);
-        }
-      }
     }
   }
 
@@ -482,6 +462,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     event.stopPropagation();
     const targetRect = _element.getBoundingClientRect();
 
+    const sideBarOffset = isLocked ? -150 : 0;
     console.log(targetRect.left);
     const currentPathString = JSON.stringify(path);
     setactiveEditEquationPath((prevPath) =>
@@ -495,7 +476,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     setShowEditBlockPopup(true);
     const equationHeight = _element.offsetHeight;
     setDropdownEditBlockTop(targetRect.bottom + 60);
-    setDropdownEditBlockLeft(targetRect.left);
+    setDropdownEditBlockLeft(targetRect.left + sideBarOffset);
   };
 
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -544,6 +525,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
         if (insertedEquationNode) {
           const { id } = insertedEquationNode[0] as CustomElement;
+          const sideBarOffset = isLocked ? -150 : 0;
           setEquationId(id);
           setactiveEditEquationPath(JSON.stringify(newPath));
           setCurrentLatex("");
@@ -552,7 +534,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             console.log(currentElement);
             if (currentElement) {
               const targetRect = currentElement.getBoundingClientRect();
-              setDropdownEditBlockLeft(targetRect.left);
+              setDropdownEditBlockLeft(targetRect.left + sideBarOffset);
               setDropdownEditBlockTop(targetRect.bottom + 60);
               console.log(targetRect.left);
             }
@@ -840,6 +822,21 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     }
   };
   function handleEditorMouseUp(event, editor) {
+    const equationElement = findAncestorWithClass(
+      event.target,
+      "equation-element"
+    );
+    console.log(equationElement);
+    if (equationElement) {
+      // Get the path from the data-path attribute
+      const pathString = equationElement.getAttribute("data-path");
+      if (pathString) {
+        console.log(pathString);
+        const path: Path = JSON.parse(pathString);
+        openEditBlockPopup(equationElement, event, path);
+      }
+    }
+
     const selection = document.getSelection();
 
     // If there's no selection, or if the selection's anchorNode is null, or if the selection is not within the editor, return early

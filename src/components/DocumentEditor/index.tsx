@@ -33,6 +33,7 @@ import useClickOutside from "@/hooks/useClickOutside";
 
 import { LayoutContext } from "../Layouts/AccountLayout";
 import { y_animation_props } from "../Dropdown";
+import { InlineMathLeaf } from "./EditorElements/InlineEquationElement";
 
 import {
   DndContext,
@@ -88,13 +89,18 @@ declare module "slate" {
 
 interface MiniDropdownProps {
   isOpen: boolean;
-  onClick: () => void;
+  addBlockHandler: () => void;
+  addInlineHandler: () => void;
 }
 
 const MiniDropdown = React.forwardRef<HTMLDivElement, MiniDropdownProps>(
-  ({ isOpen, onClick }, ref) => {
+  ({ isOpen, addBlockHandler, addInlineHandler }, ref) => {
     const addBlock = (event: React.KeyboardEvent) => {
-      onClick();
+      addBlockHandler();
+    };
+
+    const addInline = (event: React.KeyboardEvent) => {
+      addInlineHandler();
     };
 
     return (
@@ -115,6 +121,20 @@ const MiniDropdown = React.forwardRef<HTMLDivElement, MiniDropdownProps>(
             className="rounded-md border"
           />
           <span className="ml-4 ">Add Block Equation</span>
+        </motion.button>
+        <motion.button
+          whileTap={{ scale: 0.97 }}
+          className="flex w-full items-center rounded-md border-2 border-gray-100 p-3 shadow-sm transition duration-300 hover:bg-gray-100"
+          onClick={addInline}
+        >
+          <Image
+            src="/images/inline.png"
+            alt="add latex inline equation"
+            width={60}
+            height={60}
+            className="rounded-md border"
+          />
+          <span className="ml-4 ">Add Inline Equation</span>
         </motion.button>
       </div>
     );
@@ -430,6 +450,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const handleEditLatex = (value: string, path: Path) => {
     const latex = value;
     const equationNode = {
+      id: genNodeId(),
       type: "equation",
       latex,
       children: [{ text: "" }],
@@ -619,6 +640,27 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     },
     [addButtonHoveredId]
   );
+
+  const renderLeaf = useCallback(({ attributes, children, leaf }) => {
+    return (
+      <InlineMathLeaf attributes={attributes} children={children} leaf={leaf} />
+    );
+  }, []);
+
+  const insertInlineMath = (editor, mathContent) => {
+    if (!editor) return;
+
+    const mathLeaf = {
+      text: "",
+      isInlineMath: true,
+      math: mathContent,
+    };
+
+    // Insert the inline math block
+    Transforms.insertNodes(editor, mathLeaf);
+
+    Editor.insertText(editor, " ");
+  };
 
   const [insertDirection, setInsertDirection] = useState(null);
 
@@ -913,6 +955,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     className="relative h-[520px]"
                     placeholder="Press '/' for prompts"
                     renderElement={renderElement}
+                    renderLeaf={renderLeaf}
                     onKeyDown={handleKeyDown}
                     onMouseUp={(event) => handleEditorMouseUp(event, editor)}
                     onClick={(event) => handleCursorClick(event, editor)}
@@ -943,9 +986,16 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             <MiniDropdown
               ref={addSomethingDropdownRef}
               isOpen={showDropdown}
-              onClick={() => {
+              addBlockHandler={() => {
                 handleAddEditableEquationBlock("", JSON.parse(activePath));
                 setShowDropdown(false);
+              }}
+              addInlineHandler={() => {
+                console.log("add inline");
+                insertInlineMath(
+                  editor,
+                  "\\sigma = \\sqrt{\\frac{1}{N}\\sum_{i=1}^N (x_i - \\mu)^2}"
+                );
               }}
             />
           </motion.div>

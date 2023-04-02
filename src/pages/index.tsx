@@ -121,12 +121,21 @@ const Home: NextPage = () => {
     return <LoginPage />;
   }
 
+  function extractTextValues(data) {
+    return data.reduce((accumulator, item) => {
+      if (item.children) {
+        accumulator.push(...extractTextValues(item.children));
+      } else if (item.text) {
+        accumulator.push(item.text);
+      }
+      return accumulator;
+    }, []);
+  }
+
   function handleTextChange(value: any[]) {
-    const _enteredText = value.flatMap((item) =>
-      item.children.map((child: { text: string }) => child.text)
-    );
-    setEnteredText(_enteredText);
-    // console.log(_enteredText);
+    const extractedText = extractTextValues(value);
+    setEnteredText(extractedText);
+    console.log(extractedText);
   }
 
   return (

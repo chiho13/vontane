@@ -131,11 +131,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const theme = useTheme();
   const { isLocked } = useContext(LayoutContext);
   const editor = useEditor();
-  const [slatevalue, setValue] = useState([
+  const initialValue = [
     {
       id: genNodeId(),
       type: "paragraph",
-      children: [{ text: "sdfsfdsf" }],
+      children: [{ text: "Good Morning" }],
     },
     {
       id: genNodeId(),
@@ -178,14 +178,21 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     {
       id: genNodeId(),
       type: "paragraph",
-      children: [{ text: "gloovi9e" }],
+      children: [{ text: "A.I rules" }],
     },
     {
       id: genNodeId(),
       type: "paragraph",
-      children: [{ text: "lolololol" }],
+      children: [{ text: "very nice" }],
     },
-  ]);
+  ];
+  const [slatevalue, setValue] = useState(initialValue);
+
+  useEffect(() => {
+    if (handleTextChange) {
+      handleTextChange(initialValue);
+    }
+  }, []);
 
   const [activeId, setActiveId] = useState(null);
 
@@ -850,7 +857,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     const lastNodeRect = lastNodeDOM.getBoundingClientRect();
     const clickedY = event.clientY;
 
-    if (clickedY > lastNodeRect.bottom) {
+    const isLastNodeEmpty =
+      lastNode.children.length === 1 && lastNode.children[0].text === "";
+
+    if (clickedY > lastNodeRect.bottom && !isLastNodeEmpty) {
       const lastNodePath = ReactEditor.findPath(editor, lastNode);
 
       const newParagraph = {

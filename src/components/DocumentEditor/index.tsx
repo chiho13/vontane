@@ -137,60 +137,60 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       type: "paragraph",
       children: [{ text: "Solve the following quadratic equation:" }],
     },
-    {
-      id: "pD3J8kW6L5Bf9X1rVZQ0",
-      type: "equation",
-      latex: "x^2 - 5x + 6 = 0",
-      children: [{ text: "" }],
-    },
-    {
-      id: genNodeId(),
-      type: "column",
-      children: [
-        {
-          id: genNodeId(),
-          type: "column-cell",
-          children: [
-            {
-              id: genNodeId(),
-              type: "paragraph",
-              children: [{ text: "Paragraph 1 in column 1" }],
-            },
-            {
-              id: genNodeId(),
-              type: "paragraph",
-              children: [{ text: "Paragraph 2 in column 1" }],
-            },
-          ],
-        },
-        {
-          id: genNodeId(),
-          type: "column-cell",
-          children: [
-            {
-              id: genNodeId(),
-              type: "paragraph",
-              children: [{ text: "Paragraph 1 in column 2" }],
-            },
-            {
-              id: genNodeId(),
-              type: "paragraph",
-              children: [{ text: "Paragraph 2 in column 2" }],
-            },
-          ],
-        },
-      ],
-    },
-    {
-      id: genNodeId(),
-      type: "paragraph",
-      children: [{ text: "A.I rules" }],
-    },
-    {
-      id: genNodeId(),
-      type: "paragraph",
-      children: [{ text: "very nice" }],
-    },
+    // {
+    //   id: "pD3J8kW6L5Bf9X1rVZQ0",
+    //   type: "equation",
+    //   latex: "x^2 - 5x + 6 = 0",
+    //   children: [{ text: "" }],
+    // },
+    // {
+    //   id: genNodeId(),
+    //   type: "column",
+    //   children: [
+    //     {
+    //       id: genNodeId(),
+    //       type: "column-cell",
+    //       children: [
+    //         {
+    //           id: genNodeId(),
+    //           type: "paragraph",
+    //           children: [{ text: "Paragraph 1 in column 1" }],
+    //         },
+    //         {
+    //           id: genNodeId(),
+    //           type: "paragraph",
+    //           children: [{ text: "Paragraph 2 in column 1" }],
+    //         },
+    //       ],
+    //     },
+    //     {
+    //       id: genNodeId(),
+    //       type: "column-cell",
+    //       children: [
+    //         {
+    //           id: genNodeId(),
+    //           type: "paragraph",
+    //           children: [{ text: "Paragraph 1 in column 2" }],
+    //         },
+    //         {
+    //           id: genNodeId(),
+    //           type: "paragraph",
+    //           children: [{ text: "Paragraph 2 in column 2" }],
+    //         },
+    //       ],
+    //     },
+    //   ],
+    // },
+    // {
+    //   id: genNodeId(),
+    //   type: "paragraph",
+    //   children: [{ text: "A.I rules" }],
+    // },
+    // {
+    //   id: genNodeId(),
+    //   type: "paragraph",
+    //   children: [{ text: "very nice" }],
+    // },
   ];
   const [slatevalue, setValue] = useState(initialValue);
 
@@ -866,6 +866,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       const lastNodePath = ReactEditor.findPath(editor, lastNode);
 
       const newParagraph = {
+        id: genNodeId(),
         type: "paragraph",
         children: [{ text: "" }],
       };

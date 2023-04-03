@@ -364,7 +364,7 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
           </SidebarContent>
         </SidebarContainer>
         <main
-          className="min-h-screen bg-white pt-4 lg:pl-6 "
+          className="min-h-screen overflow-auto bg-white pt-4 lg:pl-6"
           style={{
             transform:
               isLocked && desktopbreakpoint

@@ -160,9 +160,12 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
   }, [voices, filters, selectedFilterOption]);
 
   const stopButtonRef = useRef<HTMLDivElement>(null);
-
-  const queryResult = api.texttospeech.getVoices.useQuery();
   const desktopbreakpoint = window.screen.width > breakpoints.lg;
+
+  const queryResult = api.texttospeech.getVoices.useQuery(undefined, {
+    cacheTime: 24 * 60 * 60 * 1000, // Cache data for 24 hours
+    staleTime: 24 * 60 * 60 * 1000, // Data is considered fresh for 24 hours
+  });
 
   useEffect(() => {
     if (queryResult.data) {
@@ -171,7 +174,6 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
       setAccents(getAccents(fetchedVoices));
       setAges(getAges(fetchedVoices));
       setVoiceStyles(getVoiceStyles(fetchedVoices));
-      setTempos(getTempos(fetchedVoices));
     }
   }, [queryResult?.data]);
 
@@ -522,59 +524,57 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
             <div className="dropdown_table_wrapper table-responsive">
               <table className="dropdown_table w-full table-auto">
                 <thead className="voiceTitles w-full p-4">
-                  <tr>
-                    {desktopbreakpoint && (
-                      <>
-                        <th className="nameHeader text-left text-sm sm:text-base">
-                          Name
-                        </th>
-                        <th className="text-left">
-                          <FilterDropdown
-                            id="gender"
-                            options={genders}
-                            defaultTitle="Gender"
-                            onChange={onFilterChange}
-                            ref={genderFilterRef}
-                            setActiveFilter={setActiveFilter}
-                            isOpen={isOpen === "gender"}
-                          />
-                        </th>
-                        <th className="text-left">
-                          <FilterDropdown
-                            id="accent"
-                            options={accents}
-                            defaultTitle="Accent"
-                            onChange={onFilterChange}
-                            ref={accentFilterRef}
-                            setActiveFilter={setActiveFilter}
-                            isOpen={isOpen === "accent"}
-                          />
-                        </th>
-                        <th className="text-left">
-                          <FilterDropdown
-                            id="age"
-                            options={ages}
-                            defaultTitle="Age"
-                            onChange={onFilterChange}
-                            ref={ageFilterRef}
-                            setActiveFilter={setActiveFilter}
-                            isOpen={isOpen === "age"}
-                          />
-                        </th>
-                        <th className="text-left">
-                          <FilterDropdown
-                            id="style"
-                            options={voiceStyles}
-                            defaultTitle="Style"
-                            onChange={onFilterChange}
-                            ref={voiceStylesFilterRef}
-                            setActiveFilter={setActiveFilter}
-                            isOpen={isOpen === "style"}
-                          />
-                        </th>{" "}
-                      </>
-                    )}
-                  </tr>
+                  {desktopbreakpoint && (
+                    <tr>
+                      <th className="nameHeader text-left text-sm sm:text-base">
+                        Name
+                      </th>
+                      <th className="text-left">
+                        <FilterDropdown
+                          id="gender"
+                          options={genders}
+                          defaultTitle="Gender"
+                          onChange={onFilterChange}
+                          ref={genderFilterRef}
+                          setActiveFilter={setActiveFilter}
+                          isOpen={isOpen === "gender"}
+                        />
+                      </th>
+                      <th className="text-left">
+                        <FilterDropdown
+                          id="accent"
+                          options={accents}
+                          defaultTitle="Accent"
+                          onChange={onFilterChange}
+                          ref={accentFilterRef}
+                          setActiveFilter={setActiveFilter}
+                          isOpen={isOpen === "accent"}
+                        />
+                      </th>
+                      <th className="text-left">
+                        <FilterDropdown
+                          id="age"
+                          options={ages}
+                          defaultTitle="Age"
+                          onChange={onFilterChange}
+                          ref={ageFilterRef}
+                          setActiveFilter={setActiveFilter}
+                          isOpen={isOpen === "age"}
+                        />
+                      </th>
+                      <th className="text-left">
+                        <FilterDropdown
+                          id="style"
+                          options={voiceStyles}
+                          defaultTitle="Style"
+                          onChange={onFilterChange}
+                          ref={voiceStylesFilterRef}
+                          setActiveFilter={setActiveFilter}
+                          isOpen={isOpen === "style"}
+                        />
+                      </th>
+                    </tr>
+                  )}
                 </thead>
 
                 <tbody className="w-full">

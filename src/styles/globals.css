@@ -2,9 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-main {
+body {
   overflow-y: hidden;
 }
+
 .container {
   max-width: 1200px;
 }

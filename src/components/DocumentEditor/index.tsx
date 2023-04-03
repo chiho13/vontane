@@ -133,9 +133,15 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const editor = useEditor();
   const initialValue = [
     {
-      id: genNodeId(),
+      id: "dL9tJpTtH8Rt7D0sYSK2",
       type: "paragraph",
-      children: [{ text: "Good Morning" }],
+      children: [{ text: "Solve the following quadratic equation:" }],
+    },
+    {
+      id: "pD3J8kW6L5Bf9X1rVZQ0",
+      type: "equation",
+      latex: "x^2 - 5x + 6 = 0",
+      children: [{ text: "" }],
     },
     {
       id: genNodeId(),
@@ -312,9 +318,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
       // console.log(target);
       if (
-        !hasEmptyParagraphNode &&
-        !hasEquationNode &&
-        !hasNextEmptyParagraphNode
+        (!hasEmptyParagraphNode && !hasNextEmptyParagraphNode) ||
+        !hasEquationNode
       ) {
         Transforms.insertNodes(
           editor,
@@ -508,11 +513,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         if (isEmptyNode) {
           Transforms.setNodes(editor, equationNode, { at: path });
           newPath = path;
-          Transforms.insertNodes(
-            editor,
-            { id: genNodeId(), type: "paragraph", children: [{ text: "" }] },
-            { at: Path.next(path) }
-          );
+          // Transforms.insertNodes(
+          //   editor,
+          //   { id: genNodeId(), type: "paragraph", children: [{ text: "" }] },
+          //   { at: Path.next(path) }
+          // );
         } else {
           Transforms.insertNodes(editor, equationNode, { at: Path.next(path) });
           newPath = Path.next(path);

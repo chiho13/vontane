@@ -225,7 +225,6 @@ function Dropdown(
   ) => {
     event.preventDefault();
     event.stopPropagation();
-    console.log(wrapperRef);
     if (activeDropdown === dropdownId) {
       toggleDropdown(null);
     } else {

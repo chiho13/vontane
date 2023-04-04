@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { CornerDownLeft, Send, Info, FileText } from "lucide-react";
 import { useTheme } from "styled-components";
 import { api } from "@/utils/api";
 import LoadingSpinner from "@/icons/LoadingSpinner";
 import styled from "styled-components";
+import { debounce } from "lodash";
 import {
   Tooltip,
   TooltipContent,
@@ -35,7 +36,7 @@ const EditBlockPopupStyle = styled.div`
 `;
 
 interface EditBlockPopupProps {
-  onChange: (value: string) => void;
+  onChange: (value: string, altText: string) => void;
   onClick: () => void;
   insertText: (note: string) => void;
   latexValue: string;
@@ -78,6 +79,7 @@ export const EditBlockPopup = React.forwardRef<
   EditBlockPopupProps
 >(({ onChange, onClick, insertText, latexValue }, ref) => {
   const [value, setValue] = useState(latexValue);
+  const [altText, setAltText] = useState("");
   const [findEquation, setFindEquation] = useState("");
   const theme = useTheme();
   const [isLoading, setIsLoading] = useState(false);
@@ -85,15 +87,25 @@ export const EditBlockPopup = React.forwardRef<
   const [noteResults, setNoteResults] = useState(null);
   const [noteInserted, setNoteInserted] = useState(false);
 
-  useEffect(() => {
-    setValue(latexValue);
-  }, [latexValue]);
+  // useEffect(() => {
+  //   setValue(latexValue);
+  // }, [latexValue]);
 
-  const onEquationChange = (e) => {
-    console.log(e.target.value);
-    setValue(e.target.value);
-    onChange(e.target.value);
-  };
+  const debouncedAltTextRefetch = useCallback(
+    debounce(() => {
+      altTextRefetch();
+    }, 1000),
+    []
+  );
+
+  const onEquationChange = useCallback(
+    (e) => {
+      setValue(e.target.value);
+      onChange(e.target.value, altText);
+      debouncedAltTextRefetch();
+    },
+    [altText]
+  );
 
   const {
     data: getEquationData,
@@ -107,12 +119,26 @@ export const EditBlockPopup = React.forwardRef<
     }
   );
 
+  const {
+    data: altTextData,
+    error: altTextError,
+    isLoading: altTextLoading,
+    refetch: altTextRefetch,
+  } = api.gpt.katextotext.useQuery(
+    { katex: value },
+    {
+      enabled: false,
+    }
+  );
+
+  // useEffect(() => {
+
+  // }, [value]);
+
   useEffect(() => {
     if (!getEquationisLoading) {
       if (getEquationData) {
         console.log(getEquationData);
-        // const correctedJsonString = getEquationData.replace(/\\\\/g, "\\");
-        // console.log("corrected", correctedJsonString);
         const processedString = preprocessResponse(getEquationData);
         let jsonData;
         console.log("result", getEquationData);
@@ -121,7 +147,9 @@ export const EditBlockPopup = React.forwardRef<
         try {
           jsonData = JSON.parse(processedString);
           setValue(jsonData.result);
-          onChange(jsonData.result);
+          setAltText(jsonData.alt);
+
+          onChange(jsonData.result, jsonData.alt);
           setNoteResults(jsonData.note);
         } catch (error) {
           console.error("Failed to parse JSON:", error);
@@ -139,6 +167,37 @@ export const EditBlockPopup = React.forwardRef<
       }
     }
   }, [getEquationData, getEquationDataError, getEquationisLoading]);
+
+  useEffect(() => {
+    if (!altTextLoading) {
+      if (altTextData) {
+        // console.log(altTextData);
+        // setAltText(altTextData);
+
+        let jsonData;
+        try {
+          jsonData = JSON.parse(altTextData);
+          console.log(jsonData);
+          // console.log(altTextData);
+          setAltText(jsonData.result);
+          onChange(value, jsonData.result);
+        } catch (error) {
+          console.error("Failed to parse JSON:", error);
+          // You can set parsedJson to a default value or handle the error in a different way
+          jsonData = null;
+        }
+      }
+
+      if (altTextError) {
+        console.error(altTextError);
+        // Handle the error as needed
+      }
+      return () => {
+        setAltText("");
+        debouncedAltTextRefetch.cancel();
+      };
+    }
+  }, [altTextData, altTextError, altTextLoading]);
 
   const onChangeFindEquation = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -202,13 +261,18 @@ export const EditBlockPopup = React.forwardRef<
         </form>
       </div>
 
-      <div className="mt-2 flex h-[130px] justify-between">
+      <div className="relative mt-2 flex h-[130px] justify-between ">
         <textarea
+          aria-label={altText}
+          aria-live="off"
           value={value}
           className="w-full resize-none rounded-md border border-gray-200 bg-transparent p-2 focus:border-[#007AFF] focus:outline-none"
           onChange={onEquationChange}
           placeholder="TEX code"
         />
+        {/* <div className=" absolute bottom-1 left-1 rounded-md bg-gray-200 px-2 text-sm text-gray-700">
+          <span className="text-bold mr-1">alt:</span>
+        </div> */}
       </div>
       {noteResults && (
         <div className="relative mt-2">

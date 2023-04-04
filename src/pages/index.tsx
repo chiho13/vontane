@@ -123,14 +123,22 @@ const Home: NextPage = () => {
     return data.reduce((accumulator, item) => {
       if (item.children) {
         accumulator.push(...extractTextValues(item.children));
-      } else if (item.text) {
+      }
+
+      if (item.text) {
         accumulator.push(item.text);
       }
+
+      if (item.type === "equation" && item.altText) {
+        accumulator.push(item.altText);
+      }
+
       return accumulator;
     }, []);
   }
 
   function handleTextChange(value: any[]) {
+    console.log(value);
     const extractedText = extractTextValues(value);
     setEnteredText(extractedText);
     console.log(extractedText);

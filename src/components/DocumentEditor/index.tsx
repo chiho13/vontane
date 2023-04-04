@@ -71,6 +71,7 @@ type CustomElement = {
   id: string;
   type: "paragraph" | "equation";
   children: CustomText[];
+  altText?: string;
   latex?: string; // Add this line for the latex string
 };
 
@@ -137,12 +138,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       type: "paragraph",
       children: [{ text: "Solve the following quadratic equation:" }],
     },
-    // {
-    //   id: "pD3J8kW6L5Bf9X1rVZQ0",
-    //   type: "equation",
-    //   latex: "x^2 - 5x + 6 = 0",
-    //   children: [{ text: "" }],
-    // },
     // {
     //   id: genNodeId(),
     //   type: "column",
@@ -432,13 +427,16 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     }
   }
 
-  const handleEditLatex = (value: string, path: Path) => {
+  const handleEditLatex = (value: string, altText: string, path: Path) => {
     const latex = value;
     const equationNode = {
       type: "equation",
       latex,
+      altText,
       children: [{ text: "" }],
     };
+
+    console.log(altText);
 
     Transforms.setNodes(editor, equationNode, { at: path });
     console.log(path);
@@ -446,15 +444,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       `[data-path="${JSON.stringify(path)}"]`
     );
     console.log(currentElement);
-    // if (currentElement) {
-    //   setTimeout(() => {
-    //     const targetRect = currentElement.getBoundingClientRect();
-    //     const height = currentElement.offsetHeight;
-    //     console.log(height);
-
-    //     setDropdownEditBlockTop(targetRect.bottom + 60);
-    //   }, 0);
-    // }
   };
 
   const [getCurrentLatex, setCurrentLatex] = useState("");
@@ -498,6 +487,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         const equationNode: CustomElement = {
           id: equationId,
           type: "equation",
+          altText: "",
           latex,
           children: [{ text: "" }],
         };
@@ -615,6 +605,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         <div
           className="group relative"
           onMouseEnter={() => setAddButtonHoveredId(element.id)}
+          onMouseLeave={() => setAddButtonHoveredId(null)}
           onKeyDown={() => setAddButtonHoveredId(null)}
         >
           {content}
@@ -889,7 +880,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   return (
     <div
       tabIndex={0}
-      className="relative mx-auto mt-3 block h-[550px] rounded-md pt-4 pr-4 pb-4 pl-2 focus:outline-none focus-visible:border-gray-300"
+      className="relative mx-auto mt-3 block h-[550px] overflow-y-auto rounded-md pt-4 pr-4 pb-4 pl-2 focus:outline-none focus-visible:border-gray-300"
     >
       <DndContext
         onDragEnd={handleDragEnd}
@@ -916,7 +907,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               >
                 <Droppable>
                   <Editable
-                    className="relative h-[520px]"
+                    className="relative h-[510px]"
                     placeholder="Press '/' for prompts"
                     renderElement={renderElement}
                     onKeyDown={handleKeyDown}
@@ -970,8 +961,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             >
               <EditBlockPopup
                 ref={editBlockDropdownRef}
-                onChange={(value) =>
-                  handleEditLatex(value, JSON.parse(activeEditEquationPath))
+                onChange={(latex, altText) =>
+                  handleEditLatex(
+                    latex,
+                    altText,
+                    JSON.parse(activeEditEquationPath)
+                  )
                 }
                 latexValue={getCurrentLatex}
                 onClick={closeEditableDropdown}

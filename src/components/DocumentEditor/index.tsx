@@ -33,6 +33,7 @@ import useClickOutside from "@/hooks/useClickOutside";
 
 import { LayoutContext } from "../Layouts/AccountLayout";
 import { y_animation_props } from "../Dropdown";
+import { findElementInSlateValue } from "./helpers/findElementInSlate";
 
 import {
   DndContext,
@@ -772,34 +773,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const handleDragStart = useCallback(function ({ active }) {
     setActiveId(active.id);
   }, []);
-
-  function findElementById(node, id) {
-    if (node.id === id) {
-      return node;
-    }
-
-    if (node.children) {
-      for (const child of node.children) {
-        const found = findElementById(child, id);
-        if (found) {
-          return found;
-        }
-      }
-    }
-
-    return null;
-  }
-
-  function findElementInSlateValue(slateValue, id) {
-    for (const node of slateValue) {
-      const found = findElementById(node, id);
-      if (found) {
-        return found;
-      }
-    }
-
-    return null;
-  }
 
   useClickOutside(
     addSomethingDropdownRef,

@@ -24,14 +24,16 @@ export function ParagraphElement(props) {
   const selected = useSelected();
 
   useEffect(() => {
-    const elementNode = Editor.node(editor, path);
-    if (
-      elementNode[0].children.length === 1 &&
-      elementNode[0].children[0].text === ""
-    ) {
-      setIsVisible(true);
-    } else {
-      setIsVisible(false);
+    if (editor) {
+      const elementNode = Editor.node(editor, path);
+      if (
+        elementNode[0].children.length === 1 &&
+        elementNode[0].children[0].text === ""
+      ) {
+        setIsVisible(true);
+      } else {
+        setIsVisible(false);
+      }
     }
   }, [editor, path, children]);
   return (

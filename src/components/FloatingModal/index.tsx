@@ -1,10 +1,12 @@
 import React, { useState, useRef } from "react";
-import { Grip } from "lucide-react";
+import { Grip, X } from "lucide-react";
+import { ZodVoidDef } from "zod";
 interface FloatingModalProps {
   title: string;
   children: React.ReactNode;
   initialX?: number;
   initialY?: number;
+  onClose: () => ZodVoidDef;
 }
 
 export const FloatingModal: React.FC<FloatingModalProps> = ({
@@ -12,8 +14,10 @@ export const FloatingModal: React.FC<FloatingModalProps> = ({
   children,
   initialX = 0,
   initialY = 0,
+  onClose,
 }) => {
   const [position, setPosition] = useState({ x: initialX, y: initialY });
+  const [showFloatingModal, setShowFloatingModal] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const dragging = useRef(false);
   let dragStart = { x: 0, y: 0 };
@@ -50,9 +54,10 @@ export const FloatingModal: React.FC<FloatingModalProps> = ({
   return (
     <div
       ref={modalRef}
-      className="fixed w-72 rounded border border-gray-300 bg-white p-4 shadow-md"
+      className="fixed w-72 w-[400px] rounded border border-gray-300 bg-white p-4 shadow-md"
       style={{ left: position.x, top: position.y }}
     >
+      <X className="absolute right-2 top-2 cursor-pointer" onClick={onClose} />
       <div className="mb-2 flex select-none items-center font-bold">
         <div className="mr-1 cursor-move rounded p-1 text-gray-500 hover:bg-gray-100">
           <Grip width={12} height={12} onMouseDown={handleMouseDown} />

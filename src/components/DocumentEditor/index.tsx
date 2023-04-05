@@ -63,6 +63,7 @@ import { findAncestorWithClass } from "@/utils/findAncestors";
 import { useNewColumn } from "@/contexts/NewColumnContext";
 import { useSensor, useSensors, MouseSensor } from "@dnd-kit/core";
 import { findPathById, createColumns } from "./helpers/createColumns";
+import { FloatingModal } from "@/components/FloatingModal";
 
 interface DocumentEditorProps {
   handleTextChange?: (value: any) => void;
@@ -91,12 +92,17 @@ declare module "slate" {
 interface MiniDropdownProps {
   isOpen: boolean;
   onClick: () => void;
+  genBlock: () => void;
 }
 
 const MiniDropdown = React.forwardRef<HTMLDivElement, MiniDropdownProps>(
-  ({ isOpen, onClick }, ref) => {
+  ({ isOpen, onClick, genBlock }, ref) => {
     const addBlock = (event: React.KeyboardEvent) => {
       onClick();
+    };
+
+    const genBlockHandler = (event: React.KeyboardEvent) => {
+      genBlock();
     };
 
     return (
@@ -104,6 +110,20 @@ const MiniDropdown = React.forwardRef<HTMLDivElement, MiniDropdownProps>(
         ref={ref}
         className="dropdown-menu rounded-md border border-gray-200 bg-white p-2 shadow-md"
       >
+        <motion.button
+          whileTap={{ scale: 0.97 }}
+          className="mb-1 flex w-full items-center rounded-md border-2 border-gray-100 p-3 shadow-sm transition duration-300 hover:bg-gray-100"
+          onClick={genBlockHandler}
+        >
+          <Image
+            src="/images/math.png"
+            alt="add latex block equation"
+            width={60}
+            height={60}
+            className="rounded-md border"
+          />
+          <span className="ml-4 ">Generate Math Questions</span>
+        </motion.button>
         <motion.button
           whileTap={{ scale: 0.97 }}
           className="flex w-full items-center rounded-md border-2 border-gray-100 p-3 shadow-sm transition duration-300 hover:bg-gray-100"
@@ -229,8 +249,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     new Set()
   );
 
-  const [dropdownTop, setDropdownTop] = useState<number | null>(0);
-  const [dropdownLeft, setDropdownLeft] = useState<number | null>(0);
+  const [dropdownTop, setDropdownTop] = useState<number>(0);
+  const [dropdownLeft, setDropdownLeft] = useState<number>(0);
 
   const [dropdownEditBlockTop, setDropdownEditBlockTop] = useState<
     number | null
@@ -249,6 +269,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   };
 
   const [checkEmptyColumnCells, setCheckEmptyColumnCells] = useState(false);
+
+  const [showFloatingModal, setShowFloatingModal] = useState(false);
 
   const openMiniDropdown = useCallback(
     (event: React.MouseEvent, path: Path) => {
@@ -917,6 +939,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 handleAddEditableEquationBlock("", JSON.parse(activePath));
                 setShowDropdown(false);
               }}
+              genBlock={() => {
+                console.log("add block");
+                setShowFloatingModal(true);
+                setShowDropdown(false);
+              }}
             />
           </motion.div>
         )}
@@ -967,6 +994,15 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           </>
         )}
       </AnimatePresence>
+      {showFloatingModal && (
+        <FloatingModal
+          title="Math Question"
+          initialX={dropdownLeft}
+          initialY={dropdownTop}
+        >
+          <div>Hello</div>
+        </FloatingModal>
+      )}
     </div>
   );
 };

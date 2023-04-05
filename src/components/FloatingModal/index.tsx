@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-
+import { Grip } from "lucide-react";
 interface FloatingModalProps {
   title: string;
   children: React.ReactNode;
@@ -7,7 +7,7 @@ interface FloatingModalProps {
   initialY?: number;
 }
 
-const FloatingModal: React.FC<FloatingModalProps> = ({
+export const FloatingModal: React.FC<FloatingModalProps> = ({
   title,
   children,
   initialX = 0,
@@ -15,24 +15,28 @@ const FloatingModal: React.FC<FloatingModalProps> = ({
 }) => {
   const [position, setPosition] = useState({ x: initialX, y: initialY });
   const modalRef = useRef<HTMLDivElement>(null);
-  let dragging = false;
+  const dragging = useRef(false);
   let dragStart = { x: 0, y: 0 };
 
   const handleMouseDown = (e: React.MouseEvent) => {
-    dragging = true;
-    dragStart = { x: e.clientX - position.x, y: e.clientY - position.y };
-  };
-
-  const handleMouseUp = () => {
-    dragging = false;
+    e.preventDefault();
+    dragging.current = true;
+    dragStart = {
+      x: e.clientX - modalRef.current.offsetLeft,
+      y: e.clientY - modalRef.current.offsetTop,
+    };
   };
 
   const handleMouseMove = (e: MouseEvent) => {
-    if (dragging) {
+    if (dragging.current) {
       setPosition({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y });
+      e.preventDefault();
     }
   };
 
+  const handleMouseUp = () => {
+    dragging.current = false;
+  };
   React.useEffect(() => {
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
@@ -46,18 +50,16 @@ const FloatingModal: React.FC<FloatingModalProps> = ({
   return (
     <div
       ref={modalRef}
-      className="absolute w-72 rounded border border-gray-300 bg-white p-4 shadow-md"
+      className="fixed w-72 rounded border border-gray-300 bg-white p-4 shadow-md"
       style={{ left: position.x, top: position.y }}
     >
-      <div
-        className="mb-2 cursor-move select-none font-bold"
-        onMouseDown={handleMouseDown}
-      >
-        {title}
+      <div className="mb-2 flex select-none items-center font-bold">
+        <div className="mr-1 cursor-move rounded p-1 text-gray-500 hover:bg-gray-100">
+          <Grip width={12} height={12} onMouseDown={handleMouseDown} />
+        </div>
+        <span className="text-gray-500">{title}</span>
       </div>
       <div className="overflow-auto">{children}</div>
     </div>
   );
 };
-
-export default FloatingModal;

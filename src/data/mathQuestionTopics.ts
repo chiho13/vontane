@@ -113,7 +113,6 @@ export const mathQuestionTopics = [
         "Algebraic fractions",
         "Indices and index laws",
         "Sequences (arithmetic and geometric)",
-        "Graphs (linear, quadratic, cubic, and reciprocal)",
         "Direct and inverse proportion",
       ],
       "Ratio, Proportion, and Rates of Change": [
@@ -163,8 +162,8 @@ export const mathQuestionTopics = [
         ],
         "Exponentials and Logarithms": [
           "Laws of indices",
-          "Exponential functions and their graphs",
-          "Logarithmic functions and their graphs",
+          "Exponential functions",
+          "Logarithmic functions",
           "Laws of logarithms",
           "Exponential growth and decay models",
           "Solving exponential and logarithmic equations",

@@ -34,6 +34,7 @@ import useClickOutside from "@/hooks/useClickOutside";
 import { LayoutContext } from "../Layouts/AccountLayout";
 import { y_animation_props } from "../Dropdown";
 import { findElementInSlateValue } from "./helpers/findElementInSlate";
+import { PromptSelector } from "../PromptSelector";
 
 import {
   DndContext,
@@ -122,7 +123,7 @@ const MiniDropdown = React.forwardRef<HTMLDivElement, MiniDropdownProps>(
             height={60}
             className="rounded-md border"
           />
-          <span className="ml-4 ">Generate Math Questions</span>
+          <span className="ml-4 ">Write Math Question</span>
         </motion.button>
         <motion.button
           whileTap={{ scale: 0.97 }}
@@ -903,7 +904,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 <Droppable>
                   <Editable
                     className="relative h-[510px]"
-                    placeholder="Press '/' for prompts"
                     renderElement={renderElement}
                     onKeyDown={handleKeyDown}
                     onMouseUp={(event) => handleEditorMouseUp(event, editor)}
@@ -996,12 +996,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       </AnimatePresence>
       {showFloatingModal && (
         <FloatingModal
-          title="Generate Math Questions"
+          title="Write Math Question"
           initialX={dropdownLeft}
-          initialY={dropdownTop}
+          initialY={dropdownTop + 50}
           onClose={() => setShowFloatingModal(false)}
         >
-          <div>Hello</div>
+          <PromptSelector />
         </FloatingModal>
       )}
     </div>

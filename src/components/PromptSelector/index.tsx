@@ -138,10 +138,9 @@ const RecursiveList = ({ data, onChange, quantities }) => {
   );
 };
 
-export const PromptSelector = () => {
+export const PromptSelector = ({ questionTopics }) => {
   const [selectedLevel, setSelectedLevel] = useState(null);
   const [selectedSubtopic, setSelectedSubtopic] = useState(null);
-  const [mainTopic, setMainTopic] = useState(null);
   const [hasPressedWrite, setHasPressedWrite] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [questionCount, setQuestionCount] = useState(0);
@@ -239,10 +238,10 @@ export const PromptSelector = () => {
     <div className="mt-2 block">
       <div className="flex rounded-md border border-gray-200 pt-2 pl-2">
         <TopicList
-          topics={mathQuestionTopics.map((level) => level.level)}
+          topics={questionTopics.map((level) => level.level)}
           onSelect={(level) => {
             handleLevelSelect(
-              mathQuestionTopics.find((lvl) => lvl.level === level)
+              questionTopics.find((lvl) => lvl.level === level)
             );
           }}
           isLastLevel={false}

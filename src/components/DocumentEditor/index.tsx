@@ -34,7 +34,7 @@ import useClickOutside from "@/hooks/useClickOutside";
 import { LayoutContext } from "../Layouts/AccountLayout";
 import { y_animation_props } from "../Dropdown";
 import { findElementInSlateValue } from "./helpers/findElementInSlate";
-import { PromptSelector } from "../PromptSelector";
+import { MathQuestionGenerator } from "../MathQuestionGenerator";
 
 import {
   DndContext,
@@ -226,13 +226,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const [showDropdown, setShowDropdown] = useState(false);
   const [showEditBlockPopup, setShowEditBlockPopup] = useState(false);
 
-  // const [offsetDropdownPosition, setOffsetDropdownPosition] = useState<number>(
-  //   isLocked ? -150 : 0
-  // );
-
-  // useEffect(() => {
-  //   setOffsetDropdownPosition(isLocked ? -150 : 0);
-  // }, [isLocked]);
   const sensors = useSensors(useSensor(MouseSensor));
 
   const [dropdownPositions, setDropdownPositions] = useState<
@@ -1001,7 +994,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           initialY={dropdownTop + 50}
           onClose={() => setShowFloatingModal(false)}
         >
-          <PromptSelector />
+          <MathQuestionGenerator />
         </FloatingModal>
       )}
     </div>

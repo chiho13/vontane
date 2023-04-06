@@ -13,15 +13,6 @@ const TopicList = ({
 }) => {
   const theme = useTheme();
 
-  const increment = (topic) => {
-    const newValue =
-      ((quantities && quantities.hasOwnProperty(topic) && quantities[topic]) ||
-        0) + 1;
-    if (newValue <= 10) {
-      onSelect(topic, newValue);
-    }
-  };
-
   const decrement = (topic) => {
     const newValue =
       ((quantities && quantities.hasOwnProperty(topic) && quantities[topic]) ||
@@ -31,12 +22,21 @@ const TopicList = ({
     }
   };
 
+  const increment = (topic) => {
+    const newValue =
+      ((quantities && quantities.hasOwnProperty(topic) && quantities[topic]) ||
+        0) + 1;
+    if (newValue <= 10) {
+      onSelect(topic, newValue);
+    }
+  };
+
   return (
-    <ul className="mr-2 max-h-[300px] overflow-y-auto">
+    <ul className="mr-2 max-h-[350px] overflow-y-auto">
       {topics.map((topic) => (
         <li
           key={topic}
-          className={`mb-1 flex cursor-pointer items-center rounded-md px-2 py-1 text-sm text-gray-500 ${
+          className={`mb-1 flex cursor-pointer items-center rounded-md px-3 py-1 text-sm text-gray-500 ${
             topic === selectedValue ? "text-black" : ""
           }`}
           style={{
@@ -56,7 +56,7 @@ const TopicList = ({
             )}
           </div>
           {isLastLevel && topic === selectedValue && (
-            <div class="ml-2 flex items-center rounded border border-gray-200">
+            <div className="ml-2 flex items-center rounded border border-gray-200">
               <input
                 type="number"
                 value={
@@ -67,19 +67,19 @@ const TopicList = ({
                 onChange={(e) => onSelect(topic, parseInt(e.target.value, 10))}
                 min={0}
                 max={10}
-                className=" h-[20px] w-6  rounded-l-md border-r text-center text-[12px] [-moz-appearance:_textfield] focus:outline-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
+                className=" h-[28px] w-6 border-l text-center text-[12px] [-moz-appearance:_textfield] focus:outline-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
               />
               <div>
                 <button
                   type="button"
-                  className="flex h-[10px] w-6 items-center justify-center rounded-tr-md border-b  bg-white  text-gray-600 transition hover:opacity-75"
+                  className="flex h-[14px] w-[14px] items-center justify-center border-l     border-b  bg-white  text-gray-600 transition hover:opacity-75"
                   onClick={() => increment(topic)}
                 >
                   <Plus className="h-3" />
                 </button>
                 <button
                   type="button"
-                  className="flex h-[10px] w-6 items-center justify-center rounded-br-md bg-white  text-gray-600 transition hover:opacity-75"
+                  className="flex h-[14px] w-[14px]  items-center justify-center  border-l bg-white  text-gray-600 transition hover:opacity-75"
                   onClick={() => decrement(topic)}
                 >
                   <Minus className="h-3" />
@@ -100,9 +100,9 @@ const RecursiveList = ({ data, onChange, quantities }) => {
     return null;
   }
 
-  const handleTopicSelect = (value, newQuantity) => {
+  const handleTopicSelect = (value, newQuantity, parentKey) => {
     setSelectedValue(value);
-    onChange({ topic: value, quantity: newQuantity });
+    onChange({ topic: value, quantity: newQuantity, parent: parentKey });
   };
 
   if (Array.isArray(data)) {
@@ -141,14 +141,51 @@ const RecursiveList = ({ data, onChange, quantities }) => {
 export const PromptSelector = () => {
   const [selectedLevel, setSelectedLevel] = useState(null);
   const [selectedSubtopic, setSelectedSubtopic] = useState(null);
-
+  const [mainTopic, setMainTopic] = useState(null);
   const [hasPressedWrite, setHasPressedWrite] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [questionCount, setQuestionCount] = useState(0);
+  const [subtopicLevels, setSubtopicLevels] = useState({});
 
   const handleLevelSelect = (level) => {
-    setSelectedLevel(level);
-    setSelectedSubtopic(null);
+    if (selectedLevel !== level) {
+      setSelectedLevel(level);
+      setSelectedSubtopic(null);
+    }
+  };
+
+  const getParentKey = (selectedTopic, topics) => {
+    let parentKey = null;
+    Object.entries(topics).forEach(([key, value]) => {
+      if (Array.isArray(value) && value.includes(selectedTopic)) {
+        parentKey = key;
+      } else if (typeof value === "object" && value !== null) {
+        const childParentKey = getParentKey(selectedTopic, value);
+        if (childParentKey !== null) {
+          parentKey = childParentKey;
+        }
+      }
+    });
+    return parentKey;
+  };
+
+  const createCustomPrompt = (subject, level, subtopics) => {
+    let subtopicArray = Object.entries(subtopics).map(
+      ([subTopic, quantity]) => {
+        const [main, ...sub] = subTopic.split(" > ");
+        const parentKey = getParentKey(main, level.topics);
+        console.log("parent key", parentKey);
+        return {
+          subject,
+          level: level.level,
+          mainTopic: parentKey,
+          subTopic: main,
+          quantity,
+        };
+      }
+    );
+
+    return subtopicArray;
   };
 
   const handleWriteClick = () => {
@@ -159,7 +196,10 @@ export const PromptSelector = () => {
     }
 
     // Handle the write action with the selected topic
-    console.log("generated");
+    console.log(createCustomPrompt("Math", selectedLevel, selectedSubtopic));
+
+    console.log("selected level", JSON.stringify(selectedLevel));
+    console.log("sub topic", JSON.stringify(selectedSubtopic));
   };
 
   useEffect(() => {
@@ -183,6 +223,11 @@ export const PromptSelector = () => {
 
       if (total <= 15) {
         setQuestionCount(total);
+        setSubtopicLevels((prevLevels) => {
+          const newLevels = { ...prevLevels };
+          newLevels[topic] = selectedLevel.level;
+          return newLevels;
+        });
         return newState;
       }
 

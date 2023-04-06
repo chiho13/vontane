@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import { Grip, X } from "lucide-react";
 
 import { AnimatePresence, motion } from "framer-motion";
+import { useTheme } from "styled-components";
 interface FloatingModalProps {
   title: string;
   children: React.ReactNode;
@@ -57,6 +58,8 @@ export const FloatingModal: React.FC<FloatingModalProps> = ({
   const dragging = useRef(false);
   let dragStart = { x: 0, y: 0 };
 
+  const theme = useTheme();
+
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
     dragging.current = true;
@@ -100,6 +103,7 @@ export const FloatingModal: React.FC<FloatingModalProps> = ({
         <X
           className="absolute right-2 top-2 cursor-pointer"
           onClick={onClose}
+          color={theme.colors.darkgray}
         />
         <div className="mb-2 flex select-none items-center font-bold">
           <div className="mr-1 cursor-move rounded p-1 text-gray-500 hover:bg-gray-100">

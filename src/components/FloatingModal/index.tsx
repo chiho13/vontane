@@ -1,13 +1,48 @@
 import React, { useState, useRef } from "react";
 import { Grip, X } from "lucide-react";
-import { ZodVoidDef } from "zod";
+
+import { AnimatePresence, motion } from "framer-motion";
 interface FloatingModalProps {
   title: string;
   children: React.ReactNode;
   initialX?: number;
   initialY?: number;
-  onClose: () => ZodVoidDef;
+  onClose: () => void;
 }
+
+const down_animation_props = {
+  animate: {
+    opacity: 1,
+    y: 0,
+  },
+  initial: {
+    opacity: 0,
+    y: "10px",
+  },
+  transition: {
+    duration: 0.2,
+  },
+  enter: {
+    opacity: 1,
+    display: "block",
+    transition: {
+      duration: 0.6,
+    },
+    transitionEnd: {
+      display: "none",
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: "10px",
+    transition: {
+      duration: 0.2,
+    },
+    transitionEnd: {
+      display: "none",
+    },
+  },
+};
 
 export const FloatingModal: React.FC<FloatingModalProps> = ({
   title,
@@ -33,7 +68,10 @@ export const FloatingModal: React.FC<FloatingModalProps> = ({
 
   const handleMouseMove = (e: MouseEvent) => {
     if (dragging.current) {
-      setPosition({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y });
+      setPosition({
+        x: e.clientX - dragStart.x - window.pageXOffset,
+        y: e.clientY - dragStart.y - window.pageYOffset,
+      });
       e.preventDefault();
     }
   };
@@ -52,19 +90,25 @@ export const FloatingModal: React.FC<FloatingModalProps> = ({
   }, []);
 
   return (
-    <div
-      ref={modalRef}
-      className="fixed w-72 w-[400px] rounded border border-gray-300 bg-white p-4 shadow-md"
-      style={{ left: position.x, top: position.y }}
-    >
-      <X className="absolute right-2 top-2 cursor-pointer" onClick={onClose} />
-      <div className="mb-2 flex select-none items-center font-bold">
-        <div className="mr-1 cursor-move rounded p-1 text-gray-500 hover:bg-gray-100">
-          <Grip width={12} height={12} onMouseDown={handleMouseDown} />
+    <AnimatePresence>
+      <motion.div
+        {...down_animation_props}
+        ref={modalRef}
+        className="fixed z-10 min-w-[550px] max-w-[800px] rounded border border-gray-300 bg-white p-4 shadow-md"
+        style={{ left: position.x, top: position.y }}
+      >
+        <X
+          className="absolute right-2 top-2 cursor-pointer"
+          onClick={onClose}
+        />
+        <div className="mb-2 flex select-none items-center font-bold">
+          <div className="mr-1 cursor-move rounded p-1 text-gray-500 hover:bg-gray-100">
+            <Grip width={12} height={12} onMouseDown={handleMouseDown} />
+          </div>
+          <span className="text-gray-500">{title}</span>
         </div>
-        <span className="text-gray-500">{title}</span>
-      </div>
-      <div className="overflow-auto">{children}</div>
-    </div>
+        <div className="overflow-auto">{children}</div>
+      </motion.div>
+    </AnimatePresence>
   );
 };

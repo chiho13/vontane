@@ -14,14 +14,18 @@ const TopicList = ({
   const theme = useTheme();
 
   const increment = (topic) => {
-    const newValue = (quantities[topic] || 0) + 1;
+    const newValue =
+      ((quantities && quantities.hasOwnProperty(topic) && quantities[topic]) ||
+        0) + 1;
     if (newValue <= 10) {
       onSelect(topic, newValue);
     }
   };
 
   const decrement = (topic) => {
-    const newValue = (quantities[topic] || 0) - 1;
+    const newValue =
+      ((quantities && quantities.hasOwnProperty(topic) && quantities[topic]) ||
+        0) - 1;
     if (newValue >= 0) {
       onSelect(topic, newValue);
     }
@@ -32,14 +36,17 @@ const TopicList = ({
       {topics.map((topic) => (
         <li
           key={topic}
-          className={`mt-1 flex cursor-pointer items-center rounded-md px-2 py-1 text-sm text-gray-500 ${
+          className={`mb-1 flex cursor-pointer items-center rounded-md px-2 py-1 text-sm text-gray-500 ${
             topic === selectedValue ? "text-black" : ""
           }`}
           style={{
             backgroundColor: topic === selectedValue ? "#eee" : "transparent",
           }}
         >
-          <div onClick={() => onSelect(topic)} className="flex items-center ">
+          <div
+            onClick={() => onSelect(topic)}
+            className="flex w-full items-center justify-between"
+          >
             {topic}
             {!isLastLevel && (
               <ChevronRight
@@ -164,7 +171,14 @@ export const PromptSelector = () => {
   const handleSubtopicSelect = (selected) => {
     const { topic, quantity } = selected;
     setSelectedSubtopic((prevState) => {
-      const newState = { ...prevState, [topic]: quantity || 0 };
+      const newState = { ...prevState };
+
+      if (quantity === 0) {
+        delete newState[topic];
+      } else {
+        newState[topic] = quantity;
+      }
+
       const total = Object.values(newState).reduce((a, b) => a + b, 0);
 
       if (total <= 15) {
@@ -178,7 +192,7 @@ export const PromptSelector = () => {
 
   return (
     <div className="mt-2 block">
-      <div className="flex">
+      <div className="flex rounded-md border border-gray-200 pt-2 pl-2">
         <TopicList
           topics={mathQuestionTopics.map((level) => level.level)}
           onSelect={(level) => {
@@ -197,7 +211,7 @@ export const PromptSelector = () => {
           />
         )}
       </div>
-      <div className="mt-2 flex justify-between">
+      <div className="mt-4 flex justify-between">
         <div>{questionCount} / 15 questions</div>
         <div className="flex ">
           {hasPressedWrite && (
@@ -208,7 +222,7 @@ export const PromptSelector = () => {
             className="rounded-md border border-gray-300 py-1 px-2 text-sm text-gray-500 shadow-sm  hover:bg-gray-100 focus:outline-none"
             onClick={handleWriteClick}
           >
-            Write
+            Create
           </motion.button>
         </div>
       </div>

@@ -94,7 +94,7 @@ export const FloatingModal: React.FC<FloatingModalProps> = ({
       <motion.div
         {...down_animation_props}
         ref={modalRef}
-        className="fixed z-10 min-w-[550px] max-w-[800px] rounded border border-gray-300 bg-white p-4 shadow-md"
+        className="fixed z-10 min-w-[550px] max-w-[900px] rounded border border-gray-300 bg-white p-4 shadow-md"
         style={{ left: position.x, top: position.y }}
       >
         <X

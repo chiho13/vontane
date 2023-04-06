@@ -11,12 +11,8 @@ export const mathQuestionTopics = [
       ],
       Algebra: ["Patterns and sequences"],
       Measure: [
-        "Using non-standard and standard units to measure length, mass, capacity, and time",
-        "Telling time to the nearest hour and half-hour",
-        "Recognizing and using simple coins and notes",
-      ],
-      Statistics: [
-        "Organizing and interpreting data (using pictograms, block graphs, and bar graphs)",
+        "Measure length, mass, capacity, and time",
+        "Telling time to nearest hour and half-hour",
       ],
     },
   },
@@ -68,25 +64,15 @@ export const mathQuestionTopics = [
         "Algebraic fractions",
         "Indices and index laws",
         "Sequences (arithmetic and geometric)",
-        "Graphs (linear, quadratic, cubic, and reciprocal)",
         "Direct and inverse proportion",
       ],
-      "Ratio, Proportion, and Rates of Change": [
+      "Ratio, Proportion": [
         "Direct and inverse proportion",
-        "Compound measures (e.g., speed, density, pressure)",
+        "Compound measures",
       ],
       Trigonometry: [
         "Trigonometric ratios (sin, cos, tan)",
         "Pythagoras' theorem",
-      ],
-      Geometry: [
-        "Properties of shapes (2D and 3D)",
-        "Angles",
-        "Construction and loci",
-        "Transformations",
-        "Congruence and similarity",
-        "Circle theorems",
-        "Geometrical reasoning and proofs",
       ],
       Measures: [
         "Estimation and approximation",

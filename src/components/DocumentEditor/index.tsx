@@ -158,7 +158,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     {
       id: "dL9tJpTtH8Rt7D0sYSK2",
       type: "paragraph",
-      children: [{ text: "Solve the following quadratic equation:" }],
+      children: [{ text: "" }],
     },
     // {
     //   id: genNodeId(),

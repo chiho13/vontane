@@ -24,7 +24,7 @@ export function ParagraphElement(props) {
   const selected = useSelected();
 
   useEffect(() => {
-    if (editor) {
+    if (editor && path) {
       const elementNode = Editor.node(editor, path);
       if (
         elementNode[0].children.length === 1 &&

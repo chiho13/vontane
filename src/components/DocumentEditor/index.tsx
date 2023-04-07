@@ -266,11 +266,14 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   const [showFloatingModal, setShowFloatingModal] = useState(false);
 
+  const [selectedElementID, setSelectedElementID] = useState<string>("");
+
   const openMiniDropdown = useCallback(
     (event: React.MouseEvent, path: Path) => {
       // console.log("clicked second time");
       // console.log("Current dropdown state:", showDropdown);
 
+      // setShowEditBlockPopup(false);
       const currentpathString = JSON.stringify(path);
       console.log(event);
       // const offsetDropdownPosition = isLocked ? -150 : 0;
@@ -465,6 +468,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   const [getCurrentLatex, setCurrentLatex] = useState("");
   const [equationHeight, setEquationHeight] = useState<number | null>(null);
+
   const openEditBlockPopup = (
     _element: HTMLElement,
     event: React.MouseEvent,
@@ -483,7 +487,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     const [currentNode] = Editor.node(editor, path);
 
     setCurrentLatex(currentNode.latex);
+    setSelectedElementID(currentNode.id);
+    console.log(currentNode.id);
 
+    // setSelectedElementID();
     setShowEditBlockPopup(true);
     const equationHeight = _element.offsetHeight;
     setDropdownEditBlockTop(targetRect.bottom + 60);
@@ -493,7 +500,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const toggleRef = useRef<HTMLButtonElement>(null);
   const toggleEditBlockRef = useRef<HTMLElement>(null);
 
-  const [_equationId, setEquationId] = useState("");
   const [addButtonHoveredId, setAddButtonHoveredId] = useState(null);
 
   const handleAddEditableEquationBlock = useCallback(
@@ -539,7 +545,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         if (insertedEquationNode) {
           const { id } = insertedEquationNode[0] as CustomElement;
           const sideBarOffset = isLocked ? -150 : 0;
-          setEquationId(id);
+          console.log(id);
+          setSelectedElementID(id);
+          setShowEditBlockPopup(true);
           setactiveEditEquationPath(JSON.stringify(newPath));
           setCurrentLatex("");
           setTimeout(() => {
@@ -548,7 +556,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             if (currentElement) {
               const targetRect = currentElement.getBoundingClientRect();
               setDropdownEditBlockLeft(targetRect.left + sideBarOffset);
-              // setDropdownEditBlockTop(targetRect.bottom + 60);
+              setDropdownEditBlockTop(targetRect.bottom + 60);
               console.log(targetRect.left);
             }
           }, 0);
@@ -562,20 +570,20 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     return document.querySelector(`[data-id="${id}"]`);
   };
 
-  useEffect(() => {
-    if (_equationId && slatevalue) {
-      const equationElement = findEquationElementById(_equationId);
+  // useEffect(() => {
+  //   if (selectedElementID && slatevalue) {
+  //     const equationElement = findEquationElementById(selectedElementID);
 
-      if (equationElement) {
-        // Get the position of the newly added equation element
-        const targetRect = equationElement.getBoundingClientRect();
-        console.log(equationElement);
-        // Open the edit block dropdown and set its position
-        setShowEditBlockPopup(true);
-        setDropdownEditBlockTop(targetRect.bottom + 40);
-      }
-    }
-  }, [slatevalue, _equationId]);
+  //     if (equationElement) {
+  //       // Get the position of the newly added equation element
+  //       const targetRect = equationElement.getBoundingClientRect();
+  //       console.log(equationElement);
+  //       // Open the edit block dropdown and set its position
+  //       // setShowEditBlockPopup(true);
+  //       setDropdownEditBlockTop(targetRect.bottom + 40);
+  //     }
+  //   }
+  // }, [slatevalue, selectedElementID]);
 
   const renderElement = useCallback(
     (props) => {
@@ -885,6 +893,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             <EditorProvider
               editor={editor}
               showEditBlockPopup={showEditBlockPopup}
+              elementID={selectedElementID}
             >
               <Slate
                 editor={editor}

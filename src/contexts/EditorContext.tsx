@@ -7,15 +7,18 @@ import { Editor } from "slate";
 const EditorContext = createContext<{
   editor: Editor;
   showEditBlockPopup: Boolean;
+  elementID: string;
 }>({
   editor: null as any,
   showEditBlockPopup: false,
+  elementID: "",
 });
 
 // Define the EquationProviderProps type
 type EquationProviderProps = PropsWithChildren<{
   editor: Editor;
   showEditBlockPopup: Boolean;
+  elementID: string;
 }>;
 
 // Create an EquationProvider component that accepts a `children` prop and the `openEditBlockPopup` function
@@ -23,9 +26,10 @@ const EditorProvider: React.FC<EquationProviderProps> = ({
   children,
   editor,
   showEditBlockPopup,
+  elementID,
 }) => {
   return (
-    <EditorContext.Provider value={{ editor, showEditBlockPopup }}>
+    <EditorContext.Provider value={{ editor, showEditBlockPopup, elementID }}>
       {children}
     </EditorContext.Provider>
   );

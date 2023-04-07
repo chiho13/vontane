@@ -4,10 +4,7 @@ import { BlockMath } from "react-katex";
 import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor } from "slate-react";
 import { Transforms } from "slate";
-import {
-  highlightElementTemporarily,
-  updateNewlyAddedOnPathChange,
-} from "../helpers/highlightElementTemp";
+import { highlightElementTemporarily } from "../helpers/highlightElementTemp";
 import { motion } from "framer-motion";
 
 export function EquationElement(props) {
@@ -18,12 +15,7 @@ export function EquationElement(props) {
 
   useEffect(() => {
     if (element.newlyAdded) {
-      highlightElementTemporarily(
-        element,
-        editor,
-        path,
-        setHighlightedElements
-      );
+      highlightElementTemporarily(path, setHighlightedElements);
     }
   }, []);
 

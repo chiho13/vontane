@@ -3,45 +3,11 @@ import Image from "next/image";
 import { BlockMath } from "react-katex";
 import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor } from "slate-react";
-import { Transforms } from "slate";
-import { highlightElementTemporarily } from "../helpers/highlightElementTemp";
-import { motion } from "framer-motion";
 
 export function EquationElement(props) {
   const { attributes, children, element } = props;
   const { editor, showEditBlockPopup } = useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);
-  const [highlightedElements, setHighlightedElements] = useState(new Set());
-
-  useEffect(() => {
-    if (element.newlyAdded) {
-      highlightElementTemporarily(path, setHighlightedElements);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!showEditBlockPopup) {
-      const updatedElement = { ...element, newlyAdded: false };
-      Transforms.setNodes(editor, updatedElement, { at: path });
-    }
-  }, [showEditBlockPopup]);
-
-  const isHighlighted =
-    highlightedElements.has(JSON.stringify(path)) || showEditBlockPopup;
-  // element.latex?.trim() === "";
-  console.log(isHighlighted);
-
-  const bgColor = isHighlighted ? "bg-blue-100" : "bg-transparent";
-
-  const fadeInOutVariants = useMemo(
-    () => ({
-      initial: { backgroundColor: "rgba(255, 255, 255, 0)" },
-      highlighted: { backgroundColor: "rgba(187, 225, 250, 0.5)" },
-      // notHighlighted: { backgroundColor: "rgba(255, 255, 255, 0)" },
-      hover: { backgroundColor: "rgba(226, 232, 240, 1)" },
-    }),
-    [isHighlighted]
-  );
 
   return (
     <div
@@ -51,7 +17,7 @@ export function EquationElement(props) {
       className={`equation-element my-2 mr-2 flex w-auto items-center rounded-md p-2 hover:bg-gray-100 ${
         element.latex?.trim() === "" ? "bg-gray-100" : "justify-center"
       } 
-      ${isHighlighted && "bg-[#d4ebf7] "}
+      ${showEditBlockPopup && "bg-[#E0EDFB] "}
       cursor-pointer`}
       contentEditable={false}
     >

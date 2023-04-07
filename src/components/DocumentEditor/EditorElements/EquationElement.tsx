@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import { BlockMath } from "react-katex";
 import { EditorContext } from "@/contexts/EditorContext";
@@ -27,17 +27,21 @@ export function EquationElement(props) {
   }, [showEditBlockPopup]);
 
   const isHighlighted =
-    highlightedElements.has(JSON.stringify(path)) || showEditBlockPopup;
+    (highlightedElements.has(JSON.stringify(path)) || showEditBlockPopup) &&
+    element.latex?.trim() === "";
   console.log(isHighlighted);
 
   const bgColor = isHighlighted ? "bg-blue-100" : "bg-transparent";
 
-  const fadeInOutVariants = {
-    initial: { backgroundColor: "rgba(255, 255, 255, 0)" },
-    highlighted: { backgroundColor: "rgba(187, 225, 250, 0.5)" },
-    notHighlighted: { backgroundColor: "rgba(255, 255, 255, 0)" },
-    hover: { backgroundColor: "rgba(226, 232, 240, 1)" },
-  };
+  const fadeInOutVariants = useMemo(
+    () => ({
+      initial: { backgroundColor: "rgba(255, 255, 255, 0)" },
+      highlighted: { backgroundColor: "rgba(187, 225, 250, 0.5)" },
+      notHighlighted: { backgroundColor: "rgba(255, 255, 255, 0)" },
+      hover: { backgroundColor: "rgba(226, 232, 240, 1)" },
+    }),
+    [isHighlighted]
+  );
 
   return (
     <motion.div
@@ -50,7 +54,7 @@ export function EquationElement(props) {
       animate={isHighlighted ? "highlighted" : "notHighlighted"}
       whileHover="hover"
       variants={fadeInOutVariants}
-      transition={{ duration: 0.3 }}
+      // transition={{ duration: 0.3 }}
       contentEditable={false}
     >
       <BlockMath math={element.latex || ""} />

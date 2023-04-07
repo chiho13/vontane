@@ -507,6 +507,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           altText: "",
           latex,
           children: [{ text: "" }],
+          newlyAdded: true,
         };
 
         const [currentNode] = Editor.node(editor, path);
@@ -547,7 +548,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             if (currentElement) {
               const targetRect = currentElement.getBoundingClientRect();
               setDropdownEditBlockLeft(targetRect.left + sideBarOffset);
-              setDropdownEditBlockTop(targetRect.bottom + 60);
+              // setDropdownEditBlockTop(targetRect.bottom + 60);
               console.log(targetRect.left);
             }
           }, 0);
@@ -881,7 +882,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           strategy={verticalListSortingStrategy}
         >
           <ActiveElementProvider activeIndex={activeIndex}>
-            <EditorProvider editor={editor}>
+            <EditorProvider
+              editor={editor}
+              showEditBlockPopup={showEditBlockPopup}
+            >
               <Slate
                 editor={editor}
                 value={slatevalue}

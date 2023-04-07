@@ -138,7 +138,7 @@ const RecursiveList = ({ data, onChange, quantities }) => {
   );
 };
 
-export const PromptSelector = ({ questionTopics }) => {
+export const PromptSelector = ({ subject, questionTopics, setQuestions }) => {
   const [selectedLevel, setSelectedLevel] = useState(null);
   const [selectedSubtopic, setSelectedSubtopic] = useState(null);
   const [hasPressedWrite, setHasPressedWrite] = useState(false);
@@ -173,7 +173,6 @@ export const PromptSelector = ({ questionTopics }) => {
       ([subTopic, quantity]) => {
         const [main, ...sub] = subTopic.split(" > ");
         const parentKey = getParentKey(main, level.topics);
-        console.log("parent key", parentKey);
         return {
           subject,
           level: level.level,
@@ -195,10 +194,14 @@ export const PromptSelector = ({ questionTopics }) => {
     }
 
     // Handle the write action with the selected topic
-    console.log(createCustomPrompt("Math", selectedLevel, selectedSubtopic));
+    const questionsArr = createCustomPrompt(
+      subject,
+      selectedLevel,
+      selectedSubtopic
+    );
+    const questionsArrStringify = JSON.stringify(questionsArr);
 
-    console.log("selected level", JSON.stringify(selectedLevel));
-    console.log("sub topic", JSON.stringify(selectedSubtopic));
+    setQuestions(questionsArrStringify);
   };
 
   useEffect(() => {

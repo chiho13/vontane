@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor, useFocused, useSelected } from "slate-react";
-import { Editor, Path, Transforms } from "slate";
+import { Editor, Path } from "slate";
 import styled from "styled-components";
 
 const ParagraphStyle = styled.div`
@@ -25,17 +25,22 @@ export function ParagraphElement(props) {
 
   useEffect(() => {
     if (editor && path) {
-      const elementNode = Editor.node(editor, path);
-      if (
-        elementNode[0].children.length === 1 &&
-        elementNode[0].children[0].text === ""
-      ) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
+      const isFirstElement = Path.equals(path, [0]);
+      const hasSingleElement = editor.children.length === 1;
+      const isEmpty =
+        element.children.length === 1 && element.children[0].text === "";
+
+      setIsVisible(isFirstElement && hasSingleElement && isEmpty);
     }
-  }, [editor, path, children]);
+  }, [editor, path, children, focused]);
+
+  const shouldShowPlaceholder =
+    (isVisible && (!focused || (focused && editor.children.length === 1))) ||
+    (focused &&
+      selected &&
+      !Path.equals(path, [0]) &&
+      element.children[0].text === "");
+
   return (
     <ParagraphStyle>
       <p
@@ -43,9 +48,7 @@ export function ParagraphElement(props) {
         {...attributes}
         data-id={element.id}
         data-path={JSON.stringify(path)}
-        data-placeholder={
-          isVisible && focused && selected ? "Press '/' for commands" : ""
-        }
+        data-placeholder={shouldShowPlaceholder ? "Press '/' for commands" : ""}
       >
         {children}
       </p>

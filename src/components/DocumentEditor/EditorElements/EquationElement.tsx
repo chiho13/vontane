@@ -3,11 +3,15 @@ import Image from "next/image";
 import { BlockMath } from "react-katex";
 import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor } from "slate-react";
+import { Editor } from "slate";
 
 export function EquationElement(props) {
   const { attributes, children, element } = props;
-  const { editor, showEditBlockPopup } = useContext(EditorContext);
+  const { editor, showEditBlockPopup, elementID } = useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);
+  const [selectedElementId, setSelectedElementId] = useState(null);
+
+  // console.log(elementID, element.id);
 
   return (
     <div
@@ -17,7 +21,7 @@ export function EquationElement(props) {
       className={`equation-element my-2 mr-2 flex w-auto items-center rounded-md p-2 hover:bg-gray-100 ${
         element.latex?.trim() === "" ? "bg-gray-100" : "justify-center"
       } 
-      ${showEditBlockPopup && "bg-[#E0EDFB] "}
+      ${showEditBlockPopup && elementID === element.id && "bg-[#E0EDFB] "}
       cursor-pointer`}
       contentEditable={false}
     >

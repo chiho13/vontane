@@ -153,6 +153,11 @@ const Home: NextPage = () => {
     <>
       <Layout profile={profile}>
         <div className="mx-auto mt-4 justify-center p-4 lg:mt-8">
+          <div className="relative mx-auto flex items-center justify-end lg:w-[980px]">
+            <label className="text-bold  mb-2 text-sm text-gray-500">
+              Text to Speech
+            </label>
+          </div>
           <div className="relative mx-auto mb-5 flex items-center lg:w-[980px]">
             <div className="mr-4 flex-1 ">
               <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />

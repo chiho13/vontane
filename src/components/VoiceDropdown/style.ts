@@ -3,7 +3,6 @@ import { mq } from "@/utils/breakpoints";
 
 export const VoiceDropdownStyle = styled.div`
   position: relative;
-  margin-bottom: 20px;
 
   .filter_label {
     font-weight: 600;

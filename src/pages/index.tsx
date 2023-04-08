@@ -100,7 +100,12 @@ const Home: NextPage = () => {
   ]);
 
   useEffect(() => {
-    if (selectedVoiceId && enteredText) {
+    if (
+      selectedVoiceId &&
+      enteredText &&
+      !(Array.isArray(enteredText) && enteredText.length === 0)
+    ) {
+      console.log(enteredText);
       setIsDisabled(false);
     } else {
       setIsDisabled(true);
@@ -148,8 +153,16 @@ const Home: NextPage = () => {
     <>
       <Layout profile={profile}>
         <div className="mx-auto mt-4 justify-center p-4 lg:mt-8">
-          <div className="mx-auto lg:w-[980px]">
-            <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
+          <div className="relative mx-auto mb-5 flex items-center lg:w-[980px]">
+            <div className="mr-4 flex-1 ">
+              <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
+            </div>
+
+            <GenerateButton
+              isDisabled={isDisabled}
+              audioIsLoading={audioIsLoading}
+              onClick={generateAudio}
+            />
           </div>
           <div className="linear-gradient mx-auto w-full rounded-md border-2 border-gray-300 px-2 lg:w-[980px] lg:px-0">
             <div className="block  lg:w-full">
@@ -169,13 +182,6 @@ const Home: NextPage = () => {
                 </div>
               </div>
             )}
-          </div>
-          <div className="mx-auto flex justify-center lg:w-[980px]">
-            <GenerateButton
-              isDisabled={isDisabled}
-              audioIsLoading={audioIsLoading}
-              onClick={generateAudio}
-            />
           </div>
         </div>
       </Layout>

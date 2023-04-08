@@ -11,6 +11,7 @@ const TopicList = ({
   selectedValue,
   isLastLevel,
   quantities = {},
+  disableOtherLevels = false,
 }) => {
   const theme = useTheme();
 
@@ -42,6 +43,8 @@ const TopicList = ({
           }`}
           style={{
             backgroundColor: topic === selectedValue ? "#eee" : "transparent",
+            pointerEvents: disableOtherLevels ? "none" : "auto",
+            opacity: disableOtherLevels ? 0.5 : 1,
           }}
         >
           <div
@@ -257,6 +260,7 @@ export const PromptSelector = ({
           }}
           isLastLevel={false}
           selectedValue={selectedLevel?.level}
+          disableOtherLevels={questionCount > 0}
         />
         {selectedLevel && (
           <RecursiveList

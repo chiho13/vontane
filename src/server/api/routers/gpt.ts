@@ -101,18 +101,19 @@ export const GPTRouter = createTRPCRouter({
               Generate a JSON object for Questions based on the following input:
     ${mathQuestions}
 
-      Each question should have a paragraph element containing the question text and an equation element with the related equation. The output should be an array of objects with the following structure:
+      Each question should have a paragraph element containing the question text and an equation element with the related equation. Each item should i have a random ID. The output should be an array of objects with the following structure:
 
 [
 {
-"id": "16 random character string",
+"id": "hzkfghvgisdhcd",
 "type": "paragraph",
 "children": [{"text": "question"}]
 },
 {
-"id": "16 random character string",
+"id": "hxdkshjdjdjsjs",
 "type": "equation",
 "latex": "KaTeX code",
+"altText": "accessible text of equation for screen readers",
 "children": [{"text": ""}]
 }
 ]

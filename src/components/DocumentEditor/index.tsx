@@ -507,11 +507,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         if (isEmptyNode) {
           Transforms.setNodes(editor, equationNode, { at: path });
           newPath = path;
-          // Transforms.insertNodes(
-          //   editor,
-          //   { id: genNodeId(), type: "paragraph", children: [{ text: "" }] },
-          //   { at: Path.next(path) }
-          // );
+          Transforms.insertNodes(
+            editor,
+            { id: genNodeId(), type: "paragraph", children: [{ text: "" }] },
+            { at: Path.next(path) }
+          );
         } else {
           Transforms.insertNodes(editor, equationNode, { at: Path.next(path) });
           newPath = Path.next(path);
@@ -808,6 +808,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         console.log(pathString);
         const path: Path = JSON.parse(pathString);
         openEditBlockPopup(equationElement, event, path);
+        return;
       }
     }
 
@@ -821,10 +822,35 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     ) {
       return;
     }
-
     // Check if the clicked position is below the last node
     const lastNode = editor.children[editor.children.length - 1];
-    const lastNodeDOM = ReactEditor.toDOMNode(editor, lastNode);
+    const lastNodePath = ReactEditor.findPath(editor, lastNode);
+    let lastNodeDOM = document.querySelector(
+      `[data-path="${JSON.stringify(lastNodePath)}"]`
+    );
+
+    // Check if lastNode is an equation, if so, insert a new paragraph below it
+    if (lastNode.type === "equation") {
+      const newParagraph = {
+        type: "paragraph",
+        children: [{ text: "" }],
+      };
+      const newPath = lastNodePath
+        .slice(0, -1)
+        .concat(lastNodePath[lastNodePath.length - 1] + 1);
+      Transforms.insertNodes(editor, newParagraph, { at: newPath });
+
+      // Set the selection to the correct leaf node (text node) within the new paragraph
+      const leafNodePath = newPath.concat(0);
+      Transforms.setSelection(editor, {
+        anchor: { path: leafNodePath, offset: 0 },
+        focus: { path: leafNodePath, offset: 0 },
+      });
+
+      event.stopPropagation();
+      return;
+    }
+
     const lastNodeRect = lastNodeDOM.getBoundingClientRect();
     const clickedY = event.clientY;
 
@@ -835,7 +861,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       const lastNodePath = ReactEditor.findPath(editor, lastNode);
 
       const newParagraph = {
-        id: genNodeId(),
         type: "paragraph",
         children: [{ text: "" }],
       };

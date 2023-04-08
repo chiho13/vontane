@@ -123,7 +123,7 @@ const MiniDropdown = React.forwardRef<HTMLDivElement, MiniDropdownProps>(
             height={60}
             className="rounded-md border"
           />
-          <span className="ml-4 ">Write Math Question</span>
+          <span className="ml-4 ">Math Homework</span>
         </motion.button>
         <motion.button
           whileTap={{ scale: 0.97 }}

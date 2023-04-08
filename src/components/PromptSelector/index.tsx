@@ -234,7 +234,7 @@ export const PromptSelector = ({
 
       const total = Object.values(newState).reduce((a, b) => a + b, 0);
 
-      if (total <= 15) {
+      if (total <= 5) {
         setQuestionCount(total);
         setSubtopicLevels((prevLevels) => {
           const newLevels = { ...prevLevels };
@@ -260,7 +260,7 @@ export const PromptSelector = ({
           }}
           isLastLevel={false}
           selectedValue={selectedLevel?.level}
-          disableOtherLevels={questionCount > 0}
+          disableOtherLevels={questionCount}
         />
         {selectedLevel && (
           <RecursiveList

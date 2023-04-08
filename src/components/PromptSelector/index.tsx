@@ -3,6 +3,7 @@ import { mathQuestionTopics } from "@/data/mathQuestionTopics";
 import { ChevronRight, Minus, Plus } from "lucide-react";
 import { useTheme } from "styled-components";
 import { motion } from "framer-motion";
+import LoadingSpinner from "@/icons/LoadingSpinner";
 
 const TopicList = ({
   topics,
@@ -138,7 +139,12 @@ const RecursiveList = ({ data, onChange, quantities }) => {
   );
 };
 
-export const PromptSelector = ({ subject, questionTopics, setQuestions }) => {
+export const PromptSelector = ({
+  subject,
+  questionTopics,
+  setQuestionHandler,
+  genLoading,
+}) => {
   const [selectedLevel, setSelectedLevel] = useState(null);
   const [selectedSubtopic, setSelectedSubtopic] = useState(null);
   const [hasPressedWrite, setHasPressedWrite] = useState(false);
@@ -186,7 +192,9 @@ export const PromptSelector = ({ subject, questionTopics, setQuestions }) => {
     return subtopicArray;
   };
 
-  const handleWriteClick = () => {
+  const handleWriteClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (questionCount === 0) {
       setHasPressedWrite(true);
       setErrorMessage("Please choose a topic");
@@ -201,7 +209,7 @@ export const PromptSelector = ({ subject, questionTopics, setQuestions }) => {
     );
     const questionsArrStringify = JSON.stringify(questionsArr);
 
-    setQuestions(questionsArrStringify);
+    setQuestionHandler(questionsArrStringify);
   };
 
   useEffect(() => {
@@ -266,10 +274,18 @@ export const PromptSelector = ({ subject, questionTopics, setQuestions }) => {
           )}
           <motion.button
             whileTap={{ scale: 0.97 }}
-            className="rounded-md border border-gray-300 py-1 px-2 text-sm text-gray-500 shadow-sm  hover:bg-gray-100 focus:outline-none"
+            className="flex h-[34px] min-w-[65px] items-center rounded-md border border-gray-300 py-1 px-2 text-sm text-gray-500 shadow-sm  hover:bg-gray-100 focus:outline-none"
             onClick={handleWriteClick}
+            disabled={genLoading}
           >
-            Create
+            {genLoading ? (
+              <>
+                <LoadingSpinner />
+                <div className="ml-2">Creating...</div>
+              </>
+            ) : (
+              <div>Create</div>
+            )}
           </motion.button>
         </div>
       </div>

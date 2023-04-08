@@ -270,31 +270,16 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   const openMiniDropdown = useCallback(
     (event: React.MouseEvent, path: Path) => {
-      // console.log("clicked second time");
-      // console.log("Current dropdown state:", showDropdown);
-
-      // setShowEditBlockPopup(false);
       const currentpathString = JSON.stringify(path);
       console.log(event);
       // const offsetDropdownPosition = isLocked ? -150 : 0;
       const [currentNode] = Editor.node(editor, path);
       const { selection } = editor;
 
-      //   const lastNode = Editor.node(editor, selection.focus);
-      // if (!selection) return;
-
       const sideBarOffset = isLocked ? -150 : 0;
       console.log(currentNode);
       console.log(event.currentTarget);
       console.log("current path string", currentpathString);
-      // const [parentNode, parentPath] = Editor.parent(
-      //   editor,
-      //   selection.anchor.path
-      // );
-      // const numPath = slatePathToNumber(path);
-
-      // const nextNumPath = slatePathToNumber(Path.next(path));
-      // const parentpathString = JSON.stringify(parentPath);
 
       const [lastNode, lastPath] = Editor.last(editor, []);
 
@@ -308,7 +293,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         // Get the next node from the editor
         const [nextNode] = Editor.node(editor, nextPath);
 
-        // Check if the next node is a paragraph and has an empty text
         hasNextEmptyParagraphNode =
           nextNode.type === "paragraph" &&
           nextNode.children.length === 1 &&
@@ -316,10 +300,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       } catch (error) {
         console.log(error);
       }
-
-      // Get the next node from the editor
-
-      //   console.log(lastPath[0]);
       const hasEmptyParagraphNode =
         currentNode.type === "paragraph" &&
         currentNode.children.length === 1 &&
@@ -331,16 +311,17 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       const target = event.currentTarget as HTMLDivElement;
       const targetRect = target.getBoundingClientRect();
 
-      // console.log(target);
       if (
         (!hasEmptyParagraphNode && !hasNextEmptyParagraphNode) ||
         !hasEquationNode
       ) {
-        Transforms.insertNodes(
-          editor,
-          { id: genNodeId(), type: "paragraph", children: [{ text: "" }] },
-          { at: Path.next(path) }
-        );
+        if (!hasEmptyParagraphNode) {
+          Transforms.insertNodes(
+            editor,
+            { id: genNodeId(), type: "paragraph", children: [{ text: "" }] },
+            { at: Path.next(path) }
+          );
+        }
 
         setDropdownTop(targetRect.bottom + 50);
       } else {

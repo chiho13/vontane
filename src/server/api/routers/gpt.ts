@@ -82,4 +82,55 @@ export const GPTRouter = createTRPCRouter({
         });
       }
     }),
+
+  mathQuestions: protectedProcedure
+    .input(
+      z.object({
+        mathQuestions: z.string(),
+      })
+    )
+    .query(async ({ input }) => {
+      const { mathQuestions } = input;
+      try {
+        const completion = await openai.createChatCompletion({
+          model: "gpt-3.5-turbo",
+          messages: [
+            {
+              role: "user",
+              content: `
+              Generate a JSON object for Questions based on the following input:
+    ${mathQuestions}
+
+      Each question should have a paragraph element containing the question text and an equation element with the related equation. The output should be an array of objects with the following structure:
+
+[
+{
+"id": "16 random character string",
+"type": "paragraph",
+"children": [{"text": "question"}]
+},
+{
+"id": "16 random character string",
+"type": "equation",
+"latex": "KaTeX code",
+"children": [{"text": ""}]
+}
+]
+              `,
+            },
+          ],
+          max_tokens: 2000,
+          temperature: 0.7,
+        });
+
+        const data = completion.data.choices[0].message.content;
+        return data;
+      } catch (err) {
+        console.error(err);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        });
+      }
+    }),
 });

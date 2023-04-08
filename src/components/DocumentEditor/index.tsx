@@ -493,7 +493,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           altText: "",
           latex,
           children: [{ text: "" }],
-          newlyAdded: true,
         };
 
         const [currentNode] = Editor.node(editor, path);

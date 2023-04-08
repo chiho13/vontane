@@ -32,5 +32,5 @@ currently under development (April)
 - [x] search equations
 - [x] drag and drop elements between columns
 - [x] drag element to create columns
-- [] math questions generator
+- [x] math questions generator
 - [] connect database

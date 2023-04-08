@@ -12,6 +12,7 @@ export function EquationElement(props) {
   const [selectedElementId, setSelectedElementId] = useState(null);
 
   // console.log(elementID, element.id);
+  console.log(elementID, element.id, showEditBlockPopup);
 
   return (
     <div
@@ -19,9 +20,13 @@ export function EquationElement(props) {
       data-path={JSON.stringify(path)}
       data-id={element.id}
       className={`equation-element my-2 mr-2 flex w-auto items-center rounded-md p-2 hover:bg-gray-100 ${
-        element.latex?.trim() === "" ? "bg-gray-100" : "justify-center"
+        element.latex?.trim() !== "" && "justify-center"
       } 
-      ${showEditBlockPopup && elementID === element.id && "bg-[#E0EDFB] "}
+      ${
+        showEditBlockPopup && elementID === element.id
+          ? " bg-[#E0EDFB]"
+          : "bg-gray-100"
+      }
       cursor-pointer`}
       contentEditable={false}
     >

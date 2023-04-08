@@ -232,7 +232,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     Map<string, { top: number; left: number }>
   >(new Map());
 
-  const [activePath, setActivePath] = useState<string | null>(null);
+  const [activePath, setActivePath] = useState<string>("");
   const [activeEditEquationPath, setactiveEditEquationPath] = useState<
     string | null
   >(null);
@@ -280,7 +280,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       console.log(currentNode);
       console.log(event.currentTarget);
       console.log("current path string", currentpathString);
-
+      setActivePath(currentpathString);
       const [lastNode, lastPath] = Editor.last(editor, []);
 
       const lastpathString = JSON.stringify(lastPath.slice(0, -1));
@@ -330,7 +330,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
       setDropdownLeft(targetRect.left + 60 + sideBarOffset);
       setShowDropdown((prevState) => !prevState);
-      setActivePath(currentpathString);
     },
     [dropdownPositions, isLocked]
   );
@@ -857,9 +856,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   }
 
   return (
-    <div
-      tabIndex={0}
-      className="relative mx-auto mt-3 block h-[550px] overflow-y-auto rounded-md pt-4 pr-4 pb-4 pl-2 focus:outline-none focus-visible:border-gray-300"
+    <EditorProvider
+      editor={editor}
+      showEditBlockPopup={showEditBlockPopup}
+      elementID={selectedElementID}
+      activePath={activePath}
     >
       <DndContext
         onDragEnd={handleDragEnd}
@@ -871,10 +872,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           strategy={verticalListSortingStrategy}
         >
           <ActiveElementProvider activeIndex={activeIndex}>
-            <EditorProvider
-              editor={editor}
-              showEditBlockPopup={showEditBlockPopup}
-              elementID={selectedElementID}
+            <div
+              tabIndex={0}
+              className="relative mx-auto mt-3 block h-[550px] overflow-y-auto rounded-md pt-4 pr-4 pb-4 pl-2 focus:outline-none focus-visible:border-gray-300"
             >
               <Slate
                 editor={editor}
@@ -898,7 +898,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                   />
                 </Droppable>
               </Slate>
-            </EditorProvider>
+            </div>
           </ActiveElementProvider>
         </SortableContext>
         <DragOverlay>
@@ -991,7 +991,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           <MathQuestionGenerator />
         </FloatingModal>
       )}
-    </div>
+    </EditorProvider>
   );
 };
 

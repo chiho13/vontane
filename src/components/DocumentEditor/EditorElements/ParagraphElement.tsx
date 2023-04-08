@@ -36,10 +36,7 @@ export function ParagraphElement(props) {
 
   const shouldShowPlaceholder =
     (isVisible && (!focused || (focused && editor.children.length === 1))) ||
-    (focused &&
-      selected &&
-      !Path.equals(path, [0]) &&
-      element.children[0].text === "");
+    (focused && selected && element.children[0].text === "");
 
   return (
     <ParagraphStyle>

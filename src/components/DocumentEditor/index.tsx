@@ -983,7 +983,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       </AnimatePresence>
       {showFloatingModal && (
         <FloatingModal
-          title="Simple Math Question Creator"
+          title="Math Homework Creator"
           initialX={dropdownLeft}
           initialY={dropdownTop + 50}
           onClose={() => setShowFloatingModal(false)}

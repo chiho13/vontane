@@ -1,6 +1,7 @@
 import React from "react";
 import LoadingSpinner from "../../icons/LoadingSpinner";
 import { GenerateButtonStyle } from "./style";
+import { FileAudio } from "lucide-react";
 
 interface GenerateButtonProps {
   isDisabled: boolean;
@@ -22,10 +23,11 @@ function GenerateButton({
       {audioIsLoading ? (
         <>
           <LoadingSpinner />
-          <div className="ml-2">Generating...</div>
+          {/* <div className="ml-2">Generating...</div> */}
         </>
       ) : (
-        <div>Generate</div>
+        // <div>Text to Speech</div>
+        <FileAudio />
       )}
     </GenerateButtonStyle>
   );

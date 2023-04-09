@@ -113,15 +113,17 @@ export const GPTRouter = createTRPCRouter({
 "id": "hxdkshjdjdjsjs",
 "type": "equation",
 "latex": "KaTeX code",
-"altText": "accessible text of equation for screen readers",
+"altText": "accessible natural language of equation for text to speech readers and change spelling of words into phonetic spelling so screen reader can read aloud verbatim.",
 "children": [{"text": ""}]
 }
 ]
-              `,
+
+after the last item, add empty paragraph element with id and type "paragraph" and children [{"text": ""}]
+`,
             },
           ],
           max_tokens: 2000,
-          temperature: 0.7,
+          temperature: 0.2,
         });
 
         const data = completion.data.choices[0].message.content;

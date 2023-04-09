@@ -135,7 +135,7 @@ const Home: NextPage = () => {
       }
 
       if (item.type === "equation" && item.altText) {
-        accumulator.push(item.altText);
+        accumulator.push(item.altText + ".");
       }
 
       return accumulator;
@@ -153,43 +153,44 @@ const Home: NextPage = () => {
     <>
       <Layout profile={profile}>
         <div className="mx-auto mt-4 justify-center p-4 lg:mt-8">
-          <div className="relative mx-auto flex items-center justify-end lg:w-[980px]">
-            <label className="text-bold  mb-2 text-sm text-gray-500">
-              Text to Speech
-            </label>
-          </div>
-          <div className="relative mx-auto mb-5 flex items-center lg:w-[980px]">
-            <div className="mr-4 flex-1 ">
-              <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
+          <div className="mx-auto lg:w-[980px]  ">
+            <div className="relative flex items-center justify-end">
+              <label className="text-bold  mb-2 text-sm text-gray-500">
+                Text to Speech
+              </label>
             </div>
+            <div className="relative mx-auto mb-5 flex items-center lg:w-[980px]">
+              <div className="mr-4 flex-1 ">
+                <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
+              </div>
 
-            <GenerateButton
-              isDisabled={isDisabled}
-              audioIsLoading={audioIsLoading}
-              onClick={generateAudio}
-            />
+              <GenerateButton
+                isDisabled={isDisabled}
+                audioIsLoading={audioIsLoading}
+                onClick={generateAudio}
+              />
+            </div>
           </div>
-          <div className="linear-gradient mx-auto w-full rounded-md border-2 border-gray-300 px-2 lg:w-[980px] lg:px-0">
+          <div className="linear-gradient mx-auto mb-20 w-full rounded-md border-2 border-gray-300 px-2 lg:h-[1370px]  lg:w-[980px] lg:px-0 ">
             <div className="block  lg:w-full">
               {/* <TablesExample /> */}
               <NewColumnProvider>
                 <DocumentEditor handleTextChange={handleTextChange} />
               </NewColumnProvider>
             </div>
-
-            {!audioIsLoading && generatedAudioElement && (
-              <div className="fixed bottom-0 left-0 bottom-4 right-0 mx-auto flex w-full justify-center ">
-                <div className="w-[94%] flex-shrink-0 lg:w-[500px] ">
-                  <AudioPlayer
-                    generatedAudio={generatedAudioElement}
-                    transcriptionId={transcriptionId}
-                  />
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </Layout>
+      {!audioIsLoading && generatedAudioElement && (
+        <div className="fixed bottom-0 left-0 bottom-4 right-0 mx-auto flex w-full justify-center ">
+          <div className="w-[94%] flex-shrink-0 lg:w-[500px] ">
+            <AudioPlayer
+              generatedAudio={generatedAudioElement}
+              transcriptionId={transcriptionId}
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 };

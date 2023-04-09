@@ -794,26 +794,22 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       setactiveEditEquationPath(null);
     }
   };
+
   function handleEditorMouseUp(event, editor) {
     const equationElement = findAncestorWithClass(
       event.target,
       "equation-element"
     );
-    console.log(equationElement);
     if (equationElement) {
-      // Get the path from the data-path attribute
       const pathString = equationElement.getAttribute("data-path");
       if (pathString) {
-        console.log(pathString);
-        const path: Path = JSON.parse(pathString);
+        const path = JSON.parse(pathString);
         openEditBlockPopup(equationElement, event, path);
         return;
       }
     }
 
     const selection = document.getSelection();
-
-    // If there's no selection, or if the selection's anchorNode is null, or if the selection is not within the editor, return early
     if (
       !selection ||
       !selection.anchorNode ||
@@ -821,62 +817,60 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     ) {
       return;
     }
-    // Check if the clicked position is below the last node
+
     const lastNode = editor.children[editor.children.length - 1];
     const lastNodePath = ReactEditor.findPath(editor, lastNode);
-    let lastNodeDOM = document.querySelector(
-      `[data-path="${JSON.stringify(lastNodePath)}"]`
-    );
 
-    // Check if lastNode is an equation, if so, insert a new paragraph below it
     if (lastNode.type === "equation") {
-      const newParagraph = {
-        type: "paragraph",
-        children: [{ text: "" }],
-      };
-      const newPath = lastNodePath
-        .slice(0, -1)
-        .concat(lastNodePath[lastNodePath.length - 1] + 1);
-      Transforms.insertNodes(editor, newParagraph, { at: newPath });
-
-      // Set the selection to the correct leaf node (text node) within the new paragraph
-      const leafNodePath = newPath.concat(0);
-      Transforms.setSelection(editor, {
-        anchor: { path: leafNodePath, offset: 0 },
-        focus: { path: leafNodePath, offset: 0 },
-      });
-
+      insertNewParagraphBelowEquation(lastNodePath);
       event.stopPropagation();
       return;
     }
 
+    const lastNodeDOM = document.querySelector(
+      `[data-path="${JSON.stringify(lastNodePath)}"]`
+    );
     const lastNodeRect = lastNodeDOM.getBoundingClientRect();
     const clickedY = event.clientY;
-
     const isLastNodeEmpty =
       lastNode.children.length === 1 && lastNode.children[0].text === "";
 
     if (clickedY > lastNodeRect.bottom && !isLastNodeEmpty) {
-      const lastNodePath = ReactEditor.findPath(editor, lastNode);
-
-      const newParagraph = {
-        type: "paragraph",
-        children: [{ text: "" }],
-      };
-      const newPath = lastNodePath
-        .slice(0, -1)
-        .concat(lastNodePath[lastNodePath.length - 1] + 1);
-      Transforms.insertNodes(editor, newParagraph, { at: newPath });
-
-      // Set the selection to the correct leaf node (text node) within the new paragraph
-      const leafNodePath = newPath.concat(0);
-      Transforms.setSelection(editor, {
-        anchor: { path: leafNodePath, offset: 0 },
-        focus: { path: leafNodePath, offset: 0 },
-      });
-
+      insertNewParagraphBelowLastNode(lastNodePath);
       event.stopPropagation();
     }
+  }
+
+  function insertNewParagraphBelowEquation(lastNodePath) {
+    const newParagraph = {
+      type: "paragraph",
+      children: [{ text: "" }],
+    };
+    const newPath = lastNodePath
+      .slice(0, -1)
+      .concat(lastNodePath[lastNodePath.length - 1] + 1);
+    Transforms.insertNodes(editor, newParagraph, { at: newPath });
+    const leafNodePath = newPath.concat(0);
+    Transforms.setSelection(editor, {
+      anchor: { path: leafNodePath, offset: 0 },
+      focus: { path: leafNodePath, offset: 0 },
+    });
+  }
+
+  function insertNewParagraphBelowLastNode(lastNodePath) {
+    const newParagraph = {
+      type: "paragraph",
+      children: [{ text: "" }],
+    };
+    const newPath = lastNodePath
+      .slice(0, -1)
+      .concat(lastNodePath[lastNodePath.length - 1] + 1);
+    Transforms.insertNodes(editor, newParagraph, { at: newPath });
+    const leafNodePath = newPath.concat(0);
+    Transforms.setSelection(editor, {
+      anchor: { path: leafNodePath, offset: 0 },
+      focus: { path: leafNodePath, offset: 0 },
+    });
   }
 
   return (
@@ -898,7 +892,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           <ActiveElementProvider activeIndex={activeIndex}>
             <div
               tabIndex={0}
-              className="relative mx-auto mt-3 block h-[550px] overflow-y-auto rounded-md pt-4 pr-4 pb-4 pl-2 focus:outline-none focus-visible:border-gray-300"
+              className="relative z-0 mx-auto  mt-3 block overflow-y-auto rounded-md pt-4 pr-4 pb-4 pl-2 focus:outline-none focus-visible:border-gray-300"
             >
               <Slate
                 editor={editor}
@@ -914,7 +908,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               >
                 <Droppable>
                   <Editable
-                    className="relative h-[510px]"
+                    className="relative min-h-[1300px]"
                     renderElement={renderElement}
                     onKeyDown={handleKeyDown}
                     onMouseUp={(event) => handleEditorMouseUp(event, editor)}

@@ -65,6 +65,7 @@ import { useNewColumn } from "@/contexts/NewColumnContext";
 import { useSensor, useSensors, MouseSensor } from "@dnd-kit/core";
 import { findPathById, createColumns } from "./helpers/createColumns";
 import { FloatingModal } from "@/components/FloatingModal";
+import { Blank } from "./LeafElements/Blank";
 
 interface DocumentEditorProps {
   handleTextChange?: (value: any) => void;
@@ -158,7 +159,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     {
       id: "dL9tJpTtH8Rt7D0sYSK2",
       type: "paragraph",
-      children: [{ text: "" }],
+      children: [
+        { text: "This is a " },
+        { text: " ", blank: true },
+        { text: " component in Slate.js." },
+      ],
     },
     // {
     //   id: genNodeId(),
@@ -336,82 +341,158 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   const [prevNode, setPrevNode] = useState<Node | null>(null);
 
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    const { selection } = editor;
-
-    if (!selection || !ReactEditor.isFocused(editor)) {
-      return;
-    }
-
-    const startPosition = selection.anchor;
-    const [currentNode, currentNodePath] = Editor.parent(
-      editor,
-      startPosition.path
-    );
-
-    if (event.key === "Enter") {
-      event.preventDefault();
-
-      if (selection) {
-        const [parentNode, parentPath] = Editor.parent(
-          editor,
-          selection.anchor.path
-        );
-        if (parentNode.type === "paragraph") {
-          const newPath = Path.next(parentPath);
-          Transforms.insertNodes(
-            editor,
-            {
-              id: genNodeId(),
-              type: "paragraph",
-              children: [{ text: "" }],
-            },
-            { at: newPath }
-          );
-          Transforms.select(editor, Editor.start(editor, newPath));
-        }
-      }
-    }
-
-    if (event.key === "Backspace") {
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent) => {
       const { selection } = editor;
 
-      if (selection && Range.isCollapsed(selection)) {
-        const _currentNodePath = selection.anchor.path.slice(0, -1);
-        const currentNode = Node.get(editor, currentNodePath);
-        const currentParagraph = Editor.node(editor, currentNodePath);
-        // Check if currentNode is an equation
-        if (currentNode.type === "equation") {
-          event.preventDefault();
-        } else {
-          // Check if the previous node is an equation
-          const prevNodeEntry = Editor.previous(editor, {
-            at: currentNodePath,
-          });
+      if (!selection || !ReactEditor.isFocused(editor)) {
+        return;
+      }
 
-          if (prevNodeEntry) {
-            const [_prevNode] = prevNodeEntry;
+      const startPosition = selection.anchor;
+      const [currentNode, currentNodePath] = Editor.parent(
+        editor,
+        startPosition.path
+      );
 
-            if (
-              _prevNode.type === "equation" &&
-              Editor.isStart(editor, selection.anchor, _currentNodePath)
-            ) {
-              event.preventDefault();
-              const nextParagraph = Editor.previous(editor, {
-                at: currentParagraph[1],
-                match: (n) => n.type === "paragraph",
-              });
-              if (nextParagraph) {
-                const [nextNode, nextPath] = nextParagraph;
-                const targetPosition = Editor.end(editor, nextPath);
-                Transforms.select(editor, targetPosition);
+      if (event.key === "Enter") {
+        event.preventDefault();
+
+        if (selection) {
+          const [parentNode, parentPath] = Editor.parent(
+            editor,
+            selection.anchor.path
+          );
+          if (parentNode.type === "paragraph") {
+            const newPath = Path.next(parentPath);
+            Transforms.insertNodes(
+              editor,
+              {
+                id: genNodeId(),
+                type: "paragraph",
+                children: [{ text: "" }],
+              },
+              { at: newPath }
+            );
+            Transforms.select(editor, Editor.start(editor, newPath));
+          }
+        }
+      }
+
+      if (event.key === "Backspace") {
+        const { selection } = editor;
+
+        if (selection && Range.isCollapsed(selection)) {
+          const _currentNodePath = selection.anchor.path.slice(0, -1);
+          const currentNode = Node.get(editor, currentNodePath);
+          const currentParagraph = Editor.node(editor, currentNodePath);
+          // Check if currentNode is an equation
+
+          if (currentNode.type === "equation") {
+            event.preventDefault();
+          } else {
+            // Check if the previous node is an equation
+            const prevNodeEntry = Editor.previous(editor, {
+              at: currentNodePath,
+            });
+
+            if (prevNodeEntry) {
+              const [_prevNode] = prevNodeEntry;
+
+              if (
+                _prevNode.type === "equation" &&
+                Editor.isStart(editor, selection.anchor, _currentNodePath)
+              ) {
+                event.preventDefault();
+                const nextParagraph = Editor.previous(editor, {
+                  at: currentParagraph[1],
+                  match: (n) => n.type === "paragraph",
+                });
+                if (nextParagraph) {
+                  const [nextNode, nextPath] = nextParagraph;
+                  const targetPosition = Editor.end(editor, nextPath);
+                  Transforms.select(editor, targetPosition);
+                }
               }
             }
           }
         }
       }
-    }
-  };
+
+      if (
+        event.key === "_" &&
+        event.shiftKey &&
+        !event.ctrlKey &&
+        !event.altKey
+      ) {
+        const { selection } = editor;
+        if (selection && Range.isCollapsed(selection)) {
+          const [startTextNode, startPath] = Editor.node(
+            editor,
+            selection.anchor.path
+          );
+
+          if (startTextNode.text) {
+            const textBeforeCaret = startTextNode.text.slice(
+              0,
+              selection.anchor.offset
+            );
+            const underscoreMatches = textBeforeCaret.match(/_{2,}$/);
+
+            if (underscoreMatches) {
+              event.preventDefault();
+
+              const numberOfUnderscores = underscoreMatches[0].length;
+              const textBeforeUnderscores = startTextNode.text.slice(
+                0,
+                selection.anchor.offset - numberOfUnderscores
+              );
+              const textAfterCaret = startTextNode.text.slice(
+                selection.anchor.offset
+              );
+
+              const newChildren = [
+                { text: textBeforeUnderscores },
+                { text: " ", blank: true },
+                { text: " " },
+                { text: textAfterCaret },
+              ];
+
+              const parentNodePath = startPath.slice(0, -1);
+              const [parentNode, _] = Editor.node(editor, parentNodePath);
+
+              const newNode = {
+                ...parentNode,
+                children: parentNode.children
+                  .slice(0, startPath[startPath.length - 1])
+                  .concat(newChildren)
+                  .concat(
+                    parentNode.children.slice(
+                      startPath[startPath.length - 1] + 1
+                    )
+                  ),
+              };
+
+              const textNodePoint = {
+                path: startPath
+                  .slice(0, -1)
+                  .concat(startPath[startPath.length - 1] + 1),
+                offset: 0,
+              };
+
+              Editor.withoutNormalizing(editor, () => {
+                Transforms.removeNodes(editor, { at: parentNodePath });
+                Transforms.insertNodes(editor, newNode, { at: parentNodePath });
+              });
+
+              Transforms.select(editor, textNodePoint);
+            }
+          }
+        }
+      }
+    },
+    [editor]
+  );
 
   function handleCursorClick(event, editor) {
     event.preventDefault();
@@ -910,6 +991,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                   <Editable
                     className="relative min-h-[1300px]"
                     renderElement={renderElement}
+                    renderLeaf={Blank}
                     onKeyDown={handleKeyDown}
                     onMouseUp={(event) => handleEditorMouseUp(event, editor)}
                     onClick={(event) => handleCursorClick(event, editor)}

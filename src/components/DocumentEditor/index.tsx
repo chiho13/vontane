@@ -1004,7 +1004,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               >
                 <Droppable>
                   <Editable
-                    className="relative min-h-[1300px]"
+                    className="relative min-h-[600px]"
                     renderElement={renderElement}
                     renderLeaf={Blank}
                     onKeyDown={handleKeyDown}

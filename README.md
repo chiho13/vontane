@@ -33,4 +33,6 @@ currently under development (April)
 - [x] drag and drop elements between columns
 - [x] drag element to create columns
 - [x] math questions generator
+- [] english questions
+- [] music questions
 - [] connect database

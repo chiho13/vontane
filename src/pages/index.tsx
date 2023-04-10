@@ -134,6 +134,10 @@ const Home: NextPage = () => {
         accumulator.push(item.text);
       }
 
+      if (item.blank) {
+        accumulator.push("BLANK");
+      }
+
       if (item.type === "equation" && item.altText) {
         accumulator.push(item.altText + ".");
       }

@@ -175,7 +175,7 @@ const Home: NextPage = () => {
               />
             </div>
           </div>
-          <div className="linear-gradient mx-auto mb-20 w-full rounded-md border-2 border-gray-300 px-2 lg:h-[1370px]  lg:w-[980px] lg:px-0 ">
+          <div className="linear-gradient mx-auto mb-20 w-full rounded-md border-2 border-gray-300 px-2 lg:h-[660px]  lg:w-[980px] lg:px-0 ">
             <div className="block  lg:w-full">
               {/* <TablesExample /> */}
               <NewColumnProvider>

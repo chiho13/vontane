@@ -271,7 +271,7 @@ export const PromptSelector = ({
         )}
       </div>
       <div className="mt-4 flex justify-between">
-        <div>{questionCount} / 5 questions</div>
+        <div>{questionCount} / 15 questions</div>
         <div className="flex ">
           {hasPressedWrite && (
             <div className="mt-2 mr-2 text-sm text-red-400">{errorMessage}</div>

@@ -870,6 +870,17 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     toggleRef
   );
 
+  useClickOutside(
+    editBlockDropdownRef,
+    () => {
+      if (showEditBlockPopup) {
+        setShowEditBlockPopup(false);
+        setactiveEditEquationPath(null);
+      }
+    },
+    toggleEditBlockRef
+  );
+
   const closeEditableDropdown = () => {
     if (showEditBlockPopup) {
       setShowEditBlockPopup(false);
@@ -1074,14 +1085,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 }}
               />
             </motion.div>
-            <div
-              tabIndex={0}
-              onClick={closeEditableDropdown}
-              className="closeOutside fixed bottom-0 left-0 h-screen w-screen opacity-50"
-              style={{
-                height: "calc(100vh - 50px",
-              }}
-            ></div>
           </>
         )}
       </AnimatePresence>

@@ -7,19 +7,29 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model profiles {
+model Profile {
   id          String        @id @db.Uuid
   name        String?
   avatar      String?
-  created_at  DateTime?     @default(now()) @db.Timestamptz(6)
-  speech_data speech_data[]
+  createdAt   DateTime?     @default(now()) @db.Timestamptz(6)
+  workspaces   Workspace[]
 }
 
-model speech_data {
-  id           Int       @id @default(autoincrement())
-  entered_text String
-  audio_url    String
-  voice_id     String?
-  profile_id   String?   @db.Uuid
-  profiles     profiles? @relation(fields: [profile_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+model Workspace {
+  id            String  @id @default(uuid())
+  name          String?
+  slateValue    String?
+  speechData    SpeechData?
+  createdAt     DateTime @default(now()) @db.Timestamptz(6)
+  profileId     String  @db.Uuid
+  profile       Profile  @relation(fields: [profileId], references: [id])
+}
+
+model SpeechData {
+  id            Int     @id @default(autoincrement())
+  enteredText   String
+  audioUrl      String
+  voiceId       String?
+  workspaceId   String  @db.Uuid @unique
+  workspace     Workspace @relation(fields: [workspaceId], references: [id])
 }

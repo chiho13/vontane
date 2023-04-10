@@ -9,11 +9,13 @@ const EditorContext = createContext<{
   showEditBlockPopup: Boolean;
   elementID: string;
   activePath: string;
+  setSelectedElementID: (id: string) => void;
 }>({
   editor: null as any,
   showEditBlockPopup: false,
   elementID: "",
   activePath: "",
+  setSelectedElementID: () => {},
 });
 
 // Define the EquationProviderProps type
@@ -22,6 +24,7 @@ type EquationProviderProps = PropsWithChildren<{
   showEditBlockPopup: Boolean;
   elementID: string;
   activePath: string;
+  setSelectedElementID: (id: string) => void;
 }>;
 
 // Create an EquationProvider component that accepts a `children` prop and the `openEditBlockPopup` function
@@ -30,11 +33,18 @@ const EditorProvider: React.FC<EquationProviderProps> = ({
   editor,
   showEditBlockPopup,
   elementID,
+  setSelectedElementID,
   activePath,
 }) => {
   return (
     <EditorContext.Provider
-      value={{ editor, showEditBlockPopup, elementID, activePath }}
+      value={{
+        editor,
+        showEditBlockPopup,
+        elementID,
+        setSelectedElementID,
+        activePath,
+      }}
     >
       {children}
     </EditorContext.Provider>

@@ -222,7 +222,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     }
   }, []);
 
-  const [activeId, setActiveId] = useState(null);
+  const [activeId, setActiveId] = useState("");
 
   const activeIndex = activeId
     ? slatevalue.findIndex((el) => el.id === activeId)
@@ -791,8 +791,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           Transforms.removeNodes(editor, { at: columnPath });
         }
       }
+      setSelectedElementID(active.id);
       setCheckEmptyColumnCells((prevCheck) => !prevCheck);
-      setActiveId(null);
+      setActiveId("");
     },
     [editor, creatingNewColumn]
   );
@@ -924,6 +925,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   function insertNewParagraphBelowEquation(lastNodePath) {
     const newParagraph = {
+      id: genNodeId(),
       type: "paragraph",
       children: [{ text: "" }],
     };
@@ -940,6 +942,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   function insertNewParagraphBelowLastNode(lastNodePath) {
     const newParagraph = {
+      id: genNodeId(),
       type: "paragraph",
       children: [{ text: "" }],
     };
@@ -959,6 +962,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       editor={editor}
       showEditBlockPopup={showEditBlockPopup}
       elementID={selectedElementID}
+      setSelectedElementID={setSelectedElementID}
       activePath={activePath}
     >
       <DndContext

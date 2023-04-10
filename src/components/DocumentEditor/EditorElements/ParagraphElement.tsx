@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor, useFocused, useSelected } from "slate-react";
 import { Editor, Path } from "slate";
@@ -16,12 +16,14 @@ const ParagraphStyle = styled.div`
 `;
 
 export function ParagraphElement(props) {
-  const { editor } = useContext(EditorContext);
+  const { editor, showEditBlockPopup, elementID, setSelectedElementID } =
+    useContext(EditorContext);
   const { attributes, children, element } = props;
   const path = ReactEditor.findPath(editor, element);
   const [isVisible, setIsVisible] = useState(false);
   const focused = useFocused();
   const selected = useSelected();
+  const paragraphRef = useRef(null);
 
   useEffect(() => {
     if (editor && path) {
@@ -34,6 +36,12 @@ export function ParagraphElement(props) {
     }
   }, [editor, path, children, focused]);
 
+  useEffect(() => {
+    if (!focused && !selected) {
+      setSelectedElementID("");
+    }
+  }, [focused, selected]);
+
   const shouldShowPlaceholder =
     (isVisible && (!focused || (focused && editor.children.length === 1))) ||
     (focused && selected && element.children[0].text === "");
@@ -41,7 +49,10 @@ export function ParagraphElement(props) {
   return (
     <ParagraphStyle>
       <p
-        className="paragraph-element"
+        ref={paragraphRef}
+        className={`paragraph-element ${
+          elementID === element.id ? " bg-[#E0EDFB]" : ""
+        }`}
         {...attributes}
         data-id={element.id}
         data-path={JSON.stringify(path)}

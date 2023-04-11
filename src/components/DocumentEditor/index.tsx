@@ -34,7 +34,7 @@ import useClickOutside from "@/hooks/useClickOutside";
 import { LayoutContext } from "../Layouts/AccountLayout";
 import { y_animation_props } from "../Dropdown";
 import { findElementInSlateValue } from "./helpers/findElementInSlate";
-import { MathQuestionGenerator } from "../MathQuestionGenerator";
+import { MathQuestionGenerator } from "../QuestionGenerator/Math";
 
 import {
   DndContext,
@@ -66,7 +66,7 @@ import { useSensor, useSensors, MouseSensor } from "@dnd-kit/core";
 import { findPathById, createColumns } from "./helpers/createColumns";
 import { FloatingModal } from "@/components/FloatingModal";
 import { Blank } from "./LeafElements/Blank";
-
+import { MiniDropdown } from "./MiniDropdown";
 interface DocumentEditorProps {
   handleTextChange?: (value: any) => void;
 }
@@ -91,63 +91,8 @@ declare module "slate" {
   }
 }
 
-interface MiniDropdownProps {
-  isOpen: boolean;
-  onClick: () => void;
-  genBlock: () => void;
-}
-
-const MiniDropdown = React.forwardRef<HTMLDivElement, MiniDropdownProps>(
-  ({ isOpen, onClick, genBlock }, ref) => {
-    const addBlock = (event: React.KeyboardEvent) => {
-      onClick();
-    };
-
-    const genBlockHandler = (event: React.KeyboardEvent) => {
-      genBlock();
-    };
-
-    return (
-      <div
-        ref={ref}
-        className="dropdown-menu rounded-md border border-gray-200 bg-white p-2 shadow-md"
-      >
-        <motion.button
-          whileTap={{ scale: 0.97 }}
-          className="mb-1 flex w-full items-center rounded-md border-2 border-gray-100 p-3 shadow-sm transition duration-300 hover:bg-gray-100"
-          onClick={genBlockHandler}
-        >
-          <Image
-            src="/images/math.png"
-            alt="add latex block equation"
-            width={60}
-            height={60}
-            className="rounded-md border"
-          />
-          <span className="ml-4 ">Math Homework</span>
-        </motion.button>
-        <motion.button
-          whileTap={{ scale: 0.97 }}
-          className="flex w-full items-center rounded-md border-2 border-gray-100 p-3 shadow-sm transition duration-300 hover:bg-gray-100"
-          onClick={addBlock}
-        >
-          <Image
-            src="/images/tex.png"
-            alt="add latex block equation"
-            width={60}
-            height={60}
-            className="rounded-md border"
-          />
-          <span className="ml-4 ">Add Block Equation</span>
-        </motion.button>
-      </div>
-    );
-  }
-);
-
-MiniDropdown.displayName = "MiniDropdown";
-
 import { EditBlockPopup } from "../EditEquationBlock";
+import { EnglishQuestionGenerator } from "../QuestionGenerator/English";
 
 export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   handleTextChange,
@@ -269,7 +214,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   const [checkEmptyColumnCells, setCheckEmptyColumnCells] = useState(false);
 
-  const [showFloatingModal, setShowFloatingModal] = useState(false);
+  const [showFloatingModal, setShowFloatingModal] = useState({
+    open: false,
+    subject: "",
+  });
 
   const [selectedElementID, setSelectedElementID] = useState<string>("");
 
@@ -488,6 +436,32 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               Transforms.select(editor, textNodePoint);
             }
           }
+        }
+      }
+
+      if (event.ctrlKey || event.metaKey) {
+        switch (event.key) {
+          case "z": {
+            event.preventDefault();
+            if (event.shiftKey) {
+              // Redo
+              editor.redo();
+            } else {
+              // Undo
+              editor.undo();
+            }
+            break;
+          }
+          case "y": {
+            if (!event.shiftKey) {
+              event.preventDefault();
+              // Redo
+              editor.redo();
+            }
+            break;
+          }
+          default:
+            break;
         }
       }
     },
@@ -915,7 +889,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     const lastNodePath = ReactEditor.findPath(editor, lastNode);
 
     if (lastNode.type === "equation") {
-      insertNewParagraphBelowEquation(lastNodePath);
+      insertNewParagraphBelowLastNode(lastNodePath);
       event.stopPropagation();
       return;
     }
@@ -934,23 +908,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     }
   }
 
-  function insertNewParagraphBelowEquation(lastNodePath) {
-    const newParagraph = {
-      id: genNodeId(),
-      type: "paragraph",
-      children: [{ text: "" }],
-    };
-    const newPath = lastNodePath
-      .slice(0, -1)
-      .concat(lastNodePath[lastNodePath.length - 1] + 1);
-    Transforms.insertNodes(editor, newParagraph, { at: newPath });
-    const leafNodePath = newPath.concat(0);
-    Transforms.setSelection(editor, {
-      anchor: { path: leafNodePath, offset: 0 },
-      focus: { path: leafNodePath, offset: 0 },
-    });
-  }
-
   function insertNewParagraphBelowLastNode(lastNodePath) {
     const newParagraph = {
       id: genNodeId(),
@@ -967,6 +924,30 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       focus: { path: leafNodePath, offset: 0 },
     });
   }
+
+  const renderSubjectComponent = () => {
+    switch (showFloatingModal.subject) {
+      case "math":
+        return <MathQuestionGenerator />;
+      case "english":
+        return <EnglishQuestionGenerator />;
+      // Add more cases for other subjects here
+      default:
+        return null;
+    }
+  };
+
+  const getModalTitle = () => {
+    switch (showFloatingModal.subject) {
+      case "math":
+        return "Math Questions";
+      case "english":
+        return "English Questions";
+      // Add more cases for other subjects here
+      default:
+        return "Homework Creator";
+    }
+  };
 
   return (
     <EditorProvider
@@ -1004,7 +985,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               >
                 <Droppable>
                   <Editable
-                    className="relative min-h-[600px]"
+                    className="relative max-h-[550px] overflow-y-auto"
                     renderElement={renderElement}
                     renderLeaf={Blank}
                     onKeyDown={handleKeyDown}
@@ -1041,9 +1022,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 handleAddEditableEquationBlock("", JSON.parse(activePath));
                 setShowDropdown(false);
               }}
-              genBlock={() => {
+              genBlock={(_subject) => {
                 console.log("add block");
-                setShowFloatingModal(true);
+                setShowFloatingModal({ open: true, subject: _subject });
                 setShowDropdown(false);
               }}
             />
@@ -1088,14 +1069,14 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           </>
         )}
       </AnimatePresence>
-      {showFloatingModal && (
+      {showFloatingModal.open && (
         <FloatingModal
-          title="Math Homework Creator"
+          title={getModalTitle()}
           initialX={dropdownLeft}
           initialY={dropdownTop + 50}
-          onClose={() => setShowFloatingModal(false)}
+          onClose={() => setShowFloatingModal({ open: false, subject: "" })}
         >
-          <MathQuestionGenerator />
+          {renderSubjectComponent()}
         </FloatingModal>
       )}
     </EditorProvider>

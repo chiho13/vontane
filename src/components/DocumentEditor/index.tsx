@@ -110,6 +110,74 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         { text: " component in Slate.js." },
       ],
     },
+    {
+      id: "sdfsdf",
+      type: "mcq",
+      children: [
+        {
+          id: "randomID2",
+          type: "paragraph",
+          children: [
+            {
+              text: "1. What is the synonym for 'abundance'?",
+            },
+          ],
+        },
+        {
+          id: "randomID3",
+          type: "ol",
+          children: [
+            {
+              id: "rndIDa1b2c3d4",
+              type: "list-item",
+              children: [
+                {
+                  text: "scarcity",
+                },
+              ],
+              correctAnswer: false,
+            },
+            {
+              id: "rndIDe5f6g7h8",
+              type: "list-item",
+              children: [
+                {
+                  text: "plethora",
+                },
+              ],
+              correctAnswer: true,
+            },
+            {
+              id: "rndIDi9j0k1l2",
+              type: "list-item",
+              children: [
+                {
+                  text: "stagnation",
+                },
+              ],
+              correctAnswer: false,
+            },
+            {
+              id: "rndIDm3n4o5p6",
+              type: "list-item",
+              children: [
+                {
+                  text: "deficit",
+                },
+              ],
+              correctAnswer: false,
+            },
+          ],
+        },
+      ],
+      altText:
+        "Question 1: What is the synonym for 'abundance'? Option A, scarcity; Option B, plethora; Option C, stagnation; Option D, deficit.",
+    },
+    {
+      id: "sfsfsfjljlajsdlf",
+      type: "paragraph",
+      children: [{ text: "" }],
+    },
     // {
     //   id: genNodeId(),
     //   type: "column",
@@ -626,12 +694,14 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       const elementPath = ReactEditor.findPath(editor, element);
       const isRoot = elementPath.length === 1;
 
+      if (!elementPath) return;
+
       const [parentElement, parentPath] = Editor.parent(editor, elementPath);
       const isInsideColumnCell = parentElement.type === "column-cell";
       const addButton =
         (isRoot && element.type !== "column") || isInsideColumnCell ? (
           <div
-            className="z-100 absolute top-1/2 left-0 -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center"
+            className="z-100 absolute  top-1/2 left-0 -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center"
             contentEditable={false}
           >
             <button
@@ -651,15 +721,17 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           </div>
         ) : null;
 
-      const content =
-        (isRoot && element.type !== "column") || isInsideColumnCell ? (
-          <SortableElement
-            {...props}
-            renderElement={(props) => <ElementSelector {...props} />}
-          />
-        ) : (
-          <ElementSelector {...props} />
-        );
+      const shouldWrapWithSortableElement =
+        (isRoot && element.type !== "column") || isInsideColumnCell;
+
+      const content = shouldWrapWithSortableElement ? (
+        <SortableElement
+          {...props}
+          renderElement={(props) => <ElementSelector {...props} />}
+        />
+      ) : (
+        <ElementSelector {...props} />
+      );
 
       return (
         <div
@@ -888,9 +960,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     const lastNode = editor.children[editor.children.length - 1];
     const lastNodePath = ReactEditor.findPath(editor, lastNode);
 
-    if (lastNode.type === "equation") {
-      insertNewParagraphBelowLastNode(lastNodePath);
-      event.stopPropagation();
+    if (lastNode.type !== "paragraph") {
+      // insertNewParagraphBelowLastNode(lastNodePath);
+      // event.stopPropagation();
       return;
     }
 

@@ -6,6 +6,7 @@ import { EditorContext } from "@/contexts/EditorContext";
 import { Transforms, Path, BaseEditor } from "slate";
 import { ReactEditor } from "slate-react";
 import { ErrorAlert } from "../ErrorAlert";
+import { genNodeId, addRandomIds } from "@/hoc/withID";
 
 export const MathQuestionGenerator = () => {
   const [mathQuestions, setQuestions] = useState("");
@@ -61,11 +62,11 @@ export const MathQuestionGenerator = () => {
     if (!getQuestionLoading) {
       if (getQuestionData) {
         // const currentElement = document.querySelector(`[data-id="${id}"]`);
-        console.log(getQuestionData);
         let jsonData;
 
         try {
           jsonData = JSON.parse(getQuestionData);
+          jsonData = addRandomIds(jsonData);
           insertNodesAtGivenPath(editor, jsonData, JSON.parse(activePath));
           setIsLoading(false);
         } catch (error) {

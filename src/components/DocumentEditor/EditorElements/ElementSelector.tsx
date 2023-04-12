@@ -1,16 +1,17 @@
-import { React } from "react";
+import React from "react";
 import {
   ParagraphElement,
   DefaultElement,
   EquationElement,
-  ColummnElement,
+  ColumnElement,
   ColumnCellElement,
+  MCQElement,
+  OptionList,
+  ListItem,
 } from "./index";
 
-import { SortableElement } from "../SortableElement";
-
 export function ElementSelector(props) {
-  const { element } = props;
+  const { element, attributes, children } = props;
 
   switch (element.type) {
     case "paragraph":
@@ -18,10 +19,15 @@ export function ElementSelector(props) {
     case "equation":
       return <EquationElement {...props} />;
     case "column":
-      return <ColummnElement {...props} />;
+      return <ColumnElement {...props} />;
     case "column-cell":
       return <ColumnCellElement {...props} />;
-
+    case "mcq":
+      return <MCQElement {...props} />;
+    case "ol":
+      return <OptionList {...props} />;
+    case "list-item":
+      return <ListItem {...props}>{children}</ListItem>;
     default:
       return <DefaultElement {...props} />;
   }

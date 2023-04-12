@@ -6,8 +6,16 @@ import { EditorContext } from "@/contexts/EditorContext";
 import { Transforms, Path, BaseEditor } from "slate";
 import { ReactEditor } from "slate-react";
 import { ErrorAlert } from "../ErrorAlert";
+import { genNodeId, addRandomIds } from "@/hoc/withID";
 
-export const convertUnderscoresToBlank = (text) => {
+export const convertUnderscoresToBlank = (text, parentNode) => {
+  // Check if the parentNode type is 'mcq'
+  const isInsideMCQ = parentNode && parentNode.type === "mcq";
+
+  if (!isInsideMCQ) {
+    return [{ text }];
+  }
+
   const regex = /_{3,}/g;
   const parts = text.split(regex);
   const result = [];
@@ -90,6 +98,7 @@ export const EnglishQuestionGenerator = () => {
             }
             return node;
           });
+          jsonData = addRandomIds(jsonData);
           insertNodesAtGivenPath(editor, jsonData, JSON.parse(activePath));
           setIsLoading(false);
         } catch (error) {

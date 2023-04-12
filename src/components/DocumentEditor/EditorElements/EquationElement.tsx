@@ -9,7 +9,6 @@ export function EquationElement(props) {
   const { attributes, children, element } = props;
   const { editor, showEditBlockPopup, elementID } = useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);
-  const [selectedElementId, setSelectedElementId] = useState(null);
 
   // console.log(elementID, element.id);
   console.log(elementID, element.id, showEditBlockPopup);

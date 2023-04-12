@@ -4,3 +4,6 @@ export * from "./ParagraphElement";
 export * from "./EquationElement";
 export * from "./ColumnElement";
 export * from "./ColumnCellElement";
+export * from "./MCQElement";
+export * from "./OptionList";
+export * from "./ListItem";

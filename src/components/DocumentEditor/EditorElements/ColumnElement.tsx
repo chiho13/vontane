@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor } from "slate-react";
 
-export function ColummnElement(props) {
+export function ColumnElement(props) {
   const { attributes, children, element } = props;
 
   const { editor } = useContext(EditorContext);

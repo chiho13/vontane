@@ -10,6 +10,23 @@ export const assignIdRecursively = (node) => {
   }
 };
 
+export const addRandomIds = (obj) => {
+  if (Array.isArray(obj)) {
+    return obj.map(addRandomIds);
+  } else if (typeof obj === "object") {
+    const newObj = { ...obj };
+    if (newObj.type) {
+      newObj.id = genNodeId();
+    }
+    Object.keys(newObj).forEach((key) => {
+      newObj[key] = addRandomIds(newObj[key]);
+    });
+    return newObj;
+  } else {
+    return obj;
+  }
+};
+
 export const withID = (editor) => {
   const { apply } = editor;
 

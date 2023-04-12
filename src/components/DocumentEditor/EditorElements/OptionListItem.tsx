@@ -5,7 +5,7 @@ import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor } from "slate-react";
 
 // Custom List Item component
-export const ListItem = ({ attributes, children, element }) => {
+export const OptionListItem = ({ attributes, children, element }) => {
   const { editor } = useContext(EditorContext);
 
   const handleChange = (e) => {

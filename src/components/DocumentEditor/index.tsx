@@ -28,7 +28,7 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import Image from "next/image";
 
-import { useTheme } from "styled-components";
+import styled, { useTheme } from "styled-components";
 import useClickOutside from "@/hooks/useClickOutside";
 
 import { LayoutContext } from "../Layouts/AccountLayout";
@@ -92,6 +92,16 @@ declare module "slate" {
   }
 }
 
+const MCQOL = styled.ol`
+  counter-reset: mcq-counter;
+  list-style-type: none;
+
+  & > li::before {
+    counter-increment: mcq-counter;
+    content: counter(mcq-counter) ". ";
+  }
+`;
+
 import { EditBlockPopup } from "../EditEquationBlock";
 import { EnglishQuestionGenerator } from "../QuestionGenerator/English";
 
@@ -117,10 +127,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       children: [
         {
           id: "randomID2",
-          type: "paragraph",
+          type: "list-item",
           children: [
             {
-              text: "1. What is the synonym for 'abundance'?",
+              text: "What is the synonym for 'abundance'?",
             },
           ],
         },
@@ -130,7 +140,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           children: [
             {
               id: "rndIDa1b2c3d4",
-              type: "list-item",
+              type: "option-list-item",
               children: [
                 {
                   text: "scarcity",
@@ -140,7 +150,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             },
             {
               id: "rndIDe5f6g7h8",
-              type: "list-item",
+              type: "option-list-item",
               children: [
                 {
                   text: "plethora",
@@ -150,7 +160,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             },
             {
               id: "rndIDi9j0k1l2",
-              type: "list-item",
+              type: "option-list-item",
               children: [
                 {
                   text: "stagnation",
@@ -160,7 +170,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             },
             {
               id: "rndIDm3n4o5p6",
-              type: "list-item",
+              type: "option-list-item",
               children: [
                 {
                   text: "deficit",
@@ -185,10 +195,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       type: "mcq",
       children: [
         {
-          type: "paragraph",
+          type: "list-item",
           children: [
             {
-              text: "1. A person who designs buildings is called a(n)",
+              text: "A person who designs buildings is called a(n)",
             },
             { text: " ", blank: true },
             { text: ". " },
@@ -198,7 +208,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           type: "ol",
           children: [
             {
-              type: "list-item",
+              type: "option-list-item",
               children: [
                 {
                   text: "architect",
@@ -207,7 +217,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               correctAnswer: true,
             },
             {
-              type: "list-item",
+              type: "option-list-item",
               children: [
                 {
                   text: "engineer",
@@ -216,7 +226,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               correctAnswer: false,
             },
             {
-              type: "list-item",
+              type: "option-list-item",
               children: [
                 {
                   text: "doctor",
@@ -225,7 +235,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               correctAnswer: false,
             },
             {
-              type: "list-item",
+              type: "option-list-item",
               children: [
                 {
                   text: "teacher",
@@ -1123,53 +1133,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     }
   };
 
-  const updateQuestionNumbers = (editor) => {
-    const mcqs = [];
-
-    // Gather all MCQ nodes
-    for (const [node, path] of Editor.nodes(editor, {
-      at: [],
-      match: (n) => n.type === "mcq",
-    })) {
-      mcqs.push({ node, path });
-    }
-
-    // Update question numbers and altTexts
-    mcqs.forEach(({ node, path }, index) => {
-      const paragraphNode = node.children.find(
-        (child) => child.type === "paragraph"
-      );
-      const currentQuestionText = paragraphNode.children[0].text;
-      const currentQuestionNumber = parseInt(currentQuestionText.split(".")[0]);
-      const newQuestionNumber = index + 1;
-
-      if (currentQuestionNumber !== newQuestionNumber) {
-        // Update the question number in the paragraph node
-        Transforms.setNodes(
-          editor,
-          {
-            text: `${newQuestionNumber}.${currentQuestionText.slice(
-              currentQuestionNumber.toString().length + 1
-            )}`,
-          },
-          { at: [...path, 0, 0] }
-        );
-
-        // Update the question number in the altText
-        Transforms.setNodes(
-          editor,
-          {
-            altText: node.altText.replace(
-              /^Question \d+/,
-              `Question ${newQuestionNumber}`
-            ),
-          },
-          { at: path }
-        );
-      }
-    });
-  };
-
   return (
     <EditorProvider
       editor={editor}
@@ -1198,7 +1161,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 key={editorKey}
                 onChange={(newValue) => {
                   setValue(newValue);
-                  updateQuestionNumbers(editor);
                   if (handleTextChange) {
                     handleTextChange(newValue);
                   }

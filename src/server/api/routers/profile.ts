@@ -9,7 +9,7 @@ export const profileRouter = createTRPCRouter({
   getProfile: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input, ctx }) => {
-      const profile = ctx.prisma.profiles.findUnique({
+      const profile = await ctx.prisma.user.findUnique({
         where: { id: input.id },
       });
       if (!profile) {

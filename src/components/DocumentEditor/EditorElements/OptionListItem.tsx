@@ -12,6 +12,11 @@ export const ListItem = ({ attributes, children, element }) => {
     const path = ReactEditor.findPath(editor, element);
     const isSelected = e.target.checked;
 
+    if (!isSelected && element.correctAnswer) {
+      // Prevent unchecking the currently selected option
+      return;
+    }
+
     // Unset correctAnswer for all other siblings if the current option is being set to true
     if (isSelected) {
       const parentPath = Path.parent(path);

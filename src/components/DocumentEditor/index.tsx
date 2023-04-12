@@ -111,7 +111,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       ],
     },
     {
-      id: "sdfsdf",
+      id: "sdfsdffddf",
       type: "mcq",
       children: [
         {
@@ -961,8 +961,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     const lastNodePath = ReactEditor.findPath(editor, lastNode);
 
     if (lastNode.type !== "paragraph") {
-      // insertNewParagraphBelowLastNode(lastNodePath);
-      // event.stopPropagation();
+      insertNewParagraphBelowLastNode(lastNodePath);
+      event.stopPropagation();
       return;
     }
 
@@ -1041,7 +1041,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           <ActiveElementProvider activeIndex={activeIndex}>
             <div
               tabIndex={0}
-              className="relative z-0 mx-auto  mt-3 block overflow-y-auto rounded-md pt-4 pr-4 pb-4 pl-2 focus:outline-none focus-visible:border-gray-300"
+              className="relative z-0 mx-auto  mt-3 block rounded-md pt-4 pr-4 pb-4 pl-2 focus:outline-none focus-visible:border-gray-300"
             >
               <Slate
                 editor={editor}
@@ -1057,7 +1057,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               >
                 <Droppable>
                   <Editable
-                    className="relative max-h-[550px] overflow-y-auto"
+                    className="relative h-[550px] overflow-y-auto"
                     renderElement={renderElement}
                     renderLeaf={Blank}
                     onKeyDown={handleKeyDown}

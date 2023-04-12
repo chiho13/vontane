@@ -175,7 +175,7 @@ export const GPTRouter = createTRPCRouter({
                   ]
                 }
               ],
-              "altText": "accessible natural language text of the multiple choice questions read like trivia shows or educational videos."
+              "altText": "Question 1:  text of question followed by  accessible natural language text of the multiple choice questions read like trivia shows or educational videos."
             },
             { 
               "type": "paragraph",

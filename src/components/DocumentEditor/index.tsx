@@ -174,10 +174,78 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       altText:
         "Question 1: What is the synonym for 'abundance'? Option A, scarcity; Option B, plethora; Option C, stagnation; Option D, deficit.",
     },
+
     {
       id: "sfsfsfjljlajsdlf",
       type: "paragraph",
       children: [{ text: "" }],
+    },
+    {
+      id: "abcdefghijkl",
+      type: "mcq",
+      children: [
+        {
+          type: "paragraph",
+          children: [
+            {
+              text: "1. A person who designs buildings is called a(n)",
+            },
+            { text: " ", blank: true },
+            { text: ". " },
+          ],
+        },
+        {
+          type: "ol",
+          children: [
+            {
+              type: "list-item",
+              children: [
+                {
+                  text: "architect",
+                },
+              ],
+              correctAnswer: true,
+            },
+            {
+              type: "list-item",
+              children: [
+                {
+                  text: "engineer",
+                },
+              ],
+              correctAnswer: false,
+            },
+            {
+              type: "list-item",
+              children: [
+                {
+                  text: "doctor",
+                },
+              ],
+              correctAnswer: false,
+            },
+            {
+              type: "list-item",
+              children: [
+                {
+                  text: "teacher",
+                },
+              ],
+              correctAnswer: false,
+            },
+          ],
+        },
+      ],
+      altText:
+        "Question 2: A person who designs buildings is called a(n) blank. Options: architect, engineer, doctor, teacher. Correct answer: architect.",
+    },
+    {
+      type: "paragraph",
+      children: [
+        {
+          text: " ",
+        },
+      ],
     },
     // {
     //   id: genNodeId(),
@@ -1055,6 +1123,53 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     }
   };
 
+  const updateQuestionNumbers = (editor) => {
+    const mcqs = [];
+
+    // Gather all MCQ nodes
+    for (const [node, path] of Editor.nodes(editor, {
+      at: [],
+      match: (n) => n.type === "mcq",
+    })) {
+      mcqs.push({ node, path });
+    }
+
+    // Update question numbers and altTexts
+    mcqs.forEach(({ node, path }, index) => {
+      const paragraphNode = node.children.find(
+        (child) => child.type === "paragraph"
+      );
+      const currentQuestionText = paragraphNode.children[0].text;
+      const currentQuestionNumber = parseInt(currentQuestionText.split(".")[0]);
+      const newQuestionNumber = index + 1;
+
+      if (currentQuestionNumber !== newQuestionNumber) {
+        // Update the question number in the paragraph node
+        Transforms.setNodes(
+          editor,
+          {
+            text: `${newQuestionNumber}.${currentQuestionText.slice(
+              currentQuestionNumber.toString().length + 1
+            )}`,
+          },
+          { at: [...path, 0, 0] }
+        );
+
+        // Update the question number in the altText
+        Transforms.setNodes(
+          editor,
+          {
+            altText: node.altText.replace(
+              /^Question \d+/,
+              `Question ${newQuestionNumber}`
+            ),
+          },
+          { at: path }
+        );
+      }
+    });
+  };
+
   return (
     <EditorProvider
       editor={editor}
@@ -1083,7 +1198,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 key={editorKey}
                 onChange={(newValue) => {
                   setValue(newValue);
-
+                  updateQuestionNumbers(editor);
                   if (handleTextChange) {
                     handleTextChange(newValue);
                   }

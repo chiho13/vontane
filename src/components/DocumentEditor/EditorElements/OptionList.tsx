@@ -2,7 +2,8 @@ import React from "react";
 import styled from "styled-components";
 
 const OptionListStyle = styled.ol`
-  list-style-type: lower-alpha;
+  list-style-type: upper-alpha;
+  padding-left: 0;
 `;
 interface OptionListProps {
   attributes: any;

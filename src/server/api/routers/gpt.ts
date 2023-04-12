@@ -162,16 +162,16 @@ export const GPTRouter = createTRPCRouter({
               type: "mcq",
               children: [
                 { 
-                  "type": "paragraph",
+                  "type": "list-item",
                   "children": [{ "text": "1. question" }]
                 },
                 { 
                   "type": "ol",
                   "children": [
-                    { type: "list-item", "children": [{ "text": "option 1" }], "correctAnswer": true/false },
-                    { type: "list-item", "children": [{ "text": "option 2" }], "correctAnswer": true/false },
-                    { "type": "list-item", "children": [{ "text": "option 3" }], "correctAnswer": true/false },
-                    { "type": "list-item", "children": [{ "text": "option 4" }], "correctAnswer": true/false }
+                    { type: "option-list-item", "children": [{ "text": "option 1" }], "correctAnswer": true/false },
+                    { type: "option-list-item", "children": [{ "text": "option 2" }], "correctAnswer": true/false },
+                    { "type": "option-list-item", "children": [{ "text": "option 3" }], "correctAnswer": true/false },
+                    { "type": "option-list-item", "children": [{ "text": "option 4" }], "correctAnswer": true/false }
                   ]
                 }
               ],

@@ -7,6 +7,7 @@ import {
   ColumnCellElement,
   MCQElement,
   OptionList,
+  OptionListItem,
   ListItem,
 } from "./index";
 
@@ -16,6 +17,8 @@ export function ElementSelector(props) {
   switch (element.type) {
     case "paragraph":
       return <ParagraphElement {...props} />;
+    case "list-item":
+      return <ListItem {...props} />;
     case "equation":
       return <EquationElement {...props} />;
     case "column":
@@ -26,8 +29,8 @@ export function ElementSelector(props) {
       return <MCQElement {...props} />;
     case "ol":
       return <OptionList {...props} />;
-    case "list-item":
-      return <ListItem {...props}>{children}</ListItem>;
+    case "option-list-item":
+      return <OptionListItem {...props}>{children}</OptionListItem>;
     default:
       return <DefaultElement {...props} />;
   }

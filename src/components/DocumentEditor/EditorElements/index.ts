@@ -6,4 +6,4 @@ export * from "./ColumnElement";
 export * from "./ColumnCellElement";
 export * from "./MCQElement";
 export * from "./OptionList";
-export * from "./ListItem";
+export * from "./OptionListItem";

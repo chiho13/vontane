@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { withReact } from "slate-react";
-import { createEditor, Editor, Path, Transforms } from "slate";
+import { createEditor } from "slate";
 
 import { withID } from "@/hoc/withID";
 import { withHistory } from "slate-history";

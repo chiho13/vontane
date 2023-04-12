@@ -162,7 +162,7 @@ export const GPTRouter = createTRPCRouter({
               type: "mcq",
               children: [
                 { 
-                  "type": "list-item",
+                  "type": "paragraph",
                   "children": [{ "text": "question" }]
                 },
                 { 

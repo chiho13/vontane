@@ -101,23 +101,20 @@ export const GPTRouter = createTRPCRouter({
               Generate a JSON object for Questions based on the following input:
               ${mathQuestions}
           
-                Each question should have a paragraph element containing the question text. If an equation is necessary for the question, include an equation element with the related equation. An equation element should be followed by an empty paragraph element.  Each item should have random 12 character generated ID. The output should be an array of objects with the following structure:
+                Each question should have a paragraph element containing the question text. If an equation is necessary for the question, include an equation element with the related equation. An equation element should be followed by an empty paragraph element. The output should be an array of objects with the following structure:
           
           [
           {
-          "id": "",
           "type": "paragraph",
           "children": [{"text": "question"}]
           },
           {
-          "id": "",
           "type": "equation",
           "latex": "KaTeX code",
           "altText": "accessible natural language of equation for text to speech readers and change spelling of words into phonetic spelling so screen reader can read aloud verbatim.",
           "children": [{"text": ""}]
           },
           {
-            "id": "",
             "type": "paragraph",
             "children": [{"text": ""}]
             },
@@ -157,34 +154,33 @@ export const GPTRouter = createTRPCRouter({
               Generate a JSON object for Questions based on the following input:
               ${englishQuestions}
           
-                Each fill-in-the-blank question is  a paragraph element containing the question text. add  "___" in question if necessary. Paragraph element for the multiple choices. Each item should have random 12 character generated ID. The output should be an array of objects with the following structure:
+                Each fill-in-the-blank question is  a paragraph element containing the question text. add  "___" in question if necessary. Each item should have random 12 character generated ID. only one correctAnswer in list-item is true. The output should be an array of objects with the following structure:
           
           [
           {
-          "id": "",
-          "type": "paragraph",
-          "children": [{"text": "question"}]
-          },
-          {
-          "id": "",
-          "type": "paragraph",
-          "children": [{"text": "A. choice 1"}, ]
-          },
-          {
-          "id": "",
-          "type": "paragraph",
-          "children": [{"text": "B. choice 2"}, ]
-          },
-          {
-          "id": "",
-          "type": "paragraph",
-          "children": [{"text": "C. choice 3"}, ]
-          },
-          {
-          "id": "",
-          "type": "paragraph",
-          "children": [{"text": "D. choice 4"}, ]
-          },
+            {
+              type: "mcq",
+              children: [
+                { 
+                  "type": "paragraph",
+                  "children": [{ "text": "1. question" }]
+                },
+                { 
+                  "type": "ol",
+                  "children": [
+                    { type: "list-item", "children": [{ "text": "option 1" }], "correctAnswer": true/false },
+                    { type: "list-item", "children": [{ "text": "option 2" }], "correctAnswer": true/false },
+                    { "type": "list-item", "children": [{ "text": "option 3" }], "correctAnswer": true/false },
+                    { "type": "list-item", "children": [{ "text": "option 4" }], "correctAnswer": true/false }
+                  ]
+                }
+              ],
+              "altText": "accessible natural language text of the multiple choice questions read like trivia shows or educational videos."
+            },
+            { 
+              "type": "paragraph",
+              "children": [{ "text": " " }]
+            },
           ]
 
 `,

@@ -8,16 +8,15 @@ import { ReactEditor } from "slate-react";
 import { ErrorAlert } from "../ErrorAlert";
 import { genNodeId, addRandomIds } from "@/hoc/withID";
 
-export const convertUnderscoresToBlank = (text, parentNode) => {
-  // Check if the parentNode type is 'mcq'
-  const isInsideMCQ = parentNode && parentNode.type === "mcq";
+export const convertUnderscoresToBlank = (text) => {
+  const regex = /_{3,}/g;
+  const parts = text.split(regex);
 
-  if (!isInsideMCQ) {
+  // Check if the text contains three or more underscores
+  if (parts.length <= 1) {
     return [{ text }];
   }
 
-  const regex = /_{3,}/g;
-  const parts = text.split(regex);
   const result = [];
 
   for (let i = 0; i < parts.length; i++) {
@@ -30,6 +29,25 @@ export const convertUnderscoresToBlank = (text, parentNode) => {
   }
 
   return result;
+};
+
+const processNode = (node) => {
+  // If the node is of type "mcq", process its children
+  if (node.type === "mcq") {
+    return {
+      ...node,
+      children: node.children.map((child) => {
+        if (child.type === "paragraph") {
+          return {
+            ...child,
+            children: convertUnderscoresToBlank(child.children[0].text),
+          };
+        }
+        return child;
+      }),
+    };
+  }
+  return node;
 };
 
 export const EnglishQuestionGenerator = () => {
@@ -53,6 +71,7 @@ export const EnglishQuestionGenerator = () => {
 
   const setQuestionHandler = (value) => {
     setQuestions(value);
+    console.log(value);
     setTriggerRefetch((prev) => !prev);
   };
 
@@ -89,15 +108,7 @@ export const EnglishQuestionGenerator = () => {
         let jsonData;
 
         try {
-          jsonData = JSON.parse(getQuestionData).map((node) => {
-            if (node.type === "paragraph") {
-              return {
-                ...node,
-                children: convertUnderscoresToBlank(node.children[0].text),
-              };
-            }
-            return node;
-          });
+          jsonData = JSON.parse(getQuestionData).map(processNode);
           jsonData = addRandomIds(jsonData);
           insertNodesAtGivenPath(editor, jsonData, JSON.parse(activePath));
           setIsLoading(false);

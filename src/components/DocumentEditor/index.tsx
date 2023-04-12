@@ -20,7 +20,7 @@ import {
 
 import { createPortal } from "react-dom";
 import { Slate, Editable, withReact, ReactEditor } from "slate-react";
-import { Plus, CornerDownLeft } from "lucide-react";
+import { Plus, CornerDownLeft, MoreHorizontal } from "lucide-react";
 import { BlockMath } from "react-katex";
 import "katex/dist/katex.min.css";
 import "katex/dist/contrib/mhchem.min.js";
@@ -737,6 +737,23 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           </div>
         ) : null;
 
+      const optionMenu =
+        (isRoot && element.type === "mcq") || element.type === "equation" ? (
+          <div className="absolute  top-1 right-1">
+            <button
+              className="flex h-[24px] w-[24px] items-center  justify-center rounded-md bg-gray-200 p-1"
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                console.log("open popup");
+              }}
+              ref={toggleRef}
+            >
+              <MoreHorizontal color={theme.colors.darkgray} />
+            </button>
+          </div>
+        ) : null;
+
       const shouldWrapWithSortableElement =
         (isRoot && element.type !== "column") || isInsideColumnCell;
 
@@ -758,6 +775,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         >
           {content}
           {addButton}
+          {optionMenu}
         </div>
       );
     },
@@ -976,11 +994,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     const lastNode = editor.children[editor.children.length - 1];
     const lastNodePath = ReactEditor.findPath(editor, lastNode);
 
-    if (lastNode.type !== "paragraph") {
-      insertNewParagraphBelowLastNode(lastNodePath);
-      event.stopPropagation();
-      return;
-    }
+    // if (lastNode.type !== "paragraph") {
+    //   insertNewParagraphBelowLastNode(lastNodePath);
+    //   event.stopPropagation();
+    //   return;
+    // }
 
     const lastNodeDOM = document.querySelector(
       `[data-path="${JSON.stringify(lastNodePath)}"]`

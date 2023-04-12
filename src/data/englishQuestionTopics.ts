@@ -140,11 +140,13 @@ export const englishQuestionTopics = [
     level: "GMAT - Graduate Management Admission Test",
     topics: {
       Vocabulary: [
-        "Common GMAT words",
         "Synonyms and antonyms",
         "Contextual understanding",
         "Word roots and prefixes",
         "Business and management terms",
+        "Idiomatic expressions",
+        "Collocations",
+        "Phrasal verbs",
       ],
       "Verbal Reasoning": [
         "Reading comprehension",

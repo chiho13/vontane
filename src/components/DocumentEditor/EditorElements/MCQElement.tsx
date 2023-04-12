@@ -51,7 +51,7 @@ export const MCQElement: React.FC<MCQElementProps> = withQuestionNumbering(
     return (
       <div
         {...attributes}
-        className="mcq-element rounded-md bg-gray-100 p-4"
+        className="mcq-element mb-4 rounded-md bg-gray-100 p-4"
         data-id={element.id}
         data-path={JSON.stringify(path)}
       >

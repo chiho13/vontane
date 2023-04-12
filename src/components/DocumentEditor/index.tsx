@@ -73,9 +73,10 @@ interface DocumentEditorProps {
 
 type CustomElement = {
   id: string;
-  type: "paragraph" | "equation";
+  type: string;
   children: CustomText[];
   altText?: string;
+  correctAnswer?: false;
   latex?: string; // Add this line for the latex string
 };
 
@@ -387,6 +388,21 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 id: genNodeId(),
                 type: "paragraph",
                 children: [{ text: "" }],
+              },
+              { at: newPath }
+            );
+            Transforms.select(editor, Editor.start(editor, newPath));
+          }
+
+          if (parentNode.type === "list-item") {
+            const newPath = Path.next(parentPath);
+            Transforms.insertNodes(
+              editor,
+              {
+                id: genNodeId(),
+                type: "list-item",
+                children: [{ text: " " }],
+                correctAnswer: false,
               },
               { at: newPath }
             );

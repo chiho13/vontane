@@ -163,7 +163,7 @@ export const GPTRouter = createTRPCRouter({
               children: [
                 { 
                   "type": "list-item",
-                  "children": [{ "text": "1. question" }]
+                  "children": [{ "text": "question" }]
                 },
                 { 
                   "type": "ol",
@@ -175,7 +175,7 @@ export const GPTRouter = createTRPCRouter({
                   ]
                 }
               ],
-              "altText": "Question 1:  text of question followed by  accessible natural language text of the multiple choice questions read like trivia shows or educational videos."
+              "altText": "Accessible natural language text of the question and the multiple choices read like trivia shows or educational videos."
             },
             { 
               "type": "paragraph",

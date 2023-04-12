@@ -184,12 +184,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       altText:
         "Question 1: What is the synonym for 'abundance'? Option A, scarcity; Option B, plethora; Option C, stagnation; Option D, deficit.",
     },
-
-    {
-      id: "sfsfsfjljlajsdlf",
-      type: "paragraph",
-      children: [{ text: "" }],
-    },
     {
       id: "abcdefghijkl",
       type: "mcq",

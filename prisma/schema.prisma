@@ -7,29 +7,32 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Profile {
-  id          String        @id @db.Uuid
+model user {
+  id          String        @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
   name        String?
   avatar      String?
   createdAt   DateTime?     @default(now()) @db.Timestamptz(6)
-  workspaces   Workspace[]
+  workspaces  workspace[]
+  speechData  texttospeech[]
 }
 
-model Workspace {
-  id            String  @id @default(uuid())
-  name          String?
-  slateValue    String?
-  speechData    SpeechData?
-  createdAt     DateTime @default(now()) @db.Timestamptz(6)
-  profileId     String  @db.Uuid
-  profile       Profile  @relation(fields: [profileId], references: [id])
+model workspace {
+  id          String      @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
+  name        String?
+  slateValue  String?
+  speechData  texttospeech[]
+  createdAt   DateTime    @default(dbgenerated("now()"))
+  authorId      String      @db.Uuid
+  author        user     @relation(fields: [authorId], references: [id])
 }
 
-model SpeechData {
-  id            Int     @id @default(autoincrement())
-  enteredText   String
-  audioUrl      String
-  voiceId       String?
-  workspaceId   String  @db.Uuid @unique
-  workspace     Workspace @relation(fields: [workspaceId], references: [id])
+model texttospeech {
+  id          String        @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
+  enteredText String
+  audioUrl    String
+  creatorId  String    @db.Uuid
+  creator   user     @relation(fields: [creatorId], references: [id])
+  workspace   workspace @relation(fields: [workspaceId], references: [id])
+  voiceId     String?
+  workspaceId String    @db.Uuid
 }

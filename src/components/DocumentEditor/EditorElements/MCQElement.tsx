@@ -9,16 +9,16 @@ interface MCQElementProps {
   element: any;
 }
 
-const findMCQElements = (node) => {
-  if (node.type === "mcq") {
-    return [node];
-  }
-
-  if (!node.children || !Array.isArray(node.children)) {
-    return [];
-  }
-
-  return node.children.flatMap(findMCQElements);
+const findMCQElements = (nodes) => {
+  let mcqElements = [];
+  nodes.forEach((node) => {
+    if (node.type === "mcq") {
+      mcqElements.push(node);
+    } else if (node.children && Array.isArray(node.children)) {
+      mcqElements.push(...findMCQElements(node.children));
+    }
+  });
+  return mcqElements;
 };
 
 const withQuestionNumbering = (Component) => {
@@ -31,7 +31,7 @@ const withQuestionNumbering = (Component) => {
     }
 
     // Find all MCQ elements within the editor
-    const mcqElements = editor.children.filter((node) => node.type === "mcq");
+    const mcqElements = findMCQElements(editor.children);
 
     console.log("MCQ Elements:", mcqElements);
     console.log("Current element ID:", element.id);

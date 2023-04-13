@@ -245,6 +245,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         "Question 2: A person who designs buildings is called a(n) blank. Options: architect, engineer, doctor, teacher. Correct answer: architect.",
     },
     {
+      id: "jwjfbskvsdnaks",
       type: "paragraph",
       children: [
         {
@@ -865,15 +866,20 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       }
 
       // Find the nodes using their IDs
+      setSelectedElementID(active.id);
+
+      console.log("active", active.id, "over", over.id);
       const fromPath = findPathById(editor, active.id);
       const toPath = findPathById(editor, over.id);
+
+      console.log("toPath", toPath);
 
       const [fromParentElement, fromParentPath] = Editor.parent(
         editor,
         fromPath
       );
 
-      // console.log(fromParentPath);
+      console.log(fromParentPath);
       const [toParentElement, toParentPath] = Editor.parent(editor, toPath);
 
       // Check if the dragged element should be inserted before or after the target element
@@ -886,7 +892,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
       const isRootLevel = fromPath.length === 1 && toPath.length === 1;
 
-      console.log(fromPath[0], toPath[0]);
+      console.log("fromPath", fromPath[0], toPath[0]);
       // console.log(isRootLevel, creatingNewColumn);
       if (isRootLevel && creatingNewColumn) {
         // Adjust the over object according to the insertDirection
@@ -944,8 +950,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           Transforms.removeNodes(editor, { at: columnPath });
         }
       }
-      setSelectedElementID(active.id);
-      setCheckEmptyColumnCells((prevCheck) => !prevCheck);
+
+      // setCheckEmptyColumnCells((prevCheck) => !prevCheck);
       setActiveId("");
     },
     [editor, creatingNewColumn]
@@ -1003,7 +1009,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     });
 
     return (
-      <div ref={droppable.setNodeRef} {...droppable.attributes}>
+      <div
+        ref={droppable.setNodeRef}
+        {...droppable.attributes}
+        className="absolute top-0 right-0 block h-[550px]  w-[200px]"
+      >
         {children}
       </div>
     );
@@ -1161,15 +1171,16 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                   }
                 }}
               >
+                <Editable
+                  className="relative h-[550px] overflow-y-auto"
+                  renderElement={renderElement}
+                  renderLeaf={Blank}
+                  onKeyDown={handleKeyDown}
+                  onMouseUp={(event) => handleEditorMouseUp(event, editor)}
+                  onClick={(event) => handleCursorClick(event, editor)}
+                />
                 <Droppable>
-                  <Editable
-                    className="relative h-[550px] overflow-y-auto"
-                    renderElement={renderElement}
-                    renderLeaf={Blank}
-                    onKeyDown={handleKeyDown}
-                    onMouseUp={(event) => handleEditorMouseUp(event, editor)}
-                    onClick={(event) => handleCursorClick(event, editor)}
-                  />
+                  <div></div>
                 </Droppable>
               </Slate>
             </div>

@@ -67,6 +67,7 @@ import { findPathById, createColumns } from "./helpers/createColumns";
 import { FloatingModal } from "@/components/FloatingModal";
 import { Blank } from "./LeafElements/Blank";
 import { MiniDropdown } from "./MiniDropdown";
+import { OptionMenu } from "./OptionMenu";
 interface DocumentEditorProps {
   handleTextChange?: (value: any) => void;
 }
@@ -775,6 +776,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   //   }
   // }, [slatevalue, selectedElementID]);
 
+  const [deleteMenuItem, setDeleteMenuItem] = useState(null);
+
   const renderElement = useCallback(
     (props) => {
       const { attributes, children, element } = props;
@@ -792,37 +795,35 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             className="z-100 absolute  top-1/2 left-0 -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center"
             contentEditable={false}
           >
-            <button
-              className={`addButton rounded-md hover:bg-gray-200 ${
-                addButtonHoveredId === element.id ? "opacity-100" : "opacity-0"
-              }`}
-              onClick={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                console.log("addButton clicked");
-                openMiniDropdown(event, ReactEditor.findPath(editor, element));
-              }}
-              ref={toggleRef}
-            >
-              <Plus color={theme.colors.darkgray} />
-            </button>
+            {addButtonHoveredId === element.id && (
+              <button
+                className={`addButton rounded-md hover:bg-gray-200`}
+                onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  console.log("addButton clicked");
+                  openMiniDropdown(
+                    event,
+                    ReactEditor.findPath(editor, element)
+                  );
+                }}
+                ref={toggleRef}
+              >
+                <Plus color={theme.colors.darkgray} />
+              </button>
+            )}
           </div>
         ) : null;
 
       const optionMenu =
         (isRoot && element.type === "mcq") || element.type === "equation" ? (
           <div className="absolute  top-1 right-1">
-            <button
-              className="flex h-[24px] w-[24px] items-center  justify-center rounded-md bg-gray-200 p-1"
-              onClick={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                console.log("open popup");
+            <OptionMenu
+              onClick={() => {
+                console.log("something");
               }}
-              ref={toggleRef}
-            >
-              <MoreHorizontal color={theme.colors.darkgray} />
-            </button>
+              element={element}
+            />
           </div>
         ) : null;
 

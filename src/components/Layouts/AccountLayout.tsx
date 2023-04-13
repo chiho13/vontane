@@ -319,6 +319,7 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
                     ref={accountDropdownRef}
                     selectedItemText={profile && profile.name}
                     image={AvatarProfile}
+                    dropdownButtonClassName="p-0 border-transparent relative outline-none border-0 shadow-none bg-transparent w-full h-[47px] justify-start transition-colors duration-300 focus:ring-2 focus:ring-black focus:ring-opacity-30 hover:bg-gray-200"
                     icon={
                       <ChevronsUpDown
                         className="w-4"

@@ -18,7 +18,7 @@ export function EquationElement(props) {
       tabIndex={0}
       data-path={JSON.stringify(path)}
       data-id={element.id}
-      className={`equation-element my-2 mr-2 flex w-auto items-center rounded-md p-2 hover:bg-gray-100 ${
+      className={`equation-element mb-4 flex w-auto items-center rounded-md p-2 hover:bg-gray-100 ${
         element.latex?.trim() !== "" && "justify-center"
       } 
       ${

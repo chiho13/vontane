@@ -78,6 +78,7 @@ type CustomElement = {
   children: CustomText[];
   altText?: string;
   correctAnswer?: false;
+  questionNumber?: number;
   latex?: string; // Add this line for the latex string
 };
 
@@ -182,8 +183,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           ],
         },
       ],
-      altText:
-        "Question 1: What is the synonym for 'abundance'? Option A, scarcity; Option B, plethora; Option C, stagnation; Option D, deficit.",
     },
     {
       id: "abcdefghijkl",
@@ -241,8 +240,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           ],
         },
       ],
-      altText:
-        "Question 2: A person who designs buildings is called a(n) blank. Options: architect, engineer, doctor, teacher. Correct answer: architect.",
     },
     {
       id: "jwjfbskvsdnaks",

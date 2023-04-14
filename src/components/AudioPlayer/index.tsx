@@ -61,14 +61,14 @@ function AudioPlayer({ generatedAudio, transcriptionId }: Props): JSX.Element {
     }
   }, [generatedAudio, isSeeking]);
 
-  useEffect(() => {
-    if (generatedAudio) {
-      generatedAudio;
-      generatedAudio.play();
-      setIsPlaying(true);
-      console.log(generatedAudio.src);
-    }
-  }, [generatedAudio]);
+  // useEffect(() => {
+  //   if (generatedAudio) {
+  //     generatedAudio;
+  //     generatedAudio.play();
+  //     setIsPlaying(true);
+  //     console.log(generatedAudio.src);
+  //   }
+  // }, [generatedAudio]);
 
   const handleSeekStart = () => {
     setIsSeeking(true);

@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { ReactEditor } from "slate-react";
-import { Editor } from "slate";
+import { Transforms } from "slate";
 import { EditorContext } from "@/contexts/EditorContext";
 
 interface MCQElementProps {
@@ -25,7 +25,7 @@ const withQuestionNumbering = (Component) => {
   return (props) => {
     const { element } = props;
     const { editor } = useContext(EditorContext);
-    console.log("Editor:", editor);
+
     if (!editor) {
       return <Component {...props} questionNumber={null} />;
     }
@@ -33,12 +33,13 @@ const withQuestionNumbering = (Component) => {
     // Find all MCQ elements within the editor
     const mcqElements = findMCQElements(editor.children);
 
-    console.log("MCQ Elements:", mcqElements);
-    console.log("Current element ID:", element.id);
-
     // Show question number for all MCQ elements
     const questionNumber =
       mcqElements.findIndex((mcq) => mcq.id === element.id) + 1;
+
+    // Set questionNumber property using Transforms.setNodes
+    const path = ReactEditor.findPath(editor, element);
+    Transforms.setNodes(editor, { questionNumber }, { at: path });
 
     return <Component {...props} questionNumber={questionNumber} />;
   };

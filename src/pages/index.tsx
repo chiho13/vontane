@@ -125,29 +125,96 @@ const Home: NextPage = () => {
   }
 
   function extractTextValues(data) {
-    return data.reduce((accumulator, item) => {
-      if (item.children) {
-        accumulator.push(...extractTextValues(item.children));
-      }
+    let questionCounter = 0;
 
-      if (item.text) {
-        accumulator.push(item.text);
-      }
+    function traverse(item) {
+      let accumulator = [];
 
-      if (item.blank) {
-        accumulator.push("BLANK");
-      }
-
-      if (item.type === "mcq" && item.altText) {
-        accumulator.push(item.altText + ".");
+      if (item.type === "paragraph" && item.children) {
+        accumulator.push(
+          ...item.children.map(
+            (child) => child.text || (child.blank ? "BLANK" : "")
+          )
+        );
       }
 
       if (item.type === "equation" && item.altText) {
         accumulator.push(item.altText + ".");
       }
 
+      if (item.type === "mcq") {
+        // questionCounter++;
+        const question = item.children.find(
+          (child) => child.type === "list-item"
+        );
+
+        if (question && item.questionNumber) {
+          accumulator.push(
+            `Question ${item.questionNumber}: ${question.children[0].text}`
+          );
+        }
+
+        const options = item.children.find((child) => child.type === "ol");
+        if (options) {
+          const pronunciationAlphabet = [
+            "Aye",
+            "Bee",
+            "See",
+            "Dee",
+            "Ee",
+            "Eff",
+            "Gee",
+            "Aitch",
+            "Eye",
+            "Jay",
+            "Kay",
+            "El",
+            "Em",
+            "En",
+            "Oh",
+            "Pee",
+            "Cue",
+            "Ar",
+            "Ess",
+            "Tee",
+            "You",
+            "Vee",
+            "Double-You",
+            "Ex",
+            "Why",
+            "Zee",
+          ];
+
+          options.children.forEach((option, index) => {
+            const optionLetter = pronunciationAlphabet[index];
+            const isFirstOption = index === 0;
+            const isLastOption = index === options.children.length - 1;
+
+            if (isFirstOption) {
+              accumulator.push(
+                `Is it ${optionLetter}. ${option.children[0].text}.`
+              );
+            } else if (isLastOption) {
+              accumulator.push(
+                `or ${optionLetter}. ${option.children[0].text}.`
+              );
+            } else {
+              accumulator.push(`${optionLetter}. ${option.children[0].text}.`);
+            }
+          });
+        }
+      }
+
+      if (item.children) {
+        item.children.forEach((child) => {
+          accumulator.push(...traverse(child));
+        });
+      }
+
       return accumulator;
-    }, []);
+    }
+
+    return traverse({ children: data });
   }
 
   function handleTextChange(value: any[]) {

@@ -138,6 +138,10 @@ const Home: NextPage = () => {
         accumulator.push("BLANK");
       }
 
+      if (item.type === "mcq" && item.altText) {
+        accumulator.push(item.altText + ".");
+      }
+
       if (item.type === "equation" && item.altText) {
         accumulator.push(item.altText + ".");
       }

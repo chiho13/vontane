@@ -113,15 +113,15 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const { isLocked } = useContext(LayoutContext);
   const editor = useEditor();
   const initialValue = [
-    {
-      id: "dL9tJpTtH8Rt7D0sYSK2",
-      type: "paragraph",
-      children: [
-        { text: "This is a " },
-        { text: " ", blank: true },
-        { text: " component in Slate.js." },
-      ],
-    },
+    // {
+    //   id: "dL9tJpTtH8Rt7D0sYSK2",
+    //   type: "paragraph",
+    //   children: [
+    //     { text: "This is a " },
+    //     { text: " ", blank: true },
+    //     { text: " component in Slate.js." },
+    //   ],
+    // },
     {
       id: "sdfsdffddf",
       type: "mcq",
@@ -719,11 +719,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         if (isEmptyNode) {
           Transforms.setNodes(editor, equationNode, { at: path });
           newPath = path;
-          Transforms.insertNodes(
-            editor,
-            { id: genNodeId(), type: "paragraph", children: [{ text: "" }] },
-            { at: Path.next(path) }
-          );
+          // Transforms.insertNodes(
+          //   editor,
+          //   { id: genNodeId(), type: "paragraph", children: [{ text: "" }] },
+          //   { at: Path.next(path) }
+          // );
         } else {
           Transforms.insertNodes(editor, equationNode, { at: Path.next(path) });
           newPath = Path.next(path);
@@ -1154,7 +1154,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           <ActiveElementProvider activeIndex={activeIndex}>
             <div
               tabIndex={0}
-              className="relative z-0 mx-auto  mt-3 block rounded-md pt-4 pr-4 pb-4 pl-2 focus:outline-none focus-visible:border-gray-300"
+              className="relative z-0 mx-auto block rounded-md pt-4 pr-4 pb-4 pl-2 focus:outline-none focus-visible:border-gray-300"
             >
               <Slate
                 editor={editor}

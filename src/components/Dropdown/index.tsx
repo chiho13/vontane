@@ -252,7 +252,7 @@ function Dropdown(
       <DropdownStyle className="dropdown_wrapper relative flex justify-end">
         <button
           type="button"
-          className={`dropdown-toggle inline-flex items-center justify-center rounded-md text-sm font-medium text-gray-700 ${dropdownButtonStyleOverride}`}
+          className={`dropdown-toggle inline-flex items-center rounded-md text-sm font-medium text-gray-700 ${dropdownButtonStyleOverride}`}
           aria-expanded={isOpen}
           aria-haspopup="true"
           id="dropdown"

@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { mq } from "@/utils/breakpoints";
 
 const OptionListStyle = styled.ol`
   list-style-type: upper-alpha;
@@ -7,6 +8,10 @@ const OptionListStyle = styled.ol`
   padding-left: 0;
   display: grid;
   grid-gap: 8px;
+
+  ${mq.lg`
+  grid-template-columns: 1fr 1fr;
+  `}
 `;
 
 const InstructionMessage = styled.p`

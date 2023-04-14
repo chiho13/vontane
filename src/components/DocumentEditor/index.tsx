@@ -468,13 +468,13 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             Transforms.select(editor, Editor.start(editor, newPath));
           }
 
-          if (parentNode.type === "list-item") {
+          if (parentNode.type === "option-list-item") {
             const newPath = Path.next(parentPath);
             Transforms.insertNodes(
               editor,
               {
                 id: genNodeId(),
-                type: "list-item",
+                type: "option-list-item",
                 children: [{ text: " " }],
                 correctAnswer: false,
               },
@@ -793,7 +793,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       const addButton =
         (isRoot && element.type !== "column") || isInsideColumnCell ? (
           <div
-            className="z-100 absolute  top-1/2 left-0 -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center"
+            className="z-100 absolute   top-1/2 left-0 -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center"
             contentEditable={false}
           >
             {addButtonHoveredId === element.id && (
@@ -1009,11 +1009,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     });
 
     return (
-      <div
-        ref={droppable.setNodeRef}
-        {...droppable.attributes}
-        className="absolute top-0 right-0 block h-[550px]  w-[200px]"
-      >
+      <div ref={droppable.setNodeRef} {...droppable.attributes}>
         {children}
       </div>
     );
@@ -1171,16 +1167,15 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                   }
                 }}
               >
-                <Editable
-                  className="relative h-[550px] overflow-y-auto"
-                  renderElement={renderElement}
-                  renderLeaf={Blank}
-                  onKeyDown={handleKeyDown}
-                  onMouseUp={(event) => handleEditorMouseUp(event, editor)}
-                  onClick={(event) => handleCursorClick(event, editor)}
-                />
                 <Droppable>
-                  <div></div>
+                  <Editable
+                    className="relative h-[550px] overflow-y-auto"
+                    renderElement={renderElement}
+                    renderLeaf={Blank}
+                    onKeyDown={handleKeyDown}
+                    onMouseUp={(event) => handleEditorMouseUp(event, editor)}
+                    onClick={(event) => handleCursorClick(event, editor)}
+                  />
                 </Droppable>
               </Slate>
             </div>

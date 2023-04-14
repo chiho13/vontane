@@ -71,7 +71,7 @@ export const OptionListItem = ({ attributes, children, element }) => {
       {checked ? (
         <div className="pointer-events-none absolute right-2  top-0 flex h-full  items-center items-center ">
           <div className="h-[24px] w-[24px] border-2 border-blue-500">
-            <Check className="absolute right-0 h-[24px] w-[24px] text-blue-500" />
+            <Check className="absolute right-0 h-[24px] w-[24px] -translate-y-[1px] text-blue-500" />
           </div>
         </div>
       ) : (

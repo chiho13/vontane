@@ -22,7 +22,7 @@ export function ListItem(props) {
 
   return (
     <div {...attributes} data-id={element.id} data-path={JSON.stringify(path)}>
-      {children}
+      <p className="text-[18px]">{children}</p>
     </div>
   );
 }

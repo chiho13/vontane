@@ -59,15 +59,17 @@ export const OptionListItem = ({ attributes, children, element }) => {
       }`}
     >
       <span>{children}</span>
-      <input
-        type="checkbox"
-        id={element.id}
-        className="absolute -top-[2px] right-2 ml-2 h-[36px] w-[36px] cursor-pointer opacity-0"
-        checked={checked}
-        onChange={handleChange}
-      />
+      <div className="absolute -top-[2px] right-2 flex h-full items-center">
+        <input
+          type="checkbox"
+          id={element.id}
+          className="h-[24px] w-[24px] cursor-pointer opacity-0"
+          checked={checked}
+          onChange={handleChange}
+        />
+      </div>
       {checked ? (
-        <div className="absolute right-2  top-0 flex h-full  items-center items-center ">
+        <div className="pointer-events-none absolute right-2  top-0 flex h-full  items-center items-center ">
           <div className="h-[24px] w-[24px] border-2 border-blue-500">
             <Check className="absolute right-0 h-[24px] w-[24px] text-blue-500" />
           </div>

@@ -1167,15 +1167,16 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                   }
                 }}
               >
+                <Editable
+                  className="relative h-[550px] overflow-y-auto"
+                  renderElement={renderElement}
+                  renderLeaf={Blank}
+                  onKeyDown={handleKeyDown}
+                  onMouseUp={(event) => handleEditorMouseUp(event, editor)}
+                  onClick={(event) => handleCursorClick(event, editor)}
+                />
                 <Droppable>
-                  <Editable
-                    className="relative h-[550px] overflow-y-auto"
-                    renderElement={renderElement}
-                    renderLeaf={Blank}
-                    onKeyDown={handleKeyDown}
-                    onMouseUp={(event) => handleEditorMouseUp(event, editor)}
-                    onClick={(event) => handleCursorClick(event, editor)}
-                  />
+                  <div></div>
                 </Droppable>
               </Slate>
             </div>

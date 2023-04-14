@@ -54,7 +54,7 @@ export const OptionListItem = ({ attributes, children, element }) => {
   return (
     <StyledOptionListItem
       {...attributes}
-      className={`rounded border-2 ${
+      className={`linear-gradient-right rounded border-2 ${
         checked ? "border-blue-500" : "border-gray-200"
       }`}
     >

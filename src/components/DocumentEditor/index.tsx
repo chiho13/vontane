@@ -818,7 +818,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
       const optionMenu =
         (isRoot && element.type === "mcq") || element.type === "equation" ? (
-          <div className="absolute  top-1 right-1">
+          <div className="absolute  top-1 right-5">
             <OptionMenu
               onClick={() => {
                 console.log("something");
@@ -1154,7 +1154,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           <ActiveElementProvider activeIndex={activeIndex}>
             <div
               tabIndex={0}
-              className="relative z-0 mx-auto block rounded-md pt-4 pr-4 pb-4 pl-2 focus:outline-none focus-visible:border-gray-300"
+              className="relative z-0 mx-auto block rounded-md pt-4 pr-1 pb-4 pl-2 focus:outline-none focus-visible:border-gray-300"
             >
               <Slate
                 editor={editor}

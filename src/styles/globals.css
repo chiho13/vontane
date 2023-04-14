@@ -36,6 +36,6 @@ body {
   background: linear-gradient(to top, #f7f7f8 0%, #fbfdff 100%);
 }
 
-.list-style-alpha {
-  list-style-type: lower-alpha;
+.linear-gradient-right {
+  background: linear-gradient(to right, #f7f7f8 0%, #fbfdff 100%);
 }

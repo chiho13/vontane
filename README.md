@@ -36,3 +36,4 @@ currently under development (April)
 - [x] english questions
 - [] music questions
 - [] connect database
+- [] stripe subscription

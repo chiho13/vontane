@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Editor, Transforms, createEditor, Path } from "slate";
 import { EditorContext } from "@/contexts/EditorContext";
-import { ReactEditor } from "slate-react";
+import { ReactEditor, useFocused } from "slate-react";
 import { Check } from "lucide-react";
 import styled from "styled-components";
 
@@ -10,13 +10,28 @@ const StyledOptionListItem = styled.li`
   padding: 8px;
   width: auto;
   display: list-item;
+
+  span[data-placeholder]::after {
+    content: attr(data-placeholder);
+    pointer-events: none;
+    opacity: 0.333;
+    user-select: none;
+    position: absolute;
+    top: 8px;
+    left: 28px;
+  }
 `;
 
 // Custom List Item component
 export const OptionListItem = ({ attributes, children, element }) => {
   const { editor } = useContext(EditorContext);
   const [checked, setChecked] = useState(element.correctAnswer || false);
+  const focused = useFocused();
 
+  const isEmpty =
+    element.children.length === 1 && element.children[0].text === "";
+
+  const shouldShowPlaceholder = isEmpty && focused;
   useEffect(() => {
     // Update the local checked state whenever element.correctAnswer changes
     setChecked(element.correctAnswer || false);
@@ -58,7 +73,17 @@ export const OptionListItem = ({ attributes, children, element }) => {
         checked ? "border-blue-500" : "border-gray-200"
       }`}
     >
-      <span>{children}</span>
+      <span
+        data-placeholder={
+          shouldShowPlaceholder
+            ? element.correctAnswer
+              ? "Edit correct answer"
+              : "Enter Option"
+            : ""
+        }
+      >
+        {children}
+      </span>
       <div className="absolute -top-[2px] right-2 flex h-full items-center">
         <input
           type="checkbox"

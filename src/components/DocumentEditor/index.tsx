@@ -364,63 +364,15 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const openMiniDropdown = useCallback(
     (event: React.MouseEvent, path: Path) => {
       const currentpathString = JSON.stringify(path);
-      console.log(event);
-      // const offsetDropdownPosition = isLocked ? -150 : 0;
-      const [currentNode] = Editor.node(editor, path);
-      const { selection } = editor;
 
       const sideBarOffset = isLocked ? -150 : 0;
-      console.log(currentNode);
-      console.log(event.currentTarget);
-      console.log("current path string", currentpathString);
+
       setActivePath(currentpathString);
-      const [lastNode, lastPath] = Editor.last(editor, []);
-
-      const lastpathString = JSON.stringify(lastPath.slice(0, -1));
-      let hasNextEmptyParagraphNode = false;
-
-      try {
-        // Get the next path after the current node
-        const nextPath = Path.next(path);
-
-        // Get the next node from the editor
-        const [nextNode] = Editor.node(editor, nextPath);
-
-        hasNextEmptyParagraphNode =
-          nextNode.type === "paragraph" &&
-          nextNode.children.length === 1 &&
-          nextNode.children[0].text === "";
-      } catch (error) {
-        console.log(error);
-      }
-      const hasEmptyParagraphNode =
-        currentNode.type === "paragraph" &&
-        currentNode.children.length === 1 &&
-        currentNode.children[0].text === "";
-
-      const hasEquationNode =
-        currentNode.type === "equation" && currentNode.latex !== "";
 
       const target = event.currentTarget as HTMLDivElement;
       const targetRect = target.getBoundingClientRect();
 
-      if (
-        (!hasEmptyParagraphNode && !hasNextEmptyParagraphNode) ||
-        !hasEquationNode
-      ) {
-        if (!hasEmptyParagraphNode) {
-          Transforms.insertNodes(
-            editor,
-            { id: genNodeId(), type: "paragraph", children: [{ text: "" }] },
-            { at: Path.next(path) }
-          );
-        }
-
-        setDropdownTop(targetRect.bottom + 50);
-      } else {
-        setDropdownTop(targetRect.bottom + 30);
-      }
-
+      setDropdownTop(targetRect.bottom + 50);
       setDropdownLeft(targetRect.left + 60 + sideBarOffset);
       setShowDropdown((prevState) => !prevState);
     },
@@ -442,6 +394,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         editor,
         startPosition.path
       );
+
+      let updatedNode = null;
 
       if (event.key === "Enter") {
         event.preventDefault();
@@ -467,17 +421,15 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
           if (parentNode.type === "option-list-item") {
             const newPath = Path.next(parentPath);
-            Transforms.insertNodes(
-              editor,
-              {
-                id: genNodeId(),
-                type: "option-list-item",
-                children: [{ text: " " }],
-                correctAnswer: false,
-              },
-              { at: newPath }
-            );
+            const newNode = {
+              id: genNodeId(),
+              type: "option-list-item",
+              children: [{ text: "" }],
+              correctAnswer: false,
+            };
+            Transforms.insertNodes(editor, newNode, { at: newPath });
             Transforms.select(editor, Editor.start(editor, newPath));
+            updatedNode = newNode;
           }
         }
       }
@@ -489,6 +441,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           const _currentNodePath = selection.anchor.path.slice(0, -1);
           const currentNode = Node.get(editor, currentNodePath);
           const currentParagraph = Editor.node(editor, currentNodePath);
+          const parentNode = Editor.parent(editor, currentNodePath);
           // Check if currentNode is an equation
 
           if (currentNode.type === "equation") {
@@ -515,6 +468,41 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                   const [nextNode, nextPath] = nextParagraph;
                   const targetPosition = Editor.end(editor, nextPath);
                   Transforms.select(editor, targetPosition);
+                }
+              }
+            }
+          }
+
+          if (currentNode.type === "list-item") {
+            const parentNode = Editor.parent(editor, currentNodePath);
+            if (parentNode[0].type === "mcq") {
+              // Check if the list-item text is empty
+              const isEmpty =
+                currentNode.children.length === 1 &&
+                currentNode.children[0].text === "";
+              if (isEmpty) {
+                event.preventDefault();
+              }
+            }
+          }
+
+          if (
+            (currentNode.type === "option-list-item" || updatedNode) &&
+            parentNode[0].type === "ol"
+          ) {
+            const mcqNode = Editor.parent(editor, parentNode[1]);
+            if (mcqNode[0].type === "mcq") {
+              const optionListItems = parentNode[0].children.filter(
+                (child) => child.type === "option-list-item"
+              );
+
+              if (optionListItems.length <= 2) {
+                const isEmpty =
+                  (currentNode.children.length === 1 &&
+                    currentNode.children[0].text === "") ||
+                  (updatedNode && updatedNode.children[0].text === "");
+                if (isEmpty) {
+                  event.preventDefault();
                 }
               }
             }
@@ -692,67 +680,129 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   const [addButtonHoveredId, setAddButtonHoveredId] = useState(null);
 
+  const handleAddMCQBlock = useCallback((path: Path) => {
+    const mcqNode = {
+      id: genNodeId(),
+      type: "mcq",
+      children: [
+        {
+          id: genNodeId(),
+          type: "list-item",
+          children: [
+            {
+              text: "",
+            },
+          ],
+        },
+        {
+          id: genNodeId(),
+          type: "ol",
+          children: [
+            {
+              id: genNodeId(),
+              type: "option-list-item",
+              children: [
+                {
+                  text: "",
+                },
+              ],
+              correctAnswer: false,
+            },
+            {
+              id: genNodeId(),
+              type: "option-list-item",
+              children: [
+                {
+                  text: "",
+                },
+              ],
+              correctAnswer: true,
+            },
+          ],
+        },
+      ],
+    };
+
+    console.log("sfsdf");
+    const [currentNode] = Editor.node(editor, path);
+    const isEmptyNode =
+      currentNode.type === "paragraph" &&
+      currentNode.children.length === 1 &&
+      currentNode.children[0].text === "";
+    let newPath: Path;
+    if (isEmptyNode) {
+      Transforms.insertNodes(editor, mcqNode, { at: path });
+      newPath = path;
+    } else {
+      Transforms.insertNodes(editor, mcqNode, { at: Path.next(path) });
+      newPath = Path.next(path);
+    }
+    // Focus on the new list-item node
+    const listItemPath = newPath.concat([0, 0]);
+    const listItemPoint = { path: listItemPath, offset: 0 };
+    Transforms.select(editor, listItemPoint);
+    ReactEditor.focus(editor);
+  }, []);
+
   const handleAddEditableEquationBlock = useCallback(
     (latex: string, path: Path) => {
-      if (showDropdown) {
-        const equationId = genNodeId();
+      const equationId = genNodeId();
 
-        const equationNode: CustomElement = {
-          id: equationId,
-          type: "equation",
-          altText: "",
-          latex,
-          children: [{ text: "" }],
-        };
+      const equationNode: CustomElement = {
+        id: equationId,
+        type: "equation",
+        altText: "",
+        latex,
+        children: [{ text: "" }],
+      };
 
-        const [currentNode] = Editor.node(editor, path);
-        const isEmptyNode =
-          (currentNode.type === "paragraph" &&
-            currentNode.children[0].text === "") ||
-          currentNode.children[0].text === " ";
+      const [currentNode] = Editor.node(editor, path);
+      const isEmptyNode =
+        currentNode.type === "paragraph" &&
+        currentNode.children.length === 1 &&
+        currentNode.children[0].text === "";
 
-        let newPath: Path;
+      let newPath: Path;
 
-        if (isEmptyNode) {
-          Transforms.setNodes(editor, equationNode, { at: path });
-          newPath = path;
-          // Transforms.insertNodes(
-          //   editor,
-          //   { id: genNodeId(), type: "paragraph", children: [{ text: "" }] },
-          //   { at: Path.next(path) }
-          // );
-        } else {
-          Transforms.insertNodes(editor, equationNode, { at: Path.next(path) });
-          newPath = Path.next(path);
-        }
+      if (isEmptyNode) {
+        Transforms.setNodes(editor, equationNode, { at: path });
+        newPath = path;
+        // Transforms.insertNodes(
+        //   editor,
+        //   { id: genNodeId(), type: "paragraph", children: [{ text: "" }] },
+        //   { at: Path.next(path) }
+        // );
+      } else {
+        Transforms.insertNodes(editor, equationNode, { at: Path.next(path) });
+        newPath = Path.next(path);
+      }
 
-        const [insertedEquationNode] = Editor.nodes(editor, {
-          at: newPath,
-          match: (n) => n.type === "equation",
-        });
+      const [insertedEquationNode] = Editor.nodes(editor, {
+        at: newPath,
+        match: (n) => n.type === "equation",
+      });
 
-        if (insertedEquationNode) {
-          const { id } = insertedEquationNode[0] as CustomElement;
-          const sideBarOffset = isLocked ? -150 : 0;
-          console.log(id);
-          setSelectedElementID(id);
-          setShowEditBlockPopup(true);
-          setactiveEditEquationPath(JSON.stringify(newPath));
-          setCurrentLatex("");
-          setTimeout(() => {
-            const currentElement = document.querySelector(`[data-id="${id}"]`);
-            console.log(currentElement);
-            if (currentElement) {
-              const targetRect = currentElement.getBoundingClientRect();
-              setDropdownEditBlockLeft(targetRect.left + sideBarOffset);
-              setDropdownEditBlockTop(targetRect.bottom + 60);
-              console.log(targetRect.left);
-            }
-          }, 0);
-        }
+      if (insertedEquationNode) {
+        const { id } = insertedEquationNode[0] as CustomElement;
+        const sideBarOffset = isLocked ? -150 : 0;
+        console.log(id);
+        setSelectedElementID(id);
+        setShowEditBlockPopup(true);
+        setactiveEditEquationPath(JSON.stringify(newPath));
+        setCurrentLatex("");
+        setTimeout(() => {
+          const currentElement = document.querySelector(`[data-id="${id}"]`);
+          console.log(currentElement);
+          if (currentElement) {
+            const targetRect = currentElement.getBoundingClientRect();
+            setDropdownEditBlockLeft(targetRect.left + sideBarOffset);
+            setDropdownEditBlockTop(targetRect.bottom + 60);
+            console.log(targetRect.left);
+          }
+        }, 0);
       }
     },
-    [showDropdown, toggleEditBlockRef]
+    []
   );
 
   const findEquationElementById = (id: string) => {
@@ -1200,7 +1250,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             <MiniDropdown
               ref={addSomethingDropdownRef}
               isOpen={showDropdown}
-              onClick={() => {
+              addMCQBlock={() => {
+                handleAddMCQBlock(JSON.parse(activePath));
+                setShowDropdown(false);
+              }}
+              addEquationBlock={() => {
                 handleAddEditableEquationBlock("", JSON.parse(activePath));
                 setShowDropdown(false);
               }}

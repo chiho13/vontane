@@ -3,8 +3,7 @@ import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor, useFocused, useSelected } from "slate-react";
 import { Editor, Path, Transforms } from "slate";
 import styled from "styled-components";
-
-const ParagraphStyle = styled.div`
+const ListItemStyle = styled.div`
   p[data-placeholder]::after {
     content: attr(data-placeholder);
     pointer-events: none;
@@ -19,10 +18,29 @@ export function ListItem(props) {
   const { editor } = useContext(EditorContext);
   const { attributes, children, element } = props;
   const path = ReactEditor.findPath(editor, element);
+  const focused = useFocused();
+  const selected = useSelected();
+  const [isVisible, setIsVisible] = useState(false);
+
+  const isEmpty =
+    element.children.length === 1 && element.children[0].text === "";
+
+  const shouldShowPlaceholder = isEmpty && focused;
 
   return (
-    <div {...attributes} data-id={element.id} data-path={JSON.stringify(path)}>
-      <p className="text-[18px]">{children}</p>
-    </div>
+    <ListItemStyle>
+      <div
+        {...attributes}
+        data-id={element.id}
+        data-path={JSON.stringify(path)}
+      >
+        <p
+          className="text-[18px]"
+          data-placeholder={shouldShowPlaceholder ? "Enter question" : ""}
+        >
+          {children}
+        </p>
+      </div>
+    </ListItemStyle>
   );
 }

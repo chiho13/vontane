@@ -31,7 +31,6 @@ export const OptionMenu = forwardRef<HTMLDivElement, OptionMenuProps>(
     };
 
     const optionMenuRef = useRef(null);
-    const toggleRef = useRef(null);
 
     return (
       <DropdownProvider>
@@ -42,12 +41,9 @@ export const OptionMenu = forwardRef<HTMLDivElement, OptionMenuProps>(
           dropdownButtonClassName="p-0 border-transparent relative outline-none border-0 shadow-none bg-transparent w-full h-[24px] justify-start transition-colors duration-300 focus:ring-2 focus:ring-black focus:ring-opacity-30"
           dropdownMenuClassName="fixed top-0 w-[200px] border-0"
           icon={
-            <button
-              className="flex h-[24px] w-[24px] items-center  justify-center rounded-md bg-gray-200 p-1"
-              ref={toggleRef}
-            >
+            <div className="flex h-[24px] w-[24px] items-center  justify-center rounded-md bg-gray-200 p-1">
               <MoreHorizontal color={theme.colors.darkgray} />
-            </button>
+            </div>
           }
         >
           <div className="p-1 " role="none">

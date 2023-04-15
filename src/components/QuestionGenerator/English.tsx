@@ -37,7 +37,7 @@ const processNode = (node) => {
     return {
       ...node,
       children: node.children.map((child) => {
-        if (child.type === "paragraph") {
+        if (child.type === "list-item") {
           return {
             ...child,
             children: convertUnderscoresToBlank(child.children[0].text),
@@ -108,7 +108,7 @@ export const EnglishQuestionGenerator = () => {
         let jsonData;
 
         try {
-          jsonData = JSON.parse(getQuestionData).map(processNode);
+          jsonData = JSON.parse(getQuestionData);
           jsonData = addRandomIds(jsonData);
           insertNodesAtGivenPath(editor, jsonData, JSON.parse(activePath));
           setIsLoading(false);

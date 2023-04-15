@@ -154,7 +154,7 @@ export const GPTRouter = createTRPCRouter({
               Generate a JSON object for Questions based on the following input:
               ${englishQuestions}
           
-                Each fill-in-the-blank question is  a paragraph element containing the question text. add  "___" in question if necessary. Each item should have random 12 character generated ID. only one correctAnswer in list-item is true. The output should be an array of objects with the following structure:
+                Each fill-in-the-blank question is  a paragraph element containing the question text. add { "text": " ", "blank": true } in list-item question if necessary. E.g '[{ "text": "She" }, { "text": " ", "blank": true }, {{ "text": "to the concert yesterday" }}]' Each item should have random 12 character generated ID. only one correctAnswer in list-item is true. The output should be an array of objects with the following structure:
           
           [
           {
@@ -162,8 +162,8 @@ export const GPTRouter = createTRPCRouter({
               type: "mcq",
               children: [
                 { 
-                  "type": "paragraph",
-                  "children": [{ "text": "question" }]
+                  "type": "list-item",
+                  "children": [{ "text": "question" }, { "text": " ", "blank": true }]
                 },
                 { 
                   "type": "ol",

@@ -125,12 +125,10 @@ const Home: NextPage = () => {
   }
 
   function extractTextValues(data) {
-    let questionCounter = 0;
-
     function traverse(item) {
       let accumulator = [];
 
-      if (item.type === "paragraph" && item.children) {
+      if (item.type === "paragraph") {
         accumulator.push(
           ...item.children.map(
             (child) => child.text || (child.blank ? "BLANK" : "")
@@ -148,10 +146,21 @@ const Home: NextPage = () => {
           (child) => child.type === "list-item"
         );
 
-        if (question && item.questionNumber) {
-          accumulator.push(
-            `Question ${item.questionNumber}: ${question.children[0].text}`
-          );
+        if (question) {
+          const questionText = question.children
+            .map((child) => {
+              if (child.blank) {
+                return " BLANK ";
+              }
+              return child.text;
+            })
+            .join("");
+
+          if (item.questionNumber) {
+            accumulator.push(
+              `Question ${item.questionNumber}: ${questionText}`
+            );
+          }
         }
 
         const options = item.children.find((child) => child.type === "ol");

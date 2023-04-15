@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { ReactEditor } from "slate-react";
 import { Transforms } from "slate";
 import { EditorContext } from "@/contexts/EditorContext";
@@ -37,10 +37,6 @@ const withQuestionNumbering = (Component) => {
     const questionNumber =
       mcqElements.findIndex((mcq) => mcq.id === element.id) + 1;
 
-    // Set questionNumber property using Transforms.setNodes
-    const path = ReactEditor.findPath(editor, element);
-    Transforms.setNodes(editor, { questionNumber }, { at: path });
-
     return <Component {...props} questionNumber={questionNumber} />;
   };
 };
@@ -49,6 +45,10 @@ export const MCQElement: React.FC<MCQElementProps> = withQuestionNumbering(
   ({ element, attributes, children, questionNumber }) => {
     const { editor } = useContext(EditorContext);
     const path = ReactEditor.findPath(editor, element);
+
+    useEffect(() => {
+      Transforms.setNodes(editor, { questionNumber }, { at: path });
+    }, []);
     return (
       <div
         {...attributes}

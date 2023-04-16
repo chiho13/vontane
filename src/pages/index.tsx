@@ -13,6 +13,7 @@ import useStatusPolling from "@/hooks/useStatusPolling";
 import { useSession } from "@supabase/auth-helpers-react";
 import LoginPage from "./login";
 import Layout from "@/components/Layouts/AccountLayout";
+import { useRouter } from "next/router";
 
 import styled from "styled-components";
 
@@ -39,6 +40,8 @@ const Home: NextPage = () => {
   const [audioUrl, setAudioUrl] = useState<string>("");
 
   const { profile, workspaces } = useUserContext();
+  const router = useRouter();
+
   const [generatedAudioElement, setGeneratedAudioElement] =
     useStatusPolling(setAudioIsLoading);
   // const dummyAudioElement = new Audio(
@@ -50,6 +53,12 @@ const Home: NextPage = () => {
       setLoading(false);
     }
   }, [session]);
+
+  useEffect(() => {
+    if (workspaces && workspaces.length > 0) {
+      router.push(`/${workspaces[0].id}`);
+    }
+  }, [workspaces, router]);
 
   const {
     data: texttospeechdata,

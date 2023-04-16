@@ -250,44 +250,44 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         },
       ],
     },
-    // {
-    //   id: genNodeId(),
-    //   type: "column",
-    //   children: [
-    //     {
-    //       id: genNodeId(),
-    //       type: "column-cell",
-    //       children: [
-    //         {
-    //           id: genNodeId(),
-    //           type: "paragraph",
-    //           children: [{ text: "Paragraph 1 in column 1" }],
-    //         },
-    //         {
-    //           id: genNodeId(),
-    //           type: "paragraph",
-    //           children: [{ text: "Paragraph 2 in column 1" }],
-    //         },
-    //       ],
-    //     },
-    //     {
-    //       id: genNodeId(),
-    //       type: "column-cell",
-    //       children: [
-    //         {
-    //           id: genNodeId(),
-    //           type: "paragraph",
-    //           children: [{ text: "Paragraph 1 in column 2" }],
-    //         },
-    //         {
-    //           id: genNodeId(),
-    //           type: "paragraph",
-    //           children: [{ text: "Paragraph 2 in column 2" }],
-    //         },
-    //       ],
-    //     },
-    //   ],
-    // },
+    {
+      id: genNodeId(),
+      type: "column",
+      children: [
+        {
+          id: genNodeId(),
+          type: "column-cell",
+          children: [
+            {
+              id: genNodeId(),
+              type: "paragraph",
+              children: [{ text: "Paragraph 1 in column 1" }],
+            },
+            {
+              id: genNodeId(),
+              type: "paragraph",
+              children: [{ text: "Paragraph 2 in column 1" }],
+            },
+          ],
+        },
+        {
+          id: genNodeId(),
+          type: "column-cell",
+          children: [
+            {
+              id: genNodeId(),
+              type: "paragraph",
+              children: [{ text: "Paragraph 1 in column 2" }],
+            },
+            {
+              id: genNodeId(),
+              type: "paragraph",
+              children: [{ text: "Paragraph 2 in column 2" }],
+            },
+          ],
+        },
+      ],
+    },
     // {
     //   id: genNodeId(),
     //   type: "paragraph",
@@ -371,8 +371,30 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
       const target = event.currentTarget as HTMLDivElement;
       const targetRect = target.getBoundingClientRect();
+      const currentNode = Editor.node(editor, path);
 
-      setDropdownTop(targetRect.bottom + 50);
+      const windowHeight = window.innerHeight;
+      const minidropdownHeight = 400;
+      const dropdownTop = Math.min(
+        targetRect.bottom + 50,
+        windowHeight - minidropdownHeight
+      );
+
+      // const [parentNode, parentPath] = Editor.parent(editor, path);
+      const newPath = Path.next(path);
+      if (!Node.has(editor, newPath)) {
+        Transforms.insertNodes(
+          editor,
+          {
+            id: genNodeId(),
+            type: "paragraph",
+            children: [{ text: "" }],
+          },
+          { at: newPath }
+        );
+      }
+
+      setDropdownTop(dropdownTop);
       setDropdownLeft(targetRect.left + 60 + sideBarOffset);
       setShowDropdown((prevState) => !prevState);
     },
@@ -864,7 +886,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         ) : null;
 
       const optionMenu =
-        (isRoot && element.type === "mcq") || element.type === "equation" ? (
+        (isRoot && element.type === "mcq") ||
+        element.type === "equation" ||
+        (isInsideColumnCell && element.type !== "paragraph") ? (
           <div className="absolute  top-1 right-5">
             <OptionMenu
               onClick={() => {
@@ -1120,11 +1144,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     const lastNode = editor.children[editor.children.length - 1];
     const lastNodePath = ReactEditor.findPath(editor, lastNode);
 
-    // if (lastNode.type !== "paragraph") {
-    //   insertNewParagraphBelowLastNode(lastNodePath);
-    //   event.stopPropagation();
-    //   return;
-    // }
+    if (lastNode.type !== "paragraph") {
+      insertNewParagraphBelowLastNode(lastNodePath);
+      event.stopPropagation();
+      return;
+    }
 
     const lastNodeDOM = document.querySelector(
       `[data-path="${JSON.stringify(lastNodePath)}"]`

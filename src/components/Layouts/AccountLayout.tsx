@@ -6,6 +6,7 @@ import Head from "next/head";
 import { useRef, useState, useEffect, useMemo, createContext } from "react";
 import { AccountLayoutStyle } from "./style";
 import ChevronDown from "@/icons/ChevronDown";
+import { useRouter } from "next/router";
 
 import { mq, breakpoints } from "@/utils/breakpoints";
 import {
@@ -26,6 +27,7 @@ import { LogoutIcon } from "@/icons/Logout";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 import { Sidebar } from "../Sidebar";
+import { useUserContext } from "@/contexts/UserContext";
 
 const Header = styled.header`
   display: flex;
@@ -170,20 +172,22 @@ const AnimatedIcon = styled.div<{ show: boolean }>`
 interface LayoutProps {
   children: React.ReactNode;
   profile: any;
+  workspaces: any;
 }
 
 export const LayoutContext = createContext({
   isLocked: true,
 });
 
-const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
+const Layout: React.FC<LayoutProps> = ({ children, profile, workspaces }) => {
+  const router = useRouter();
+
   const [isLocked, setIsLocked] = useState<boolean>(
     JSON.parse(localStorage.getItem("isLocked") || "true")
   );
   const [isOpen, setIsOpen] = useState<boolean>(
     JSON.parse(localStorage.getItem("isOpen") || "true")
   );
-
   const desktopbreakpoint = window.screen.width > breakpoints.lg;
 
   const [showChevronRight, setShowChevronRight] = useState(false);
@@ -284,6 +288,12 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
     );
   };
 
+  const handleWorkspaceRoute = (workspaceId: string) => {
+    router.push(`/${workspaceId}`, undefined, {
+      shallow: true,
+    });
+  };
+
   return (
     <>
       <LayoutContext.Provider value={{ isLocked }}>
@@ -345,12 +355,21 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
                 </DropdownProvider>
               </div>
               <ul className="mt-10 mb-10">
-                <SidebarItem>
-                  <a href="#" tabIndex={0}>
-                    Item 1
-                  </a>
-                </SidebarItem>
-                <SidebarItem>
+                {workspaces &&
+                  workspaces.map((workspace) => {
+                    return (
+                      <SidebarItem
+                        key={workspace.id}
+                        onClick={() => handleWorkspaceRoute(workspace.id)}
+                      >
+                        <a href="#" tabIndex={0}>
+                          {workspace.name}
+                        </a>
+                      </SidebarItem>
+                    );
+                  })}
+
+                {/* <SidebarItem>
                   <a href="#" tabIndex={0}>
                     Item 2
                   </a>
@@ -359,7 +378,7 @@ const Layout: React.FC<LayoutProps> = ({ children, profile }) => {
                   <a href="#" tabIndex={0}>
                     Item 3
                   </a>
-                </SidebarItem>
+                </SidebarItem> */}
               </ul>
             </AccountLayoutStyle>
           </SidebarContent>

@@ -70,6 +70,7 @@ import { MiniDropdown } from "./MiniDropdown";
 import { OptionMenu } from "./OptionMenu";
 interface DocumentEditorProps {
   handleTextChange?: (value: any) => void;
+  initialSlateValue?: any;
 }
 
 type CustomElement = {
@@ -109,20 +110,12 @@ import { EnglishQuestionGenerator } from "../QuestionGenerator/English";
 
 export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   handleTextChange,
+  initialSlateValue,
 }) => {
   const theme = useTheme();
   const { isLocked } = useContext(LayoutContext);
   const editor = useEditor();
   const initialValue = [
-    // {
-    //   id: "dL9tJpTtH8Rt7D0sYSK2",
-    //   type: "paragraph",
-    //   children: [
-    //     { text: "This is a " },
-    //     { text: " ", blank: true },
-    //     { text: " component in Slate.js." },
-    //   ],
-    // },
     {
       id: "sdfsdffddf",
       type: "mcq",
@@ -299,13 +292,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     //   children: [{ text: "very nice" }],
     // },
   ];
-  const [slatevalue, setValue] = useState(initialValue);
-
-  useEffect(() => {
-    if (handleTextChange) {
-      handleTextChange(initialValue);
-    }
-  }, []);
+  const [slatevalue, setValue] = useState(initialSlateValue);
 
   const [activeId, setActiveId] = useState("");
 

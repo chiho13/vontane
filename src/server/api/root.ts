@@ -1,6 +1,7 @@
 import { createTRPCRouter } from "@/server/api/trpc";
 import { exampleRouter } from "@/server/api/routers/example";
 import { profileRouter } from "@/server/api/routers/profile";
+import { workspaceRouter } from "@/server/api/routers/workspace";
 import { texttospeechRouter } from "@/server/api/routers/texttospeech";
 import { GPTRouter } from "@/server/api/routers/gpt";
 
@@ -12,6 +13,7 @@ import { GPTRouter } from "@/server/api/routers/gpt";
 export const appRouter = createTRPCRouter({
   example: exampleRouter,
   profile: profileRouter,
+  workspace: workspaceRouter,
   texttospeech: texttospeechRouter,
   gpt: GPTRouter,
 });

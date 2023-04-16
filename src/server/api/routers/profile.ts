@@ -12,9 +12,17 @@ export const profileRouter = createTRPCRouter({
       const profile = await ctx.prisma.user.findUnique({
         where: { id: input.id },
       });
+
+      const workspaces = await ctx.prisma.workspace.findMany({
+        where: { author_id: input.id },
+        select: { id: true, name: true },
+      });
       if (!profile) {
         throw new Error("Profile not found");
       }
-      return profile;
+      if (!workspaces) {
+        throw new Error("workspace  not found");
+      }
+      return { profile, workspaces };
     }),
 });

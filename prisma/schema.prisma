@@ -11,28 +11,28 @@ model user {
   id          String        @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
   name        String?
   avatar      String?
-  createdAt   DateTime?     @default(now()) @db.Timestamptz(6)
+  created_at  DateTime?     @default(now()) @db.Timestamptz(6)
   workspaces  workspace[]
-  speechData  texttospeech[]
+  speech_data texttospeech[]
 }
 
 model workspace {
   id          String      @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
   name        String?
-  slateValue  String?
-  speechData  texttospeech[]
-  createdAt   DateTime    @default(dbgenerated("now()"))
-  authorId      String      @db.Uuid
-  author        user     @relation(fields: [authorId], references: [id])
+  slate_value String?
+  speech_data texttospeech[]
+  created_at  DateTime    @default(dbgenerated("now()"))
+  author_id   String      @db.Uuid
+  author      user        @relation(fields: [author_id], references: [id])
 }
 
 model texttospeech {
   id          String        @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
-  enteredText String
-  audioUrl    String
-  creatorId  String    @db.Uuid
-  creator   user     @relation(fields: [creatorId], references: [id])
-  workspace   workspace @relation(fields: [workspaceId], references: [id])
-  voiceId     String?
-  workspaceId String    @db.Uuid
+  entered_text String
+  audio_url   String
+  creator_id  String        @db.Uuid
+  creator     user          @relation(fields: [creator_id], references: [id])
+  workspace   workspace     @relation(fields: [workspace_id], references: [id])
+  voice_id    String?
+  workspace_id String       @db.Uuid
 }

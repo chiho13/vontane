@@ -20,6 +20,7 @@ import { DocumentEditor } from "@/components/DocumentEditor";
 import TablesExample from "@/components/TableExample";
 import { NewColumnProvider } from "@/contexts/NewColumnContext";
 import { useUserContext } from "@/contexts/UserContext";
+import { useRouter } from "next/router";
 
 const TextAreaInputStyle = styled.textarea`
   background: linear-gradient(120deg, #fdfbfb 0%, #f2f6f7 100%);
@@ -33,6 +34,7 @@ const Home: NextPage = () => {
 
   const [audioIsLoading, setAudioIsLoading] = React.useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+  const [fetchWorkspaceIsLoading, setFetchWorkspaceIsLoading] = useState(true);
 
   const [transcriptionId, setTranscriptionId] = useState<string>("");
   const [status, setStatus] = useState<string>("");
@@ -44,6 +46,42 @@ const Home: NextPage = () => {
   // const dummyAudioElement = new Audio(
   //   "https://peregrine-samples.s3.amazonaws.com/editor-samples/anny.wav"
   // );
+
+  const router = useRouter();
+  const { workspaceId } = router.query;
+
+  const { data: workspaceData, refetch: refetchWorkspaceData } =
+    api.workspace.getWorkspace.useQuery(
+      {
+        id: workspaceId || "",
+      },
+      {
+        enabled: !!workspaceId,
+      }
+    );
+
+  useEffect(() => {
+    if (workspaceId) {
+      refetchWorkspaceData();
+    }
+  }, [workspaceId, refetchWorkspaceData]);
+
+  const [initialSlateValue, setInitialSlateValue] = useState([
+    { type: "paragraph", children: [{ text: "" }] },
+  ]);
+
+  useEffect(() => {
+    if (workspaceData) {
+      const slateValue = workspaceData.workspace.slate_value;
+
+      if (slateValue) {
+        console.log(JSON.parse(slateValue));
+        setInitialSlateValue(JSON.parse(slateValue));
+      }
+
+      setFetchWorkspaceIsLoading(false);
+    }
+  }, [workspaceData]);
 
   useEffect(() => {
     if (session) {
@@ -116,7 +154,7 @@ const Home: NextPage = () => {
     return () => setLoading(false);
   }, []);
 
-  if (loading) {
+  if (loading || fetchWorkspaceIsLoading) {
     return <div></div>;
   }
 
@@ -258,9 +296,12 @@ const Home: NextPage = () => {
           <div className="linear-gradient mx-auto mb-20 w-full rounded-md border-2 border-gray-300 px-2 lg:h-[610px]  lg:w-[980px] lg:px-0 ">
             <div className="block  lg:w-full">
               {/* <TablesExample /> */}
-              {/* <NewColumnProvider>
-                <DocumentEditor handleTextChange={handleTextChange} />
-              </NewColumnProvider> */}
+              <NewColumnProvider>
+                <DocumentEditor
+                  handleTextChange={handleTextChange}
+                  initialSlateValue={initialSlateValue}
+                />
+              </NewColumnProvider>
             </div>
           </div>
         </div>

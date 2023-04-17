@@ -55,10 +55,10 @@ const Home: NextPage = () => {
   }, [session]);
 
   useEffect(() => {
-    if (workspaces && workspaces.length > 0) {
+    if (session && workspaces && workspaces.length > 0) {
       router.push(`/${workspaces[0].id}`);
     }
-  }, [workspaces, router]);
+  }, [workspaces, router, session]);
 
   const {
     data: texttospeechdata,

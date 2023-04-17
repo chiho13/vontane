@@ -9,12 +9,15 @@ import {
   OptionList,
   OptionListItem,
   ListItem,
+  TitleElement,
 } from "./index";
 
 export function ElementSelector(props) {
   const { element, attributes, children } = props;
 
   switch (element.type) {
+    case "title":
+      return <TitleElement {...props} />;
     case "paragraph":
       return <ParagraphElement {...props} />;
     case "list-item":

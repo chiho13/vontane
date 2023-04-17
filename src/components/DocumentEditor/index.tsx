@@ -825,7 +825,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       const [parentElement, parentPath] = Editor.parent(editor, elementPath);
       const isInsideColumnCell = parentElement.type === "column-cell";
       const addButton =
-        (isRoot && element.type !== "column") || isInsideColumnCell ? (
+        (isRoot && element.type !== "column" && element.type !== "title") ||
+        isInsideColumnCell ? (
           <div
             className="z-100 absolute   top-1/2 left-0 -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center"
             contentEditable={false}
@@ -863,7 +864,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         ) : null;
 
       const shouldWrapWithSortableElement =
-        (isRoot && element.type !== "column") || isInsideColumnCell;
+        (isRoot && element.type !== "column" && element.type !== "title") ||
+        isInsideColumnCell;
 
       const content = shouldWrapWithSortableElement ? (
         <SortableElement
@@ -1107,11 +1109,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     const lastNode = editor.children[editor.children.length - 1];
     const lastNodePath = ReactEditor.findPath(editor, lastNode);
 
-    // if (lastNode.type !== "paragraph") {
-    //   insertNewParagraphBelowLastNode(lastNodePath);
-    //   event.stopPropagation();
-    //   return;
-    // }
+    if (lastNode.type === "equation") {
+      insertNewParagraphBelowLastNode(lastNodePath);
+      event.stopPropagation();
+      return;
+    }
 
     const lastNodeDOM = document.querySelector(
       `[data-path="${JSON.stringify(lastNodePath)}"]`

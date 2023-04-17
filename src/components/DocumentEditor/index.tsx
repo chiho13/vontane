@@ -1197,14 +1197,14 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 value={slatevalue}
                 key={editorKey}
                 onChange={(newValue) => {
-                  setValue(newValue);
+                  // setValue(newValue);
                   if (handleTextChange) {
                     handleTextChange(newValue);
                   }
                 }}
               >
                 <Editable
-                  className="relative h-[550px] overflow-y-auto"
+                  className="relative h-[680px] -translate-y-[80px] overflow-y-auto"
                   renderElement={renderElement}
                   renderLeaf={Blank}
                   onKeyDown={handleKeyDown}

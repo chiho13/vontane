@@ -20,7 +20,7 @@ const TitleStyle = styled.div`
   }
 
   text-indent: 68px;
-  margin-bottom: 16px;
+  margin-bottom: 36px;
 `;
 
 export function TitleElement(props) {

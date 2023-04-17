@@ -60,6 +60,21 @@ const Home: NextPage = () => {
       }
     );
 
+  api.workspace.onWorkspaceUpdate.useSubscription(
+    { id: workspaceId },
+    {
+      next: (data) => {
+        if (data.workspace) {
+          const slateValue = data.workspace.slate_value;
+          if (slateValue) {
+            setInitialSlateValue(JSON.parse(slateValue));
+          }
+        }
+      },
+      error: (err) => console.error("Error in subscription:", err),
+    }
+  );
+
   useEffect(() => {
     if (workspaceId) {
       refetchWorkspaceData();
@@ -113,6 +128,18 @@ const Home: NextPage = () => {
   }
 
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
+  const updateWorkspaceMutation = api.workspace.updateWorkspace.useMutation();
+
+  const updateWorkspace = async (newSlateValue: any) => {
+    try {
+      await updateWorkspaceMutation.mutateAsync({
+        id: workspaceId,
+        slate_value: JSON.stringify(newSlateValue),
+      });
+    } catch (error) {
+      console.error("Error updating workspace:", error);
+    }
+  };
 
   useEffect(() => {
     console.log(transcriptionId);
@@ -269,33 +296,33 @@ const Home: NextPage = () => {
     const extractedText = extractTextValues(value);
     setEnteredText(extractedText);
     console.log(extractedText);
+    updateWorkspace(value);
   }
 
   return (
     <>
       <Layout profile={profile} workspaces={workspaces}>
         <div className="mx-auto mt-4 justify-center p-4 lg:mt-8">
-          <div className="mx-auto lg:w-[980px]  ">
+          <div className=" z-1000 absolute mx-auto lg:w-[980px]  ">
             <div className="relative flex items-center justify-end">
-              <label className="text-bold  mb-2 text-sm text-gray-500">
+              {/* <label className="text-bold  mb-2 text-sm text-gray-500">
                 Text to Speech
-              </label>
-            </div>
-            <div className="relative mx-auto mb-5 flex items-center lg:w-[980px]">
-              <div className="mr-4 flex-1 ">
-                <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
-              </div>
-
-              <GenerateButton
-                isDisabled={isDisabled}
-                audioIsLoading={audioIsLoading}
-                onClick={generateAudio}
-              />
+              </label> */}
             </div>
           </div>
-          <div className="linear-gradient mx-auto mb-20 w-full rounded-md border-2 border-gray-300 px-2 lg:h-[610px]  lg:w-[980px] lg:px-0 ">
+          <div className="linear-gradient z-0 mx-auto mb-20 mt-20 w-full rounded-md border-2 border-gray-300 px-2 lg:h-[640px]  lg:w-[980px] lg:px-0 ">
             <div className="block  lg:w-full">
-              {/* <TablesExample /> */}
+              {/* <div className="z-10 mx-auto mb-5 flex items-center lg:absolute lg:w-[980px]">
+                <div className="mr-4 flex-1 ">
+                  <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
+                </div>
+
+                <GenerateButton
+                  isDisabled={isDisabled}
+                  audioIsLoading={audioIsLoading}
+                  onClick={generateAudio}
+                />
+              </div> */}
               <NewColumnProvider>
                 <DocumentEditor
                   handleTextChange={handleTextChange}

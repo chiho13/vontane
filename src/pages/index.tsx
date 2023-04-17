@@ -246,30 +246,33 @@ const Home: NextPage = () => {
     <>
       <Layout profile={profile} workspaces={workspaces}>
         <div className="mx-auto mt-4 justify-center p-4 lg:mt-8">
-          <div className="mx-auto lg:w-[980px]  ">
+          <div className=" z-1000 absolute mx-auto lg:w-[980px]  ">
             <div className="relative flex items-center justify-end">
-              <label className="text-bold  mb-2 text-sm text-gray-500">
+              {/* <label className="text-bold  mb-2 text-sm text-gray-500">
                 Text to Speech
-              </label>
-            </div>
-            <div className="relative mx-auto mb-5 flex items-center lg:w-[980px]">
-              <div className="mr-4 flex-1 ">
-                <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
-              </div>
-
-              <GenerateButton
-                isDisabled={isDisabled}
-                audioIsLoading={audioIsLoading}
-                onClick={generateAudio}
-              />
+              </label> */}
             </div>
           </div>
-          <div className="linear-gradient mx-auto mb-20 w-full rounded-md border-2 border-gray-300 px-2 lg:h-[610px]  lg:w-[980px] lg:px-0 ">
+          <div className="linear-gradient z-0 mx-auto mb-20 mt-20 w-full rounded-md border-2 border-gray-300 px-2 lg:h-[640px]  lg:w-[980px] lg:px-0 ">
             <div className="block  lg:w-full">
               {/* <TablesExample /> */}
-              {/* <NewColumnProvider>
-                <DocumentEditor handleTextChange={handleTextChange} />
-              </NewColumnProvider> */}
+              <div className="z-10 mx-auto mb-5 flex items-center lg:absolute lg:w-[980px]">
+                <div className="mr-4 flex-1 ">
+                  <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
+                </div>
+
+                <GenerateButton
+                  isDisabled={isDisabled}
+                  audioIsLoading={audioIsLoading}
+                  onClick={generateAudio}
+                />
+              </div>
+              <NewColumnProvider>
+                <DocumentEditor
+                  handleTextChange={handleTextChange}
+                  initialSlateValue={initialSlateValue}
+                />
+              </NewColumnProvider>
             </div>
           </div>
         </div>

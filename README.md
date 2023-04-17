@@ -34,6 +34,7 @@ currently under development (April)
 - [x] drag element to create columns
 - [x] math questions generator
 - [x] english questions
-- [] music questions
+- [] musicXML
+- [] map block
 - [] connect database
 - [] stripe subscription

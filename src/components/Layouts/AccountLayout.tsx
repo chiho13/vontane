@@ -8,6 +8,7 @@ import { AccountLayoutStyle } from "./style";
 import ChevronDown from "@/icons/ChevronDown";
 import { useRouter } from "next/router";
 import { Plus } from "lucide-react";
+import { workspace } from "@/prisma/client";
 
 import { mq, breakpoints } from "@/utils/breakpoints";
 import {
@@ -126,7 +127,7 @@ transition: transform 300ms, ${(props) =>
 
 // left: ${(props) => (!props.isLocked && props.isOpen ? "250px" : "0")};
 
-const SidebarItem = styled.li`
+const SidebarItem = styled.li<{ activeWorkspace?: boolean }>`
   a {
     display: flex;
     padding: 8px 24px;
@@ -134,6 +135,10 @@ const SidebarItem = styled.li`
     border-radius: 4px;
     transition: background-color 300ms ease, transform 300ms;
     color: ${({ theme }) => theme.colors.darkergray};
+    background-color: ${({ theme, activeWorkspace }) =>
+      activeWorkspace ? theme.colors.gray : "transparent"};
+    font-weight: ${({ activeWorkspace }) =>
+      activeWorkspace ? "bold" : "normal"};
 
     &:hover {
       background-color: ${({ theme }) => theme.colors.gray};
@@ -145,7 +150,6 @@ const SidebarItem = styled.li`
 
     &:focus {
       outline: none;
-      box-shadow: 0 0 0 2px ${({ theme }) => theme.colors.darkgray};
     }
   }
 `;
@@ -175,14 +179,18 @@ const AnimatedIcon = styled.div<{ show: boolean }>`
 interface LayoutProps {
   children: React.ReactNode;
   profile: any;
-  workspaces: any;
+  currentWorkspaceId: string;
 }
 
 export const LayoutContext = createContext({
   isLocked: true,
 });
 
-const Layout: React.FC<LayoutProps> = ({ children, profile, workspaces }) => {
+const Layout: React.FC<LayoutProps> = ({
+  children,
+  profile,
+  currentWorkspaceId,
+}) => {
   const router = useRouter();
 
   const { updatedWorkspace } = useWorkspaceTitleUpdate();
@@ -205,17 +213,21 @@ const Layout: React.FC<LayoutProps> = ({ children, profile, workspaces }) => {
     await supabase.auth.signOut();
   }
 
-  const [activeWorkspace, setActiveWorkspace] = useState(() => {
-    if (workspaces && workspaces.length > 0) {
-      const parsedSlateValue = JSON.parse(workspaces[0].slate_value);
-      return parsedSlateValue[0].children[0].text;
+  const [workspaces, setWorkspaces] = useState<workspace[]>([]);
+  const { data: workspacesData, refetch: refetchWorkspaces } =
+    api.workspace.getWorkspaces.useQuery();
+
+  useEffect(() => {
+    if (workspacesData) {
+      const response = workspacesData.workspaces;
+
+      console.log(response);
+      setWorkspaces(response);
     }
-    return "";
-  });
+  }, [workspacesData]);
 
   const createWorkspaceMutation = api.workspace.createWorkspace.useMutation();
   const handleWorkspaceRoute = (workspaceId: string, workspaceName: string) => {
-    setActiveWorkspace(workspaceName);
     router.push(`/${workspaceId}`);
   };
 
@@ -223,6 +235,7 @@ const Layout: React.FC<LayoutProps> = ({ children, profile, workspaces }) => {
     try {
       const response = await createWorkspaceMutation.mutateAsync();
       if (response && response.workspace) {
+        refetchWorkspaces();
         handleWorkspaceRoute(response.workspace.id, "");
       }
     } catch (error) {
@@ -389,10 +402,12 @@ const Layout: React.FC<LayoutProps> = ({ children, profile, workspaces }) => {
                         ? updatedWorkspace.title
                         : workspaceName;
 
+                    console.log(currentWorkspaceId);
                     return (
                       <SidebarItem
                         key={workspace.id}
                         onClick={() => handleWorkspaceRoute(workspace.id, "")}
+                        activeWorkspace={currentWorkspaceId === workspace.id}
                       >
                         <a href="javascript:void(0)" tabIndex={0}>
                           {displayName || "Untitled"}

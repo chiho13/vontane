@@ -12,6 +12,18 @@ import { nanoid } from "nanoid";
 const ee = new EventEmitter();
 
 export const workspaceRouter = createTRPCRouter({
+  getWorkspaces: protectedProcedure.query(async ({ ctx }) => {
+    const workspaces = await ctx.prisma.workspace.findMany({
+      where: { author_id: ctx.user.id },
+      orderBy: { created_at: "asc" },
+    });
+
+    if (!workspaces) {
+      throw new Error("workspace  not found");
+    }
+
+    return { workspaces };
+  }),
   getWorkspace: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input, ctx }) => {

@@ -25,7 +25,7 @@ export function ListItem(props) {
   const isEmpty =
     element.children.length === 1 && element.children[0].text === "";
 
-  const shouldShowPlaceholder = isEmpty && focused;
+  const shouldShowPlaceholder = isEmpty;
 
   return (
     <ListItemStyle>

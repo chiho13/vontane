@@ -31,7 +31,8 @@ export const OptionListItem = ({ attributes, children, element }) => {
   const isEmpty =
     element.children.length === 1 && element.children[0].text === "";
 
-  const shouldShowPlaceholder = isEmpty && focused;
+  const shouldShowPlaceholder = isEmpty;
+
   useEffect(() => {
     // Update the local checked state whenever element.correctAnswer changes
     setChecked(element.correctAnswer || false);

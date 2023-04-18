@@ -21,6 +21,7 @@ import { DocumentEditor } from "@/components/DocumentEditor";
 import TablesExample from "@/components/TableExample";
 import { NewColumnProvider } from "@/contexts/NewColumnContext";
 import { useUserContext } from "@/contexts/UserContext";
+import { workspace } from "@prisma/client";
 
 const TextAreaInputStyle = styled.textarea`
   background: linear-gradient(120deg, #fdfbfb 0%, #f2f6f7 100%);
@@ -39,7 +40,7 @@ const Home: NextPage = () => {
   const [status, setStatus] = useState<string>("");
   const [audioUrl, setAudioUrl] = useState<string>("");
 
-  const { profile, workspaces } = useUserContext();
+  const { profile } = useUserContext();
   const router = useRouter();
 
   const [generatedAudioElement, setGeneratedAudioElement] =
@@ -48,6 +49,18 @@ const Home: NextPage = () => {
   //   "https://peregrine-samples.s3.amazonaws.com/editor-samples/anny.wav"
   // );
 
+  const [workspaces, setWorkspaces] = useState<workspace[]>([]);
+  const { data: workspacesData, refetch: refetchWorkspaces } =
+    api.workspace.getWorkspaces.useQuery();
+
+  useEffect(() => {
+    if (workspacesData) {
+      const response = workspacesData.workspaces;
+
+      console.log(response);
+      setWorkspaces(response);
+    }
+  }, [workspacesData]);
   useEffect(() => {
     if (session) {
       setLoading(false);

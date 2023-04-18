@@ -372,11 +372,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     [dropdownPositions, isLocked]
   );
 
-  const [prevNode, setPrevNode] = useState<Node | null>(null);
-
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
       const { selection } = editor;
+      const _currentNodePath = selection.anchor.path.slice(0, -1);
 
       if (!selection || !ReactEditor.isFocused(editor)) {
         return;
@@ -400,23 +399,61 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           );
 
           if (parentNode.type === "paragraph") {
-            Transforms.splitNodes(editor);
-
             const newPath = Path.next(parentPath);
-            const newId = genNodeId();
-            Transforms.setNodes(editor, { id: newId }, { at: newPath });
+            if (Editor.isEnd(editor, selection.anchor, _currentNodePath)) {
+              const newNode = {
+                id: genNodeId(),
+                type: "paragraph",
+                children: [{ text: "" }],
+              };
+              Transforms.insertNodes(editor, newNode, { at: newPath });
+              Transforms.select(editor, Editor.start(editor, newPath));
+            } else {
+              Transforms.splitNodes(editor);
+
+              const newId = genNodeId();
+              Transforms.setNodes(editor, { id: newId }, { at: newPath });
+            }
           }
 
           if (parentNode.type === "title") {
-            Transforms.splitNodes(editor);
-
             const newPath = Path.next(parentPath);
-            const newId = genNodeId();
-            Transforms.setNodes(
-              editor,
-              { id: newId, type: "paragraph" },
-              { at: newPath }
-            );
+            const nextNode = Editor.node(editor, newPath);
+
+            if (
+              (nextNode && nextNode[0].type === "mcq") ||
+              nextNode[0].type === "equation"
+            ) {
+              // If the next node is of type 'mcq', insert a new paragraph before it
+              const newId = genNodeId();
+              const newParagraph = {
+                id: newId,
+                type: "paragraph",
+                children: [{ text: "" }],
+              };
+
+              if (Editor.isEnd(editor, selection.anchor, _currentNodePath)) {
+                Transforms.insertNodes(editor, newParagraph, { at: newPath });
+                Transforms.select(editor, Editor.start(editor, newPath));
+              } else {
+                Transforms.splitNodes(editor);
+                const newId = genNodeId();
+                Transforms.setNodes(
+                  editor,
+                  { id: newId, type: "paragraph" },
+                  { at: newPath }
+                );
+              }
+            } else {
+              // Otherwise, split the nodes and create a new paragraph as before
+              Transforms.splitNodes(editor);
+              const newId = genNodeId();
+              Transforms.setNodes(
+                editor,
+                { id: newId, type: "paragraph" },
+                { at: newPath }
+              );
+            }
           }
 
           if (parentNode.type === "option-list-item") {
@@ -438,7 +475,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         const { selection } = editor;
 
         if (selection && Range.isCollapsed(selection)) {
-          const _currentNodePath = selection.anchor.path.slice(0, -1);
           const currentNode = Node.get(editor, currentNodePath);
           const currentParagraph = Editor.node(editor, currentNodePath);
           const parentNode = Editor.parent(editor, currentNodePath);

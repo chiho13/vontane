@@ -16,6 +16,7 @@ import {
   Range,
   Node,
   Element,
+  Location,
 } from "slate";
 
 import { createPortal } from "react-dom";
@@ -372,6 +373,26 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     [dropdownPositions, isLocked]
   );
 
+  function insertNewParagraphEnter(newPath: Path) {
+    const newNode = {
+      id: genNodeId(),
+      type: "paragraph",
+      children: [{ text: "" }],
+    };
+
+    Transforms.insertNodes(editor, newNode, { at: newPath });
+    Transforms.select(editor, Editor.start(editor, newPath));
+  }
+
+  function splitTitleNode(newPath: Path) {
+    Transforms.splitNodes(editor);
+    Transforms.setNodes(
+      editor,
+      { id: genNodeId(), type: "paragraph" },
+      { at: newPath }
+    );
+  }
+
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
       const { selection } = editor;
@@ -401,13 +422,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           if (parentNode.type === "paragraph") {
             const newPath = Path.next(parentPath);
             if (Editor.isEnd(editor, selection.anchor, _currentNodePath)) {
-              const newNode = {
-                id: genNodeId(),
-                type: "paragraph",
-                children: [{ text: "" }],
-              };
-              Transforms.insertNodes(editor, newNode, { at: newPath });
-              Transforms.select(editor, Editor.start(editor, newPath));
+              insertNewParagraphEnter(newPath);
             } else {
               Transforms.splitNodes(editor);
 
@@ -424,35 +439,19 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               (nextNode && nextNode[0].type === "mcq") ||
               nextNode[0].type === "equation"
             ) {
-              // If the next node is of type 'mcq', insert a new paragraph before it
-              const newId = genNodeId();
-              const newParagraph = {
-                id: newId,
-                type: "paragraph",
-                children: [{ text: "" }],
-              };
-
               if (Editor.isEnd(editor, selection.anchor, _currentNodePath)) {
-                Transforms.insertNodes(editor, newParagraph, { at: newPath });
-                Transforms.select(editor, Editor.start(editor, newPath));
+                insertNewParagraphEnter(newPath);
               } else {
-                Transforms.splitNodes(editor);
-                const newId = genNodeId();
-                Transforms.setNodes(
-                  editor,
-                  { id: newId, type: "paragraph" },
-                  { at: newPath }
-                );
+                splitTitleNode(newPath);
               }
             } else {
               // Otherwise, split the nodes and create a new paragraph as before
-              Transforms.splitNodes(editor);
-              const newId = genNodeId();
-              Transforms.setNodes(
-                editor,
-                { id: newId, type: "paragraph" },
-                { at: newPath }
-              );
+
+              if (Editor.isEnd(editor, selection.anchor, _currentNodePath)) {
+                insertNewParagraphEnter(newPath);
+              } else {
+                splitTitleNode(newPath);
+              }
             }
           }
 
@@ -840,27 +839,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     },
     []
   );
-
-  const findEquationElementById = (id: string) => {
-    return document.querySelector(`[data-id="${id}"]`);
-  };
-
-  // useEffect(() => {
-  //   if (selectedElementID && slatevalue) {
-  //     const equationElement = findEquationElementById(selectedElementID);
-
-  //     if (equationElement) {
-  //       // Get the position of the newly added equation element
-  //       const targetRect = equationElement.getBoundingClientRect();
-  //       console.log(equationElement);
-  //       // Open the edit block dropdown and set its position
-  //       // setShowEditBlockPopup(true);
-  //       setDropdownEditBlockTop(targetRect.bottom + 40);
-  //     }
-  //   }
-  // }, [slatevalue, selectedElementID]);
-
-  const [deleteMenuItem, setDeleteMenuItem] = useState(null);
 
   const renderElement = useCallback(
     (props) => {

@@ -124,8 +124,8 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <Layout profile={profile} workspaces={workspaces}>
-        <div className="mx-auto mt-4 justify-center p-4 lg:mt-8">
+      <Layout profile={profile}>
+        <div className="mx-auto mt-4 justify-center p-4">
           <div className=" z-1000 absolute mx-auto lg:w-[980px]  ">
             <div className="relative flex items-center justify-end"></div>
           </div>

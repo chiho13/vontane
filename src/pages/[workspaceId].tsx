@@ -391,7 +391,7 @@ const Workspace: NextPage = () => {
         currentWorkspaceId={workspaceId}
         // setWorkSpaceId={setWorkSpaceId}
       >
-        <div className="mx-auto mt-4 justify-center p-4 lg:mt-8">
+        <div className="mx-auto mt-4 justify-center p-4">
           <div className=" z-1000 absolute mx-auto lg:w-[980px]  ">
             <div className="relative flex items-center justify-end">
               {/* <label className="text-bold  mb-2 text-sm text-gray-500">

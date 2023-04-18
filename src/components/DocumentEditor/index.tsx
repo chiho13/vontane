@@ -384,7 +384,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     Transforms.select(editor, Editor.start(editor, newPath));
   }
 
-  function splitTitleNode(newPath: Path) {
+  function splitTitleNode(newPath: Path, _currentNodePath: any) {
     Transforms.splitNodes(editor);
     Transforms.setNodes(
       editor,
@@ -429,6 +429,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               const newId = genNodeId();
               Transforms.setNodes(editor, { id: newId }, { at: newPath });
             }
+
+            if (
+              Editor.isStart(editor, editor.selection.anchor, _currentNodePath)
+            ) {
+              insertNewParagraphEnter(newPath);
+            }
           }
 
           if (parentNode.type === "title") {
@@ -439,10 +445,19 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               (nextNode && nextNode[0].type === "mcq") ||
               nextNode[0].type === "equation"
             ) {
+              if (
+                Editor.isStart(
+                  editor,
+                  editor.selection.anchor,
+                  _currentNodePath
+                )
+              ) {
+                return;
+              }
               if (Editor.isEnd(editor, selection.anchor, _currentNodePath)) {
                 insertNewParagraphEnter(newPath);
               } else {
-                splitTitleNode(newPath);
+                splitTitleNode(newPath, _currentNodePath);
               }
             } else {
               // Otherwise, split the nodes and create a new paragraph as before
@@ -450,7 +465,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               if (Editor.isEnd(editor, selection.anchor, _currentNodePath)) {
                 insertNewParagraphEnter(newPath);
               } else {
-                splitTitleNode(newPath);
+                splitTitleNode(newPath, _currentNodePath);
               }
             }
           }

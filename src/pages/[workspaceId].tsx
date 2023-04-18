@@ -32,7 +32,6 @@ import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import { appRouter } from "@/server/api/root";
 import superjson from "superjson";
 import { createInnerTRPCContext } from "@/server/api/trpc";
-import { getServerSidePropsWithContext } from "@/server/helpers/ssgHelper";
 import {
   GetServerSideProps,
   NextApiRequest,
@@ -113,7 +112,7 @@ const Workspace: NextPage = () => {
   const [status, setStatus] = useState<string>("");
   const [audioUrl, setAudioUrl] = useState<string>("");
 
-  const { profile, workspaces } = useUserContext();
+  const { profile } = useUserContext();
   const { setUpdatedWorkspace } = useWorkspaceTitleUpdate();
   const [generatedAudioElement, setGeneratedAudioElement] =
     useStatusPolling(setAudioIsLoading);
@@ -154,10 +153,10 @@ const Workspace: NextPage = () => {
     }
   );
 
-  useEffect(() => {
-    refetchWorkspaceData();
-    console.log(workspaceId);
-  }, [router.isReady]);
+  //   useEffect(() => {
+  //     refetchWorkspaceData();
+  //     console.log(workspaceId);
+  //   }, [router.isReady]);
 
   const [initialSlateValue, setInitialSlateValue] = useState(null);
 
@@ -264,9 +263,9 @@ const Workspace: NextPage = () => {
     return <div></div>;
   }
 
-  //   if (fetchWorkspaceIsLoading) {
-  //     return <div></div>;
-  //   }
+  if (fetchWorkspaceIsLoading) {
+    return <div></div>;
+  }
 
   if (!session) {
     return <LoginPage />;
@@ -389,7 +388,7 @@ const Workspace: NextPage = () => {
     <>
       <Layout
         profile={profile}
-        workspaces={workspaces}
+        currentWorkspaceId={workspaceId}
         // setWorkSpaceId={setWorkSpaceId}
       >
         <div className="mx-auto mt-4 justify-center p-4 lg:mt-8">
@@ -416,6 +415,7 @@ const Workspace: NextPage = () => {
               <NewColumnProvider>
                 {initialSlateValue && workspaceId && (
                   <DocumentEditor
+                    key={workspaceId}
                     workspaceId={workspaceId}
                     handleTextChange={handleTextChange}
                     initialSlateValue={initialSlateValue}

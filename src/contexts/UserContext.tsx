@@ -5,12 +5,10 @@ import { api, RouterOutputs } from "@/utils/api";
 
 export type UserContextType = {
   profile: null | RouterOutputs["profile"]["getProfile"];
-  workspaces: null | RouterOutputs["profile"]["getProfile"]["workspaces"];
 };
 
 export const UserContext = createContext<UserContextType>({
   profile: null,
-  workspaces: null,
 });
 
 export function UserContextProvider({
@@ -21,12 +19,10 @@ export function UserContextProvider({
   const session = useSession();
   const userId = session?.user?.id;
 
-  const { profile, workspaces } = useUserProfile(userId);
+  const { profile } = useUserProfile(userId);
 
   return (
-    <UserContext.Provider value={{ profile, workspaces }}>
-      {children}
-    </UserContext.Provider>
+    <UserContext.Provider value={{ profile }}>{children}</UserContext.Provider>
   );
 }
 
@@ -43,7 +39,6 @@ function useUserProfile(userId: string | undefined) {
   );
   const { data } = queryResult;
   const profile = data?.profile;
-  const workspaces = data?.workspaces;
 
-  return { profile, workspaces };
+  return { profile };
 }

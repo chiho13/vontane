@@ -398,18 +398,25 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             editor,
             selection.anchor.path
           );
+
           if (parentNode.type === "paragraph") {
+            Transforms.splitNodes(editor);
+
             const newPath = Path.next(parentPath);
-            Transforms.insertNodes(
+            const newId = genNodeId();
+            Transforms.setNodes(editor, { id: newId }, { at: newPath });
+          }
+
+          if (parentNode.type === "title") {
+            Transforms.splitNodes(editor);
+
+            const newPath = Path.next(parentPath);
+            const newId = genNodeId();
+            Transforms.setNodes(
               editor,
-              {
-                id: genNodeId(),
-                type: "paragraph",
-                children: [{ text: "" }],
-              },
+              { id: newId, type: "paragraph" },
               { at: newPath }
             );
-            Transforms.select(editor, Editor.start(editor, newPath));
           }
 
           if (parentNode.type === "option-list-item") {

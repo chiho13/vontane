@@ -5,7 +5,7 @@ import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import { UserContextProvider } from "@/contexts/UserContext";
 import { useState } from "react";
-
+import { WorkspaceTitleUpdateProvider } from "@/contexts/WorkspaceTitleContext";
 import "@/styles/globals.css";
 import { ThemeProvider } from "styled-components";
 interface Theme {
@@ -39,7 +39,7 @@ const theme: Theme = {
     white: "#ffffff",
     gray: "#eeeeee",
     darkgray: "#999999",
-    darkergray: "#444444",
+    darkergray: "#666666",
   },
   background: {
     white: "linear-gradient(120deg, #fdfbfb 0%, #f2f6f7 100%)",
@@ -56,7 +56,9 @@ const MyApp: AppType = ({ Component, pageProps }) => {
     >
       <UserContextProvider>
         <ThemeProvider theme={theme}>
-          <Component {...pageProps} />
+          <WorkspaceTitleUpdateProvider>
+            <Component {...pageProps} />
+          </WorkspaceTitleUpdateProvider>
         </ThemeProvider>
       </UserContextProvider>
     </SessionContextProvider>

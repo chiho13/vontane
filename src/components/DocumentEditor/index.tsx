@@ -25,6 +25,7 @@ import { BlockMath } from "react-katex";
 import "katex/dist/katex.min.css";
 import "katex/dist/contrib/mhchem.min.js";
 import { AnimatePresence, motion } from "framer-motion";
+import { nanoid } from "nanoid";
 
 import Image from "next/image";
 
@@ -35,6 +36,7 @@ import { LayoutContext } from "../Layouts/AccountLayout";
 import { y_animation_props } from "../Dropdown";
 import { findElementInSlateValue } from "./helpers/findElementInSlate";
 import { MathQuestionGenerator } from "../QuestionGenerator/Math";
+import dynamic from "next/dynamic";
 
 import {
   DndContext,
@@ -69,6 +71,7 @@ import { Blank } from "./LeafElements/Blank";
 import { MiniDropdown } from "./MiniDropdown";
 import { OptionMenu } from "./OptionMenu";
 interface DocumentEditorProps {
+  workspaceId: string;
   handleTextChange?: (value: any) => void;
   initialSlateValue?: any;
 }
@@ -109,6 +112,7 @@ import { EditBlockPopup } from "../EditEquationBlock";
 import { EnglishQuestionGenerator } from "../QuestionGenerator/English";
 
 export const DocumentEditor: React.FC<DocumentEditorProps> = ({
+  workspaceId,
   handleTextChange,
   initialSlateValue,
 }) => {
@@ -294,6 +298,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   ];
   const [slatevalue, setValue] = useState(initialSlateValue);
 
+  useEffect(() => {
+    setValue(initialSlateValue);
+  }, [initialSlateValue]);
+
   const [activeId, setActiveId] = useState("");
 
   const activeIndex = activeId
@@ -329,8 +337,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const [dropdownEditBlockLeft, setDropdownEditBlockLeft] = useState<
     number | null
   >(0);
-
-  const [editorKey, setEditorKey] = useState(Date.now());
 
   const { creatingNewColumn, setCreatingNewColumn } = useNewColumn();
 
@@ -1195,7 +1201,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               <Slate
                 editor={editor}
                 value={slatevalue}
-                key={editorKey}
+                key={JSON.stringify(slatevalue)}
                 onChange={(newValue) => {
                   // setValue(newValue);
                   if (handleTextChange) {

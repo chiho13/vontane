@@ -7,6 +7,7 @@ import { useRef, useState, useEffect, useMemo, createContext } from "react";
 import { AccountLayoutStyle } from "./style";
 import ChevronDown from "@/icons/ChevronDown";
 import { useRouter } from "next/router";
+import { Plus } from "lucide-react";
 
 import { mq, breakpoints } from "@/utils/breakpoints";
 import {
@@ -28,6 +29,8 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 import { Sidebar } from "../Sidebar";
 import { useUserContext } from "@/contexts/UserContext";
+import { useWorkspaceTitleUpdate } from "@/contexts/WorkspaceTitleContext";
+import { api } from "@/utils/api";
 
 const Header = styled.header`
   display: flex;
@@ -125,7 +128,7 @@ transition: transform 300ms, ${(props) =>
 
 const SidebarItem = styled.li`
   a {
-    display: block;
+    display: flex;
     padding: 8px 24px;
     margin: 5px;
     border-radius: 4px;
@@ -182,6 +185,7 @@ export const LayoutContext = createContext({
 const Layout: React.FC<LayoutProps> = ({ children, profile, workspaces }) => {
   const router = useRouter();
 
+  const { updatedWorkspace } = useWorkspaceTitleUpdate();
   const [isLocked, setIsLocked] = useState<boolean>(
     JSON.parse(localStorage.getItem("isLocked") || "true")
   );
@@ -200,6 +204,31 @@ const Layout: React.FC<LayoutProps> = ({ children, profile, workspaces }) => {
   async function logout() {
     await supabase.auth.signOut();
   }
+
+  const [activeWorkspace, setActiveWorkspace] = useState(() => {
+    if (workspaces && workspaces.length > 0) {
+      const parsedSlateValue = JSON.parse(workspaces[0].slate_value);
+      return parsedSlateValue[0].children[0].text;
+    }
+    return "";
+  });
+
+  const createWorkspaceMutation = api.workspace.createWorkspace.useMutation();
+  const handleWorkspaceRoute = (workspaceId: string, workspaceName: string) => {
+    setActiveWorkspace(workspaceName);
+    router.push(`/${workspaceId}`);
+  };
+
+  const createWorkspace = async () => {
+    try {
+      const response = await createWorkspaceMutation.mutateAsync();
+      if (response && response.workspace) {
+        handleWorkspaceRoute(response.workspace.id, "");
+      }
+    } catch (error) {
+      console.error("Error creating workspace:", error);
+    }
+  };
 
   useEffect(() => {
     localStorage.setItem("isLocked", JSON.stringify(isLocked));
@@ -288,12 +317,6 @@ const Layout: React.FC<LayoutProps> = ({ children, profile, workspaces }) => {
     );
   };
 
-  const handleWorkspaceRoute = (workspaceId: string) => {
-    router.push(`/${workspaceId}`, undefined, {
-      shallow: true,
-    });
-  };
-
   return (
     <>
       <LayoutContext.Provider value={{ isLocked }}>
@@ -357,28 +380,32 @@ const Layout: React.FC<LayoutProps> = ({ children, profile, workspaces }) => {
               <ul className="mt-10 mb-10">
                 {workspaces &&
                   workspaces.map((workspace) => {
+                    const parsedSlateValue = JSON.parse(workspace.slate_value);
+
+                    const workspaceName = parsedSlateValue[0].children[0].text;
+                    console.log(workspaceName);
+                    const displayName =
+                      updatedWorkspace && updatedWorkspace.id === workspace.id
+                        ? updatedWorkspace.title
+                        : workspaceName;
+
                     return (
                       <SidebarItem
                         key={workspace.id}
-                        onClick={() => handleWorkspaceRoute(workspace.id)}
+                        onClick={() => handleWorkspaceRoute(workspace.id, "")}
                       >
-                        <a href="#" tabIndex={0}>
-                          {workspace.name}
+                        <a href="javascript:void(0)" tabIndex={0}>
+                          {displayName || "Untitled"}
                         </a>
                       </SidebarItem>
                     );
                   })}
 
-                {/* <SidebarItem>
-                  <a href="#" tabIndex={0}>
-                    Item 2
+                <SidebarItem onClick={createWorkspace}>
+                  <a href="javascript:void(0)" tabIndex={0}>
+                    <Plus /> <span className="ml-2">Create Workspace</span>
                   </a>
                 </SidebarItem>
-                <SidebarItem>
-                  <a href="#" tabIndex={0}>
-                    Item 3
-                  </a>
-                </SidebarItem> */}
               </ul>
             </AccountLayoutStyle>
           </SidebarContent>

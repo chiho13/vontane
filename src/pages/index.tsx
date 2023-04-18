@@ -72,17 +72,6 @@ const Home: NextPage = () => {
     }
   );
 
-  async function generateAudio(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    setAudioIsLoading(true);
-    setGeneratedAudioElement(null);
-    setStatus("");
-    setTranscriptionId("");
-
-    texttospeechrefetch();
-  }
-
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
 
   useEffect(() => {
@@ -109,19 +98,6 @@ const Home: NextPage = () => {
   ]);
 
   useEffect(() => {
-    if (
-      selectedVoiceId &&
-      enteredText &&
-      !(Array.isArray(enteredText) && enteredText.length === 0)
-    ) {
-      console.log(enteredText);
-      setIsDisabled(false);
-    } else {
-      setIsDisabled(true);
-    }
-  }, [selectedVoiceId, enteredText]);
-
-  useEffect(() => {
     return () => setLoading(false);
   }, []);
 
@@ -133,160 +109,16 @@ const Home: NextPage = () => {
     return <LoginPage />;
   }
 
-  function extractTextValues(data) {
-    function traverse(item) {
-      let accumulator = [];
-
-      if (item.type === "paragraph") {
-        accumulator.push(
-          ...item.children.map(
-            (child) => child.text || (child.blank ? "BLANK" : "")
-          )
-        );
-      }
-
-      if (item.type === "equation" && item.altText) {
-        accumulator.push(item.altText + ".");
-      }
-
-      if (item.type === "mcq") {
-        // questionCounter++;
-        const question = item.children.find(
-          (child) => child.type === "list-item"
-        );
-
-        if (question) {
-          const questionText = question.children
-            .map((child) => {
-              if (child.blank) {
-                return " BLANK ";
-              }
-              return child.text;
-            })
-            .join("");
-
-          if (item.questionNumber) {
-            accumulator.push(
-              `Question ${item.questionNumber}: ${questionText}`
-            );
-          }
-        }
-
-        const options = item.children.find((child) => child.type === "ol");
-        if (options) {
-          const pronunciationAlphabet = [
-            "Aye",
-            "Bee",
-            "See",
-            "Dee",
-            "Ee",
-            "Eff",
-            "Gee",
-            "Aitch",
-            "Eye",
-            "Jay",
-            "Kay",
-            "El",
-            "Em",
-            "En",
-            "Oh",
-            "Pee",
-            "Cue",
-            "Ar",
-            "Ess",
-            "Tee",
-            "You",
-            "Vee",
-            "Double-You",
-            "Ex",
-            "Why",
-            "Zee",
-          ];
-
-          options.children.forEach((option, index) => {
-            const optionLetter = pronunciationAlphabet[index];
-            const isFirstOption = index === 0;
-            const isLastOption = index === options.children.length - 1;
-
-            if (isFirstOption) {
-              accumulator.push(
-                `Is it ${optionLetter}. ${option.children[0].text}.`
-              );
-            } else if (isLastOption) {
-              accumulator.push(
-                `or ${optionLetter}. ${option.children[0].text}.`
-              );
-            } else {
-              accumulator.push(`${optionLetter}. ${option.children[0].text}.`);
-            }
-          });
-        }
-      }
-
-      if (item.children) {
-        item.children.forEach((child) => {
-          accumulator.push(...traverse(child));
-        });
-      }
-
-      return accumulator;
-    }
-
-    return traverse({ children: data });
-  }
-
-  function handleTextChange(value: any[]) {
-    console.log(value);
-    const extractedText = extractTextValues(value);
-    setEnteredText(extractedText);
-    console.log(extractedText);
-  }
-
   return (
     <>
       <Layout profile={profile} workspaces={workspaces}>
         <div className="mx-auto mt-4 justify-center p-4 lg:mt-8">
           <div className=" z-1000 absolute mx-auto lg:w-[980px]  ">
-            <div className="relative flex items-center justify-end">
-              {/* <label className="text-bold  mb-2 text-sm text-gray-500">
-                Text to Speech
-              </label> */}
-            </div>
+            <div className="relative flex items-center justify-end"></div>
           </div>
-          <div className="linear-gradient z-0 mx-auto mb-20 mt-20 w-full rounded-md border-2 border-gray-300 px-2 lg:h-[640px]  lg:w-[980px] lg:px-0 ">
-            <div className="block  lg:w-full">
-              {/* <TablesExample /> */}
-              <div className="z-10 mx-auto mb-5 flex items-center lg:absolute lg:w-[980px]">
-                <div className="mr-4 flex-1 ">
-                  <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
-                </div>
-
-                <GenerateButton
-                  isDisabled={isDisabled}
-                  audioIsLoading={audioIsLoading}
-                  onClick={generateAudio}
-                />
-              </div>
-              <NewColumnProvider>
-                <DocumentEditor
-                  handleTextChange={handleTextChange}
-                  initialSlateValue={initialSlateValue}
-                />
-              </NewColumnProvider>
-            </div>
-          </div>
+          <div className="linear-gradient z-0 mx-auto mb-20 mt-20 w-full rounded-md border-2 border-gray-300 px-2 lg:h-[640px]  lg:w-[980px] lg:px-0 "></div>
         </div>
       </Layout>
-      {!audioIsLoading && generatedAudioElement && (
-        <div className="fixed bottom-0 left-0 bottom-4 right-0 mx-auto flex w-full justify-center ">
-          <div className="w-[94%] flex-shrink-0 lg:w-[500px] ">
-            <AudioPlayer
-              generatedAudio={generatedAudioElement}
-              transcriptionId={transcriptionId}
-            />
-          </div>
-        </div>
-      )}
     </>
   );
 };

@@ -1,4 +1,9 @@
-import { type NextPage } from "next";
+import {
+  GetStaticPropsContext,
+  type NextPage,
+  InferGetStaticPropsType,
+  GetStaticPaths,
+} from "next";
 import Head from "next/head";
 import Link from "next/link";
 
@@ -15,18 +20,86 @@ import LoginPage from "./login";
 import Layout from "@/components/Layouts/AccountLayout";
 
 import styled from "styled-components";
-
+import { useWorkspaceTitleUpdate } from "@/contexts/WorkspaceTitleContext";
 import { DocumentEditor } from "@/components/DocumentEditor";
 import TablesExample from "@/components/TableExample";
 import { NewColumnProvider } from "@/contexts/NewColumnContext";
 import { useUserContext } from "@/contexts/UserContext";
 import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
+import { prisma } from "@/server/db";
+import { createProxySSGHelpers } from "@trpc/react-query/ssg";
+import { appRouter } from "@/server/api/root";
+import superjson from "superjson";
+import { createInnerTRPCContext } from "@/server/api/trpc";
+import { getServerSidePropsWithContext } from "@/server/helpers/ssgHelper";
+import {
+  GetServerSideProps,
+  NextApiRequest,
+  NextApiResponse,
+} from "next/types";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { parse } from "cookie";
+import { workspace } from "@prisma/client";
+const DynamicDocumentEditor = dynamic(
+  () => import("@/components/DocumentEditor")
+);
 
 const TextAreaInputStyle = styled.textarea`
   background: linear-gradient(120deg, #fdfbfb 0%, #f2f6f7 100%);
 `;
 
-const Home: NextPage = () => {
+type Props = {
+  workspaceId: string;
+};
+
+// export const getServerSideProps = getServerSidePropsWithContext(
+//   async (
+//     context: GetStaticPropsContext & {
+//       req: NextApiRequest;
+//       res: NextApiResponse;
+//     }
+//   ) => {
+//     const helpers = createProxySSGHelpers({
+//       router: appRouter,
+//       ctx: createInnerTRPCContext({}, context.req, context.res),
+//       transformer: superjson, // optional - adds superjson serialization
+//     });
+
+//     const workspaceId = context.params?.workspaceId as string;
+//     await helpers.workspace.getWorkspace.prefetch({ id: workspaceId });
+
+//     return {
+//       props: {
+//         trpcState: helpers.dehydrate(),
+//         workspaceId,
+//       },
+//       revalidate: 1,
+//     };
+//   }
+// );
+
+// export const getStaticPaths: GetStaticPaths = async () => {
+//   // Fetch all workspace IDs you want to pre-render
+//   const workspaces = await prisma.workspace.findMany({
+//     select: {
+//       id: true,
+//     },
+//   });
+
+//   // Generate the paths array with the fetched workspace IDs
+//   const paths = workspaces.map((workspace) => ({
+//     params: { workspaceId: workspace.id },
+//   }));
+
+//   // Return the paths object with fallback set to 'blocking'
+//   return {
+//     paths,
+//     fallback: "blocking",
+//   };
+// };
+
+const Workspace: NextPage = () => {
   const session = useSession();
   const [selectedVoiceId, setSelectedVoiceId] = React.useState<string>("");
 
@@ -41,6 +114,7 @@ const Home: NextPage = () => {
   const [audioUrl, setAudioUrl] = useState<string>("");
 
   const { profile, workspaces } = useUserContext();
+  const { setUpdatedWorkspace } = useWorkspaceTitleUpdate();
   const [generatedAudioElement, setGeneratedAudioElement] =
     useStatusPolling(setAudioIsLoading);
   // const dummyAudioElement = new Audio(
@@ -48,17 +122,22 @@ const Home: NextPage = () => {
   // );
 
   const router = useRouter();
-  const { workspaceId } = router.query;
+  const workspaceId: string = router.query.workspaceId as string;
 
-  const { data: workspaceData, refetch: refetchWorkspaceData } =
-    api.workspace.getWorkspace.useQuery(
-      {
-        id: workspaceId || "",
-      },
-      {
-        enabled: !!workspaceId,
-      }
-    );
+  //   const [workspaceId, setWorkSpaceId] = useState(router.query.workspaceId);
+  console.log(workspaceId);
+  const {
+    data: workspaceData,
+    refetch: refetchWorkspaceData,
+    isLoading,
+  } = api.workspace.getWorkspace.useQuery(
+    {
+      id: workspaceId || "",
+    },
+    {
+      enabled: !!workspaceId,
+    }
+  );
 
   api.workspace.onWorkspaceUpdate.useSubscription(
     { id: workspaceId },
@@ -76,14 +155,11 @@ const Home: NextPage = () => {
   );
 
   useEffect(() => {
-    if (workspaceId) {
-      refetchWorkspaceData();
-    }
-  }, [workspaceId, refetchWorkspaceData]);
+    refetchWorkspaceData();
+    console.log(workspaceId);
+  }, [router.isReady]);
 
-  const [initialSlateValue, setInitialSlateValue] = useState([
-    { type: "paragraph", children: [{ text: "" }] },
-  ]);
+  const [initialSlateValue, setInitialSlateValue] = useState(null);
 
   useEffect(() => {
     if (workspaceData) {
@@ -92,10 +168,13 @@ const Home: NextPage = () => {
       if (slateValue) {
         console.log(JSON.parse(slateValue));
         setInitialSlateValue(JSON.parse(slateValue));
+        setFetchWorkspaceIsLoading(false);
       }
-
-      setFetchWorkspaceIsLoading(false);
     }
+
+    return () => {
+      setInitialSlateValue(null);
+    };
   }, [workspaceData]);
 
   useEffect(() => {
@@ -181,9 +260,13 @@ const Home: NextPage = () => {
     return () => setLoading(false);
   }, []);
 
-  if (loading || fetchWorkspaceIsLoading) {
+  if (loading) {
     return <div></div>;
   }
+
+  //   if (fetchWorkspaceIsLoading) {
+  //     return <div></div>;
+  //   }
 
   if (!session) {
     return <LoginPage />;
@@ -297,11 +380,18 @@ const Home: NextPage = () => {
     setEnteredText(extractedText);
     console.log(extractedText);
     updateWorkspace(value);
+
+    console.log(workspaceId);
+    setUpdatedWorkspace({ title: value[0].children[0].text, id: workspaceId });
   }
 
   return (
     <>
-      <Layout profile={profile} workspaces={workspaces}>
+      <Layout
+        profile={profile}
+        workspaces={workspaces}
+        // setWorkSpaceId={setWorkSpaceId}
+      >
         <div className="mx-auto mt-4 justify-center p-4 lg:mt-8">
           <div className=" z-1000 absolute mx-auto lg:w-[980px]  ">
             <div className="relative flex items-center justify-end">
@@ -324,10 +414,13 @@ const Home: NextPage = () => {
                 />
               </div> */}
               <NewColumnProvider>
-                <DocumentEditor
-                  handleTextChange={handleTextChange}
-                  initialSlateValue={initialSlateValue}
-                />
+                {initialSlateValue && workspaceId && (
+                  <DocumentEditor
+                    workspaceId={workspaceId}
+                    handleTextChange={handleTextChange}
+                    initialSlateValue={initialSlateValue}
+                  />
+                )}
               </NewColumnProvider>
             </div>
           </div>
@@ -347,4 +440,4 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default Workspace;

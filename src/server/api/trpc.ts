@@ -38,7 +38,7 @@ type CreateContextOptions = Record<string, never>;
  *
  * @see https://create.t3.gg/en/usage/trpc#-servertrpccontextts
  */
-const createInnerTRPCContext = (
+export const createInnerTRPCContext = (
   _opts: CreateContextOptions,
   req: NextApiRequest,
   res: NextApiResponse

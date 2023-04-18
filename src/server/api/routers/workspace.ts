@@ -7,6 +7,7 @@ import {
 import { observable } from "@trpc/server/observable";
 import { EventEmitter } from "events";
 import { Prisma, workspace } from "@prisma/client";
+import { nanoid } from "nanoid";
 
 const ee = new EventEmitter();
 
@@ -77,4 +78,35 @@ export const workspaceRouter = createTRPCRouter({
         };
       });
     }),
+  createWorkspace: protectedProcedure.mutation(async ({ ctx }) => {
+    const defaultSlateValue = JSON.stringify([
+      {
+        id: nanoid(),
+        type: "title",
+        children: [
+          {
+            text: "",
+          },
+        ],
+      },
+      {
+        id: nanoid(),
+        type: "paragraph",
+        children: [
+          {
+            text: "",
+          },
+        ],
+      },
+    ]);
+
+    const workspace = await ctx.prisma.workspace.create({
+      data: {
+        author_id: ctx.user.id,
+        slate_value: defaultSlateValue,
+      },
+    });
+
+    return { workspace };
+  }),
 });

@@ -26,77 +26,11 @@ import TablesExample from "@/components/TableExample";
 import { NewColumnProvider } from "@/contexts/NewColumnContext";
 import { useUserContext } from "@/contexts/UserContext";
 import { useRouter } from "next/router";
-import dynamic from "next/dynamic";
-import { prisma } from "@/server/db";
-import { createProxySSGHelpers } from "@trpc/react-query/ssg";
-import { appRouter } from "@/server/api/root";
-import superjson from "superjson";
-import { createInnerTRPCContext } from "@/server/api/trpc";
-import {
-  GetServerSideProps,
-  NextApiRequest,
-  NextApiResponse,
-} from "next/types";
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import { parse } from "cookie";
-import { workspace } from "@prisma/client";
-const DynamicDocumentEditor = dynamic(
-  () => import("@/components/DocumentEditor")
-);
-
-const TextAreaInputStyle = styled.textarea`
-  background: linear-gradient(120deg, #fdfbfb 0%, #f2f6f7 100%);
-`;
+import { TextSpeech } from "@/components/TextSpeech";
 
 type Props = {
   workspaceId: string;
 };
-
-// export const getServerSideProps = getServerSidePropsWithContext(
-//   async (
-//     context: GetStaticPropsContext & {
-//       req: NextApiRequest;
-//       res: NextApiResponse;
-//     }
-//   ) => {
-//     const helpers = createProxySSGHelpers({
-//       router: appRouter,
-//       ctx: createInnerTRPCContext({}, context.req, context.res),
-//       transformer: superjson, // optional - adds superjson serialization
-//     });
-
-//     const workspaceId = context.params?.workspaceId as string;
-//     await helpers.workspace.getWorkspace.prefetch({ id: workspaceId });
-
-//     return {
-//       props: {
-//         trpcState: helpers.dehydrate(),
-//         workspaceId,
-//       },
-//       revalidate: 1,
-//     };
-//   }
-// );
-
-// export const getStaticPaths: GetStaticPaths = async () => {
-//   // Fetch all workspace IDs you want to pre-render
-//   const workspaces = await prisma.workspace.findMany({
-//     select: {
-//       id: true,
-//     },
-//   });
-
-//   // Generate the paths array with the fetched workspace IDs
-//   const paths = workspaces.map((workspace) => ({
-//     params: { workspaceId: workspace.id },
-//   }));
-
-//   // Return the paths object with fallback set to 'blocking'
-//   return {
-//     paths,
-//     fallback: "blocking",
-//   };
-// };
 
 const Workspace: NextPage = () => {
   const session = useSession();
@@ -114,14 +48,13 @@ const Workspace: NextPage = () => {
 
   const { profile } = useUserContext();
   const { setUpdatedWorkspace } = useWorkspaceTitleUpdate();
-  const [generatedAudioElement, setGeneratedAudioElement] =
-    useStatusPolling(setAudioIsLoading);
+
   // const dummyAudioElement = new Audio(
   //   "https://peregrine-samples.s3.amazonaws.com/editor-samples/anny.wav"
   // );
 
   const router = useRouter();
-  const workspaceId: string = router.query.workspaceId as string;
+  const workspaceId = router.query.workspaceId;
 
   //   const [workspaceId, setWorkSpaceId] = useState(router.query.workspaceId);
   const {
@@ -144,7 +77,8 @@ const Workspace: NextPage = () => {
         if (data.workspace) {
           const slateValue = data.workspace.slate_value;
           if (slateValue) {
-            setInitialSlateValue(JSON.parse(slateValue));
+            const parsedSlateValue = JSON.parse(slateValue);
+            setInitialSlateValue(parsedSlateValue);
           }
         }
       },
@@ -164,7 +98,11 @@ const Workspace: NextPage = () => {
       const slateValue = workspaceData.workspace.slate_value;
 
       if (slateValue) {
-        setInitialSlateValue(JSON.parse(slateValue));
+        const parsedSlateValue = JSON.parse(slateValue);
+        setInitialSlateValue(parsedSlateValue);
+
+        const extractedText = extractTextValues(parsedSlateValue);
+        setEnteredText(extractedText);
         setFetchWorkspaceIsLoading(false);
       }
     }
@@ -180,29 +118,6 @@ const Workspace: NextPage = () => {
     }
   }, [session]);
 
-  const {
-    data: texttospeechdata,
-    error: texttospeecherror,
-    isLoading: texttospeechloading,
-    refetch: texttospeechrefetch,
-  } = api.texttospeech.startConversion.useQuery(
-    { voice: selectedVoiceId, content: enteredText },
-    {
-      enabled: false,
-    }
-  );
-
-  async function generateAudio(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    setAudioIsLoading(true);
-    setGeneratedAudioElement(null);
-    setStatus("");
-    setTranscriptionId("");
-
-    texttospeechrefetch();
-  }
-
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const updateWorkspaceMutation = api.workspace.updateWorkspace.useMutation();
 
@@ -216,42 +131,6 @@ const Workspace: NextPage = () => {
       console.error("Error updating workspace:", error);
     }
   };
-
-  useEffect(() => {
-    console.log(transcriptionId);
-  }, [transcriptionId]);
-
-  useEffect(() => {
-    if (audioIsLoading && !texttospeechloading) {
-      if (texttospeechdata) {
-        setTranscriptionId(texttospeechdata.transcriptionId);
-        console.log(texttospeechdata);
-      }
-
-      if (texttospeecherror) {
-        console.error(texttospeecherror);
-        // Handle the error as needed
-      }
-    }
-  }, [
-    audioIsLoading,
-    texttospeechdata,
-    texttospeecherror,
-    texttospeechloading,
-  ]);
-
-  useEffect(() => {
-    if (
-      selectedVoiceId &&
-      enteredText &&
-      !(Array.isArray(enteredText) && enteredText.length === 0)
-    ) {
-      console.log(enteredText);
-      setIsDisabled(false);
-    } else {
-      setIsDisabled(true);
-    }
-  }, [selectedVoiceId, enteredText]);
 
   useEffect(() => {
     return () => setLoading(false);
@@ -375,6 +254,8 @@ const Workspace: NextPage = () => {
     const extractedText = extractTextValues(value);
     setEnteredText(extractedText);
     updateWorkspace(value);
+    setInitialSlateValue(value);
+    console.log(JSON.stringify(value));
 
     setUpdatedWorkspace({ title: value[0].children[0].text, id: workspaceId });
   }
@@ -387,26 +268,11 @@ const Workspace: NextPage = () => {
         // setWorkSpaceId={setWorkSpaceId}
       >
         <div className="mx-auto mt-4 justify-center p-4">
-          <div className=" z-1000 absolute mx-auto lg:w-[980px]  ">
-            <div className="relative flex items-center justify-end">
-              {/* <label className="text-bold  mb-2 text-sm text-gray-500">
-                Text to Speech
-              </label> */}
-            </div>
-          </div>
-          <div className="linear-gradient z-0 mx-auto mb-20 mt-20 w-full rounded-md border-2 border-gray-300 px-2 lg:h-[640px]  lg:w-[980px] lg:px-0 ">
+          <TextSpeech enteredText={enteredText} />
+        </div>
+        <div className="flex flex-col items-center justify-center">
+          <div className="linear-gradient z-0 mx-auto mb-20 mt-2 w-full rounded-md border-2 border-gray-300 px-2 lg:h-[640px]  lg:w-[980px] lg:px-0 ">
             <div className="block  lg:w-full">
-              {/* <div className="z-10 mx-auto mb-5 flex items-center lg:absolute lg:w-[980px]">
-                <div className="mr-4 flex-1 ">
-                  <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
-                </div>
-
-                <GenerateButton
-                  isDisabled={isDisabled}
-                  audioIsLoading={audioIsLoading}
-                  onClick={generateAudio}
-                />
-              </div> */}
               <NewColumnProvider>
                 {!fetchWorkspaceIsLoading &&
                   initialSlateValue &&
@@ -423,7 +289,7 @@ const Workspace: NextPage = () => {
           </div>
         </div>
       </Layout>
-      {!audioIsLoading && generatedAudioElement && (
+      {/* {!audioIsLoading && generatedAudioElement && (
         <div className="fixed bottom-0 left-0 bottom-4 right-0 mx-auto flex w-full justify-center ">
           <div className="w-[94%] flex-shrink-0 lg:w-[500px] ">
             <AudioPlayer
@@ -432,7 +298,7 @@ const Workspace: NextPage = () => {
             />
           </div>
         </div>
-      )}
+      )} */}
     </>
   );
 };

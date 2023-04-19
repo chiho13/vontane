@@ -142,6 +142,7 @@ const SidebarItem = styled.li<{ activeWorkspace?: boolean }>`
       activeWorkspace ? theme.colors.gray : "transparent"};
     font-weight: ${({ activeWorkspace }) =>
       activeWorkspace ? "bold" : "normal"};
+    overflow: hidden;
 
     &:hover {
       background-color: ${({ theme }) => theme.colors.gray};
@@ -153,6 +154,12 @@ const SidebarItem = styled.li<{ activeWorkspace?: boolean }>`
 
     &:focus {
       outline: none;
+    }
+
+    span {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
   }
 `;
@@ -412,7 +419,7 @@ const Layout: React.FC<LayoutProps> = ({
                         <button
                           onClick={() => handleWorkspaceRoute(workspace.id, "")}
                         >
-                          {displayName || "Untitled"}
+                          <span>{displayName || "Untitled"}</span>
                         </button>
                       </SidebarItem>
                     );

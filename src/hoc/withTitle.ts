@@ -1,5 +1,5 @@
 // withTitle.js
-import { Transforms } from "slate";
+import { Transforms, Node, Path } from "slate";
 
 export const withTitle = (editor) => {
   const { normalizeNode } = editor;
@@ -8,14 +8,17 @@ export const withTitle = (editor) => {
     const [node, path] = entry;
 
     // Ensure the first node is of type 'title'
-    if (path.length === 0 && node.children[0].type !== "title") {
+    if (Path.equals(path, [0]) && node.type !== "title") {
       const titleNode = { type: "title", children: [{ text: "" }] };
-      Transforms.insertNodes(editor, titleNode, { at: [0] });
+      Transforms.setNodes(editor, titleNode, { at: path });
+      return;
+    }
 
-      Transforms.select(editor, {
-        anchor: { path: [0, 0], offset: 0 },
-        focus: { path: [0, 0], offset: 0 },
-      });
+    // Ensure other nodes are not of type 'title'
+    if (!Path.equals(path, [0]) && node.type === "title") {
+      const paragraphNode = { type: "paragraph", children: [{ text: "" }] };
+      Transforms.setNodes(editor, paragraphNode, { at: path });
+      return;
     }
 
     // Fall back to the original `normalizeNode`

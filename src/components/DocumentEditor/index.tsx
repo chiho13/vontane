@@ -99,16 +99,6 @@ declare module "slate" {
   }
 }
 
-const MCQOL = styled.ol`
-  counter-reset: mcq-counter;
-  list-style-type: none;
-
-  & > li::before {
-    counter-increment: mcq-counter;
-    content: counter(mcq-counter) ". ";
-  }
-`;
-
 import { EditBlockPopup } from "../EditEquationBlock";
 import { EnglishQuestionGenerator } from "../QuestionGenerator/English";
 
@@ -120,183 +110,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const theme = useTheme();
   const { isLocked } = useContext(LayoutContext);
   const editor = useEditor();
-  const initialValue = [
-    {
-      id: "sdfsdffddf",
-      type: "mcq",
-      children: [
-        {
-          id: "randomID2",
-          type: "list-item",
-          children: [
-            {
-              text: "What is the synonym for 'abundance'?",
-            },
-          ],
-        },
-        {
-          id: "randomID3",
-          type: "ol",
-          children: [
-            {
-              id: "rndIDa1b2c3d4",
-              type: "option-list-item",
-              children: [
-                {
-                  text: "scarcity",
-                },
-              ],
-              correctAnswer: false,
-            },
-            {
-              id: "rndIDe5f6g7h8",
-              type: "option-list-item",
-              children: [
-                {
-                  text: "plethora",
-                },
-              ],
-              correctAnswer: true,
-            },
-            {
-              id: "rndIDi9j0k1l2",
-              type: "option-list-item",
-              children: [
-                {
-                  text: "stagnation",
-                },
-              ],
-              correctAnswer: false,
-            },
-            {
-              id: "rndIDm3n4o5p6",
-              type: "option-list-item",
-              children: [
-                {
-                  text: "deficit",
-                },
-              ],
-              correctAnswer: false,
-            },
-          ],
-        },
-      ],
-    },
-    {
-      id: "abcdefghijkl",
-      type: "mcq",
-      children: [
-        {
-          type: "list-item",
-          children: [
-            {
-              text: "A person who designs buildings is called a(n)",
-            },
-            { text: " ", blank: true },
-            { text: ". " },
-          ],
-        },
-        {
-          type: "ol",
-          children: [
-            {
-              type: "option-list-item",
-              children: [
-                {
-                  text: "architect",
-                },
-              ],
-              correctAnswer: true,
-            },
-            {
-              type: "option-list-item",
-              children: [
-                {
-                  text: "engineer",
-                },
-              ],
-              correctAnswer: false,
-            },
-            {
-              type: "option-list-item",
-              children: [
-                {
-                  text: "doctor",
-                },
-              ],
-              correctAnswer: false,
-            },
-            {
-              type: "option-list-item",
-              children: [
-                {
-                  text: "teacher",
-                },
-              ],
-              correctAnswer: false,
-            },
-          ],
-        },
-      ],
-    },
-    {
-      id: "jwjfbskvsdnaks",
-      type: "paragraph",
-      children: [
-        {
-          text: " ",
-        },
-      ],
-    },
-    // {
-    //   id: genNodeId(),
-    //   type: "column",
-    //   children: [
-    //     {
-    //       id: genNodeId(),
-    //       type: "column-cell",
-    //       children: [
-    //         {
-    //           id: genNodeId(),
-    //           type: "paragraph",
-    //           children: [{ text: "Paragraph 1 in column 1" }],
-    //         },
-    //         {
-    //           id: genNodeId(),
-    //           type: "paragraph",
-    //           children: [{ text: "Paragraph 2 in column 1" }],
-    //         },
-    //       ],
-    //     },
-    //     {
-    //       id: genNodeId(),
-    //       type: "column-cell",
-    //       children: [
-    //         {
-    //           id: genNodeId(),
-    //           type: "paragraph",
-    //           children: [{ text: "Paragraph 1 in column 2" }],
-    //         },
-    //         {
-    //           id: genNodeId(),
-    //           type: "paragraph",
-    //           children: [{ text: "Paragraph 2 in column 2" }],
-    //         },
-    //       ],
-    //     },
-    //   ],
-    // },
-    // {
-    //   id: genNodeId(),
-    //   type: "paragraph",
-    //   children: [{ text: "A.I rules" }],
-    // },
-    // {
-    //   id: genNodeId(),
-    //   type: "paragraph",
-    //   children: [{ text: "very nice" }],
-    // },
-  ];
   const [slatevalue, setValue] = useState(initialSlateValue);
 
   useEffect(() => {
@@ -325,9 +138,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   const addSomethingDropdownRef = useRef<HTMLDivElement | null>(null);
   const editBlockDropdownRef = useRef<HTMLDivElement | null>(null);
-  const [addedParagraphs, setAddedParagraphs] = useState<Set<string>>(
-    new Set()
-  );
 
   const [dropdownTop, setDropdownTop] = useState<number>(0);
   const [dropdownLeft, setDropdownLeft] = useState<number>(0);
@@ -870,7 +680,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         (isRoot && element.type !== "column" && element.type !== "title") ||
         isInsideColumnCell ? (
           <div
-            className="z-100 absolute   top-1/2 left-0 -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center"
+            className="z-1000 absolute   top-1/2 left-0 -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center"
             contentEditable={false}
           >
             {addButtonHoveredId === element.id && (
@@ -1094,6 +904,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   }
 
   const handleDragStart = useCallback(function ({ active }) {
+    console.log(active.id);
     setActiveId(active.id);
   }, []);
 
@@ -1246,7 +1057,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 }}
               >
                 <Editable
-                  className="relative h-[680px] -translate-y-[80px] overflow-y-auto"
+                  className="relative h-[680px] overflow-y-auto"
                   renderElement={renderElement}
                   renderLeaf={Blank}
                   onKeyDown={handleKeyDown}

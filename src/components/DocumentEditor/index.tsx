@@ -1054,7 +1054,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   };
 
   const handleSelectedText = (event, editor) => {
-    event.preventDefault();
+    event.stopPropagation();
     const { selection } = editor;
     if (selection && !Range.isCollapsed(selection)) {
       const domSelection = window.getSelection();
@@ -1120,8 +1120,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     handleEditorMouseUp(event, editor);
                     handleSelectedText(event, editor);
                   }}
-                  onKeyDown={(event) => {
-                    handleKeyDown(event);
+                  onKeyDown={handleKeyDown}
+                  onKeyUp={(event) => {
                     handleSelectedText(event, editor);
                   }}
                   onClick={(event) => handleCursorClick(event, editor)}

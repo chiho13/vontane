@@ -118,7 +118,8 @@ function AudioPlayer({ generatedAudio, transcriptionId }: Props): JSX.Element {
   };
 
   const formatTime = (timeInSeconds: number) => {
-    const date = new Date(timeInSeconds * 1000);
+    const nonNegativeTime = Math.max(0, timeInSeconds); // Ensure time is non-negative
+    const date = new Date(nonNegativeTime * 1000);
     const minutes = date.getUTCMinutes();
     const seconds = date.getSeconds().toString().padStart(2, "0");
     return `${minutes}:${seconds}`;

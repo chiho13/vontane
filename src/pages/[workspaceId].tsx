@@ -152,11 +152,20 @@ const Workspace: NextPage = () => {
     function traverse(item) {
       let accumulator = [];
 
+      if (item.type === "title") {
+        accumulator.push(...item.children.map((child) => `${child.text}.`));
+      }
+
       if (item.type === "paragraph") {
         accumulator.push(
-          ...item.children.map(
-            (child) => child.text || (child.blank ? "BLANK" : "")
-          )
+          ...item.children.map((child) => {
+            let text = child.text || (child.blank ? "BLANK" : "");
+
+            // Replace % with " percent"
+            text = text.replace(/%/g, " percent");
+
+            return text;
+          })
         );
       }
 
@@ -255,7 +264,7 @@ const Workspace: NextPage = () => {
     setEnteredText(extractedText);
     updateWorkspace(value);
     setInitialSlateValue(value);
-    console.log(JSON.stringify(value));
+    console.log(extractedText);
 
     setUpdatedWorkspace({ title: value[0].children[0].text, id: workspaceId });
   }

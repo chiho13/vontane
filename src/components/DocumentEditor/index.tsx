@@ -248,12 +248,13 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           }
 
           if (parentNode.type === "title") {
-            const newPath = Path.next(parentPath);
-            const nextNode = Editor.node(editor, newPath);
+            const nextNode = Editor.next(editor, { at: parentPath });
 
             if (
-              (nextNode && nextNode[0].type === "mcq") ||
-              nextNode[0].type === "equation"
+              !nextNode ||
+              (nextNode &&
+                nextNode[0].type !== "mcq" &&
+                nextNode[0].type !== "equation")
             ) {
               if (
                 Editor.isStart(
@@ -265,17 +266,28 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 return;
               }
               if (Editor.isEnd(editor, selection.anchor, _currentNodePath)) {
-                insertNewParagraphEnter(newPath);
+                const newPath = Path.next(parentPath);
+                Transforms.insertNodes(
+                  editor,
+                  {
+                    type: "paragraph",
+                    children: [{ text: "" }],
+                  },
+                  { at: newPath }
+                );
+                Transforms.select(editor, newPath);
               } else {
+                const newPath = Path.next(parentPath);
                 splitTitleNode(newPath, _currentNodePath);
               }
             } else {
               // Otherwise, split the nodes and create a new paragraph as before
 
               if (Editor.isEnd(editor, selection.anchor, _currentNodePath)) {
+                const newPath = Path.next(parentPath);
                 insertNewParagraphEnter(newPath);
               } else {
-                splitTitleNode(newPath, _currentNodePath);
+                splitTitleNode(parentPath, _currentNodePath);
               }
             }
           }
@@ -680,7 +692,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         (isRoot && element.type !== "column" && element.type !== "title") ||
         isInsideColumnCell ? (
           <div
-            className="z-1000 absolute   top-1/2 left-0 -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center"
+            className="z-1000 absolute top-1/2 left-0 -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center"
             contentEditable={false}
           >
             {addButtonHoveredId === element.id && (

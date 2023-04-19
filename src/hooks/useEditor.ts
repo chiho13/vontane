@@ -20,11 +20,13 @@ const withNormalizePasting = (editor) => {
       const lines = text.split(/\r\n|\r|\n/);
 
       // Wrap each line in a paragraph node and remove empty lines
-      const nodesToInsert = lines.map((line) => ({
-        id: genNodeId(),
-        type: "paragraph",
-        children: [{ text: line }],
-      }));
+      const nodesToInsert = lines
+        .filter((line) => line.trim().length > 0)
+        .map((line) => ({
+          id: genNodeId(),
+          type: "paragraph",
+          children: [{ text: line }],
+        }));
 
       // If there are valid nodes to insert, insert them as a fragment
       if (nodesToInsert.length > 0) {

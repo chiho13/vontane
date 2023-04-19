@@ -185,6 +185,7 @@ export const VoiceDropdownStyle = styled.div`
     ${mq.lg`
       background: linear-gradient(109.6deg, rgb(20, 30, 48) 11.2%, rgb(36, 59, 85) 91.1%);
       opacity: 0.5;
+      z-index: 1;
       `}
   }
 

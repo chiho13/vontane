@@ -8,7 +8,7 @@ import { AccountLayoutStyle } from "./style";
 import ChevronDown from "@/icons/ChevronDown";
 import { useRouter } from "next/router";
 import { Plus } from "lucide-react";
-import { workspace } from "@/prisma/client";
+import { workspace } from "@prisma/client";
 
 import { mq, breakpoints } from "@/utils/breakpoints";
 import {
@@ -128,10 +128,13 @@ transition: transform 300ms, ${(props) =>
 // left: ${(props) => (!props.isLocked && props.isOpen ? "250px" : "0")};
 
 const SidebarItem = styled.li<{ activeWorkspace?: boolean }>`
-  a {
+  display: flex;
+
+  button {
     display: flex;
     padding: 8px 24px;
     margin: 5px;
+    width: 100%;
     border-radius: 4px;
     transition: background-color 300ms ease, transform 300ms;
     color: ${({ theme }) => theme.colors.darkergray};
@@ -221,7 +224,6 @@ const Layout: React.FC<LayoutProps> = ({
     if (workspacesData) {
       const response = workspacesData.workspaces;
 
-      console.log(response);
       setWorkspaces(response);
     }
   }, [workspacesData]);
@@ -397,30 +399,29 @@ const Layout: React.FC<LayoutProps> = ({
                     const parsedSlateValue = JSON.parse(workspace.slate_value);
 
                     const workspaceName = parsedSlateValue[0].children[0].text;
-                    console.log(workspaceName);
                     const displayName =
                       updatedWorkspace && updatedWorkspace.id === workspace.id
                         ? updatedWorkspace.title
                         : workspaceName;
 
-                    console.log(currentWorkspaceId);
                     return (
                       <SidebarItem
                         key={workspace.id}
-                        onClick={() => handleWorkspaceRoute(workspace.id, "")}
                         activeWorkspace={currentWorkspaceId === workspace.id}
                       >
-                        <a href="javascript:void(0)" tabIndex={0}>
+                        <button
+                          onClick={() => handleWorkspaceRoute(workspace.id, "")}
+                        >
                           {displayName || "Untitled"}
-                        </a>
+                        </button>
                       </SidebarItem>
                     );
                   })}
 
-                <SidebarItem onClick={createWorkspace}>
-                  <a href="javascript:void(0)" tabIndex={0}>
+                <SidebarItem>
+                  <button onClick={createWorkspace}>
                     <Plus /> <span className="ml-2">Create Workspace</span>
-                  </a>
+                  </button>
                 </SidebarItem>
               </ul>
             </AccountLayoutStyle>

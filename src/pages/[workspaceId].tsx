@@ -124,7 +124,6 @@ const Workspace: NextPage = () => {
   const workspaceId: string = router.query.workspaceId as string;
 
   //   const [workspaceId, setWorkSpaceId] = useState(router.query.workspaceId);
-  console.log(workspaceId);
   const {
     data: workspaceData,
     refetch: refetchWorkspaceData,
@@ -165,7 +164,6 @@ const Workspace: NextPage = () => {
       const slateValue = workspaceData.workspace.slate_value;
 
       if (slateValue) {
-        console.log(JSON.parse(slateValue));
         setInitialSlateValue(JSON.parse(slateValue));
         setFetchWorkspaceIsLoading(false);
       }
@@ -374,13 +372,10 @@ const Workspace: NextPage = () => {
   }
 
   function handleTextChange(value: any[]) {
-    console.log(value);
     const extractedText = extractTextValues(value);
     setEnteredText(extractedText);
-    console.log(extractedText);
     updateWorkspace(value);
 
-    console.log(workspaceId);
     setUpdatedWorkspace({ title: value[0].children[0].text, id: workspaceId });
   }
 
@@ -413,14 +408,16 @@ const Workspace: NextPage = () => {
                 />
               </div> */}
               <NewColumnProvider>
-                {initialSlateValue && workspaceId && (
-                  <DocumentEditor
-                    key={workspaceId}
-                    workspaceId={workspaceId}
-                    handleTextChange={handleTextChange}
-                    initialSlateValue={initialSlateValue}
-                  />
-                )}
+                {!fetchWorkspaceIsLoading &&
+                  initialSlateValue &&
+                  workspaceId && (
+                    <DocumentEditor
+                      key={workspaceId}
+                      workspaceId={workspaceId}
+                      handleTextChange={handleTextChange}
+                      initialSlateValue={initialSlateValue}
+                    />
+                  )}
               </NewColumnProvider>
             </div>
           </div>

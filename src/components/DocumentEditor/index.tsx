@@ -99,6 +99,18 @@ declare module "slate" {
   }
 }
 
+const StyledMiniToolbar = styled(motion.div)`
+  position: absolute;
+  z-index: 20;
+  display: block;
+  border-radius: 4px;
+  border: 1px solid #cbd5e0;
+  background-color: white;
+  padding: 0.5rem;
+  box-shadow: 0 10px 20px rgba(50, 50, 50, 0.19),
+    0 6px 6px rgba(50, 50, 50, 0.23);
+`;
+
 import { EditBlockPopup } from "../EditEquationBlock";
 import { EnglishQuestionGenerator } from "../QuestionGenerator/English";
 
@@ -164,6 +176,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   });
 
   const [selectedElementID, setSelectedElementID] = useState<string>("");
+
+  const [showMiniToolbar, setShowMiniToolbar] = useState(false);
+  const [miniToolbarPosition, setMiniToolbarPosition] = useState({
+    x: 0,
+    y: 0,
+  });
 
   const openMiniDropdown = useCallback(
     (event: React.MouseEvent, path: Path) => {
@@ -1035,6 +1053,32 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     }
   };
 
+  const handleSelectedText = (event, editor) => {
+    event.preventDefault();
+    const { selection } = editor;
+    if (selection && !Range.isCollapsed(selection)) {
+      const domSelection = window.getSelection();
+      if (domSelection && domSelection.rangeCount > 0) {
+        const range = domSelection.getRangeAt(0);
+        const startContainer = range.startContainer;
+
+        if (startContainer.nodeType === startContainer.TEXT_NODE) {
+          const rangeForStart = range.cloneRange();
+          rangeForStart.setEnd(startContainer, range.startOffset);
+          const rect = rangeForStart.getBoundingClientRect();
+
+          setMiniToolbarPosition({
+            x: rect.left + window.scrollX,
+            y: rect.top + window.scrollY - rect.height - 40,
+          });
+          setShowMiniToolbar(true);
+        }
+      }
+    } else {
+      setShowMiniToolbar(false);
+    }
+  };
+
   return (
     <EditorProvider
       editor={editor}
@@ -1072,8 +1116,14 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                   className="relative h-[680px] overflow-y-auto"
                   renderElement={renderElement}
                   renderLeaf={Blank}
-                  onKeyDown={handleKeyDown}
-                  onMouseUp={(event) => handleEditorMouseUp(event, editor)}
+                  onMouseUp={(event) => {
+                    handleEditorMouseUp(event, editor);
+                    handleSelectedText(event, editor);
+                  }}
+                  onKeyDown={(event) => {
+                    handleKeyDown(event);
+                    handleSelectedText(event, editor);
+                  }}
                   onClick={(event) => handleCursorClick(event, editor)}
                 />
                 <Droppable>
@@ -1169,6 +1219,18 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           {renderSubjectComponent()}
         </FloatingModal>
       )}
+      <AnimatePresence>
+        {showMiniToolbar && (
+          <StyledMiniToolbar
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{ top: miniToolbarPosition.y, left: miniToolbarPosition.x }}
+          >
+            <button>hello</button>
+          </StyledMiniToolbar>
+        )}
+      </AnimatePresence>
     </EditorProvider>
   );
 };

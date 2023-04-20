@@ -25,7 +25,7 @@ export const GenerateButtonStyle: StyledComponent<
 
   &:hover {
     background-color: #fefefe;
-    color: #f5820d;
+    color: ${(props) => props.theme.colors.brand};
   }
 
   &:disabled {

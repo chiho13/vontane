@@ -36,7 +36,7 @@ declare module "styled-components" {
 
 const theme: Theme = {
   colors: {
-    brand: "#f5820d",
+    brand: "#348EF3",
     white: "#ffffff",
     gray: "#eeeeee",
     darkgray: "#999999",

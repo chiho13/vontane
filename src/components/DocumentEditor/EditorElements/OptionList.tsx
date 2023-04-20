@@ -29,7 +29,6 @@ export const OptionList: React.FC<OptionListProps> = ({
   attributes,
   children,
 }) => {
-  console.log(children.length);
   return (
     <div>
       <InstructionMessage>

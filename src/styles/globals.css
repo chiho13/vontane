@@ -10,10 +10,6 @@ body {
   max-width: 1200px;
 }
 
-.dropdown-toggle:focus {
-  border-color: orange;
-}
-
 .spinning-icon {
   flex-shrink: 0;
   width: 40px;

@@ -14,6 +14,7 @@ import useClickOutside from "@/hooks/useClickOutside";
 import { motion, AnimatePresence, useCycle } from "framer-motion";
 import { mq, breakpoints } from "@/utils/breakpoints";
 import { Portal } from "react-portal";
+import { useTheme } from "styled-components";
 
 export interface DropdownContextType {
   activeDropdown: string | null;
@@ -181,6 +182,8 @@ function Dropdown(
   const isOpen = activeDropdown === dropdownId;
   const wrapperRef = useRef<HTMLDivElement>(null);
 
+  const theme = useTheme();
+
   const desktopbreakpoint = window.screen.width > breakpoints.lg;
 
   const animation_props = desktopbreakpoint
@@ -255,7 +258,7 @@ function Dropdown(
       <DropdownStyle className="dropdown_wrapper relative flex justify-end">
         <button
           type="button"
-          className={`dropdown-toggle inline-flex items-center rounded-md text-sm font-medium text-gray-700 ${dropdownButtonStyleOverride}`}
+          className={`dropdown-toggle z-10 inline-flex items-center rounded-md text-sm font-medium text-gray-700 ${dropdownButtonStyleOverride}`}
           aria-expanded={isOpen}
           aria-haspopup="true"
           id="dropdown"

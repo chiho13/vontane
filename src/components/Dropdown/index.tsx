@@ -53,6 +53,7 @@ interface DropdownProps {
   image?: React.ReactNode;
   dropdownButtonClassName?: string;
   dropdownMenuClassName?: string;
+  dropdownMenuNonPortalOverride?: string;
   minHeight?: number;
   usePortal?: boolean;
   callback?: (event) => void;
@@ -165,13 +166,13 @@ function Dropdown(
     image = null,
     dropdownButtonClassName,
     dropdownMenuClassName,
+    dropdownMenuNonPortalOverride,
     minHeight = 0,
     usePortal = false,
   }: DropdownProps,
   ref: ForwardedRef<DropdownRef>
 ) {
   const { activeDropdown, toggleDropdown } = useContext(DropdownContext);
-
   const [buttonPosition, setButtonPosition] = useState<{
     top: number;
     right: number;
@@ -233,6 +234,8 @@ function Dropdown(
     dropdownButtonClassName ||
     " border-2 border-gray-300 bg-white px-4 py-2 shadow-md shadow-sm outline-none hover:bg-gray-50 focus-visible:border-gray-400";
 
+  const _dropdownMenuNonPortalOverride =
+    dropdownMenuNonPortalOverride || "lg:absolute";
   const dropdownMenuStyleOverride =
     dropdownMenuClassName || "fixed left-0  top-12 mt-2 w-full";
   return (
@@ -242,7 +245,7 @@ function Dropdown(
           {activeDropdown === dropdownId && (
             <motion.div {...clickoutside_props}>
               <div
-                className="closeOutside fixed top-0 left-0 h-full w-screen opacity-50"
+                className="closeOutside pointer-events-none fixed top-0 left-0 h-full w-screen opacity-50"
                 // onClick={handleClose}
               ></div>
             </motion.div>
@@ -288,12 +291,20 @@ function Dropdown(
               <motion.div
                 {...animation_props}
                 id={dropdownId}
-                className="dropdown-menu z-10000 fixed left-0  top-12 mt-2 w-full min-w-[100px] origin-top-right border-2 bg-white shadow-lg ring-1 ring-black ring-opacity-5 lg:absolute lg:rounded-md"
+                className={`dropdown-menu z-10000 fixed left-0  top-12 mt-2 w-full min-w-[100px] origin-top-right border-2 bg-white shadow-lg ring-1 ring-black ring-opacity-5 lg:rounded-md ${_dropdownMenuNonPortalOverride}`}
                 role="menu"
                 aria-orientation="vertical"
                 aria-labelledby="voices-dropdown"
                 tabIndex={-1}
                 ref={wrapperRef}
+                style={{
+                  top: dropdownMenuNonPortalOverride
+                    ? buttonPosition.top
+                    : "reset",
+                  // right: dropdownMenuNonPortalOverride
+                  //   ? buttonPosition.right
+                  //   : "reset",
+                }}
               >
                 {children}
               </motion.div>

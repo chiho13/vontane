@@ -8,6 +8,7 @@ import { useState } from "react";
 import { WorkspaceTitleUpdateProvider } from "@/contexts/WorkspaceTitleContext";
 import "@/styles/globals.css";
 import { ThemeProvider } from "styled-components";
+import { TextSpeechProvider } from "@/contexts/TextSpeechContext";
 interface Theme {
   colors: {
     brand: string;
@@ -57,7 +58,9 @@ const MyApp: AppType = ({ Component, pageProps }) => {
       <UserContextProvider>
         <ThemeProvider theme={theme}>
           <WorkspaceTitleUpdateProvider>
-            <Component {...pageProps} />
+            <TextSpeechProvider>
+              <Component {...pageProps} />
+            </TextSpeechProvider>
           </WorkspaceTitleUpdateProvider>
         </ThemeProvider>
       </UserContextProvider>

@@ -38,7 +38,6 @@ import { LayoutContext } from "../Layouts/AccountLayout";
 import { y_animation_props } from "../Dropdown";
 import { findElementInSlateValue } from "./helpers/findElementInSlate";
 import { MathQuestionGenerator } from "../QuestionGenerator/Math";
-import dynamic from "next/dynamic";
 
 import {
   DndContext,
@@ -72,6 +71,8 @@ import { FloatingModal } from "@/components/FloatingModal";
 import { Blank } from "./LeafElements/Blank";
 import { MiniDropdown } from "./MiniDropdown";
 import { OptionMenu } from "./OptionMenu";
+import { useTextSpeech } from "@/contexts/TextSpeechContext";
+import { TextSpeech } from "@/components/TextSpeech";
 interface DocumentEditorProps {
   workspaceId: string;
   handleTextChange?: (value: any) => void;
@@ -183,6 +184,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     x: 0,
     y: 0,
   });
+
+  const { setTextSpeech } = useTextSpeech();
 
   const openMiniDropdown = useCallback(
     (event: React.MouseEvent, path: Path) => {
@@ -1066,7 +1069,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             const rangeForStart = range.cloneRange();
             rangeForStart.setEnd(startContainer, range.startOffset);
             const rect = rangeForStart.getBoundingClientRect();
-            const offsetTitle = startNode.type === "title" ? 20 : 40;
+            const offsetTitle = startNode.type === "title" ? 30 : 60;
             const sideBarOffset = isLocked ? -150 : 0;
             setMiniToolbarPosition({
               x: rect.left + window.scrollX + sideBarOffset,
@@ -1075,6 +1078,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             setShowMiniToolbar(true);
 
             const selectedText = Editor.string(editor, selection);
+            setTextSpeech([selectedText]);
             console.log("Selected text:", selectedText);
           }
         }
@@ -1231,8 +1235,13 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             style={{ top: miniToolbarPosition.y, left: miniToolbarPosition.x }}
+            onMouseDown={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+            }}
           >
-            <button>hello</button>
+            {/* <button>hello</button> */}
+            <TextSpeech />
           </StyledMiniToolbar>
         )}
       </AnimatePresence>

@@ -27,6 +27,7 @@ import { NewColumnProvider } from "@/contexts/NewColumnContext";
 import { useUserContext } from "@/contexts/UserContext";
 import { useRouter } from "next/router";
 import { TextSpeech } from "@/components/TextSpeech";
+import { useTextSpeech } from "@/contexts/TextSpeechContext";
 
 type Props = {
   workspaceId: string;
@@ -36,7 +37,8 @@ const Workspace: NextPage = () => {
   const session = useSession();
   const [selectedVoiceId, setSelectedVoiceId] = React.useState<string>("");
 
-  const [enteredText, setEnteredText] = React.useState<string[]>([]);
+  // const [te, setEnteredText] = React.useState<string[]>([]);
+  const { setTextSpeech } = useTextSpeech();
 
   const [audioIsLoading, setAudioIsLoading] = React.useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
@@ -101,8 +103,8 @@ const Workspace: NextPage = () => {
         const parsedSlateValue = JSON.parse(slateValue);
         setInitialSlateValue(parsedSlateValue);
 
-        const extractedText = extractTextValues(parsedSlateValue);
-        setEnteredText(extractedText);
+        const extractedText: [string] = extractTextValues(parsedSlateValue);
+        setTextSpeech(extractedText);
         setFetchWorkspaceIsLoading(false);
       }
     }
@@ -261,23 +263,18 @@ const Workspace: NextPage = () => {
 
   function handleTextChange(value: any[]) {
     const extractedText = extractTextValues(value);
-    setEnteredText(extractedText);
+    setTextSpeech(extractedText);
     updateWorkspace(value);
     setInitialSlateValue(value);
-    console.log(extractedText);
 
     setUpdatedWorkspace({ title: value[0].children[0].text, id: workspaceId });
   }
 
   return (
     <>
-      <Layout
-        profile={profile}
-        currentWorkspaceId={workspaceId}
-        // setWorkSpaceId={setWorkSpaceId}
-      >
+      <Layout profile={profile} currentWorkspaceId={workspaceId}>
         <div className="mx-auto mt-4 justify-center p-4">
-          <TextSpeech enteredText={enteredText} />
+          <TextSpeech />
         </div>
         <div className="flex flex-col items-center justify-center">
           <div className="linear-gradient z-0 mx-auto mb-20 mt-2 w-full rounded-md border-2 border-gray-300 px-2 lg:h-[640px]  lg:w-[980px] lg:px-0 ">

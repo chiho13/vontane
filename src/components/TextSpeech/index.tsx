@@ -5,21 +5,16 @@ import GenerateButton from "@/components/GenerateButton";
 import useStatusPolling from "@/hooks/useStatusPolling";
 import AudioPlayer from "@/components/AudioPlayer";
 import { Portal } from "react-portal";
+import { useTextSpeech } from "@/contexts/TextSpeechContext";
 
-type TextSpeechProps = {
-  enteredText: string[];
-  //   setEnteredText: (enteredText: string[]) => void;
-};
-
-export const TextSpeech: React.FC<TextSpeechProps> = ({
-  enteredText,
-  //   setEnteredText,
-}) => {
+export const TextSpeech: React.FC = () => {
   const [selectedVoiceId, setSelectedVoiceId] = useState<string>("");
   const [audioIsLoading, setAudioIsLoading] = useState<boolean>(false);
   const [transcriptionId, setTranscriptionId] = useState<string>("");
   const [generatedAudioElement, setGeneratedAudioElement] =
     useStatusPolling(setAudioIsLoading);
+
+  const { textSpeech } = useTextSpeech();
 
   const {
     data: texttospeechdata,
@@ -27,7 +22,7 @@ export const TextSpeech: React.FC<TextSpeechProps> = ({
     isLoading: texttospeechloading,
     refetch: texttospeechrefetch,
   } = api.texttospeech.startConversion.useQuery(
-    { voice: selectedVoiceId, content: enteredText },
+    { voice: selectedVoiceId, content: textSpeech },
     {
       enabled: false,
     }
@@ -36,15 +31,15 @@ export const TextSpeech: React.FC<TextSpeechProps> = ({
   useEffect(() => {
     if (
       selectedVoiceId &&
-      enteredText &&
-      !(Array.isArray(enteredText) && enteredText.length === 0)
+      textSpeech &&
+      !(Array.isArray(textSpeech) && textSpeech.length === 0)
     ) {
-      console.log(enteredText);
+      console.log(textSpeech);
       setIsDisabled(false);
     } else {
       setIsDisabled(true);
     }
-  }, [selectedVoiceId, enteredText]);
+  }, [selectedVoiceId, textSpeech]);
 
   useEffect(() => {
     if (audioIsLoading && !texttospeechloading) {
@@ -80,18 +75,18 @@ export const TextSpeech: React.FC<TextSpeechProps> = ({
   useEffect(() => {
     if (
       selectedVoiceId &&
-      enteredText &&
-      !(Array.isArray(enteredText) && enteredText.length === 0)
+      textSpeech &&
+      !(Array.isArray(textSpeech) && textSpeech.length === 0)
     ) {
       setIsDisabled(false);
     } else {
       setIsDisabled(true);
     }
-  }, [selectedVoiceId, enteredText]);
+  }, [selectedVoiceId, textSpeech]);
 
   return (
     <>
-      <div className="relative mx-auto flex items-center justify-center lg:w-[980px]">
+      <div className="relative mx-auto flex items-center justify-center lg:max-w-[980px]">
         <div className="mr-4 flex-1 ">
           <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
         </div>

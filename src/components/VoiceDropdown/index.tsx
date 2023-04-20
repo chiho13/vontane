@@ -422,6 +422,7 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
           selectedItemText={selectedItemText}
           ref={voicesDropdownRef}
           icon={<ChevronDown className="ml-4 w-4" />}
+          dropdownMenuNonPortalOverride="right-0 mx-auto lg:w-[900px]"
         >
           <div>
             {desktopbreakpoint && (

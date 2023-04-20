@@ -17,6 +17,7 @@ import {
   Node,
   Element,
   Location,
+  Text,
 } from "slate";
 
 import { createPortal } from "react-dom";
@@ -710,26 +711,22 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         (isRoot && element.type !== "column" && element.type !== "title") ||
         isInsideColumnCell ? (
           <div
-            className="z-1000 absolute top-1/2 left-0 -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center"
+            className="z-1000 absolute top-1/2 left-[8px] -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center"
             contentEditable={false}
           >
-            {addButtonHoveredId === element.id && (
-              <button
-                className={`addButton rounded-md hover:bg-gray-200`}
-                onClick={(event) => {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  console.log("addButton clicked");
-                  openMiniDropdown(
-                    event,
-                    ReactEditor.findPath(editor, element)
-                  );
-                }}
-                ref={toggleRef}
-              >
-                <Plus color={theme.colors.darkgray} />
-              </button>
-            )}
+            <button
+              className={`addButton rounded-md opacity-0 transition-opacity duration-300 ease-in-out hover:bg-gray-200 ${
+                addButtonHoveredId === element.id ? "opacity-100" : ""
+              }`}
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                openMiniDropdown(event, ReactEditor.findPath(editor, element));
+              }}
+              ref={toggleRef}
+            >
+              <Plus color={theme.colors.darkgray} />
+            </button>
           </div>
         ) : null;
 
@@ -763,7 +760,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           className="group relative"
           onMouseEnter={() => setAddButtonHoveredId(element.id)}
           onMouseLeave={() => setAddButtonHoveredId(null)}
-          onKeyDown={() => setAddButtonHoveredId(null)}
         >
           {content}
           {addButton}
@@ -1063,15 +1059,24 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         const startContainer = range.startContainer;
 
         if (startContainer.nodeType === startContainer.TEXT_NODE) {
-          const rangeForStart = range.cloneRange();
-          rangeForStart.setEnd(startContainer, range.startOffset);
-          const rect = rangeForStart.getBoundingClientRect();
+          const startPath = Editor.path(editor, selection, { edge: "start" });
+          const [startNode] = Editor.parent(editor, startPath);
+          console.log(startNode);
+          if (startNode.type === "paragraph" || startNode.type === "title") {
+            const rangeForStart = range.cloneRange();
+            rangeForStart.setEnd(startContainer, range.startOffset);
+            const rect = rangeForStart.getBoundingClientRect();
+            const offsetTitle = startNode.type === "title" ? 20 : 40;
+            const sideBarOffset = isLocked ? -150 : 0;
+            setMiniToolbarPosition({
+              x: rect.left + window.scrollX + sideBarOffset,
+              y: rect.top + window.scrollY - rect.height - offsetTitle,
+            });
+            setShowMiniToolbar(true);
 
-          setMiniToolbarPosition({
-            x: rect.left + window.scrollX,
-            y: rect.top + window.scrollY - rect.height - 40,
-          });
-          setShowMiniToolbar(true);
+            const selectedText = Editor.string(editor, selection);
+            console.log("Selected text:", selectedText);
+          }
         }
       }
     } else {

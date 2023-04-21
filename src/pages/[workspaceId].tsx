@@ -28,9 +28,27 @@ import { useUserContext } from "@/contexts/UserContext";
 import { useRouter } from "next/router";
 import { TextSpeech } from "@/components/TextSpeech";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
-
+import { Mirt } from "@/plugins/audioTrimmer";
+// import "react-mirt/dist/css/react-mirt.css";
 type Props = {
   workspaceId: string;
+};
+
+const useDownloadFile = (url, fileName) => {
+  const [file, setFile] = useState(null);
+
+  useEffect(() => {
+    const fetchFile = async () => {
+      const response = await fetch(url);
+      const data = await response.blob();
+      const file = new File([data], fileName, { type: data.type });
+      setFile(file);
+    };
+
+    fetchFile();
+  }, [url, fileName]);
+
+  return file;
 };
 
 const Workspace: NextPage = () => {
@@ -51,6 +69,10 @@ const Workspace: NextPage = () => {
   const { profile } = useUserContext();
   const { setUpdatedWorkspace } = useWorkspaceTitleUpdate();
 
+  const url =
+    "https://res.cloudinary.com/monkeyking/video/upload/v1682090997/synthesised-audio_12_qvb3p4.wav";
+  const fileName = "anny.wav";
+  const file = useDownloadFile(url, fileName);
   // const dummyAudioElement = new Audio(
   //   "https://peregrine-samples.s3.amazonaws.com/editor-samples/anny.wav"
   // );
@@ -275,6 +297,7 @@ const Workspace: NextPage = () => {
       <Layout profile={profile} currentWorkspaceId={workspaceId}>
         <div className="mx-auto mt-4 justify-center p-4">
           <TextSpeech />
+          <Mirt file={file} />
         </div>
         <div className="flex flex-col items-center justify-center">
           <div className="linear-gradient z-0 mx-auto mb-20 mt-2 w-full rounded-md border-2 border-gray-300 px-2 lg:h-[640px]  lg:w-[980px] lg:px-0 ">

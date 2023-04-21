@@ -11,7 +11,7 @@ export const TextSpeech: React.FC = () => {
   const [selectedVoiceId, setSelectedVoiceId] = useState<string>("");
   const [audioIsLoading, setAudioIsLoading] = useState<boolean>(false);
   const [transcriptionId, setTranscriptionId] = useState<string>("");
-  const [generatedAudioElement, setGeneratedAudioElement] =
+  const [generatedAudioElement, setGeneratedAudioElement, audioURL] =
     useStatusPolling(setAudioIsLoading);
 
   const { textSpeech } = useTextSpeech();

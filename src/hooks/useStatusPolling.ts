@@ -6,7 +6,8 @@ import { io } from "socket.io-client";
 
 type UseTextSpeechStatusPollingResult = [
   HTMLAudioElement | null,
-  Dispatch<SetStateAction<HTMLAudioElement | null>>
+  Dispatch<SetStateAction<HTMLAudioElement | null>>,
+  string
 ];
 
 function useTextSpeechStatusPolling(
@@ -14,6 +15,8 @@ function useTextSpeechStatusPolling(
 ): UseTextSpeechStatusPollingResult {
   const [generatedAudioElement, setGeneratedAudioElement] =
     useState<HTMLAudioElement | null>(null);
+
+  const [audioURL, setAudioURL] = useState<string>("");
 
   const SOCKET_URL = process.env.PLAYHT_SOCKET_URL;
 
@@ -25,6 +28,7 @@ function useTextSpeechStatusPolling(
         console.log("Received audio URL:", data.metadata.output);
 
         const newAudioElement = new Audio(data.metadata.output[0]);
+        setAudioURL(data.metadata.output[0]);
         console.log(data.metadata.progress);
         newAudioElement.addEventListener("error", (e) => {
           console.error("Error playing audio:", e);
@@ -44,7 +48,7 @@ function useTextSpeechStatusPolling(
     };
   }, []);
 
-  return [generatedAudioElement, setGeneratedAudioElement];
+  return [generatedAudioElement, setGeneratedAudioElement, audioURL];
 }
 
 export default useTextSpeechStatusPolling;

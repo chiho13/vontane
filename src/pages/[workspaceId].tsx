@@ -297,7 +297,9 @@ const Workspace: NextPage = () => {
       <Layout profile={profile} currentWorkspaceId={workspaceId}>
         <div className="mx-auto mt-4 justify-center p-4">
           <TextSpeech />
-          <Mirt file={file} />
+          <div className="mx-auto mt-5 w-[980px]">
+            <Mirt file={file} />
+          </div>
         </div>
         <div className="flex flex-col items-center justify-center">
           <div className="linear-gradient z-0 mx-auto mb-20 mt-2 w-full rounded-md border-2 border-gray-300 px-2 lg:h-[640px]  lg:w-[980px] lg:px-0 ">

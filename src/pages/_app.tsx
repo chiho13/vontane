@@ -20,6 +20,9 @@ interface Theme {
   background: {
     white: string;
   };
+  audio: {
+    frameColor: string;
+  };
 }
 
 declare module "styled-components" {
@@ -28,6 +31,9 @@ declare module "styled-components" {
       [key: string]: string;
     };
     background: {
+      [key: string]: string;
+    };
+    audio?: {
       [key: string]: string;
     };
     // Add other custom theme properties here
@@ -44,6 +50,9 @@ const theme: Theme = {
   },
   background: {
     white: "linear-gradient(120deg, #fdfbfb 0%, #f2f6f7 100%)",
+  },
+  audio: {
+    frameColor: "#348EF3",
   },
 };
 

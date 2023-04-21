@@ -41,6 +41,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-katex": "^3.0.1",
+    "react-mirt": "^1.3.0",
     "react-portal": "^4.2.2",
     "slate": "^0.91.4",
     "slate-history": "^0.86.0",

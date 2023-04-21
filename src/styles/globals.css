@@ -35,3 +35,7 @@ body {
 .linear-gradient-right {
   background: linear-gradient(to right, #f7f7f8 0%, #fbfdff 100%);
 }
+
+.linear-gradient-left {
+  background: linear-gradient(to left, #f7f7f8 0%, #fbfdff 100%);
+}

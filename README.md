@@ -35,6 +35,7 @@ currently under development (April)
 - [x] math questions generator
 - [x] english questions
 - [x] connect database
+- [] audio trimmer
 - [] musicXML
 - [] map block
 - [] stripe subscription

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const height = (props) => props.theme.audio?.mirtHeight || "3rem";
+const height = (props) => props.theme.audio?.mirtHeight || "60px";
 const borderRadius = (props) => props.theme.audio?.mirtBorderRadius || "0.3rem";
 const backgroundColor = (props) =>
   props.theme.audio?.mirtBackgroundColor || "#333";
@@ -17,7 +17,7 @@ const handleIconWidth = (props) =>
   props.theme.audio?.mirtHandleIconWidth || "0.75rem";
 const handleTransitionDuration = (props) =>
   props.theme.audio?.mirtHandleTransitionDuration || "500ms";
-const buttonWidth = (props) => props.theme.audio?.mirtButtonWidth || "3rem";
+const buttonWidth = (props) => props.theme.audio?.mirtButtonWidth || "60px";
 const buttonBorderColor = (props) =>
   props.theme.audio?.mirtButtonBorderColor || "#222";
 const buttonHoverColor = (props) =>

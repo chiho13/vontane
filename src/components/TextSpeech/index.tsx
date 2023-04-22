@@ -33,10 +33,11 @@ export const TextSpeech: React.FC = () => {
   const [selectedVoiceId, setSelectedVoiceId] = useState<string>("");
   const [audioIsLoading, setAudioIsLoading] = useState<boolean>(false);
   const [transcriptionId, setTranscriptionId] = useState<string>("");
-  const [generatedAudioElement, setGeneratedAudioElement] = useStatusPolling(
-    setAudioIsLoading,
-    workspaceId
-  );
+
+  const url =
+    "https://res.cloudinary.com/monkeyking/video/upload/v1682090997/synthesised-audio_12_qvb3p4.wav";
+  const fileName = "anny.wav";
+  const file = useDownloadFile(url, fileName);
 
   const { textSpeech } = useTextSpeech();
 
@@ -51,6 +52,35 @@ export const TextSpeech: React.FC = () => {
       enabled: false,
     }
   );
+
+  const {
+    data: ttsaudiodata,
+    error: ttsaudiodataerror,
+    isLoading: ttsaudiodataloading,
+    refetch: ttsaudiodatarefetch,
+  } = api.texttospeech.getTextToSpeechFileNames.useQuery(
+    { workspaceId },
+    {
+      enabled: false,
+    }
+  );
+  const [generatedAudioElement, setGeneratedAudioElement] = useStatusPolling(
+    setAudioIsLoading,
+    workspaceId,
+    ttsaudiodatarefetch
+  );
+
+  useEffect(() => {
+    if (workspaceId) {
+      ttsaudiodatarefetch();
+    }
+  }, [workspaceId]);
+
+  useEffect(() => {
+    if (ttsaudiodata) {
+      console.log(ttsaudiodata);
+    }
+  }, [ttsaudiodata]);
 
   useEffect(() => {
     if (
@@ -128,12 +158,13 @@ export const TextSpeech: React.FC = () => {
           </div>
         </Portal>
       )} */}
-
-      <div className="fixed left-0 bottom-2 w-full">
-        <div className="mx-auto mt-5 block lg:w-[980px]">
-          <Mirt file={file} />
+      <Portal>
+        <div className="fixed left-0 bottom-2 w-full">
+          <div className="mx-auto mt-5 block lg:w-[980px]">
+            <Mirt file={file} />
+          </div>
         </div>
-      </div>
+      </Portal>
     </>
   );
 };

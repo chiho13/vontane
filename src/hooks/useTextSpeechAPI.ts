@@ -11,7 +11,8 @@ type UseTextSpeechStatusPollingResult = [
 
 function useTextSpeechStatusPolling(
   setAudioIsLoading: (value: boolean) => void,
-  workspaceId: string
+  workspaceId: any,
+  ttsaudiodatarefetch: () => void
 ): UseTextSpeechStatusPollingResult {
   const [generatedAudioElement, setGeneratedAudioElement] =
     useState<HTMLAudioElement | null>(null);
@@ -21,7 +22,6 @@ function useTextSpeechStatusPolling(
 
   const SOCKET_URL = process.env.PLAYHT_SOCKET_URL;
 
-  console.log(workspaceId);
   useEffect(() => {
     const socket = io(SOCKET_URL);
 
@@ -45,37 +45,28 @@ function useTextSpeechStatusPolling(
     };
   }, []);
 
-  const {
-    data: uploadAudioData,
-    error: uploadAudioError,
-    isLoading: uploadAudioLoading,
-    refetch: uploadAudioRefetch,
-  } = api.texttospeech.uploadAudio.useQuery(
-    { audioURL, fileName, workspaceId },
-    {
-      enabled: false,
+  const uploadAudioToSupabase = api.texttospeech.uploadAudio.useMutation();
+
+  const createTTSAudio = async () => {
+    try {
+      const response = await uploadAudioToSupabase.mutateAsync({
+        audioURL,
+        fileName,
+        workspaceId,
+      });
+      if (response && response.tts) {
+        ttsaudiodatarefetch();
+      }
+    } catch (error) {
+      console.error("Error creating workspace:", error);
     }
-  );
+  };
 
   useEffect(() => {
     if (audioURL) {
-      uploadAudioRefetch();
+      createTTSAudio();
     }
   }, [audioURL]);
-
-  useEffect(() => {
-    if (uploadAudioData) {
-      console.log(uploadAudioData);
-      const newAudioElement = new Audio(uploadAudioData.url);
-      setGeneratedAudioElement(newAudioElement);
-      setAudioIsLoading(false);
-    }
-
-    if (uploadAudioError) {
-      console.error(uploadAudioError);
-      // Handle the error as needed
-    }
-  }, [uploadAudioData, uploadAudioError, uploadAudioLoading]);
 
   return [generatedAudioElement, setGeneratedAudioElement];
 }

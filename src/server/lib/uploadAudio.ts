@@ -1,9 +1,12 @@
+import { PrismaClient, Prisma } from "@prisma/client";
 import { SupabaseClient } from "@supabase/supabase-js";
 
 export async function uploadAudioToSupabase(
+  prisma: PrismaClient,
   supabaseServerClient: SupabaseClient,
   audioUrl: string,
-  fileName: string
+  fileName: string,
+  workspaceId: string
 ): Promise<string> {
   try {
     const {
@@ -50,6 +53,14 @@ export async function uploadAudioToSupabase(
     if (signedURLError || !signedURL) {
       throw new Error("Failed to generate signed URL for the audio file.");
     }
+
+    await prisma.texttospeech.create({
+      data: {
+        file_name: fileName,
+        creator_id: userId,
+        workspace_id: workspaceId,
+      },
+    });
 
     return signedURL.signedUrl;
   } catch (error) {

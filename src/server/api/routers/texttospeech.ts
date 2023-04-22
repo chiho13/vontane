@@ -67,19 +67,51 @@ export const texttospeechRouter = createTRPCRouter({
       z.object({
         audioURL: z.string(),
         fileName: z.string(),
+        workspaceId: z.string(),
       })
     )
     .query(async ({ ctx, input }) => {
       const { supabaseServerClient } = ctx;
-      const { audioURL, fileName } = input;
+      const { audioURL, fileName, workspaceId } = input;
 
       try {
         const uploadedUrl = await uploadAudioToSupabase(
+          ctx.prisma,
           supabaseServerClient,
           audioURL,
-          fileName
+          fileName,
+          workspaceId
         );
         return { url: uploadedUrl };
+      } catch (error) {
+        console.error(error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        });
+      }
+    }),
+  getTextToSpeechFileNames: protectedProcedure
+    .input(
+      z.object({
+        workspaceId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { workspaceId } = input;
+
+      try {
+        const fileNames = await ctx.prisma.texttospeech.findMany({
+          where: {
+            workspace_id: workspaceId,
+            creator_id: ctx.user.id,
+          },
+          select: {
+            file_name: true,
+          },
+        });
+
+        return fileNames.map((record) => record.file_name);
       } catch (error) {
         console.error(error);
         throw new TRPCError({

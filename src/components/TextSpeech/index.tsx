@@ -2,18 +2,41 @@ import { useEffect, useState } from "react";
 import { api } from "@/utils/api";
 import VoiceDropdown from "@/components/VoiceDropdown";
 import GenerateButton from "@/components/GenerateButton";
-import useStatusPolling from "@/hooks/useStatusPolling";
+import useStatusPolling from "@/hooks/useTextSpeechAPI";
 import AudioPlayer from "@/components/AudioPlayer";
 import { Portal } from "react-portal";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { genNodeId } from "@/hoc/withID";
+import { useRouter } from "next/router";
+import { Mirt } from "@/plugins/audioTrimmer";
+
+const useDownloadFile = (url, fileName) => {
+  const [file, setFile] = useState(null);
+
+  useEffect(() => {
+    const fetchFile = async () => {
+      const response = await fetch(url);
+      const data = await response.blob();
+      const file = new File([data], fileName, { type: data.type });
+      setFile(file);
+    };
+
+    fetchFile();
+  }, [url, fileName]);
+
+  return file;
+};
 
 export const TextSpeech: React.FC = () => {
+  const router = useRouter();
+  const workspaceId = router.query.workspaceId;
   const [selectedVoiceId, setSelectedVoiceId] = useState<string>("");
   const [audioIsLoading, setAudioIsLoading] = useState<boolean>(false);
   const [transcriptionId, setTranscriptionId] = useState<string>("");
-  const [generatedAudioElement, setGeneratedAudioElement] =
-    useStatusPolling(setAudioIsLoading);
+  const [generatedAudioElement, setGeneratedAudioElement] = useStatusPolling(
+    setAudioIsLoading,
+    workspaceId
+  );
 
   const { textSpeech } = useTextSpeech();
 
@@ -93,7 +116,7 @@ export const TextSpeech: React.FC = () => {
           onClick={generateAudio}
         />
       </div>
-      {!audioIsLoading && generatedAudioElement && (
+      {/* {!audioIsLoading && generatedAudioElement && (
         <Portal>
           <div className="fixed bottom-0 left-0 bottom-4 right-0 mx-auto flex w-full justify-center ">
             <div className="w-[94%] flex-shrink-0 lg:w-[500px] ">
@@ -104,7 +127,13 @@ export const TextSpeech: React.FC = () => {
             </div>
           </div>
         </Portal>
-      )}
+      )} */}
+
+      <div className="fixed left-0 bottom-2 w-full">
+        <div className="mx-auto mt-5 block lg:w-[980px]">
+          <Mirt file={file} />
+        </div>
+      </div>
     </>
   );
 };

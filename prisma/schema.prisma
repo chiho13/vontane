@@ -28,11 +28,9 @@ model workspace {
 
 model texttospeech {
   id          String        @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
-  entered_text String
-  audio_url   String
+  file_name   String
   creator_id  String        @db.Uuid
   creator     user          @relation(fields: [creator_id], references: [id])
   workspace   workspace     @relation(fields: [workspace_id], references: [id])
-  voice_id    String?
   workspace_id String       @db.Uuid
 }

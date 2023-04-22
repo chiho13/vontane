@@ -40,7 +40,7 @@ const Home: NextPage = () => {
   const [status, setStatus] = useState<string>("");
   const [audioUrl, setAudioUrl] = useState<string>("");
 
-  const { profile } = useUserContext();
+  const { profile, workspaces } = useUserContext();
   const router = useRouter();
 
   const [generatedAudioElement, setGeneratedAudioElement] =
@@ -49,20 +49,21 @@ const Home: NextPage = () => {
   //   "https://peregrine-samples.s3.amazonaws.com/editor-samples/anny.wav"
   // );
 
-  const [workspaces, setWorkspaces] = useState<workspace[]>([]);
-  const { data: workspacesData, refetch: refetchWorkspaces } =
-    api.workspace.getWorkspaces.useQuery();
+  // const [workspaces, setWorkspaces] = useState<workspace[]>([]);
+  // const { data: workspacesData, refetch: refetchWorkspaces } =
+  //   api.workspace.getWorkspaces.useQuery({ id: "sdfdsf" }, { enabled: false });
 
-  useEffect(() => {
-    if (workspacesData) {
-      const response = workspacesData.workspaces;
+  // useEffect(() => {
+  //   if (workspacesData) {
+  //     const response = workspacesData.workspaces;
 
-      console.log(response);
-      setWorkspaces(response);
-    }
-  }, [workspacesData]);
+  //     console.log(response);
+  //     setWorkspaces(response);
+  //   }
+  // }, [workspacesData, session]);
   useEffect(() => {
     if (session) {
+      // refetchWorkspaces();
       setLoading(false);
     }
   }, [session]);

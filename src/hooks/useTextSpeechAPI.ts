@@ -10,7 +10,8 @@ type UseTextSpeechStatusPollingResult = [
 ];
 
 function useTextSpeechStatusPolling(
-  setAudioIsLoading: (value: boolean) => void
+  setAudioIsLoading: (value: boolean) => void,
+  workspaceId: string
 ): UseTextSpeechStatusPollingResult {
   const [generatedAudioElement, setGeneratedAudioElement] =
     useState<HTMLAudioElement | null>(null);
@@ -20,6 +21,7 @@ function useTextSpeechStatusPolling(
 
   const SOCKET_URL = process.env.PLAYHT_SOCKET_URL;
 
+  console.log(workspaceId);
   useEffect(() => {
     const socket = io(SOCKET_URL);
 
@@ -49,7 +51,7 @@ function useTextSpeechStatusPolling(
     isLoading: uploadAudioLoading,
     refetch: uploadAudioRefetch,
   } = api.texttospeech.uploadAudio.useQuery(
-    { audioURL, fileName },
+    { audioURL, fileName, workspaceId },
     {
       enabled: false,
     }

@@ -44,7 +44,7 @@ export interface MirtOptions {
 
 const defauiltOptions: MirtOptions = {
   showButton: true,
-  waveformColor: "rgba(255, 255, 255, 0.5)",
+  waveformColor: "rgba(255, 255, 255, 0.7)",
   waveformBlockWidth: 4,
   waveformBarWidth: 0.5,
   waveformLoading: false,

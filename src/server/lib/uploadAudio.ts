@@ -54,15 +54,15 @@ export async function uploadAudioToSupabase(
       throw new Error("Failed to generate signed URL for the audio file.");
     }
 
-    await prisma.texttospeech.create({
-      data: {
-        file_name: fileName,
-        creator_id: userId,
-        workspace_id: workspaceId,
-      },
-    });
+    // await prisma.texttospeech.create({
+    //   data: {
+    //     file_name: fileName,
+    //     creator_id: userId,
+    //     workspace_id: workspaceId,
+    //   },
+    // });
 
-    return signedURL.signedUrl;
+    // return signedURL.signedUrl;
   } catch (error) {
     console.error("Error uploading audio file to Supabase:", error);
     throw new Error("Failed to upload audio file to Supabase storage.");

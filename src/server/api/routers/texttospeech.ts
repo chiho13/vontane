@@ -70,19 +70,29 @@ export const texttospeechRouter = createTRPCRouter({
         workspaceId: z.string(),
       })
     )
-    .query(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       const { supabaseServerClient } = ctx;
       const { audioURL, fileName, workspaceId } = input;
 
       try {
-        const uploadedUrl = await uploadAudioToSupabase(
+        await uploadAudioToSupabase(
           ctx.prisma,
           supabaseServerClient,
           audioURL,
           fileName,
           workspaceId
         );
-        return { url: uploadedUrl };
+        // return { url: uploadedUrl };
+
+        const tts = await ctx.prisma.texttospeech.create({
+          data: {
+            file_name: fileName,
+            creator_id: ctx.user.id,
+            workspace_id: workspaceId,
+          },
+        });
+
+        return { tts };
       } catch (error) {
         console.error(error);
         throw new TRPCError({
@@ -110,8 +120,30 @@ export const texttospeechRouter = createTRPCRouter({
             file_name: true,
           },
         });
+        const signedURLPromises = fileNames.map(async (record) => {
+          const expiresIn = 60 * 60 * 24 * 7;
+          const fullFilePath = `${ctx.user.id}/${record.file_name}`;
+          const { data: signedURL, error: signedURLError } =
+            await ctx.supabaseServerClient.storage
+              .from("tts-audio")
+              .createSignedUrl(fullFilePath, expiresIn);
 
-        return fileNames.map((record) => record.file_name);
+          if (signedURLError) {
+            console.error(
+              `Error creating signed URL: ${signedURLError.message}`
+            );
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Failed to create signed URL",
+            });
+          }
+
+          return signedURL;
+        });
+
+        const signedURLs = await Promise.all(signedURLPromises);
+
+        return signedURLs;
       } catch (error) {
         console.error(error);
         throw new TRPCError({

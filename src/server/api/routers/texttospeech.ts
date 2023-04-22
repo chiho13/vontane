@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { TRPCError } from "@trpc/server";
+import { uploadAudioToSupabase } from "@/server/lib/uploadAudio";
 
 const secretkey = process.env.PLAYHT_SECRETKEY;
 const userId = process.env.PLAYHT_USERID;
@@ -53,6 +54,32 @@ export const texttospeechRouter = createTRPCRouter({
 
         const data = await response.json();
         return data;
+      } catch (error) {
+        console.error(error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        });
+      }
+    }),
+  uploadAudio: protectedProcedure
+    .input(
+      z.object({
+        audioURL: z.string(),
+        fileName: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { supabaseServerClient } = ctx;
+      const { audioURL, fileName } = input;
+
+      try {
+        const uploadedUrl = await uploadAudioToSupabase(
+          supabaseServerClient,
+          audioURL,
+          fileName
+        );
+        return { url: uploadedUrl };
       } catch (error) {
         console.error(error);
         throw new TRPCError({

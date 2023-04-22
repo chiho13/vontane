@@ -6,12 +6,13 @@ import useStatusPolling from "@/hooks/useStatusPolling";
 import AudioPlayer from "@/components/AudioPlayer";
 import { Portal } from "react-portal";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
+import { genNodeId } from "@/hoc/withID";
 
 export const TextSpeech: React.FC = () => {
   const [selectedVoiceId, setSelectedVoiceId] = useState<string>("");
   const [audioIsLoading, setAudioIsLoading] = useState<boolean>(false);
   const [transcriptionId, setTranscriptionId] = useState<string>("");
-  const [generatedAudioElement, setGeneratedAudioElement, audioURL] =
+  const [generatedAudioElement, setGeneratedAudioElement] =
     useStatusPolling(setAudioIsLoading);
 
   const { textSpeech } = useTextSpeech();
@@ -53,12 +54,7 @@ export const TextSpeech: React.FC = () => {
         // Handle the error as needed
       }
     }
-  }, [
-    audioIsLoading,
-    texttospeechdata,
-    texttospeecherror,
-    texttospeechloading,
-  ]);
+  }, [texttospeechdata, texttospeecherror, texttospeechloading]);
 
   async function generateAudio(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();

@@ -159,17 +159,12 @@ const Workspace: NextPage = () => {
   useEffect(() => {
     return () => setLoading(false);
   }, []);
-
-  if (loading) {
-    return <div></div>;
+  if (!session) {
+    return <LoginPage />;
   }
 
   if (fetchWorkspaceIsLoading) {
     return <div></div>;
-  }
-
-  if (!session) {
-    return <LoginPage />;
   }
 
   function extractTextValues(data) {
@@ -297,7 +292,7 @@ const Workspace: NextPage = () => {
       <Layout profile={profile} currentWorkspaceId={workspaceId}>
         <div className="mx-auto mt-4 justify-center p-4">
           <TextSpeech />
-          <div className="mx-auto mt-5 w-[980px]">
+          <div className="mx-auto mt-5 max-w-[980px]">
             <Mirt file={file} />
           </div>
         </div>

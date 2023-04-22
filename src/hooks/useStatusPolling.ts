@@ -1,13 +1,12 @@
 import { useState, useEffect, useRef, Dispatch, SetStateAction } from "react";
 import { getTextSpeechStatusPolling } from "../api/ttsStatusPolling";
-
+import { genNodeId } from "@/hoc/withID";
 import { api } from "@/utils/api";
 import { io } from "socket.io-client";
 
 type UseTextSpeechStatusPollingResult = [
   HTMLAudioElement | null,
-  Dispatch<SetStateAction<HTMLAudioElement | null>>,
-  string
+  Dispatch<SetStateAction<HTMLAudioElement | null>>
 ];
 
 function useTextSpeechStatusPolling(
@@ -17,6 +16,7 @@ function useTextSpeechStatusPolling(
     useState<HTMLAudioElement | null>(null);
 
   const [audioURL, setAudioURL] = useState<string>("");
+  const [fileName, setFileName] = useState<string>("");
 
   const SOCKET_URL = process.env.PLAYHT_SOCKET_URL;
 
@@ -29,13 +29,8 @@ function useTextSpeechStatusPolling(
 
         const newAudioElement = new Audio(data.metadata.output[0]);
         setAudioURL(data.metadata.output[0]);
+        setFileName(`synthesis-${genNodeId()}.wav`);
         console.log(data.metadata.progress);
-        newAudioElement.addEventListener("error", (e) => {
-          console.error("Error playing audio:", e);
-        });
-        // newAudioElement.play();
-        setGeneratedAudioElement(newAudioElement);
-        setAudioIsLoading(false);
       }
 
       if (data.status === "QUEUED") {
@@ -48,7 +43,39 @@ function useTextSpeechStatusPolling(
     };
   }, []);
 
-  return [generatedAudioElement, setGeneratedAudioElement, audioURL];
+  const {
+    data: uploadAudioData,
+    error: uploadAudioError,
+    isLoading: uploadAudioLoading,
+    refetch: uploadAudioRefetch,
+  } = api.texttospeech.uploadAudio.useQuery(
+    { audioURL, fileName },
+    {
+      enabled: false,
+    }
+  );
+
+  useEffect(() => {
+    if (audioURL) {
+      uploadAudioRefetch();
+    }
+  }, [audioURL]);
+
+  useEffect(() => {
+    if (uploadAudioData) {
+      console.log(uploadAudioData);
+      const newAudioElement = new Audio(uploadAudioData.url);
+      setGeneratedAudioElement(newAudioElement);
+      setAudioIsLoading(false);
+    }
+
+    if (uploadAudioError) {
+      console.error(uploadAudioError);
+      // Handle the error as needed
+    }
+  }, [uploadAudioData, uploadAudioError, uploadAudioLoading]);
+
+  return [generatedAudioElement, setGeneratedAudioElement];
 }
 
 export default useTextSpeechStatusPolling;

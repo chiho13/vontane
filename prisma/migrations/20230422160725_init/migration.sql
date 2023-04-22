@@ -22,10 +22,8 @@ CREATE TABLE "workspace" (
 -- CreateTable
 CREATE TABLE "texttospeech" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
-    "entered_text" TEXT NOT NULL,
-    "audio_url" TEXT NOT NULL,
+    "file_name" TEXT NOT NULL,
     "creator_id" UUID NOT NULL,
-    "voice_id" TEXT,
     "workspace_id" UUID NOT NULL,
 
     CONSTRAINT "texttospeech_pkey" PRIMARY KEY ("id")

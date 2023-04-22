@@ -224,6 +224,7 @@ const Layout: React.FC<LayoutProps> = ({
   }
 
   const [workspaces, setWorkspaces] = useState<workspace[]>([]);
+
   const { data: workspacesData, refetch: refetchWorkspaces } =
     api.workspace.getWorkspaces.useQuery();
 

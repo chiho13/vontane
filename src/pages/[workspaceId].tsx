@@ -13,7 +13,6 @@ import VoiceDropdown from "@/components/VoiceDropdown";
 import GenerateButton from "@/components/GenerateButton";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import useStatusPolling from "@/hooks/useStatusPolling";
 
 import { useSession } from "@supabase/auth-helpers-react";
 import LoginPage from "./login";
@@ -53,6 +52,11 @@ const useDownloadFile = (url, fileName) => {
 
 const Workspace: NextPage = () => {
   const session = useSession();
+
+  if (!session) {
+    return <LoginPage />;
+  }
+
   const [selectedVoiceId, setSelectedVoiceId] = React.useState<string>("");
 
   // const [te, setEnteredText] = React.useState<string[]>([]);
@@ -122,6 +126,7 @@ const Workspace: NextPage = () => {
       const slateValue = workspaceData.workspace.slate_value;
 
       if (slateValue) {
+        console.log(slateValue);
         const parsedSlateValue = JSON.parse(slateValue);
         setInitialSlateValue(parsedSlateValue);
 
@@ -159,9 +164,6 @@ const Workspace: NextPage = () => {
   useEffect(() => {
     return () => setLoading(false);
   }, []);
-  if (!session) {
-    return <LoginPage />;
-  }
 
   if (fetchWorkspaceIsLoading) {
     return <div></div>;
@@ -283,7 +285,7 @@ const Workspace: NextPage = () => {
     setTextSpeech(extractedText);
     updateWorkspace(value);
     setInitialSlateValue(value);
-
+    console.log(extractedText);
     setUpdatedWorkspace({ title: value[0].children[0].text, id: workspaceId });
   }
 
@@ -292,9 +294,6 @@ const Workspace: NextPage = () => {
       <Layout profile={profile} currentWorkspaceId={workspaceId}>
         <div className="mx-auto mt-4 justify-center p-4">
           <TextSpeech />
-          <div className="mx-auto mt-5 max-w-[980px]">
-            <Mirt file={file} />
-          </div>
         </div>
         <div className="flex flex-col items-center justify-center">
           <div className="linear-gradient z-0 mx-auto mb-20 mt-2 w-full rounded-md border-2 border-gray-300 px-2 lg:h-[640px]  lg:w-[980px] lg:px-0 ">
@@ -315,6 +314,7 @@ const Workspace: NextPage = () => {
           </div>
         </div>
       </Layout>
+
       {/* {!audioIsLoading && generatedAudioElement && (
         <div className="fixed bottom-0 left-0 bottom-4 right-0 mx-auto flex w-full justify-center ">
           <div className="w-[94%] flex-shrink-0 lg:w-[500px] ">

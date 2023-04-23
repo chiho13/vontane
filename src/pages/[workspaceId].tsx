@@ -292,11 +292,11 @@ const Workspace: NextPage = () => {
   return (
     <>
       <Layout profile={profile} currentWorkspaceId={workspaceId}>
-        <div className="mx-auto mt-4 justify-center p-4">
+        {/* <div className="mx-auto mt-4 justify-center p-4">
           <TextSpeech />
-        </div>
+        </div> */}
         <div className="flex flex-col items-center justify-center">
-          <div className="linear-gradient z-0 mx-auto mb-20 mt-2 w-full rounded-md border-2 border-gray-300 px-2 lg:h-[640px]  lg:w-[980px] lg:px-0 ">
+          <div className="linear-gradient z-0 mx-auto mb-20 mt-4 w-full rounded-md border-2 border-gray-300 px-2 lg:mt-20 lg:h-[640px]  lg:max-w-[980px] lg:px-0 ">
             <div className="block  lg:w-full">
               <NewColumnProvider>
                 {!fetchWorkspaceIsLoading &&

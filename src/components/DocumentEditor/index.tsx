@@ -1122,7 +1122,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 }}
               >
                 <Editable
-                  className="relative h-[680px] overflow-y-auto"
+                  className="relative h-[640px] overflow-y-auto"
                   renderElement={renderElement}
                   renderLeaf={Blank}
                   onMouseUp={(event) => {

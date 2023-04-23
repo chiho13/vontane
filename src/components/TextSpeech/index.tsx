@@ -182,13 +182,17 @@ export const TextSpeech: React.FC = () => {
           </div>
         </Portal>
       )} */}
-      {/* <Portal>
-        <div className="fixed left-0 bottom-2 w-full">
-          <div className="mx-auto mt-5 block lg:w-[980px]">
-            <Mirt file={file} />
+      {/* {audioFiles && audioFiles.length > 0 && (
+        <Portal>
+          <div className="fixed left-0 bottom-2 w-full">
+            <div className="mx-auto mt-5 block lg:w-[980px]">
+              {audioFiles.map((file) => (
+                <Mirt file={file} />
+              ))}
+            </div>
           </div>
-        </div>
-      </Portal> */}
+        </Portal>
+      )} */}
     </>
   );
 };

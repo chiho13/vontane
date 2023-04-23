@@ -42,9 +42,9 @@ export interface MirtOptions {
   fineTuningScale: number;
 }
 
-const defauiltOptions: MirtOptions = {
+const defaultOptions: MirtOptions = {
   showButton: true,
-  waveformColor: "rgba(255, 255, 255, 0.7)",
+  waveformColor: "rgba(52, 142, 243, 0.9)",
   waveformBlockWidth: 4,
   waveformBarWidth: 0.5,
   waveformLoading: false,
@@ -64,7 +64,7 @@ export const Mirt = ({
   end: endValueOverwrite,
   options,
 }: MirtProps) => {
-  const config = { ...defauiltOptions, ...options };
+  const config = { ...defaultOptions, ...options };
 
   const start = useRef<HTMLInputElement>(null);
   const playhead = useRef<HTMLInputElement>(null);
@@ -84,6 +84,7 @@ export const Mirt = ({
   const [duration, setDuration] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [fineTuning, setFineTuning] = useState(-1);
+  const [currentTime, setCurrentTime] = useState(0);
 
   const fineTuningResolution = duration / config.fineTuningScale;
 
@@ -111,6 +112,10 @@ export const Mirt = ({
       audio.load();
     }
   }, [audio]);
+
+  useEffect(() => {
+    setCurrentTime(playheadPosition);
+  }, [playheadPosition]);
 
   useEffect(() => {
     if (onChange && initialized) {
@@ -231,6 +236,14 @@ export const Mirt = ({
     if (onChange) {
       onChange({ start: 0, current: 0, end: durationInMilliseconds });
     }
+  };
+
+  const formatTime = (timeInMilliseconds: number) => {
+    const totalSeconds = Math.floor(timeInMilliseconds / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
   const pausePlayback = (currentTime?: number) => {
@@ -386,156 +399,160 @@ export const Mirt = ({
   };
 
   return (
-    <MirtStyle
-      className={classNames(
-        "mirt",
-        {
-          "mirt--initialized": initialized,
-          "mirt--disabled": !initialized,
-        },
-        className
-      )}
-    >
-      {config.showButton && (
-        <button
-          className="mirt__play-button"
-          type="button"
-          onClick={handleButtonClick}
-          disabled={!initialized}
-        >
-          {playing ? (
-            <svg
-              viewBox="0 0 32 32"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              className="mirt__play-button-icon"
-            >
-              <path d="M12.404 2.364A2.364 2.364 0 0 0 10.041 0H6.134a2.364 2.364 0 0 0-2.363 2.364v27.273A2.364 2.364 0 0 0 6.134 32h3.907a2.364 2.364 0 0 0 2.363-2.363V2.364Zm15.826 0A2.364 2.364 0 0 0 25.866 0H21.96a2.364 2.364 0 0 0-2.364 2.364v27.273A2.364 2.364 0 0 0 21.96 32h3.906a2.364 2.364 0 0 0 2.364-2.363V2.364Z" />
-            </svg>
-          ) : (
-            <svg
-              viewBox="0 0 32 32"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              className="mirt__play-button-icon"
-            >
-              <path d="M2.919 29.696a2.304 2.304 0 0 0 3.458 1.995l23.765-13.723a2.277 2.277 0 0 0 1.144-1.976c0-.816-.436-1.57-1.144-1.979C24.266 10.623 12.33 3.731 6.409.313a2.325 2.325 0 0 0-3.49 2.014v27.37Z" />
-            </svg>
-          )}
-        </button>
-      )}
-      <div className="mirt__timeline">
-        <div className="mirt__range-handles">
-          <div className="mirt__range-handle-frame">
-            <input
-              ref={start}
-              className="mirt__range-handle mirt__range-handle--start"
-              type="range"
-              min={getMinValue(fineTuning, fineTuningResolution, duration)}
-              max={getMaxValue(fineTuning, fineTuningResolution, duration)}
-              value={startPosition}
-              onChange={handleStartChange}
-              onPointerDown={(e) => dragHandle(e, "start")}
-              onPointerUp={() => releaseHandle("start")}
-              disabled={!initialized}
-            />
+    <>
+      <div className="mirt__current-time">{formatTime(currentTime)}</div>
 
-            <input
-              ref={end}
-              className="mirt__range-handle mirt__range-handle--end"
-              type="range"
-              min={getMinValue(fineTuning, fineTuningResolution, duration)}
-              max={getMaxValue(fineTuning, fineTuningResolution, duration)}
-              value={endPosition}
-              onChange={handleEndChange}
-              onPointerDown={(e) => dragHandle(e, "end")}
-              onPointerUp={() => releaseHandle("end")}
-              disabled={!initialized}
-            />
-          </div>
-          <div className="mirt__range-handle-playhead-track">
-            <input
-              ref={playhead}
-              className="mirt__range-handle mirt__range-handle--playhead"
-              type="range"
-              min={getMinValue(fineTuning, fineTuningResolution, duration)}
-              max={getMaxValue(fineTuning, fineTuningResolution, duration)}
-              value={playheadPosition}
-              onChange={handlePlayheadChange}
-              onPointerDown={(e) => dragHandle(e, "playhead")}
-              onPointerUp={() => releaseHandle("playhead")}
-              disabled={!initialized}
-            />
-          </div>
-        </div>
-        <div className="mirt__handles">
-          <div
-            className={classNames("mirt__handle-frame", {
-              "mirt__handle-frame--start-dragging": startDragging,
-              "mirt__handle-frame--end-dragging": endDragging,
-            })}
-            style={{
-              left: `${getStartHandleValue(
-                startPosition,
-                fineTuning,
-                fineTuningResolution,
-                duration
-              )}%`,
-              right: `${getEndHandleValue(
-                endPosition,
-                fineTuning,
-                fineTuningResolution,
-                duration
-              )}%`,
-            }}
+      <MirtStyle
+        className={classNames(
+          "mirt",
+          {
+            "mirt--initialized": initialized,
+            "mirt--disabled": !initialized,
+          },
+          className
+        )}
+      >
+        {config.showButton && (
+          <button
+            className="mirt__play-button"
+            type="button"
+            onClick={handleButtonClick}
+            disabled={!initialized}
           >
-            <svg
-              viewBox="0 0 16 32"
-              xmlns="http://www.w3.org/2000/svg"
-              className="mirt__handle-icon mirt__handle-icon--start"
-              fill="currentColor"
-            >
-              <path d="M8.638 1.342 3.714 15.334a2.013 2.013 0 0 0 0 1.332l4.924 13.992a2.008 2.008 0 0 0 3.789-1.333L7.737 16l4.69-13.325a2.008 2.008 0 0 0-3.789-1.333Z" />
-            </svg>
-            <svg
-              viewBox="0 0 16 32"
-              xmlns="http://www.w3.org/2000/svg"
-              className="mirt__handle-icon mirt__handle-icon--end"
-              fill="currentColor"
-            >
-              <path d="m7.503 1.342 4.924 13.992c.151.43.151.901 0 1.332L7.503 30.658a2.008 2.008 0 0 1-3.788-1.333L8.404 16 3.714 2.675a2.008 2.008 0 0 1 3.789-1.333Z" />
-            </svg>
+            {playing ? (
+              <svg
+                viewBox="0 0 32 32"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                className="mirt__play-button-icon"
+              >
+                <path d="M12.404 2.364A2.364 2.364 0 0 0 10.041 0H6.134a2.364 2.364 0 0 0-2.363 2.364v27.273A2.364 2.364 0 0 0 6.134 32h3.907a2.364 2.364 0 0 0 2.363-2.363V2.364Zm15.826 0A2.364 2.364 0 0 0 25.866 0H21.96a2.364 2.364 0 0 0-2.364 2.364v27.273A2.364 2.364 0 0 0 21.96 32h3.906a2.364 2.364 0 0 0 2.364-2.363V2.364Z" />
+              </svg>
+            ) : (
+              <svg
+                viewBox="0 0 32 32"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                className="mirt__play-button-icon"
+              >
+                <path d="M2.919 29.696a2.304 2.304 0 0 0 3.458 1.995l23.765-13.723a2.277 2.277 0 0 0 1.144-1.976c0-.816-.436-1.57-1.144-1.979C24.266 10.623 12.33 3.731 6.409.313a2.325 2.325 0 0 0-3.49 2.014v27.37Z" />
+              </svg>
+            )}
+          </button>
+        )}
+        <div className="mirt__timeline">
+          <div className="mirt__range-handles">
+            <div className="mirt__range-handle-frame">
+              <input
+                ref={start}
+                className="mirt__range-handle mirt__range-handle--start"
+                type="range"
+                min={getMinValue(fineTuning, fineTuningResolution, duration)}
+                max={getMaxValue(fineTuning, fineTuningResolution, duration)}
+                value={startPosition}
+                onChange={handleStartChange}
+                onPointerDown={(e) => dragHandle(e, "start")}
+                onPointerUp={() => releaseHandle("start")}
+                disabled={!initialized}
+              />
+
+              <input
+                ref={end}
+                className="mirt__range-handle mirt__range-handle--end"
+                type="range"
+                min={getMinValue(fineTuning, fineTuningResolution, duration)}
+                max={getMaxValue(fineTuning, fineTuningResolution, duration)}
+                value={endPosition}
+                onChange={handleEndChange}
+                onPointerDown={(e) => dragHandle(e, "end")}
+                onPointerUp={() => releaseHandle("end")}
+                disabled={!initialized}
+              />
+            </div>
+            <div className="mirt__range-handle-playhead-track">
+              <input
+                ref={playhead}
+                className="mirt__range-handle mirt__range-handle--playhead"
+                type="range"
+                min={getMinValue(fineTuning, fineTuningResolution, duration)}
+                max={getMaxValue(fineTuning, fineTuningResolution, duration)}
+                value={playheadPosition}
+                onChange={handlePlayheadChange}
+                onPointerDown={(e) => dragHandle(e, "playhead")}
+                onPointerUp={() => releaseHandle("playhead")}
+                disabled={!initialized}
+              />
+            </div>
           </div>
-          <div className="mirt__playhead-track">
+          <div className="mirt__handles">
             <div
-              className={classNames("mirt__playhead", {
-                "mirt__playhead--dragging":
-                  playheadDragging || startDragging || endDragging || playing,
+              className={classNames("mirt__handle-frame", {
+                "mirt__handle-frame--start-dragging": startDragging,
+                "mirt__handle-frame--end-dragging": endDragging,
               })}
               style={{
                 left: `${getStartHandleValue(
-                  playheadPosition,
+                  startPosition,
+                  fineTuning,
+                  fineTuningResolution,
+                  duration
+                )}%`,
+                right: `${getEndHandleValue(
+                  endPosition,
                   fineTuning,
                   fineTuningResolution,
                   duration
                 )}%`,
               }}
-            ></div>
+            >
+              <svg
+                viewBox="0 0 16 32"
+                xmlns="http://www.w3.org/2000/svg"
+                className="mirt__handle-icon mirt__handle-icon--start"
+                fill="currentColor"
+              >
+                <path d="M8.638 1.342 3.714 15.334a2.013 2.013 0 0 0 0 1.332l4.924 13.992a2.008 2.008 0 0 0 3.789-1.333L7.737 16l4.69-13.325a2.008 2.008 0 0 0-3.789-1.333Z" />
+              </svg>
+              <svg
+                viewBox="0 0 16 32"
+                xmlns="http://www.w3.org/2000/svg"
+                className="mirt__handle-icon mirt__handle-icon--end"
+                fill="currentColor"
+              >
+                <path d="m7.503 1.342 4.924 13.992c.151.43.151.901 0 1.332L7.503 30.658a2.008 2.008 0 0 1-3.788-1.333L8.404 16 3.714 2.675a2.008 2.008 0 0 1 3.789-1.333Z" />
+              </svg>
+            </div>
+            <div className="mirt__playhead-track">
+              <div
+                className={classNames("mirt__playhead", {
+                  "mirt__playhead--dragging":
+                    playheadDragging || startDragging || endDragging || playing,
+                })}
+                style={{
+                  left: `${getStartHandleValue(
+                    playheadPosition,
+                    fineTuning,
+                    fineTuningResolution,
+                    duration
+                  )}%`,
+                }}
+              ></div>
+            </div>
           </div>
+          {initialized && (
+            <div className="mirt__waveform">
+              <Waveform
+                file={file}
+                fineTuning={fineTuning}
+                fineTuningResolution={fineTuningResolution}
+                duration={duration}
+                config={config}
+                handleWaveformLoaded={handleWaveformLoaded}
+              />
+            </div>
+          )}
         </div>
-        {initialized && (
-          <div className="mirt__waveform">
-            <Waveform
-              file={file}
-              fineTuning={fineTuning}
-              fineTuningResolution={fineTuningResolution}
-              duration={duration}
-              config={config}
-              handleWaveformLoaded={handleWaveformLoaded}
-            />
-          </div>
-        )}
-      </div>
-    </MirtStyle>
+      </MirtStyle>
+    </>
   );
 };

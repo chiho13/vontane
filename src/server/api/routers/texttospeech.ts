@@ -138,7 +138,7 @@ export const texttospeechRouter = createTRPCRouter({
             });
           }
 
-          return signedURL;
+          return { signedURL: signedURL.signedUrl, fileName: record.file_name };
         });
 
         const signedURLs = await Promise.all(signedURLPromises);

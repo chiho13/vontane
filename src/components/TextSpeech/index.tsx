@@ -15,10 +15,14 @@ const useDownloadFile = (url, fileName) => {
 
   useEffect(() => {
     const fetchFile = async () => {
-      const response = await fetch(url);
-      const data = await response.blob();
-      const file = new File([data], fileName, { type: data.type });
-      setFile(file);
+      if (url && fileName) {
+        const response = await fetch(url);
+        const data = await response.blob();
+        const file = new File([data], fileName, { type: data.type });
+        setFile(file);
+      } else {
+        setFile(null);
+      }
     };
 
     fetchFile();
@@ -34,10 +38,14 @@ export const TextSpeech: React.FC = () => {
   const [audioIsLoading, setAudioIsLoading] = useState<boolean>(false);
   const [transcriptionId, setTranscriptionId] = useState<string>("");
 
-  const url =
-    "https://res.cloudinary.com/monkeyking/video/upload/v1682090997/synthesised-audio_12_qvb3p4.wav";
-  const fileName = "anny.wav";
-  const file = useDownloadFile(url, fileName);
+  const [ttsAudioFile, setTtsAudioFile] = useState<File>();
+
+  // const url =
+  //   "https://res.cloudinary.com/monkeyking/video/upload/v1682090997/synthesised-audio_12_qvb3p4.wav";
+  // const fileName = "anny.wav";
+  // const file = useDownloadFile(url, fileName);
+
+  const [audioFiles, setAudioFiles] = useState<File[]>([]);
 
   const { textSpeech } = useTextSpeech();
 
@@ -78,7 +86,19 @@ export const TextSpeech: React.FC = () => {
 
   useEffect(() => {
     if (ttsaudiodata) {
-      console.log(ttsaudiodata);
+      const fetchedFiles: File[] = [];
+
+      const fetchAllFiles = async () => {
+        for (const { signedURL, fileName } of ttsaudiodata) {
+          const response = await fetch(signedURL);
+          const data = await response.blob();
+          const file = new File([data], fileName, { type: data.type });
+          fetchedFiles.push(file);
+        }
+        setAudioFiles(fetchedFiles);
+      };
+
+      fetchAllFiles();
     }
   }, [ttsaudiodata]);
 
@@ -108,6 +128,10 @@ export const TextSpeech: React.FC = () => {
       }
     }
   }, [texttospeechdata, texttospeecherror, texttospeechloading]);
+
+  useEffect(() => {
+    console.log(audioFiles);
+  }, [audioFiles]);
 
   async function generateAudio(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -153,18 +177,18 @@ export const TextSpeech: React.FC = () => {
               <AudioPlayer
                 generatedAudio={generatedAudioElement}
                 transcriptionId={transcriptionId}
-              />
+              />a
             </div>
           </div>
         </Portal>
       )} */}
-      <Portal>
+      {/* <Portal>
         <div className="fixed left-0 bottom-2 w-full">
           <div className="mx-auto mt-5 block lg:w-[980px]">
             <Mirt file={file} />
           </div>
         </div>
-      </Portal>
+      </Portal> */}
     </>
   );
 };

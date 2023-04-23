@@ -29,7 +29,7 @@ const buttonIconColor = (props) =>
 
 export const MirtStyle = styled.div`
   display: flex;
-  background-color: ${backgroundColor};
+  background-color: transparent;
   height: ${height};
   border-radius: ${borderRadius};
   overflow: hidden;
@@ -68,6 +68,7 @@ export const MirtStyle = styled.div`
     position: relative;
     flex-grow: 1;
     overflow: hidden;
+    background-color: rgba(52, 142, 243, 0.2);
   }
 
   .mirt__range-handles {
@@ -344,7 +345,7 @@ export const MirtStyle = styled.div`
       position: absolute;
       top: 0;
       bottom: 0;
-      background-color: ${backgroundColor};
+      background-color: rgb(132, 158, 188, 0.7);
       opacity: 0.7;
       z-index: -1;
       content: "";

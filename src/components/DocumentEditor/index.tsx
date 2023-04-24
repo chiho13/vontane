@@ -360,7 +360,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           const parentNode = Editor.parent(editor, currentNodePath);
           // Check if currentNode is an equation
 
-          if (currentNode.type === "equation") {
+          if (currentNode.type === "equation" || currentNode.type === "audio") {
             event.preventDefault();
           } else {
             // Check if the previous node is an equation
@@ -372,7 +372,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               const [_prevNode] = prevNodeEntry;
 
               if (
-                _prevNode.type === "equation" &&
+                (_prevNode.type === "equation" || _prevNode.type === "audio") &&
                 Editor.isStart(editor, selection.anchor, _currentNodePath)
               ) {
                 event.preventDefault();

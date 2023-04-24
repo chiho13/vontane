@@ -73,6 +73,7 @@ import { MiniDropdown } from "./MiniDropdown";
 import { OptionMenu } from "./OptionMenu";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { TextSpeech } from "@/components/TextSpeech";
+import ErrorBoundary from "../Errorboundary";
 interface DocumentEditorProps {
   workspaceId: string;
   handleTextChange?: (value: any) => void;
@@ -131,7 +132,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     setValue(initialSlateValue);
   }, [initialSlateValue]);
 
-  const [activeId, setActiveId] = useState("");
+  const [activeId, setActiveId] = useState(null);
 
   const activeIndex = activeId
     ? slatevalue.findIndex((el) => el.id === activeId)
@@ -576,56 +577,55 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const [addButtonHoveredId, setAddButtonHoveredId] = useState(null);
 
   const handleAddMCQBlock = useCallback((path: Path) => {
-    // const mcqNode = {
-    //   id: genNodeId(),
-    //   type: "mcq",
-    //   children: [
-    //     {
-    //       id: genNodeId(),
-    //       type: "list-item",
-    //       children: [
-    //         {
-    //           text: "",
-    //         },
-    //       ],
-    //     },
-    //     {
-    //       id: genNodeId(),
-    //       type: "ol",
-    //       children: [
-    //         {
-    //           id: genNodeId(),
-    //           type: "option-list-item",
-    //           children: [
-    //             {
-    //               text: "",
-    //             },
-    //           ],
-    //           correctAnswer: false,
-    //         },
-    //         {
-    //           id: genNodeId(),
-    //           type: "option-list-item",
-    //           children: [
-    //             {
-    //               text: "",
-    //             },
-    //           ],
-    //           correctAnswer: true,
-    //         },
-    //       ],
-    //     },
-    //   ],
-    // };
-
     const mcqNode = {
       id: genNodeId(),
-      type: "audio",
-      fileName: "audio.mp3",
-      children: [{ text: "" }],
+      type: "mcq",
+      children: [
+        {
+          id: genNodeId(),
+          type: "list-item",
+          children: [
+            {
+              text: "",
+            },
+          ],
+        },
+        {
+          id: genNodeId(),
+          type: "ol",
+          children: [
+            {
+              id: genNodeId(),
+              type: "option-list-item",
+              children: [
+                {
+                  text: "",
+                },
+              ],
+              correctAnswer: false,
+            },
+            {
+              id: genNodeId(),
+              type: "option-list-item",
+              children: [
+                {
+                  text: "",
+                },
+              ],
+              correctAnswer: true,
+            },
+          ],
+        },
+      ],
     };
 
-    console.log("sfsdf");
+    // const mcqNode = {
+    //   id: genNodeId(),
+    //   type: "audio",
+    //   fileName: "audio.mp3",
+    //   children: [{ text: "" }],
+    // };
+
     const [currentNode] = Editor.node(editor, path);
     const isEmptyNode =
       currentNode.type === "paragraph" &&
@@ -784,10 +784,18 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     function (event) {
       const { active, over } = event;
       if (!over || active.id === over.id) {
+        console.log("canceled");
+        setActiveId(null);
+        const activeElementPath = findPathById(editor, active.id);
+        if (activeElementPath) {
+          const endtOfActiveElement = Editor.end(editor, activeElementPath);
+          Transforms.select(editor, endtOfActiveElement);
+          ReactEditor.focus(editor);
+        }
         return;
       }
 
-      // Find the nodes using their IDs
+      // Find the nodes using the ir IDs
       setSelectedElementID(active.id);
 
       console.log("active", active.id, "over", over.id);
@@ -874,9 +882,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       }
 
       // setCheckEmptyColumnCells((prevCheck) => !prevCheck);
-      setActiveId("");
+      setActiveId(null);
     },
-    [editor, creatingNewColumn]
+    [editor, creatingNewColumn, activeId]
   );
 
   function Droppable({ children }) {
@@ -996,7 +1004,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     const lastNode = editor.children[editor.children.length - 1];
     const lastNodePath = ReactEditor.findPath(editor, lastNode);
 
-    if (lastNode.type === "equation") {
+    if (lastNode.type === "equation" || lastNode.type === "audio") {
       insertNewParagraphBelowLastNode(lastNodePath);
       event.stopPropagation();
       return;
@@ -1101,60 +1109,63 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       setSelectedElementID={setSelectedElementID}
       activePath={activePath}
     >
-      <DndContext
-        onDragEnd={handleDragEnd}
-        onDragStart={handleDragStart}
-        sensors={sensors}
-      >
-        <SortableContext
-          items={slatevalue}
-          strategy={verticalListSortingStrategy}
+      <ErrorBoundary>
+        <DndContext
+          onDragEnd={handleDragEnd}
+          onDragStart={handleDragStart}
+          sensors={sensors}
         >
-          <ActiveElementProvider activeIndex={activeIndex}>
-            <div
-              tabIndex={0}
-              className="relative z-0 mx-auto block rounded-md pt-4 pr-1 pb-4 pl-2 focus:outline-none focus-visible:border-gray-300"
-            >
-              <Slate
-                editor={editor}
-                value={slatevalue}
-                key={JSON.stringify(slatevalue)}
-                onChange={(newValue) => {
-                  setGhostValue(newValue);
-                  if (handleTextChange) {
-                    handleTextChange(newValue);
-                  }
-                }}
+          <SortableContext
+            items={slatevalue}
+            strategy={verticalListSortingStrategy}
+          >
+            <ActiveElementProvider activeIndex={activeIndex}>
+              <div
+                tabIndex={0}
+                className="relative z-0 mx-auto block rounded-md pt-4 pr-1 pb-4 pl-2 focus:outline-none focus-visible:border-gray-300"
               >
-                <Editable
-                  className="relative h-[640px] overflow-y-auto"
-                  renderElement={renderElement}
-                  renderLeaf={Blank}
-                  onMouseUp={(event) => {
-                    handleEditorMouseUp(event, editor);
-                    handleSelectedText(event, editor);
+                <Slate
+                  editor={editor}
+                  value={slatevalue}
+                  key={JSON.stringify(slatevalue)}
+                  onChange={(newValue) => {
+                    // setValue(newValue);
+                    setGhostValue(newValue);
+                    if (handleTextChange) {
+                      handleTextChange(newValue);
+                    }
                   }}
-                  onKeyDown={handleKeyDown}
-                  onKeyUp={(event) => {
-                    handleSelectedText(event, editor);
-                  }}
-                  onClick={(event) => handleCursorClick(event, editor)}
-                />
-                <Droppable>
-                  <div></div>
-                </Droppable>
-              </Slate>
-            </div>
-          </ActiveElementProvider>
-        </SortableContext>
-        {activeId && (
+                >
+                  <Editable
+                    className="relative h-[640px] overflow-y-auto"
+                    renderElement={renderElement}
+                    renderLeaf={Blank}
+                    onMouseUp={(event) => {
+                      handleEditorMouseUp(event, editor);
+                      handleSelectedText(event, editor);
+                    }}
+                    onKeyDown={handleKeyDown}
+                    onKeyUp={(event) => {
+                      handleSelectedText(event, editor);
+                    }}
+                    onClick={(event) => handleCursorClick(event, editor)}
+                  />
+                  <Droppable>
+                    <div></div>
+                  </Droppable>
+                </Slate>
+              </div>
+            </ActiveElementProvider>
+          </SortableContext>
           <DragOverlay>
-            <DragOverlayContent
-              element={findElementInSlateValue(ghostslatevalue, activeId)}
-            />
+            {activeId ? (
+              <DragOverlayContent
+                element={findElementInSlateValue(ghostslatevalue, activeId)}
+              />
+            ) : null}
           </DragOverlay>
-        )}
-      </DndContext>
+        </DndContext>
+      </ErrorBoundary>
       <AnimatePresence>
         {showDropdown && activePath && (
           <motion.div

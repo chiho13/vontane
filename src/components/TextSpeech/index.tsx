@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { api } from "@/utils/api";
 import VoiceDropdown from "@/components/VoiceDropdown";
 import GenerateButton from "@/components/GenerateButton";
@@ -9,6 +9,8 @@ import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { genNodeId } from "@/hoc/withID";
 import { useRouter } from "next/router";
 import { Mirt } from "@/plugins/audioTrimmer";
+import { Transforms, Editor, Node } from "slate";
+import { EditorContext } from "@/contexts/EditorContext";
 
 const useDownloadFile = (url, fileName) => {
   const [file, setFile] = useState(null);
@@ -45,6 +47,7 @@ export const TextSpeech: React.FC<TextSpeechProps> = ({
   const [transcriptionId, setTranscriptionId] = useState<string>("");
 
   const [ttsAudioFile, setTtsAudioFile] = useState<File>();
+  const { editor } = useContext(EditorContext);
 
   // const url =
   //   "https://res.cloudinary.com/monkeyking/video/upload/v1682090997/synthesised-audio_12_qvb3p4.wav";
@@ -74,45 +77,35 @@ export const TextSpeech: React.FC<TextSpeechProps> = ({
     }
   );
 
-  // const {
-  //   data: ttsaudiodata,
-  //   error: ttsaudiodataerror,
-  //   isLoading: ttsaudiodataloading,
-  //   refetch: ttsaudiodatarefetch,
-  // } = api.texttospeech.getTextToSpeechFileNames.useQuery(
-  //   { workspaceId },
-  //   {
-  //     enabled: false,
-  //   }
-  // );
-  // const [generatedAudioElement, setGeneratedAudioElement] = useStatusPolling(
-  //   setAudioIsLoading,
-  //   workspaceId
-  // );
+  useEffect(() => {
+    if (uploadedFileName) {
+      const newNode = {
+        id: genNodeId(),
+        type: "audio",
+        fileName: uploadedFileName,
+        children: [{ text: "" }],
+      };
 
-  // useEffect(() => {
-  //   if (workspaceId) {
-  //     ttsaudiodatarefetch();
-  //   }
-  // }, [workspaceId]);
+      // Get all the nodes in the editor
+      const nodes = Array.from(Node.nodes(editor));
 
-  // useEffect(() => {
-  //   if (ttsaudiodata) {
-  //     const fetchedFiles: File[] = [];
+      // Find the last node and its path
+      const lastNodeEntry = nodes[nodes.length - 1];
 
-  //     const fetchAllFiles = async () => {
-  //       for (const { signedURL, fileName } of ttsaudiodata) {
-  //         const response = await fetch(signedURL);
-  //         const data = await response.blob();
-  //         const file = new File([data], fileName, { type: data.type });
-  //         fetchedFiles.push(file);
-  //       }
-  //       setAudioFiles(fetchedFiles);
-  //     };
+      if (!lastNodeEntry) return;
+      const lastNodePath = lastNodeEntry[1];
 
-  //     fetchAllFiles();
-  //   }
-  // }, [ttsaudiodata]);
+      // Calculate the path for the new node
+      const newPath = [
+        ...lastNodePath.slice(0, -1),
+        lastNodePath[lastNodePath.length - 1] + 1,
+      ];
+
+      // Insert the new node at the newPath
+      Transforms.insertNodes(editor, newNode, { at: newPath });
+      Transforms.select(editor, Editor.start(editor, newPath));
+    }
+  }, [uploadedFileName]);
 
   useEffect(() => {
     if (

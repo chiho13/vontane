@@ -35,8 +35,10 @@ export function AudioElement(props) {
     }
   );
   useEffect(() => {
-    ttsaudiodatarefetch();
-  }, []);
+    if (element.fileName) {
+      ttsaudiodatarefetch();
+    }
+  }, [element.fileName]);
 
   useEffect(() => {
     if (ttsaudiodata) {
@@ -57,11 +59,13 @@ export function AudioElement(props) {
     >
       {/* <p
           className="text-[18px]"
+
           data-placeholder={shouldShowPlaceholder ? "Enter question" : ""}
         >
           {children}
         </p> */}
       <AudioPlayer
+        key={element.id}
         generatedAudio={generatedAudioElement}
         audioURL={audioURL}
         fileName={fileName}

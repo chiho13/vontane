@@ -30,6 +30,7 @@ import {
   getTempos,
 } from "../../api/getVoicesApi";
 import { Voice } from "../../types/voice";
+import { useTextSpeech } from "@/contexts/TextSpeechContext";
 
 interface FilterOption {
   key: string;
@@ -99,6 +100,7 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
   const [voiceStyles, setVoiceStyles] = useState<Filter[]>([]);
   const [tempos, setTempos] = useState<string[]>([]);
   const [filters, setFilters] = useState<Filter[]>([]);
+  const { showMiniToolbar } = useTextSpeech();
 
   const [isOpenMobileFilterDropdown, setIsOpenMobileFilterDropdown] =
     useState(false);
@@ -422,7 +424,9 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
           selectedItemText={selectedItemText}
           ref={voicesDropdownRef}
           icon={<ChevronDown className="ml-4 w-4" />}
-          dropdownMenuNonPortalOverride="right-0 mx-auto lg:w-[900px]"
+          dropdownMenuNonPortalOverride={`right-0 mx-auto lg:w-[900px] ${
+            showMiniToolbar ? " top:0" : ""
+          }`}
         >
           <div>
             {desktopbreakpoint && (

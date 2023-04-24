@@ -8,6 +8,7 @@ import React, {
   ForwardedRef,
   useState,
   useContext,
+  useCallback,
 } from "react";
 import { DropdownStyle } from "./style";
 import useClickOutside from "@/hooks/useClickOutside";
@@ -189,21 +190,62 @@ function Dropdown(
   const animation_props = desktopbreakpoint
     ? y_animation_props
     : slide_up_animation_props;
+  const [menuHeight, setMenuHeight] = useState<number | null>(null);
+  const dropdownMenuRef = useRef<HTMLDivElement>(null);
+  const adjustDropdownPosition = (
+    dropdownMenu: HTMLElement,
+    buttonPosition: { top: number; right: number },
+    toggleButtonRect: DOMRect
+  ) => {
+    const windowHeight = window.innerHeight;
+    const dropdownMenuRect = dropdownMenu.getBoundingClientRect();
+    const dropdownMenuHeight = dropdownMenuRect.height;
+    const scrollY = window.scrollY;
 
-  const updateButtonPosition = () => {
-    if (toggleRef.current) {
-      const rect = toggleRef.current.getBoundingClientRect();
-      setButtonPosition({
-        top: rect.top + window.scrollY + rect.height + 10,
-        right: window.innerWidth - (rect.left + rect.width + 80),
-      });
+    let newTopPosition = buttonPosition.top;
+    console.log("window height", windowHeight);
+    console.log("dropdownMenuHeight", dropdownMenuHeight);
+    console.log(
+      "spaceBelowToggleButton",
+      windowHeight - (toggleButtonRect.top + toggleButtonRect.height)
+    );
+    if (buttonPosition.top + dropdownMenuHeight > windowHeight) {
+      const spaceBelowToggleButton =
+        windowHeight - (toggleButtonRect.top + toggleButtonRect.height);
+      const spaceAboveToggleButton = toggleButtonRect.top;
+
+      if (spaceBelowToggleButton >= dropdownMenuHeight) {
+        // Enough space below the toggle button
+        newTopPosition =
+          toggleButtonRect.top + scrollY + toggleButtonRect.height + 10;
+      } else if (spaceAboveToggleButton >= dropdownMenuHeight) {
+        // Enough space above the toggle button
+        newTopPosition =
+          toggleButtonRect.top + scrollY - dropdownMenuHeight - 10;
+      } else {
+        // Center the dropdown menu within the window
+        newTopPosition = (windowHeight - dropdownMenuHeight) / 2 + scrollY;
+      }
     }
+
+    return {
+      ...buttonPosition,
+      top: newTopPosition,
+      right:
+        window.innerWidth -
+        (toggleButtonRect.left + toggleButtonRect.width + 80),
+    };
   };
+
+  // const updateButtonPosition = useCallback(() => {
+  //   console.log(toggleRef.current);
+
+  // }, [menuHeight]);
 
   const handleDropdownClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     event.stopPropagation();
-    updateButtonPosition();
+    // updateButtonPosition();
 
     if (activeDropdown === dropdownId) {
       toggleDropdown(null);
@@ -217,6 +259,34 @@ function Dropdown(
   };
 
   const toggleRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (wrapperRef.current && activeDropdown === dropdownId) {
+      const menuRect = wrapperRef.current.getBoundingClientRect();
+      // setMenuHeight(menuRect.height);
+
+      if (toggleRef.current) {
+        const toggleButtonRect = toggleRef.current.getBoundingClientRect();
+        let newButtonPosition = {
+          top:
+            toggleButtonRect.top +
+            window.scrollY +
+            toggleButtonRect.height +
+            10,
+          right:
+            window.innerWidth -
+            (toggleButtonRect.left + toggleButtonRect.width + 80),
+        };
+        const adjustedButtonPosition = adjustDropdownPosition(
+          wrapperRef.current,
+          newButtonPosition,
+          toggleButtonRect
+        );
+
+        setButtonPosition(adjustedButtonPosition);
+      }
+    }
+  }, [activeDropdown, dropdownId]);
 
   useClickOutside(
     wrapperRef,
@@ -301,12 +371,7 @@ function Dropdown(
                 tabIndex={-1}
                 ref={wrapperRef}
                 style={{
-                  top: dropdownMenuNonPortalOverride
-                    ? buttonPosition.top
-                    : "reset",
-                  // right: dropdownMenuNonPortalOverride
-                  //   ? buttonPosition.right
-                  //   : "reset",
+                  top: buttonPosition.top,
                 }}
               >
                 {children}

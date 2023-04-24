@@ -12,10 +12,9 @@ import { DownloadButton } from "../DownloadButton";
 
 interface Props {
   generatedAudio: HTMLAudioElement | null;
-  transcriptionId: string;
 }
 
-function AudioPlayer({ generatedAudio, transcriptionId }: Props): JSX.Element {
+function AudioPlayer({ generatedAudio }: Props): JSX.Element {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [seekValue, setSeekValue] = useState<number>(0);
   const [seekMax, setSeekMax] = useState<number>(0);
@@ -187,12 +186,12 @@ function AudioPlayer({ generatedAudio, transcriptionId }: Props): JSX.Element {
       >
         Stop
       </button> */}
-      <div className="ml-4">
+      {/* <div className="ml-4">
         <DownloadButton
           generatedAudio={generatedAudio}
           transcriptionId={transcriptionId}
         />
-      </div>
+      </div> */}
     </AudioPlayerStyle>
   );
 }

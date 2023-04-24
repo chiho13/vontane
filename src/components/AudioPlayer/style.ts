@@ -4,7 +4,7 @@ export const AudioPlayerStyle: StyledComponent<"div", any> = styled.div`
   position: relative;
   display: flex;
   align-items: center;
-  max-width: 500px;
+  max-width: 1000px;
   padding: 20px;
   border-radius: 8px;
   border: 2px solid #eeeeee;

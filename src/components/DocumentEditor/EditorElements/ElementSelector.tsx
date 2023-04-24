@@ -10,6 +10,7 @@ import {
   OptionListItem,
   ListItem,
   TitleElement,
+  AudioElement,
 } from "./index";
 
 export function ElementSelector(props) {
@@ -18,6 +19,8 @@ export function ElementSelector(props) {
   switch (element.type) {
     case "title":
       return <TitleElement {...props} />;
+    case "audio":
+      return <AudioElement {...props} />;
     case "paragraph":
       return <ParagraphElement {...props} />;
     case "list-item":

@@ -126,6 +126,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const editor = useEditor();
   const [slatevalue, setValue] = useState(initialSlateValue);
 
+  const [ghostslatevalue, setGhostValue] = useState(initialSlateValue);
   useEffect(() => {
     setValue(initialSlateValue);
   }, [initialSlateValue]);
@@ -575,46 +576,53 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const [addButtonHoveredId, setAddButtonHoveredId] = useState(null);
 
   const handleAddMCQBlock = useCallback((path: Path) => {
+    // const mcqNode = {
+    //   id: genNodeId(),
+    //   type: "mcq",
+    //   children: [
+    //     {
+    //       id: genNodeId(),
+    //       type: "list-item",
+    //       children: [
+    //         {
+    //           text: "",
+    //         },
+    //       ],
+    //     },
+    //     {
+    //       id: genNodeId(),
+    //       type: "ol",
+    //       children: [
+    //         {
+    //           id: genNodeId(),
+    //           type: "option-list-item",
+    //           children: [
+    //             {
+    //               text: "",
+    //             },
+    //           ],
+    //           correctAnswer: false,
+    //         },
+    //         {
+    //           id: genNodeId(),
+    //           type: "option-list-item",
+    //           children: [
+    //             {
+    //               text: "",
+    //             },
+    //           ],
+    //           correctAnswer: true,
+    //         },
+    //       ],
+    //     },
+    //   ],
+    // };
+
     const mcqNode = {
       id: genNodeId(),
-      type: "mcq",
-      children: [
-        {
-          id: genNodeId(),
-          type: "list-item",
-          children: [
-            {
-              text: "",
-            },
-          ],
-        },
-        {
-          id: genNodeId(),
-          type: "ol",
-          children: [
-            {
-              id: genNodeId(),
-              type: "option-list-item",
-              children: [
-                {
-                  text: "",
-                },
-              ],
-              correctAnswer: false,
-            },
-            {
-              id: genNodeId(),
-              type: "option-list-item",
-              children: [
-                {
-                  text: "",
-                },
-              ],
-              correctAnswer: true,
-            },
-          ],
-        },
-      ],
+      type: "audio",
+      fileName: "audio.mp3",
+      children: [{ text: "" }],
     };
 
     console.log("sfsdf");
@@ -699,79 +707,76 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     []
   );
 
-  const renderElement = useCallback(
-    (props) => {
-      const { attributes, children, element } = props;
+  const MemoizedElementSelector = React.memo(ElementSelector);
 
-      const elementPath = ReactEditor.findPath(editor, element);
-      const isRoot = elementPath.length === 1;
+  const renderElement = useCallback((props) => {
+    const { attributes, children, element } = props;
 
-      if (!elementPath) return;
+    const elementPath = ReactEditor.findPath(editor, element);
+    const isRoot = elementPath.length === 1;
 
-      const [parentElement, parentPath] = Editor.parent(editor, elementPath);
-      const isInsideColumnCell = parentElement.type === "column-cell";
-      const addButton =
-        (isRoot && element.type !== "column" && element.type !== "title") ||
-        isInsideColumnCell ? (
-          <div
-            className="z-1000 absolute top-1/2 left-[8px] -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center"
-            contentEditable={false}
-          >
-            <button
-              className={`addButton rounded-md opacity-0 transition-opacity duration-300 ease-in-out hover:bg-gray-200 ${
-                addButtonHoveredId === element.id ? "opacity-100" : ""
-              }`}
-              onClick={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                openMiniDropdown(event, ReactEditor.findPath(editor, element));
-              }}
-              ref={toggleRef}
-            >
-              <Plus color={theme.colors.darkgray} />
-            </button>
-          </div>
-        ) : null;
+    if (!elementPath) return;
 
-      const optionMenu =
-        (isRoot && element.type === "mcq") || element.type === "equation" ? (
-          <div className="absolute  top-1 right-5">
-            <OptionMenu
-              onClick={() => {
-                console.log("something");
-              }}
-              element={element}
-            />
-          </div>
-        ) : null;
-
-      const shouldWrapWithSortableElement =
-        (isRoot && element.type !== "column" && element.type !== "title") ||
-        isInsideColumnCell;
-
-      const content = shouldWrapWithSortableElement ? (
-        <SortableElement
-          {...props}
-          renderElement={(props) => <ElementSelector {...props} />}
-        />
-      ) : (
-        <ElementSelector {...props} />
-      );
-
-      return (
+    const [parentElement, parentPath] = Editor.parent(editor, elementPath);
+    const isInsideColumnCell = parentElement.type === "column-cell";
+    const addButton =
+      (isRoot && element.type !== "column" && element.type !== "title") ||
+      isInsideColumnCell ? (
         <div
-          className="group relative"
-          onMouseEnter={() => setAddButtonHoveredId(element.id)}
-          onMouseLeave={() => setAddButtonHoveredId(null)}
+          className="z-1000 group absolute top-1/2 left-[8px] -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center"
+          contentEditable={false}
         >
-          {content}
-          {addButton}
-          {optionMenu}
+          <button
+            className="addButton rounded-md opacity-0 transition-opacity duration-300 ease-in-out hover:bg-gray-200  group-hover:opacity-100"
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              openMiniDropdown(event, ReactEditor.findPath(editor, element));
+            }}
+            ref={toggleRef}
+          >
+            <Plus color={theme.colors.darkgray} />
+          </button>
         </div>
-      );
-    },
-    [addButtonHoveredId]
-  );
+      ) : null;
+
+    const optionMenu =
+      (isRoot && element.type === "mcq") || element.type === "equation" ? (
+        <div className="absolute  top-1 right-5">
+          <OptionMenu
+            onClick={() => {
+              console.log("something");
+            }}
+            element={element}
+          />
+        </div>
+      ) : null;
+
+    const shouldWrapWithSortableElement =
+      (isRoot && element.type !== "column" && element.type !== "title") ||
+      isInsideColumnCell;
+
+    const content = shouldWrapWithSortableElement ? (
+      <SortableElement
+        {...props}
+        renderElement={(props) => <MemoizedElementSelector {...props} />}
+      />
+    ) : (
+      <MemoizedElementSelector {...props} />
+    );
+
+    return (
+      <div
+        className="group relative"
+        // onMouseEnter={() => setAddButtonHoveredId(element.id)}
+        // onMouseLeave={() => setAddButtonHoveredId(null)}
+      >
+        {content}
+        {addButton}
+        {optionMenu}
+      </div>
+    );
+  }, []);
 
   const [insertDirection, setInsertDirection] = useState(null);
 
@@ -1069,7 +1074,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             const rangeForStart = range.cloneRange();
             rangeForStart.setEnd(startContainer, range.startOffset);
             const rect = rangeForStart.getBoundingClientRect();
-            const offsetTitle = startNode.type === "title" ? 30 : 60;
+            const offsetTitle = startNode.type === "title" ? 60 : 80;
             const sideBarOffset = isLocked ? -150 : 0;
             setMiniToolbarPosition({
               x: rect.left + window.scrollX + sideBarOffset,
@@ -1115,7 +1120,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 value={slatevalue}
                 key={JSON.stringify(slatevalue)}
                 onChange={(newValue) => {
-                  // setValue(newValue);
+                  setGhostValue(newValue);
                   if (handleTextChange) {
                     handleTextChange(newValue);
                   }
@@ -1142,13 +1147,13 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             </div>
           </ActiveElementProvider>
         </SortableContext>
-        <DragOverlay>
-          {activeId ? (
+        {activeId && (
+          <DragOverlay>
             <DragOverlayContent
-              element={findElementInSlateValue(slatevalue, activeId)}
+              element={findElementInSlateValue(ghostslatevalue, activeId)}
             />
-          ) : null}
-        </DragOverlay>
+          </DragOverlay>
+        )}
       </DndContext>
       <AnimatePresence>
         {showDropdown && activePath && (
@@ -1241,7 +1246,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             }}
           >
             {/* <button>hello</button> */}
-            <TextSpeech />
+            <TextSpeech isSelected={true} />
           </StyledMiniToolbar>
         )}
       </AnimatePresence>

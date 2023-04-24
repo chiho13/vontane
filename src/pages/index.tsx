@@ -8,7 +8,6 @@ import VoiceDropdown from "@/components/VoiceDropdown";
 import GenerateButton from "@/components/GenerateButton";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import useStatusPolling from "@/hooks/useStatusPolling";
 
 import { useSession } from "@supabase/auth-helpers-react";
 import LoginPage from "./login";
@@ -43,8 +42,6 @@ const Home: NextPage = () => {
   const { profile, workspaces } = useUserContext();
   const router = useRouter();
 
-  const [generatedAudioElement, setGeneratedAudioElement] =
-    useStatusPolling(setAudioIsLoading);
   // const dummyAudioElement = new Audio(
   //   "https://peregrine-samples.s3.amazonaws.com/editor-samples/anny.wav"
   // );

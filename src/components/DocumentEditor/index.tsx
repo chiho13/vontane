@@ -20,7 +20,7 @@ import {
   Text,
 } from "slate";
 
-import { createPortal } from "react-dom";
+import { EditorContext } from "@/contexts/EditorContext";
 import { Slate, Editable, withReact, ReactEditor } from "slate-react";
 import { Plus, CornerDownLeft, MoreHorizontal } from "lucide-react";
 import { BlockMath } from "react-katex";
@@ -124,7 +124,15 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 }) => {
   const theme = useTheme();
   const { isLocked } = useContext(LayoutContext);
-  const editor = useEditor();
+  const {
+    editor,
+    showEditBlockPopup,
+    setShowEditBlockPopup,
+    activePath,
+    setActivePath,
+    setSelectedElementID,
+  } = useContext(EditorContext);
+  // const editor = useEditor();
   const [slatevalue, setValue] = useState(initialSlateValue);
 
   const [ghostslatevalue, setGhostValue] = useState(initialSlateValue);
@@ -139,7 +147,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     : -1;
 
   const [showDropdown, setShowDropdown] = useState(false);
-  const [showEditBlockPopup, setShowEditBlockPopup] = useState(false);
+  // const [showEditBlockPopup, setShowEditBlockPopup] = useState(false);
 
   const sensors = useSensors(useSensor(MouseSensor));
 
@@ -147,7 +155,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     Map<string, { top: number; left: number }>
   >(new Map());
 
-  const [activePath, setActivePath] = useState<string>("");
+  // const [activePath, setActivePath] = useState<string>("");
   const [activeEditEquationPath, setactiveEditEquationPath] = useState<
     string | null
   >(null);
@@ -179,7 +187,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     subject: "",
   });
 
-  const [selectedElementID, setSelectedElementID] = useState<string>("");
+  // const [selectedElementID, setSelectedElementID] = useState<string>("");
 
   const [showMiniToolbar, setShowMiniToolbar] = useState(false);
   const [miniToolbarPosition, setMiniToolbarPosition] = useState({
@@ -230,12 +238,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
       const { selection } = editor;
-      const _currentNodePath = selection.anchor.path.slice(0, -1);
 
       if (!selection || !ReactEditor.isFocused(editor)) {
         return;
       }
 
+      const _currentNodePath = selection.anchor.path.slice(0, -1);
       const startPosition = selection.anchor;
       const [currentNode, currentNodePath] = Editor.parent(
         editor,
@@ -340,7 +348,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           const parentNode = Editor.parent(editor, currentNodePath);
           // Check if currentNode is an equation
 
-          if (currentNode.type === "equation") {
+          if (currentNode.type === "equation" || currentNode.type === "audio") {
             event.preventDefault();
           } else {
             // Check if the previous node is an equation
@@ -352,7 +360,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               const [_prevNode] = prevNodeEntry;
 
               if (
-                _prevNode.type === "equation" &&
+                (_prevNode.type === "equation" || _prevNode.type === "audio") &&
                 Editor.isStart(editor, selection.anchor, _currentNodePath)
               ) {
                 event.preventDefault();
@@ -626,6 +634,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     //   children: [{ text: "" }],
     // };
 
+    console.log(path);
     const [currentNode] = Editor.node(editor, path);
     const isEmptyNode =
       currentNode.type === "paragraph" &&
@@ -1102,13 +1111,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   };
 
   return (
-    <EditorProvider
-      editor={editor}
-      showEditBlockPopup={showEditBlockPopup}
-      elementID={selectedElementID}
-      setSelectedElementID={setSelectedElementID}
-      activePath={activePath}
-    >
+    <div>
       <ErrorBoundary>
         <DndContext
           onDragEnd={handleDragEnd}
@@ -1261,7 +1264,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           </StyledMiniToolbar>
         )}
       </AnimatePresence>
-    </EditorProvider>
+    </div>
   );
 };
 

@@ -1,49 +1,57 @@
-import React, { createContext, useContext, PropsWithChildren } from "react";
+import React, {
+  createContext,
+  useContext,
+  PropsWithChildren,
+  useState,
+  SetStateAction,
+  Dispatch,
+  ReactNode,
+} from "react";
 import { MouseEvent } from "react";
 import { Path } from "slate";
 import { Editor } from "slate";
+import { useEditor } from "@/hooks/useEditor";
 
 // Create the EditorContext with the correct function signature
 const EditorContext = createContext<{
   editor: Editor;
   showEditBlockPopup: Boolean;
-  elementID: string;
+  setShowEditBlockPopup: Dispatch<SetStateAction<boolean>>;
+  selectedElementID: string;
   activePath: string;
-  setSelectedElementID: (id: string) => void;
+  setActivePath: Dispatch<SetStateAction<string>>;
+  setSelectedElementID: Dispatch<SetStateAction<string>>;
 }>({
   editor: null as any,
   showEditBlockPopup: false,
-  elementID: "",
+  setShowEditBlockPopup: () => {},
+  selectedElementID: "",
   activePath: "",
+  setActivePath: () => {},
   setSelectedElementID: () => {},
 });
 
 // Define the EquationProviderProps type
 type EquationProviderProps = PropsWithChildren<{
-  editor: Editor;
-  showEditBlockPopup: Boolean;
-  elementID: string;
-  activePath: string;
-  setSelectedElementID: (id: string) => void;
+  children: ReactNode;
 }>;
 
 // Create an EquationProvider component that accepts a `children` prop and the `openEditBlockPopup` function
-const EditorProvider: React.FC<EquationProviderProps> = ({
-  children,
-  editor,
-  showEditBlockPopup,
-  elementID,
-  setSelectedElementID,
-  activePath,
-}) => {
+const EditorProvider: React.FC<EquationProviderProps> = ({ children }) => {
+  const editor = useEditor();
+  const [showEditBlockPopup, setShowEditBlockPopup] = useState(false);
+  const [selectedElementID, setSelectedElementID] = useState<string>("");
+  const [activePath, setActivePath] = useState<string>("");
   return (
     <EditorContext.Provider
       value={{
         editor,
         showEditBlockPopup,
-        elementID,
+        setShowEditBlockPopup,
+        selectedElementID,
         setSelectedElementID,
         activePath,
+        setActivePath,
       }}
     >
       {children}

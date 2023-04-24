@@ -4,6 +4,8 @@ import { ReactEditor, useFocused, useSelected } from "slate-react";
 import { Editor, Path, Transforms } from "slate";
 import styled from "styled-components";
 import AudioPlayer from "@/components/AudioPlayer";
+import { useTextSpeech } from "@/contexts/TextSpeechContext";
+import { api } from "@/utils/api";
 
 export function AudioElement(props) {
   const { editor } = useContext(EditorContext);
@@ -15,6 +17,35 @@ export function AudioElement(props) {
       "https://peregrine-samples.s3.amazonaws.com/editor-samples/anny.wav"
     );
   }, []); // Empty dependency array means it will only be created once
+
+  const { generatedAudioElement, setGeneratedAudioElement } = useTextSpeech();
+  const [audioURL, setAudioURL] = useState<string | null>(null);
+  const [fileName, setFileName] = useState("");
+  const {
+    data: ttsaudiodata,
+    error: ttsaudiodataerror,
+    isLoading: ttsaudiodataloading,
+    refetch: ttsaudiodatarefetch,
+  } = api.texttospeech.getTextToSpeechFileName.useQuery(
+    { fileName: element.fileName },
+    {
+      enabled: false,
+      cacheTime: 5 * 60 * 1000, // Cache data for 5 minutes
+      staleTime: 5 * 60 * 1000, // Data is considered fresh for 5 minutes
+    }
+  );
+  useEffect(() => {
+    ttsaudiodatarefetch();
+  }, []);
+
+  useEffect(() => {
+    if (ttsaudiodata) {
+      const audioElement = new Audio(ttsaudiodata.signedURL);
+      setGeneratedAudioElement(audioElement);
+      setAudioURL(ttsaudiodata.signedURL);
+      setFileName(ttsaudiodata.fileName);
+    }
+  }, [ttsaudiodata]);
 
   return (
     <div
@@ -30,7 +61,11 @@ export function AudioElement(props) {
         >
           {children}
         </p> */}
-      <AudioPlayer generatedAudio={dummyAudioElement} />
+      <AudioPlayer
+        generatedAudio={generatedAudioElement}
+        audioURL={audioURL}
+        fileName={fileName}
+      />
     </div>
   );
 }

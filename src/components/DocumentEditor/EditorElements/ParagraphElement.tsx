@@ -16,8 +16,12 @@ const ParagraphStyle = styled.div`
 `;
 
 export function ParagraphElement(props) {
-  const { editor, showEditBlockPopup, elementID, setSelectedElementID } =
-    useContext(EditorContext);
+  const {
+    editor,
+    showEditBlockPopup,
+    selectedElementID,
+    setSelectedElementID,
+  } = useContext(EditorContext);
   const { attributes, children, element } = props;
   const path = ReactEditor.findPath(editor, element);
   const [isVisible, setIsVisible] = useState(false);
@@ -51,7 +55,7 @@ export function ParagraphElement(props) {
       <p
         ref={paragraphRef}
         className={`paragraph-element ${
-          elementID === element.id ? " bg-[#E0EDFB]" : ""
+          selectedElementID === element.id ? " bg-[#E0EDFB]" : ""
         }`}
         {...attributes}
         data-id={element.id}

@@ -40,23 +40,23 @@ const withNormalizePasting = (editor) => {
   return editor;
 };
 
-// export function useEditor() {
-//   const editor = useMemo(
-//     () =>
-//       withNormalizePasting(
-//         withTitle(withHistory(withColumns(withReact(createEditor()))))
-//       ),
-//     []
-//   );
-//   return editor;
-// }
-
 export function useEditor() {
-  const editorRef = useRef();
-  if (!editorRef.current)
-    editorRef.current = withNormalizePasting(
-      withTitle(withHistory(withColumns(withReact(createEditor()))))
-    );
-
-  return editorRef.current;
+  const editor = useMemo(
+    () =>
+      withNormalizePasting(
+        withTitle(withHistory(withColumns(withReact(createEditor()))))
+      ),
+    []
+  );
+  return editor;
 }
+
+// export function useEditor() {
+//   const editorRef = useRef();
+//   if (!editorRef.current)
+//     editorRef.current = withNormalizePasting(
+//       withTitle(withHistory(withColumns(withReact(createEditor()))))
+//     );
+
+//   return editorRef.current;
+// }

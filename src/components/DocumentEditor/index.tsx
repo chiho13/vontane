@@ -207,7 +207,16 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       const target = event.currentTarget as HTMLDivElement;
       const targetRect = target.getBoundingClientRect();
 
-      setDropdownTop(targetRect.bottom + 50);
+      const windowHeight = window.innerHeight;
+      const dropdownHeight = 360;
+      const spaceBelowTarget = windowHeight - targetRect.bottom;
+
+      let topOffset = 50;
+      if (spaceBelowTarget < dropdownHeight) {
+        topOffset = spaceBelowTarget - dropdownHeight - topOffset;
+      }
+
+      setDropdownTop(targetRect.bottom + topOffset);
       setDropdownLeft(targetRect.left + 60 + sideBarOffset);
       setShowDropdown((prevState) => !prevState);
     },
@@ -1240,7 +1249,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         <FloatingModal
           title={getModalTitle()}
           initialX={dropdownLeft}
-          initialY={dropdownTop + 50}
+          initialY={dropdownTop}
           onClose={() => setShowFloatingModal({ open: false, subject: "" })}
         >
           {renderSubjectComponent()}

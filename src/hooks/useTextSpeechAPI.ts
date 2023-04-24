@@ -6,13 +6,13 @@ import { io } from "socket.io-client";
 
 type UseTextSpeechStatusPollingResult = [
   HTMLAudioElement | null,
-  Dispatch<SetStateAction<HTMLAudioElement | null>>
+  Dispatch<SetStateAction<HTMLAudioElement | null>>,
+  string
 ];
 
 function useTextSpeechStatusPolling(
   setAudioIsLoading: (value: boolean) => void,
-  workspaceId: any,
-  ttsaudiodatarefetch: () => void
+  workspaceId: any
 ): UseTextSpeechStatusPollingResult {
   const [generatedAudioElement, setGeneratedAudioElement] =
     useState<HTMLAudioElement | null>(null);
@@ -20,6 +20,7 @@ function useTextSpeechStatusPolling(
   const [audioURL, setAudioURL] = useState<string>("");
   const [fileName, setFileName] = useState<string>("");
 
+  const [uploadedFileName, setUploadedFileName] = useState<string>("");
   const SOCKET_URL = process.env.PLAYHT_SOCKET_URL;
 
   useEffect(() => {
@@ -54,8 +55,13 @@ function useTextSpeechStatusPolling(
         fileName,
         workspaceId,
       });
-      if (response && response.tts) {
-        ttsaudiodatarefetch();
+      if (response) {
+        // console.log("response.url:", response.url);
+        const newAudioElement = new Audio(response.url);
+        setGeneratedAudioElement(newAudioElement);
+        setAudioIsLoading(false);
+        setUploadedFileName(response.fileName);
+        // ttsaudiodatarefetch();
       }
     } catch (error) {
       console.error("Error creating workspace:", error);
@@ -68,7 +74,7 @@ function useTextSpeechStatusPolling(
     }
   }, [audioURL]);
 
-  return [generatedAudioElement, setGeneratedAudioElement];
+  return [generatedAudioElement, setGeneratedAudioElement, uploadedFileName];
 }
 
 export default useTextSpeechStatusPolling;

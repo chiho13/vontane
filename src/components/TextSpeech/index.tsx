@@ -31,11 +31,17 @@ const useDownloadFile = (url, fileName) => {
   return file;
 };
 
-export const TextSpeech: React.FC = () => {
+interface TextSpeechProps {
+  isSelected?: boolean;
+}
+
+export const TextSpeech: React.FC<TextSpeechProps> = ({
+  isSelected = false,
+}) => {
   const router = useRouter();
   const workspaceId = router.query.workspaceId;
   const [selectedVoiceId, setSelectedVoiceId] = useState<string>("");
-  const [audioIsLoading, setAudioIsLoading] = useState<boolean>(false);
+  // const [audioIsLoading, setAudioIsLoading] = useState<boolean>(false);
   const [transcriptionId, setTranscriptionId] = useState<string>("");
 
   const [ttsAudioFile, setTtsAudioFile] = useState<File>();
@@ -47,7 +53,14 @@ export const TextSpeech: React.FC = () => {
 
   const [audioFiles, setAudioFiles] = useState<File[]>([]);
 
-  const { textSpeech } = useTextSpeech();
+  const {
+    textSpeech,
+    audioIsLoading,
+    setAudioIsLoading,
+    generatedAudioElement,
+    setGeneratedAudioElement,
+    uploadedFileName,
+  } = useTextSpeech();
 
   const {
     data: texttospeechdata,
@@ -61,46 +74,45 @@ export const TextSpeech: React.FC = () => {
     }
   );
 
-  const {
-    data: ttsaudiodata,
-    error: ttsaudiodataerror,
-    isLoading: ttsaudiodataloading,
-    refetch: ttsaudiodatarefetch,
-  } = api.texttospeech.getTextToSpeechFileNames.useQuery(
-    { workspaceId },
-    {
-      enabled: false,
-    }
-  );
-  const [generatedAudioElement, setGeneratedAudioElement] = useStatusPolling(
-    setAudioIsLoading,
-    workspaceId,
-    ttsaudiodatarefetch
-  );
+  // const {
+  //   data: ttsaudiodata,
+  //   error: ttsaudiodataerror,
+  //   isLoading: ttsaudiodataloading,
+  //   refetch: ttsaudiodatarefetch,
+  // } = api.texttospeech.getTextToSpeechFileNames.useQuery(
+  //   { workspaceId },
+  //   {
+  //     enabled: false,
+  //   }
+  // );
+  // const [generatedAudioElement, setGeneratedAudioElement] = useStatusPolling(
+  //   setAudioIsLoading,
+  //   workspaceId
+  // );
 
-  useEffect(() => {
-    if (workspaceId) {
-      ttsaudiodatarefetch();
-    }
-  }, [workspaceId]);
+  // useEffect(() => {
+  //   if (workspaceId) {
+  //     ttsaudiodatarefetch();
+  //   }
+  // }, [workspaceId]);
 
-  useEffect(() => {
-    if (ttsaudiodata) {
-      const fetchedFiles: File[] = [];
+  // useEffect(() => {
+  //   if (ttsaudiodata) {
+  //     const fetchedFiles: File[] = [];
 
-      const fetchAllFiles = async () => {
-        for (const { signedURL, fileName } of ttsaudiodata) {
-          const response = await fetch(signedURL);
-          const data = await response.blob();
-          const file = new File([data], fileName, { type: data.type });
-          fetchedFiles.push(file);
-        }
-        setAudioFiles(fetchedFiles);
-      };
+  //     const fetchAllFiles = async () => {
+  //       for (const { signedURL, fileName } of ttsaudiodata) {
+  //         const response = await fetch(signedURL);
+  //         const data = await response.blob();
+  //         const file = new File([data], fileName, { type: data.type });
+  //         fetchedFiles.push(file);
+  //       }
+  //       setAudioFiles(fetchedFiles);
+  //     };
 
-      fetchAllFiles();
-    }
-  }, [ttsaudiodata]);
+  //     fetchAllFiles();
+  //   }
+  // }, [ttsaudiodata]);
 
   useEffect(() => {
     if (
@@ -159,29 +171,32 @@ export const TextSpeech: React.FC = () => {
 
   return (
     <>
-      <div className="relative mx-auto flex items-center justify-center lg:max-w-[980px]">
-        <div className="mr-4 flex-1 ">
+      <div className="relative mx-auto flex items-center lg:max-w-[980px]">
+        <label className="text-bold mb-2 flex justify-end text-sm text-gray-400">
+          {!isSelected
+            ? "Convert workspace to audio"
+            : "Convert selected text to audio"}
+        </label>
+      </div>
+      <div className="relative mx-auto flex items-center lg:max-w-[980px]">
+        <div className="mr-4">
           <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
         </div>
-
         <GenerateButton
           isDisabled={isDisabled}
           audioIsLoading={audioIsLoading}
           onClick={generateAudio}
         />
       </div>
-      {/* {!audioIsLoading && generatedAudioElement && (
+      {!audioIsLoading && generatedAudioElement && (
         <Portal>
           <div className="fixed bottom-0 left-0 bottom-4 right-0 mx-auto flex w-full justify-center ">
             <div className="w-[94%] flex-shrink-0 lg:w-[500px] ">
-              <AudioPlayer
-                generatedAudio={generatedAudioElement}
-                transcriptionId={transcriptionId}
-              />a
+              <AudioPlayer generatedAudio={generatedAudioElement} />
             </div>
           </div>
         </Portal>
-      )} */}
+      )}
       {/* {audioFiles && audioFiles.length > 0 && (
         <Portal>
           <div className="fixed left-0 bottom-2 w-full">

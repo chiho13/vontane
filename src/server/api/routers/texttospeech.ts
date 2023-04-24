@@ -75,24 +75,24 @@ export const texttospeechRouter = createTRPCRouter({
       const { audioURL, fileName, workspaceId } = input;
 
       try {
-        await uploadAudioToSupabase(
+        const uploadedUrl = await uploadAudioToSupabase(
           ctx.prisma,
           supabaseServerClient,
           audioURL,
           fileName,
           workspaceId
         );
-        // return { url: uploadedUrl };
+        return { url: uploadedUrl, fileName };
 
-        const tts = await ctx.prisma.texttospeech.create({
-          data: {
-            file_name: fileName,
-            creator_id: ctx.user.id,
-            workspace_id: workspaceId,
-          },
-        });
+        // const tts = await ctx.prisma.texttospeech.create({
+        //   data: {
+        //     file_name: fileName,
+        //     creator_id: ctx.user.id,
+        //     workspace_id: workspaceId,
+        //   },
+        // });
 
-        return { tts };
+        // return { tts };
       } catch (error) {
         console.error(error);
         throw new TRPCError({

@@ -17,7 +17,9 @@ interface TextSpeechContextType {
   setGeneratedAudioElement: Dispatch<SetStateAction<HTMLAudioElement | null>>;
   audioIsLoading: boolean;
   setAudioIsLoading: (value: boolean) => void;
-  uploadedFileName: string;
+  uploadedFileName: string | null;
+  showMiniToolbar: boolean;
+  setShowMiniToolbar: (value: boolean) => void;
 }
 
 // Create the context with default values
@@ -29,6 +31,8 @@ const TextSpeechContext = createContext<TextSpeechContextType>({
   audioIsLoading: false,
   setAudioIsLoading: () => {},
   uploadedFileName: "",
+  showMiniToolbar: false,
+  setShowMiniToolbar: () => {},
 });
 
 // Define the shape of the provider props
@@ -48,7 +52,7 @@ const TextSpeechProvider = ({ children }: TextSpeechProviderProps) => {
   const [audioIsLoading, setAudioIsLoading] = useState<boolean>(false);
   const [generatedAudioElement, setGeneratedAudioElement, uploadedFileName] =
     useTextSpeechStatusPolling(setAudioIsLoading, workspaceId); // Replace `workspaceId` with the actual workspace ID.
-
+  const [showMiniToolbar, setShowMiniToolbar] = useState(false);
   return (
     <TextSpeechContext.Provider
       value={{
@@ -59,6 +63,8 @@ const TextSpeechProvider = ({ children }: TextSpeechProviderProps) => {
         audioIsLoading,
         setAudioIsLoading,
         uploadedFileName,
+        showMiniToolbar,
+        setShowMiniToolbar,
       }}
     >
       {children}

@@ -188,14 +188,13 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   });
 
   // const [selectedElementID, setSelectedElementID] = useState<string>("");
-
-  const [showMiniToolbar, setShowMiniToolbar] = useState(false);
   const [miniToolbarPosition, setMiniToolbarPosition] = useState({
     x: 0,
     y: 0,
   });
 
-  const { setTextSpeech } = useTextSpeech();
+  const { setTextSpeech, showMiniToolbar, setShowMiniToolbar } =
+    useTextSpeech();
 
   const openMiniDropdown = useCallback(
     (event: React.MouseEvent, path: Path) => {
@@ -348,7 +347,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           const parentNode = Editor.parent(editor, currentNodePath);
           // Check if currentNode is an equation
 
-          if (currentNode.type === "equation" || currentNode.type === "audio") {
+          if (currentNode.type === "equation") {
             event.preventDefault();
           } else {
             // Check if the previous node is an equation
@@ -360,7 +359,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               const [_prevNode] = prevNodeEntry;
 
               if (
-                (_prevNode.type === "equation" || _prevNode.type === "audio") &&
+                _prevNode.type === "equation" &&
                 Editor.isStart(editor, selection.anchor, _currentNodePath)
               ) {
                 event.preventDefault();
@@ -1260,7 +1259,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             }}
           >
             {/* <button>hello</button> */}
-            <TextSpeech isSelected={true} />
+            <TextSpeech key="selectedText" isSelected={true} />
           </StyledMiniToolbar>
         )}
       </AnimatePresence>

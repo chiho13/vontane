@@ -11,16 +11,11 @@ import React from "react";
 import { DownloadButton } from "../DownloadButton";
 
 interface Props {
-  generatedAudio: HTMLAudioElement | null;
   audioURL: string | null;
   fileName: string;
 }
 
-function AudioPlayer({
-  generatedAudio,
-  audioURL,
-  fileName,
-}: Props): JSX.Element {
+function AudioPlayer({ audioURL, fileName }: Props): JSX.Element {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [seekValue, setSeekValue] = useState<number>(0);
   const [seekMax, setSeekMax] = useState<number>(0);
@@ -29,6 +24,21 @@ function AudioPlayer({
   const [nibPosition, setNibPosition] = useState<number>(0);
 
   const theme = useTheme();
+
+  const [generatedAudio, setGenerateAudio] = useState<HTMLAudioElement | null>(
+    null
+  );
+
+  useEffect(() => {
+    if (audioURL) {
+      const audio = new Audio(audioURL);
+      setGenerateAudio(audio);
+
+      return () => {
+        setGenerateAudio(null);
+      };
+    }
+  }, [audioURL]);
 
   useEffect(() => {
     if (generatedAudio) {

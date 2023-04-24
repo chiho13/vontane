@@ -193,8 +193,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     y: 0,
   });
 
-  const { setTextSpeech, showMiniToolbar, setShowMiniToolbar } =
-    useTextSpeech();
+  const {
+    setSelectedTextSpeech,
+    showMiniToolbar,
+    setShowMiniToolbar,
+    uploadedFileName,
+  } = useTextSpeech();
 
   const openMiniDropdown = useCallback(
     (event: React.MouseEvent, path: Path) => {
@@ -1108,15 +1112,55 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             setShowMiniToolbar(true);
 
             const selectedText = Editor.string(editor, selection);
-            setTextSpeech([selectedText]);
-            console.log("Selected text:", selectedText);
+            setSelectedTextSpeech([selectedText]);
+
+            console.log("Selected text:", [selectedText]);
           }
         }
       }
     } else {
+      setSelectedTextSpeech(null);
       setShowMiniToolbar(false);
     }
   };
+
+  useEffect(() => {
+    if (uploadedFileName) {
+      const newNode = {
+        id: genNodeId(),
+        type: "audio",
+        fileName: uploadedFileName,
+        children: [{ text: "" }],
+      };
+
+      const { selection } = editor;
+
+      if (selection) {
+        // Text is selected
+
+        // Get the end point of the selection
+        const selectionEndPoint = Editor.end(editor, selection);
+
+        // Insert the new node right after the selection
+        Transforms.insertNodes(editor, newNode, { at: selectionEndPoint });
+      } else {
+        // Text is not selected
+
+        // Get the number of top-level nodes in the editor
+        const topLevelNodesCount = editor.children.length;
+
+        // Calculate the path for the new node
+        const newPath = [topLevelNodesCount];
+
+        // Insert the new node at the newPath
+        Transforms.insertNodes(editor, newNode, { at: newPath });
+
+        // Focus the editor
+      }
+
+      // Update the last inserted file name
+    }
+  }, [uploadedFileName]);
 
   return (
     <div>
@@ -1143,6 +1187,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     // setValue(newValue);
                     setGhostValue(newValue);
                     if (handleTextChange) {
+                      if (showMiniToolbar) return;
                       handleTextChange(newValue);
                     }
                   }}

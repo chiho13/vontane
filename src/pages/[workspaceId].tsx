@@ -62,7 +62,7 @@ const Workspace: NextPage = () => {
   const [selectedVoiceId, setSelectedVoiceId] = React.useState<string>("");
 
   // const [te, setEnteredText] = React.useState<string[]>([]);
-  const { setTextSpeech } = useTextSpeech();
+  const { setTextSpeech, showMiniToolbar } = useTextSpeech();
 
   const [audioIsLoading, setAudioIsLoading] = React.useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
@@ -284,19 +284,19 @@ const Workspace: NextPage = () => {
 
   function handleTextChange(value: any[]) {
     const extractedText = extractTextValues(value);
-    setTextSpeech(extractedText);
+    // setTextSpeech(extractedText);
     updateWorkspace(value);
     console.log(value);
     // setInitialSlateValue(value);
-    console.log(extractedText);
+    // console.log(extractedText);
     setUpdatedWorkspace({ title: value[0].children[0].text, id: workspaceId });
   }
 
   return (
     <EditorProvider>
       <Layout profile={profile} currentWorkspaceId={workspaceId}>
-        <div className="mx-auto justify-start p-4">
-          <TextSpeech key="wholeText" />
+        <div className="mx-auto h-[100px] justify-start p-4">
+          {!showMiniToolbar && <TextSpeech />}
         </div>
         <div className="flex flex-col items-center justify-center">
           <div className="linear-gradient z-0 mx-auto  mt-4 w-full rounded-md border-2 border-gray-300 px-2 lg:h-[680px]  lg:max-w-[980px] lg:px-0 ">

@@ -59,48 +59,35 @@ export const TextSpeech: React.FC<TextSpeechProps> = ({
 
   const {
     textSpeech,
+    selectedTextSpeech,
     audioIsLoading,
     setAudioIsLoading,
     generatedAudioElement,
     setGeneratedAudioElement,
-    uploadedFileName,
   } = useTextSpeech();
 
+  const [inputText, setInputText] = useState<string[]>(textSpeech);
   const {
     data: texttospeechdata,
     error: texttospeecherror,
     isLoading: texttospeechloading,
     refetch: texttospeechrefetch,
   } = api.texttospeech.startConversion.useQuery(
-    { voice: selectedVoiceId, content: textSpeech },
+    { voice: selectedVoiceId, content: inputText },
     {
       enabled: false,
     }
   );
 
   useEffect(() => {
-    if (uploadedFileName) {
-      const newNode = {
-        id: genNodeId(),
-        type: "audio",
-        fileName: uploadedFileName,
-        children: [{ text: "" }],
-      };
-
-      // ReactEditor.focus(editor); // Focus the editor
-
-      // Get the number of top-level nodes in the editor
-      const topLevelNodesCount = editor.children.length;
-
-      console.log(topLevelNodesCount);
-      // Calculate the path for the new node
-      const newPath = [topLevelNodesCount];
-
-      // Insert the new node at the newPath
-      Transforms.insertNodes(editor, newNode, { at: newPath });
-      Transforms.select(editor, Editor.start(editor, newPath));
+    if (selectedTextSpeech) {
+      setInputText(selectedTextSpeech);
+      console.log(selectedTextSpeech);
+    } else {
+      setInputText(textSpeech);
+      console.log(textSpeech);
     }
-  }, [uploadedFileName]);
+  }, [selectedTextSpeech]);
 
   useEffect(() => {
     if (
@@ -176,26 +163,6 @@ export const TextSpeech: React.FC<TextSpeechProps> = ({
           onClick={generateAudio}
         />
       </div>
-      {/* {!audioIsLoading && generatedAudioElement && (
-        <Portal>
-          <div className="fixed bottom-0 left-0 bottom-4 right-0 mx-auto flex w-full justify-center ">
-            <div className="w-[94%] flex-shrink-0 lg:w-[500px] ">
-              <AudioPlayer generatedAudio={generatedAudioElement} />
-            </div>
-          </div>
-        </Portal>
-      )} */}
-      {/* {audioFiles && audioFiles.length > 0 && (
-        <Portal>
-          <div className="fixed left-0 bottom-2 w-full">
-            <div className="mx-auto mt-5 block lg:w-[980px]">
-              {audioFiles.map((file) => (
-                <Mirt file={file} />
-              ))}
-            </div>
-          </div>
-        </Portal>
-      )} */}
     </>
   );
 };

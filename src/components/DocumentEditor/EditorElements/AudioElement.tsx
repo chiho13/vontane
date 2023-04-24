@@ -42,8 +42,8 @@ export function AudioElement(props) {
 
   useEffect(() => {
     if (ttsaudiodata) {
-      const audioElement = new Audio(ttsaudiodata.signedURL);
-      setGeneratedAudioElement(audioElement);
+      //   const audioElement = new Audio(ttsaudiodata.signedURL);
+      //   setGeneratedAudioElement(audioElement);
       setAudioURL(ttsaudiodata.signedURL);
       setFileName(ttsaudiodata.fileName);
     }
@@ -64,12 +64,7 @@ export function AudioElement(props) {
         >
           {children}
         </p> */}
-      <AudioPlayer
-        key={element.id}
-        generatedAudio={generatedAudioElement}
-        audioURL={audioURL}
-        fileName={fileName}
-      />
+      <AudioPlayer key={element.id} audioURL={audioURL} fileName={fileName} />
     </div>
   );
 }

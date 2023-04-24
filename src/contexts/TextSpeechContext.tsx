@@ -13,6 +13,8 @@ import {
 interface TextSpeechContextType {
   textSpeech: string[];
   setTextSpeech: (textSpeech: string[]) => void;
+  selectedTextSpeech: string[] | null;
+  setSelectedTextSpeech: (textSpeech: string[] | null) => void;
   generatedAudioElement: HTMLAudioElement | null;
   setGeneratedAudioElement: Dispatch<SetStateAction<HTMLAudioElement | null>>;
   audioIsLoading: boolean;
@@ -26,6 +28,8 @@ interface TextSpeechContextType {
 const TextSpeechContext = createContext<TextSpeechContextType>({
   textSpeech: [""],
   setTextSpeech: () => {},
+  selectedTextSpeech: [""],
+  setSelectedTextSpeech: () => {},
   generatedAudioElement: null,
   setGeneratedAudioElement: () => {},
   audioIsLoading: false,
@@ -49,6 +53,9 @@ const TextSpeechProvider = ({ children }: TextSpeechProviderProps) => {
   const router = useRouter();
   const workspaceId = router.query.workspaceId;
   const [textSpeech, setTextSpeech] = useState<string[]>([""]);
+  const [selectedTextSpeech, setSelectedTextSpeech] = useState<string[] | null>(
+    null
+  );
   const [audioIsLoading, setAudioIsLoading] = useState<boolean>(false);
   const [generatedAudioElement, setGeneratedAudioElement, uploadedFileName] =
     useTextSpeechStatusPolling(setAudioIsLoading, workspaceId); // Replace `workspaceId` with the actual workspace ID.
@@ -58,6 +65,8 @@ const TextSpeechProvider = ({ children }: TextSpeechProviderProps) => {
       value={{
         textSpeech,
         setTextSpeech,
+        selectedTextSpeech,
+        setSelectedTextSpeech,
         generatedAudioElement,
         setGeneratedAudioElement,
         audioIsLoading,

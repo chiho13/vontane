@@ -22,6 +22,7 @@ export function AudioElement(props) {
       data-id={element.id}
       data-path={JSON.stringify(path)}
       className="mr-4"
+      contentEditable={false}
     >
       {/* <p
           className="text-[18px]"

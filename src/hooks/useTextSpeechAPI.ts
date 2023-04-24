@@ -7,7 +7,7 @@ import { io } from "socket.io-client";
 type UseTextSpeechStatusPollingResult = [
   HTMLAudioElement | null,
   Dispatch<SetStateAction<HTMLAudioElement | null>>,
-  string
+  string | null
 ];
 
 function useTextSpeechStatusPolling(
@@ -20,7 +20,7 @@ function useTextSpeechStatusPolling(
   const [audioURL, setAudioURL] = useState<string>("");
   const [fileName, setFileName] = useState<string>("");
 
-  const [uploadedFileName, setUploadedFileName] = useState<string>("");
+  const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
   const SOCKET_URL = process.env.PLAYHT_SOCKET_URL;
 
   useEffect(() => {
@@ -57,8 +57,8 @@ function useTextSpeechStatusPolling(
       });
       if (response) {
         // console.log("response.url:", response.url);
-        const newAudioElement = new Audio(response.url);
-        setGeneratedAudioElement(newAudioElement);
+        // const newAudioElement = new Audio(response.url);
+        // setGeneratedAudioElement(newAudioElement);
         setAudioIsLoading(false);
         setUploadedFileName(response.fileName);
         // ttsaudiodatarefetch();

@@ -12,21 +12,21 @@ import {
 } from "@/components/ui/tooltip";
 
 interface DownloadButtonProps {
-  generatedAudio: HTMLAudioElement | null;
-  transcriptionId: string;
+  audioURL: string | null;
+  fileName: string;
 }
 
 export function DownloadButton({
-  generatedAudio,
-  transcriptionId,
+  audioURL,
+  fileName,
 }: DownloadButtonProps): JSX.Element {
   const theme = useTheme();
   async function handleDownload() {
-    if (!generatedAudio) return;
-
+    if (!audioURL) return;
     try {
-      const blob = await downloadAudio(transcriptionId);
-      saveAs(blob, "synthesised-audio.wav");
+      const response = await fetch(audioURL);
+      const blob = await response.blob();
+      saveAs(blob, fileName);
     } catch (error) {
       console.error(error);
       // Handle error here
@@ -35,7 +35,11 @@ export function DownloadButton({
 
   return (
     <button
-      className="flex h-[30px] w-[30px] items-center justify-center rounded-full border border-gray-300 bg-white px-1 py-1 text-sm font-medium text-gray-700 outline-none hover:border-orange-500 hover:bg-gray-50 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
+      className={`flex h-[30px] w-[30px] items-center justify-center rounded-full border border-gray-300 bg-white px-1 py-1 text-sm font-medium text-gray-700 outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50 ${
+        audioURL
+          ? "hover:border-orange-500 hover:bg-gray-50"
+          : "cursor-not-allowed"
+      }`}
       onClick={handleDownload}
     >
       <Download color={theme.colors.darkgray} className="w-4" />

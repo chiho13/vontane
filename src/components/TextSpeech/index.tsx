@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import { Mirt } from "@/plugins/audioTrimmer";
 import { Transforms, Editor, Node } from "slate";
 import { EditorContext } from "@/contexts/EditorContext";
+import { ReactEditor } from "slate-react";
 
 const useDownloadFile = (url, fileName) => {
   const [file, setFile] = useState(null);
@@ -86,20 +87,14 @@ export const TextSpeech: React.FC<TextSpeechProps> = ({
         children: [{ text: "" }],
       };
 
-      // Get all the nodes in the editor
-      const nodes = Array.from(Node.nodes(editor));
+      // ReactEditor.focus(editor); // Focus the editor
 
-      // Find the last node and its path
-      const lastNodeEntry = nodes[nodes.length - 1];
+      // Get the number of top-level nodes in the editor
+      const topLevelNodesCount = editor.children.length;
 
-      if (!lastNodeEntry) return;
-      const lastNodePath = lastNodeEntry[1];
-
+      console.log(topLevelNodesCount);
       // Calculate the path for the new node
-      const newPath = [
-        ...lastNodePath.slice(0, -1),
-        lastNodePath[lastNodePath.length - 1] + 1,
-      ];
+      const newPath = [topLevelNodesCount];
 
       // Insert the new node at the newPath
       Transforms.insertNodes(editor, newNode, { at: newPath });
@@ -181,7 +176,7 @@ export const TextSpeech: React.FC<TextSpeechProps> = ({
           onClick={generateAudio}
         />
       </div>
-      {!audioIsLoading && generatedAudioElement && (
+      {/* {!audioIsLoading && generatedAudioElement && (
         <Portal>
           <div className="fixed bottom-0 left-0 bottom-4 right-0 mx-auto flex w-full justify-center ">
             <div className="w-[94%] flex-shrink-0 lg:w-[500px] ">
@@ -189,7 +184,7 @@ export const TextSpeech: React.FC<TextSpeechProps> = ({
             </div>
           </div>
         </Portal>
-      )}
+      )} */}
       {/* {audioFiles && audioFiles.length > 0 && (
         <Portal>
           <div className="fixed left-0 bottom-2 w-full">

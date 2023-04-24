@@ -7,11 +7,12 @@ import { Editor } from "slate";
 
 export function EquationElement(props) {
   const { attributes, children, element } = props;
-  const { editor, showEditBlockPopup, elementID } = useContext(EditorContext);
+  const { editor, showEditBlockPopup, selectedElementID } =
+    useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);
 
   // console.log(elementID, element.id);
-  console.log(elementID, element.id, showEditBlockPopup);
+  // console.log(selectedElementID, element.id, showEditBlockPopup);
 
   return (
     <div
@@ -22,7 +23,7 @@ export function EquationElement(props) {
         element.latex?.trim() !== "" && "justify-center"
       } 
       ${
-        showEditBlockPopup && elementID === element.id
+        showEditBlockPopup && selectedElementID === element.id
           ? " bg-[#E0EDFB]"
           : "bg-gray-100"
       }

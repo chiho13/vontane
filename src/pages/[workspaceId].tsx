@@ -29,6 +29,7 @@ import { TextSpeech } from "@/components/TextSpeech";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { Mirt } from "@/plugins/audioTrimmer";
 import debounce from "lodash/debounce";
+import { EditorProvider } from "@/contexts/EditorContext";
 // import "react-mirt/dist/css/react-mirt.css";
 type Props = {
   workspaceId: string;
@@ -285,13 +286,14 @@ const Workspace: NextPage = () => {
     const extractedText = extractTextValues(value);
     setTextSpeech(extractedText);
     updateWorkspace(value);
+    console.log(value);
     // setInitialSlateValue(value);
     console.log(extractedText);
     setUpdatedWorkspace({ title: value[0].children[0].text, id: workspaceId });
   }
 
   return (
-    <>
+    <EditorProvider>
       <Layout profile={profile} currentWorkspaceId={workspaceId}>
         <div className="mx-auto justify-start p-4">
           <TextSpeech />
@@ -326,7 +328,7 @@ const Workspace: NextPage = () => {
           </div>
         </div>
       )} */}
-    </>
+    </EditorProvider>
   );
 };
 

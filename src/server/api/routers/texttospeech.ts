@@ -152,4 +152,38 @@ export const texttospeechRouter = createTRPCRouter({
         });
       }
     }),
+  getTextToSpeechFileName: protectedProcedure
+    .input(
+      z.object({
+        fileName: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { fileName } = input;
+
+      try {
+        const expiresIn = 60 * 60 * 24 * 7;
+        const fullFilePath = `${ctx.user.id}/${fileName}`;
+        const { data: signedURL, error: signedURLError } =
+          await ctx.supabaseServerClient.storage
+            .from("tts-audio")
+            .createSignedUrl(fullFilePath, expiresIn);
+
+        if (signedURLError) {
+          console.error(`Error creating signed URL: ${signedURLError.message}`);
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to create signed URL",
+          });
+        }
+
+        return { signedURL: signedURL.signedUrl, fileName };
+      } catch (error) {
+        console.error(error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        });
+      }
+    }),
 });

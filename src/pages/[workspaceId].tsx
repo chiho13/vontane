@@ -55,10 +55,6 @@ const useDownloadFile = (url, fileName) => {
 const Workspace: NextPage = () => {
   const session = useSession();
 
-  if (!session) {
-    return <LoginPage />;
-  }
-
   const [selectedVoiceId, setSelectedVoiceId] = React.useState<string>("");
 
   // const [te, setEnteredText] = React.useState<string[]>([]);
@@ -166,10 +162,6 @@ const Workspace: NextPage = () => {
   useEffect(() => {
     return () => setLoading(false);
   }, []);
-
-  if (fetchWorkspaceIsLoading) {
-    return <div></div>;
-  }
 
   function extractTextValues(data) {
     function traverse(item) {
@@ -293,42 +285,29 @@ const Workspace: NextPage = () => {
   }
 
   return (
-    <EditorProvider>
-      <Layout profile={profile} currentWorkspaceId={workspaceId}>
-        <div className="mx-auto h-[100px] justify-start p-4">
-          {!showMiniToolbar && <TextSpeech />}
-        </div>
-        <div className="flex flex-col items-center justify-center">
-          <div className="linear-gradient z-0 mx-auto  mt-4 w-full rounded-md border-2 border-gray-300 px-2 lg:h-[680px]  lg:max-w-[980px] lg:px-0 ">
-            <div className="block  lg:w-full">
-              <NewColumnProvider>
-                {!fetchWorkspaceIsLoading &&
-                  initialSlateValue &&
-                  workspaceId && (
-                    <DocumentEditor
-                      key={workspaceId}
-                      workspaceId={workspaceId}
-                      handleTextChange={debounce(handleTextChange, 500)}
-                      initialSlateValue={initialSlateValue}
-                    />
-                  )}
-              </NewColumnProvider>
-            </div>
+    <Layout profile={profile} currentWorkspaceId={workspaceId}>
+      <div className="mx-auto h-[100px] justify-start p-4">
+        {!showMiniToolbar && <TextSpeech />}
+      </div>
+      <div className="flex flex-col items-center justify-center">
+        <div className="linear-gradient z-0 mx-auto  mt-4 w-full rounded-md border-2 border-gray-300 px-2 lg:h-[680px]  lg:max-w-[980px] lg:px-0 ">
+          <div className="block  lg:w-full">
+            <NewColumnProvider>
+              {!fetchWorkspaceIsLoading && initialSlateValue && workspaceId && (
+                <EditorProvider key={workspaceId}>
+                  <DocumentEditor
+                    key={workspaceId}
+                    workspaceId={workspaceId}
+                    handleTextChange={debounce(handleTextChange, 500)}
+                    initialSlateValue={initialSlateValue}
+                  />
+                </EditorProvider>
+              )}
+            </NewColumnProvider>
           </div>
         </div>
-      </Layout>
-
-      {/* {!audioIsLoading && generatedAudioElement && (
-        <div className="fixed bottom-0 left-0 bottom-4 right-0 mx-auto flex w-full justify-center ">
-          <div className="w-[94%] flex-shrink-0 lg:w-[500px] ">
-            <AudioPlayer
-              generatedAudio={generatedAudioElement}
-              transcriptionId={transcriptionId}
-            />
-          </div>
-        </div>
-      )} */}
-    </EditorProvider>
+      </div>
+    </Layout>
   );
 };
 

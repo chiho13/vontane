@@ -209,6 +209,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const resetTextSpeech = useTextSpeechReset();
 
   useEffect(() => {
+    const extractedText = extractTextValues(initialSlateValue);
+    setTextSpeech(extractedText);
     return () => {
       resetTextSpeech();
     };
@@ -1140,6 +1142,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             const selectedText = Editor.string(editor, selection);
             const extractedText = textRegex(selectedText);
             console.log(extractedText);
+            setTextSpeech(null);
             setSelectedTextSpeech([extractedText]);
           }
         }

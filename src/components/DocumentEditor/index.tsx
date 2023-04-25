@@ -144,9 +144,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const [slatevalue, setValue] = useState(initialSlateValue);
 
   const [ghostslatevalue, setGhostValue] = useState(initialSlateValue);
-  // useEffect(() => {
-  //   setValue(initialSlateValue);
-  // }, [initialSlateValue]);
 
   const [activeId, setActiveId] = useState(null);
 
@@ -180,8 +177,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   >(0);
 
   const { creatingNewColumn, setCreatingNewColumn } = useNewColumn();
-
-  const [checkEmptyColumnCells, setCheckEmptyColumnCells] = useState(false);
 
   const [showFloatingModal, setShowFloatingModal] = useState({
     open: false,
@@ -1239,7 +1234,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                           onKeyUp={(event) => {
                             handleSelectedText(event, editor);
                           }}
-                          onClick={(event) => handleCursorClick(event, editor)}
                         />
                         <Droppable>
                           <div></div>

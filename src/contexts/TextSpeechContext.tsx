@@ -12,18 +12,16 @@ import {
 
 // Define the shape of the context object
 interface TextSpeechContextType {
-  textSpeech: string[];
+  textSpeech: string[] | null;
   setTextSpeech: (textSpeech: string[] | null) => void;
   selectedTextSpeech: string[] | null;
   setSelectedTextSpeech: (textSpeech: string[] | null) => void;
-  generatedAudioElement: HTMLAudioElement | null;
-  setGeneratedAudioElement: Dispatch<SetStateAction<HTMLAudioElement | null>>;
   audioIsLoading: boolean;
   setAudioIsLoading: (value: boolean) => void;
-  uploadedFileName: string | null;
   showMiniToolbar: boolean;
   setShowMiniToolbar: (value: boolean) => void;
-  resetTextSpeech: () => void;
+  signedURL: string | null;
+  setSignedURL: (value: string | null) => void;
 }
 
 // Create the context with default values
@@ -32,14 +30,12 @@ const TextSpeechContext = createContext<TextSpeechContextType>({
   setTextSpeech: () => {},
   selectedTextSpeech: [""],
   setSelectedTextSpeech: () => {},
-  generatedAudioElement: null,
-  setGeneratedAudioElement: () => {},
   audioIsLoading: false,
   setAudioIsLoading: () => {},
-  uploadedFileName: "",
   showMiniToolbar: false,
   setShowMiniToolbar: () => {},
-  resetTextSpeech: () => {},
+  signedURL: null,
+  setSignedURL: () => {},
 });
 
 // Define the shape of the provider props
@@ -52,11 +48,6 @@ const useTextSpeech = () => {
   return useContext(TextSpeechContext);
 };
 
-const useTextSpeechReset = () => {
-  const context = useContext(TextSpeechContext);
-  return context.resetTextSpeech;
-};
-
 const TextSpeechProvider = ({ children }: TextSpeechProviderProps) => {
   const router = useRouter();
   const workspaceId = router.query.workspaceId;
@@ -65,17 +56,9 @@ const TextSpeechProvider = ({ children }: TextSpeechProviderProps) => {
     null
   );
   const [audioIsLoading, setAudioIsLoading] = useState<boolean>(false);
-  const [generatedAudioElement, setGeneratedAudioElement, uploadedFileName] =
-    useTextSpeechStatusPolling(setAudioIsLoading, workspaceId); // Replace `workspaceId` with the actual workspace ID.
+  // Replace `workspaceId` with the actual workspace ID.
   const [showMiniToolbar, setShowMiniToolbar] = useState(false);
-
-  const resetTextSpeech = useCallback(() => {
-    setTextSpeech([""]);
-    setSelectedTextSpeech(null);
-    setAudioIsLoading(false);
-    setGeneratedAudioElement(null);
-    setShowMiniToolbar(false);
-  }, []);
+  const [signedURL, setSignedURL] = useState<string | null>(null);
 
   return (
     <TextSpeechContext.Provider
@@ -84,14 +67,12 @@ const TextSpeechProvider = ({ children }: TextSpeechProviderProps) => {
         setTextSpeech,
         selectedTextSpeech,
         setSelectedTextSpeech,
-        generatedAudioElement,
-        setGeneratedAudioElement,
         audioIsLoading,
         setAudioIsLoading,
-        uploadedFileName,
         showMiniToolbar,
         setShowMiniToolbar,
-        resetTextSpeech,
+        signedURL,
+        setSignedURL,
       }}
     >
       {children}
@@ -99,4 +80,4 @@ const TextSpeechProvider = ({ children }: TextSpeechProviderProps) => {
   );
 };
 
-export { TextSpeechProvider, useTextSpeech, useTextSpeechReset };
+export { TextSpeechProvider, useTextSpeech };

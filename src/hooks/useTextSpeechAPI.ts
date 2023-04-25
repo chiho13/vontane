@@ -4,19 +4,12 @@ import { genNodeId } from "@/hoc/withID";
 import { api } from "@/utils/api";
 import { io } from "socket.io-client";
 
-type UseTextSpeechStatusPollingResult = [
-  HTMLAudioElement | null,
-  Dispatch<SetStateAction<HTMLAudioElement | null>>,
-  string | null
-];
+type UseTextSpeechStatusPollingResult = [string | null];
 
 function useTextSpeechStatusPolling(
   setAudioIsLoading: (value: boolean) => void,
   workspaceId: any
 ): UseTextSpeechStatusPollingResult {
-  const [generatedAudioElement, setGeneratedAudioElement] =
-    useState<HTMLAudioElement | null>(null);
-
   const [audioURL, setAudioURL] = useState<string>("");
   const [fileName, setFileName] = useState<string>("");
 
@@ -74,7 +67,7 @@ function useTextSpeechStatusPolling(
     }
   }, [audioURL]);
 
-  return [generatedAudioElement, setGeneratedAudioElement, uploadedFileName];
+  return [uploadedFileName];
 }
 
 export default useTextSpeechStatusPolling;

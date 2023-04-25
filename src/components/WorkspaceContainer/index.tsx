@@ -29,6 +29,7 @@ import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { Mirt } from "@/plugins/audioTrimmer";
 import debounce from "lodash/debounce";
 import { TextSpeechProvider } from "@/contexts/TextSpeechContext";
+import { EditorProvider } from "@/contexts/EditorContext";
 
 // import "react-mirt/dist/css/react-mirt.css";
 type Props = {
@@ -98,8 +99,6 @@ export const WorkspaceContainer = ({ workspaceId }) => {
         const parsedSlateValue = JSON.parse(slateValue);
         setInitialSlateValue(parsedSlateValue);
 
-        // const extractedText: [string] = extractTextValues(parsedSlateValue);
-        // setTextSpeech(extractedText);
         setFetchWorkspaceIsLoading(false);
       }
     }
@@ -145,14 +144,16 @@ export const WorkspaceContainer = ({ workspaceId }) => {
     <Layout profile={profile} currentWorkspaceId={workspaceId}>
       <NewColumnProvider>
         {!fetchWorkspaceIsLoading && initialSlateValue && workspaceId && (
-          <TextSpeechProvider>
-            <DocumentEditor
-              key={workspaceId}
-              workspaceId={workspaceId}
-              handleTextChange={debounce(handleTextChange, 500)}
-              initialSlateValue={initialSlateValue}
-            />
-          </TextSpeechProvider>
+          <EditorProvider key={workspaceId}>
+            <TextSpeechProvider key={workspaceId}>
+              <DocumentEditor
+                key={workspaceId}
+                workspaceId={workspaceId}
+                handleTextChange={debounce(handleTextChange, 500)}
+                initialSlateValue={initialSlateValue}
+              />
+            </TextSpeechProvider>
+          </EditorProvider>
         )}
       </NewColumnProvider>
     </Layout>

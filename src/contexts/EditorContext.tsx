@@ -34,14 +34,11 @@ const EditorContext = createContext<{
 // Define the EquationProviderProps type
 type EquationProviderProps = PropsWithChildren<{
   children: ReactNode;
-  editor: Editor;
 }>;
 
 // Create an EquationProvider component that accepts a `children` prop and the `openEditBlockPopup` function
-const EditorProvider: React.FC<EquationProviderProps> = ({
-  children,
-  editor,
-}) => {
+const EditorProvider: React.FC<EquationProviderProps> = ({ children }) => {
+  const editor = useEditor();
   const [showEditBlockPopup, setShowEditBlockPopup] = useState(false);
   const [selectedElementID, setSelectedElementID] = useState<string>("");
   const [activePath, setActivePath] = useState<string>("");

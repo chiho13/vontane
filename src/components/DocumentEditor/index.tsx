@@ -284,10 +284,22 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               Transforms.setNodes(editor, { id: newId }, { at: newPath });
             }
 
+            console.log(_currentNodePath);
             if (
               Editor.isStart(editor, editor.selection.anchor, _currentNodePath)
             ) {
-              insertNewParagraphEnter(newPath);
+              // Get the previous path for the new paragraph
+              // Create a new paragraph with an empty text node and a new ID
+              const newParagraph = {
+                type: "paragraph",
+                id: genNodeId(),
+                children: [{ text: "" }],
+              };
+
+              // Insert the new paragraph at the previous path
+              Transforms.insertNodes(editor, newParagraph, {
+                at: _currentNodePath,
+              });
             }
           }
 

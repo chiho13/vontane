@@ -38,6 +38,11 @@ import { LayoutContext } from "../Layouts/AccountLayout";
 import { y_animation_props } from "../Dropdown";
 import { findElementInSlateValue } from "./helpers/findElementInSlate";
 import { MathQuestionGenerator } from "../QuestionGenerator/Math";
+import {
+  TextSpeechProvider,
+  useTextSpeechReset,
+} from "@/contexts/TextSpeechContext";
+import { extractTextValues } from "@/components/DocumentEditor/helpers/extractText";
 
 import {
   DndContext,
@@ -74,6 +79,7 @@ import { OptionMenu } from "./OptionMenu";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { TextSpeech } from "@/components/TextSpeech";
 import ErrorBoundary from "../Errorboundary";
+import { textRegex } from "./helpers/textRegex";
 interface DocumentEditorProps {
   workspaceId: string;
   handleTextChange?: (value: any) => void;
@@ -125,14 +131,13 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const theme = useTheme();
   const { isLocked } = useContext(LayoutContext);
   const {
-    editor,
     showEditBlockPopup,
     setShowEditBlockPopup,
     activePath,
     setActivePath,
     setSelectedElementID,
   } = useContext(EditorContext);
-  // const editor = useEditor();
+  const editor = useEditor();
   const [slatevalue, setValue] = useState(initialSlateValue);
 
   const [ghostslatevalue, setGhostValue] = useState(initialSlateValue);
@@ -194,11 +199,20 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   });
 
   const {
+    setTextSpeech,
     setSelectedTextSpeech,
     showMiniToolbar,
     setShowMiniToolbar,
     uploadedFileName,
   } = useTextSpeech();
+
+  const resetTextSpeech = useTextSpeechReset();
+
+  useEffect(() => {
+    return () => {
+      resetTextSpeech();
+    };
+  }, [workspaceId]);
 
   const openMiniDropdown = useCallback(
     (event: React.MouseEvent, path: Path) => {
@@ -1124,9 +1138,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             setShowMiniToolbar(true);
 
             const selectedText = Editor.string(editor, selection);
-            setSelectedTextSpeech([selectedText]);
-
-            console.log("Selected text:", [selectedText]);
+            const extractedText = textRegex(selectedText);
+            console.log(extractedText);
+            setSelectedTextSpeech([extractedText]);
           }
         }
       }
@@ -1175,161 +1189,189 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   }, [uploadedFileName]);
 
   return (
-    <div>
-      <ErrorBoundary>
-        <DndContext
-          onDragEnd={handleDragEnd}
-          onDragStart={handleDragStart}
-          sensors={sensors}
-        >
-          <SortableContext
-            items={slatevalue}
-            strategy={verticalListSortingStrategy}
-          >
-            <ActiveElementProvider activeIndex={activeIndex}>
-              <div
-                tabIndex={0}
-                className="relative z-0 mx-auto block rounded-md pt-4 pr-1 pb-4 pl-2 focus:outline-none focus-visible:border-gray-300"
-              >
-                <Slate
-                  editor={editor}
-                  value={slatevalue}
-                  key={JSON.stringify(slatevalue)}
-                  onChange={(newValue) => {
-                    // setValue(newValue);
-                    setGhostValue(newValue);
-                    if (handleTextChange) {
-                      if (showMiniToolbar) return;
-                      handleTextChange(newValue);
-                    }
-                  }}
+    <>
+      <div className="mx-auto h-[100px] justify-start p-4">
+        {!showMiniToolbar && <TextSpeech />}
+      </div>
+      <div className="flex flex-col items-center justify-center">
+        <div className="linear-gradient z-0 mx-auto  mt-4 w-full rounded-md border-2 border-gray-300 px-2 lg:h-[680px]  lg:max-w-[980px] lg:px-0 ">
+          <div className="block  lg:w-full">
+            <EditorProvider editor={editor}>
+              <ErrorBoundary>
+                <DndContext
+                  onDragEnd={handleDragEnd}
+                  onDragStart={handleDragStart}
+                  sensors={sensors}
                 >
-                  <Editable
-                    className="relative h-[640px] overflow-y-auto"
-                    renderElement={renderElement}
-                    renderLeaf={Blank}
-                    onMouseUp={(event) => {
-                      handleEditorMouseUp(event, editor);
-                      handleSelectedText(event, editor);
+                  <SortableContext
+                    items={slatevalue}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <ActiveElementProvider activeIndex={activeIndex}>
+                      <div
+                        tabIndex={0}
+                        className="relative z-0 mx-auto block rounded-md pt-4 pr-1 pb-4 pl-2 focus:outline-none focus-visible:border-gray-300"
+                      >
+                        <Slate
+                          editor={editor}
+                          value={slatevalue}
+                          key={JSON.stringify(slatevalue)}
+                          onChange={(newValue) => {
+                            // setValue(newValue);
+                            setGhostValue(newValue);
+                            const extractedText = extractTextValues(newValue);
+                            setTextSpeech(extractedText);
+                            console.log(extractedText);
+                            if (handleTextChange) {
+                              handleTextChange(newValue);
+                            }
+                          }}
+                        >
+                          <Editable
+                            className="relative h-[640px] overflow-y-auto"
+                            renderElement={renderElement}
+                            renderLeaf={Blank}
+                            onMouseUp={(event) => {
+                              handleEditorMouseUp(event, editor);
+                              handleSelectedText(event, editor);
+                            }}
+                            onKeyDown={handleKeyDown}
+                            onKeyUp={(event) => {
+                              handleSelectedText(event, editor);
+                            }}
+                            onClick={(event) =>
+                              handleCursorClick(event, editor)
+                            }
+                          />
+                          <Droppable>
+                            <div></div>
+                          </Droppable>
+                        </Slate>
+                      </div>
+                    </ActiveElementProvider>
+                  </SortableContext>
+                  <DragOverlay>
+                    {activeId ? (
+                      <DragOverlayContent
+                        element={findElementInSlateValue(
+                          ghostslatevalue,
+                          activeId
+                        )}
+                      />
+                    ) : null}
+                  </DragOverlay>
+                </DndContext>
+              </ErrorBoundary>
+              <AnimatePresence>
+                {showDropdown && activePath && (
+                  <motion.div
+                    {...y_animation_props}
+                    className="fixed left-[120px] z-10 mx-auto mt-2 w-[320px]"
+                    style={{
+                      top: `${dropdownTop}px`,
+                      left: `${dropdownLeft}px`,
                     }}
-                    onKeyDown={handleKeyDown}
-                    onKeyUp={(event) => {
-                      handleSelectedText(event, editor);
+                  >
+                    <MiniDropdown
+                      ref={addSomethingDropdownRef}
+                      isOpen={showDropdown}
+                      addMCQBlock={() => {
+                        handleAddMCQBlock(JSON.parse(activePath));
+                        setShowDropdown(false);
+                      }}
+                      addEquationBlock={() => {
+                        handleAddEditableEquationBlock(
+                          "",
+                          JSON.parse(activePath)
+                        );
+                        setShowDropdown(false);
+                      }}
+                      genBlock={(_subject) => {
+                        console.log("add block");
+                        setShowFloatingModal({ open: true, subject: _subject });
+                        setShowDropdown(false);
+                      }}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              <AnimatePresence>
+                {showEditBlockPopup && activeEditEquationPath && (
+                  <>
+                    <motion.div
+                      {...y_animation_props}
+                      className="fixed  z-10 z-10 mx-auto mt-2 mt-2 w-[380px]"
+                      style={{
+                        top: `${dropdownEditBlockTop}px`,
+                        left: `${dropdownEditBlockLeft}px`,
+                      }}
+                    >
+                      <EditBlockPopup
+                        ref={editBlockDropdownRef}
+                        onChange={(latex, altText) =>
+                          handleEditLatex(
+                            latex,
+                            altText,
+                            JSON.parse(activeEditEquationPath)
+                          )
+                        }
+                        latexValue={getCurrentLatex}
+                        onClick={closeEditableDropdown}
+                        insertText={(note) => {
+                          Transforms.insertNodes(
+                            editor,
+                            {
+                              id: genNodeId(),
+                              type: "paragraph",
+                              children: [{ text: note }],
+                            },
+                            {
+                              at: Path.next(JSON.parse(activeEditEquationPath)),
+                            }
+                          );
+                        }}
+                      />
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
+              {showFloatingModal.open && (
+                <FloatingModal
+                  title={getModalTitle()}
+                  initialX={dropdownLeft}
+                  initialY={dropdownTop}
+                  onClose={() =>
+                    setShowFloatingModal({ open: false, subject: "" })
+                  }
+                >
+                  {renderSubjectComponent()}
+                </FloatingModal>
+              )}
+              <AnimatePresence>
+                {showMiniToolbar && (
+                  <StyledMiniToolbar
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    style={{
+                      top: miniToolbarPosition.y,
+                      left: miniToolbarPosition.x,
                     }}
-                    onClick={(event) => handleCursorClick(event, editor)}
-                  />
-                  <Droppable>
-                    <div></div>
-                  </Droppable>
-                </Slate>
-              </div>
-            </ActiveElementProvider>
-          </SortableContext>
-          <DragOverlay>
-            {activeId ? (
-              <DragOverlayContent
-                element={findElementInSlateValue(ghostslatevalue, activeId)}
-              />
-            ) : null}
-          </DragOverlay>
-        </DndContext>
-      </ErrorBoundary>
-      <AnimatePresence>
-        {showDropdown && activePath && (
-          <motion.div
-            {...y_animation_props}
-            className="fixed left-[120px] z-10 mx-auto mt-2 w-[320px]"
-            style={{
-              top: `${dropdownTop}px`,
-              left: `${dropdownLeft}px`,
-            }}
-          >
-            <MiniDropdown
-              ref={addSomethingDropdownRef}
-              isOpen={showDropdown}
-              addMCQBlock={() => {
-                handleAddMCQBlock(JSON.parse(activePath));
-                setShowDropdown(false);
-              }}
-              addEquationBlock={() => {
-                handleAddEditableEquationBlock("", JSON.parse(activePath));
-                setShowDropdown(false);
-              }}
-              genBlock={(_subject) => {
-                console.log("add block");
-                setShowFloatingModal({ open: true, subject: _subject });
-                setShowDropdown(false);
-              }}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-      <AnimatePresence>
-        {showEditBlockPopup && activeEditEquationPath && (
-          <>
-            <motion.div
-              {...y_animation_props}
-              className="fixed  z-10 z-10 mx-auto mt-2 mt-2 w-[380px]"
-              style={{
-                top: `${dropdownEditBlockTop}px`,
-                left: `${dropdownEditBlockLeft}px`,
-              }}
-            >
-              <EditBlockPopup
-                ref={editBlockDropdownRef}
-                onChange={(latex, altText) =>
-                  handleEditLatex(
-                    latex,
-                    altText,
-                    JSON.parse(activeEditEquationPath)
-                  )
-                }
-                latexValue={getCurrentLatex}
-                onClick={closeEditableDropdown}
-                insertText={(note) => {
-                  Transforms.insertNodes(
-                    editor,
-                    {
-                      id: genNodeId(),
-                      type: "paragraph",
-                      children: [{ text: note }],
-                    },
-                    { at: Path.next(JSON.parse(activeEditEquationPath)) }
-                  );
-                }}
-              />
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-      {showFloatingModal.open && (
-        <FloatingModal
-          title={getModalTitle()}
-          initialX={dropdownLeft}
-          initialY={dropdownTop}
-          onClose={() => setShowFloatingModal({ open: false, subject: "" })}
-        >
-          {renderSubjectComponent()}
-        </FloatingModal>
-      )}
-      <AnimatePresence>
-        {showMiniToolbar && (
-          <StyledMiniToolbar
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            style={{ top: miniToolbarPosition.y, left: miniToolbarPosition.x }}
-            onMouseDown={(event) => {
-              event.preventDefault();
-              event.stopPropagation();
-            }}
-          >
-            {/* <button>hello</button> */}
-            <TextSpeech key="selectedText" isSelected={true} />
-          </StyledMiniToolbar>
-        )}
-      </AnimatePresence>
-    </div>
+                    onMouseDown={(event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                    }}
+                  >
+                    {/* <button>hello</button> */}
+                    <TextSpeech key="selectedText" isSelected={true} />
+                  </StyledMiniToolbar>
+                )}
+              </AnimatePresence>
+            </EditorProvider>
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 

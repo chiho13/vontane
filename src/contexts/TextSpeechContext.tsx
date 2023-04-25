@@ -7,6 +7,7 @@ import {
   ReactNode,
   SetStateAction,
   Dispatch,
+  useCallback,
 } from "react";
 
 // Define the shape of the context object
@@ -22,6 +23,7 @@ interface TextSpeechContextType {
   uploadedFileName: string | null;
   showMiniToolbar: boolean;
   setShowMiniToolbar: (value: boolean) => void;
+  resetTextSpeech: () => void;
 }
 
 // Create the context with default values
@@ -37,6 +39,7 @@ const TextSpeechContext = createContext<TextSpeechContextType>({
   uploadedFileName: "",
   showMiniToolbar: false,
   setShowMiniToolbar: () => {},
+  resetTextSpeech: () => {},
 });
 
 // Define the shape of the provider props
@@ -47,6 +50,11 @@ interface TextSpeechProviderProps {
 // Create a custom hook to use the context
 const useTextSpeech = () => {
   return useContext(TextSpeechContext);
+};
+
+const useTextSpeechReset = () => {
+  const context = useContext(TextSpeechContext);
+  return context.resetTextSpeech;
 };
 
 const TextSpeechProvider = ({ children }: TextSpeechProviderProps) => {
@@ -60,6 +68,15 @@ const TextSpeechProvider = ({ children }: TextSpeechProviderProps) => {
   const [generatedAudioElement, setGeneratedAudioElement, uploadedFileName] =
     useTextSpeechStatusPolling(setAudioIsLoading, workspaceId); // Replace `workspaceId` with the actual workspace ID.
   const [showMiniToolbar, setShowMiniToolbar] = useState(false);
+
+  const resetTextSpeech = useCallback(() => {
+    setTextSpeech([""]);
+    setSelectedTextSpeech(null);
+    setAudioIsLoading(false);
+    setGeneratedAudioElement(null);
+    setShowMiniToolbar(false);
+  }, []);
+
   return (
     <TextSpeechContext.Provider
       value={{
@@ -74,6 +91,7 @@ const TextSpeechProvider = ({ children }: TextSpeechProviderProps) => {
         uploadedFileName,
         showMiniToolbar,
         setShowMiniToolbar,
+        resetTextSpeech,
       }}
     >
       {children}
@@ -81,4 +99,4 @@ const TextSpeechProvider = ({ children }: TextSpeechProviderProps) => {
   );
 };
 
-export { TextSpeechProvider, useTextSpeech };
+export { TextSpeechProvider, useTextSpeech, useTextSpeechReset };

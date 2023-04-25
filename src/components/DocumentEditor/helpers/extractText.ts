@@ -5,7 +5,16 @@ export function extractTextValues(data) {
     let accumulator = [];
 
     if (item.type === "title") {
-      accumulator.push(...item.children.map((child) => `${child.text}.`));
+      accumulator.push(
+        ...item.children.map((child) => {
+          let text = child.text;
+
+          // Replace % with " percent"
+          text = textRegex(text);
+
+          return text;
+        })
+      );
     }
 
     if (item.type === "paragraph") {

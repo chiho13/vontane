@@ -55,8 +55,6 @@ export const TextSpeech: React.FC<TextSpeechProps> = ({
   // const fileName = "anny.wav";
   // const file = useDownloadFile(url, fileName);
 
-  const [audioFiles, setAudioFiles] = useState<File[]>([]);
-
   const {
     textSpeech,
     selectedTextSpeech,
@@ -80,15 +78,14 @@ export const TextSpeech: React.FC<TextSpeechProps> = ({
   );
 
   useEffect(() => {
-    // if (selectedTextSpeech) {
-    //   setInputText(selectedTextSpeech);
-    //   console.log(selectedTextSpeech);
-    // } else {
-    //   setInputText(textSpeech);
-    //   console.log(textSpeech);
-    // }
-    console.log(selectedTextSpeech);
-  }, [selectedTextSpeech]);
+    if (selectedTextSpeech) {
+      setInputText(selectedTextSpeech);
+      console.log(selectedTextSpeech);
+    } else if (textSpeech) {
+      setInputText(textSpeech);
+      console.log(textSpeech);
+    }
+  }, [selectedTextSpeech, textSpeech]);
 
   useEffect(() => {
     if (
@@ -116,10 +113,6 @@ export const TextSpeech: React.FC<TextSpeechProps> = ({
       }
     }
   }, [texttospeechdata, texttospeecherror, texttospeechloading]);
-
-  useEffect(() => {
-    console.log(audioFiles);
-  }, [audioFiles]);
 
   async function generateAudio(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();

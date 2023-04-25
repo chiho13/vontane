@@ -13,7 +13,7 @@ import {
 // Define the shape of the context object
 interface TextSpeechContextType {
   textSpeech: string[];
-  setTextSpeech: (textSpeech: string[]) => void;
+  setTextSpeech: (textSpeech: string[] | null) => void;
   selectedTextSpeech: string[] | null;
   setSelectedTextSpeech: (textSpeech: string[] | null) => void;
   generatedAudioElement: HTMLAudioElement | null;
@@ -60,7 +60,7 @@ const useTextSpeechReset = () => {
 const TextSpeechProvider = ({ children }: TextSpeechProviderProps) => {
   const router = useRouter();
   const workspaceId = router.query.workspaceId;
-  const [textSpeech, setTextSpeech] = useState<string[]>([""]);
+  const [textSpeech, setTextSpeech] = useState<string[] | null>(null);
   const [selectedTextSpeech, setSelectedTextSpeech] = useState<string[] | null>(
     null
   );

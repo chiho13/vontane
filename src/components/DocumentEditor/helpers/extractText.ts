@@ -12,7 +12,7 @@ export function extractTextValues(data) {
           // Replace % with " percent"
           text = textRegex(text);
 
-          return text;
+          return `${text}.`;
         })
       );
     }

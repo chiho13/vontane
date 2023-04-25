@@ -54,7 +54,7 @@ export function ParagraphElement(props) {
     <ParagraphStyle>
       <p
         ref={paragraphRef}
-        className={`paragraph-element ${
+        className={`paragraph-element w-[98%] ${
           selectedElementID === element.id ? " bg-[#E0EDFB]" : ""
         }`}
         {...attributes}

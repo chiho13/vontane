@@ -80,13 +80,14 @@ export const TextSpeech: React.FC<TextSpeechProps> = ({
   );
 
   useEffect(() => {
-    if (selectedTextSpeech) {
-      setInputText(selectedTextSpeech);
-      console.log(selectedTextSpeech);
-    } else {
-      setInputText(textSpeech);
-      console.log(textSpeech);
-    }
+    // if (selectedTextSpeech) {
+    //   setInputText(selectedTextSpeech);
+    //   console.log(selectedTextSpeech);
+    // } else {
+    //   setInputText(textSpeech);
+    //   console.log(textSpeech);
+    // }
+    console.log(selectedTextSpeech);
   }, [selectedTextSpeech]);
 
   useEffect(() => {

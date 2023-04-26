@@ -785,12 +785,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     const optionMenu =
       (isRoot && element.type === "mcq") || element.type === "equation" ? (
         <div className="absolute  top-1 right-5">
-          <OptionMenu
-            onClick={() => {
-              console.log("something");
-            }}
-            element={element}
-          />
+          <OptionMenu element={element} />
         </div>
       ) : null;
 

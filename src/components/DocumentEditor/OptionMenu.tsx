@@ -9,12 +9,11 @@ import { ReactEditor } from "slate-react";
 import { Transforms } from "slate";
 
 interface OptionMenuProps {
-  onClick: () => void;
   element: any;
 }
 
 export const OptionMenu = forwardRef<HTMLDivElement, OptionMenuProps>(
-  ({ onClick, element }, ref) => {
+  ({ element }, ref) => {
     const { editor } = useContext(EditorContext);
     const theme = useTheme();
     const deleteBlock = (event: React.MouseEvent<HTMLButtonElement>) => {

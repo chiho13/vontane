@@ -18,7 +18,7 @@ export function AudioElement(props) {
     );
   }, []); // Empty dependency array means it will only be created once
 
-  const { generatedAudioElement, setGeneratedAudioElement } = useTextSpeech();
+  const { signedURL } = useTextSpeech();
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const [fileName, setFileName] = useState("");
   const {
@@ -65,7 +65,12 @@ export function AudioElement(props) {
         >
           {children}
         </p> */}
-      <AudioPlayer key={element.id} audioURL={audioURL} fileName={fileName} />
+      <AudioPlayer
+        key={element.id}
+        audioURL={audioURL}
+        fileName={fileName}
+        element={element}
+      />
     </div>
   );
 }

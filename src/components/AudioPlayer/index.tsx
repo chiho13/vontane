@@ -9,13 +9,15 @@ import { useTheme } from "styled-components";
 import React from "react";
 
 import { DownloadButton } from "../DownloadButton";
+import { OptionMenu } from "../DocumentEditor/OptionMenu";
 
 interface Props {
   audioURL: string | null;
   fileName: string;
+  element: any;
 }
 
-function AudioPlayer({ audioURL, fileName }: Props): JSX.Element {
+function AudioPlayer({ audioURL, fileName, element }: Props): JSX.Element {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [seekValue, setSeekValue] = useState<number>(0);
   const [seekMax, setSeekMax] = useState<number>(0);
@@ -204,6 +206,9 @@ function AudioPlayer({ audioURL, fileName }: Props): JSX.Element {
       </button> */}
       <div className="ml-4">
         <DownloadButton audioURL={audioURL} fileName={fileName} />
+      </div>
+      <div className="ml-4">
+        <OptionMenu element={element} />
       </div>
     </AudioPlayerStyle>
   );

@@ -91,9 +91,9 @@ const SidebarContent = styled.div<{ isLocked: boolean; isOpen: boolean }>`
 position: fixed;
 top: 0;
 height: 100%;
-width: 270px;
+width: 240px;
 transform: ${(props) =>
-  props.isLocked && props.isOpen ? "translateX(0)" : "translateX(-270px)"};
+  props.isLocked && props.isOpen ? "translateX(0)" : "translateX(-240px)"};
   background: rgb(251, 251, 250); 
 padding: 0;
 z-index: 10;
@@ -357,8 +357,8 @@ const Layout: React.FC<LayoutProps> = ({
         <SidebarContainer onMouseLeave={handleMouseLeave}>
           <ToggleButtonWrapper
             style={{
-              transform: isLocked ? "translateX(220px)" : "translateX(0)",
-              transition: isLocked ? "transform 400ms" : "transform 200ms",
+              transform: isLocked ? "translateX(190px)" : "translateX(0)",
+              transition: isLocked ? "transform 300ms" : "transform 100ms",
             }}
             onMouseEnter={handleMouseEnter}
           >
@@ -420,15 +420,21 @@ const Layout: React.FC<LayoutProps> = ({
                         <button
                           onClick={() => handleWorkspaceRoute(workspace.id, "")}
                         >
-                          <span>{displayName || "Untitled"}</span>
+                          <span className="text-sm">
+                            {displayName || "Untitled"}
+                          </span>
                         </button>
                       </SidebarItem>
                     );
                   })}
 
                 <SidebarItem>
-                  <button onClick={createWorkspace}>
-                    <Plus /> <span className="ml-2">Create Workspace</span>
+                  <button
+                    className="flex items-center"
+                    onClick={createWorkspace}
+                  >
+                    <Plus />{" "}
+                    <span className="ml-2 text-sm">Create Workspace</span>
                   </button>
                 </SidebarItem>
               </ul>
@@ -438,14 +444,11 @@ const Layout: React.FC<LayoutProps> = ({
         <main
           className="min-h-screen overflow-auto bg-white pt-4 lg:pl-6"
           style={{
-            transform:
-              isLocked && desktopbreakpoint
-                ? "translateX(150px)"
-                : "translateX(0)",
+            marginLeft: isLocked && desktopbreakpoint ? "190px" : "0",
+            width:
+              isLocked && desktopbreakpoint ? "calc(100vw - 190px" : "100vw",
             transition:
-              isLocked && desktopbreakpoint
-                ? "transform 300ms"
-                : "transform 100ms",
+              "margin-left 300ms ease-in-out, width 300ms ease-in-out",
           }}
         >
           {children}

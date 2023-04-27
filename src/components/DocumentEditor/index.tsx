@@ -308,6 +308,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           }
 
           if (parentNode.type === "title") {
+            event.preventDefault();
             const nextNode = Editor.next(editor, { at: parentPath });
 
             if (
@@ -323,13 +324,33 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                   _currentNodePath
                 )
               ) {
-                return;
+                const newPath = Path.next(parentPath);
+                // Insert an empty paragraph below the title
+                Transforms.insertNodes(
+                  editor,
+                  {
+                    id: genNodeId(),
+                    type: "paragraph",
+                    children: [{ text: "" }],
+                  },
+                  { at: newPath }
+                );
+                // Move the content of the title to the new paragraph
+                Transforms.moveNodes(editor, {
+                  at: [0, 0],
+                  to: [1, 0],
+                });
+                // Set the title node to empty
+                // Transforms.insertText(editor, "", { at: [0, 0], select: true });
+                // Transforms.setNodes(editor, { type: "title" }, { at: [0] });
               }
+
               if (Editor.isEnd(editor, selection.anchor, _currentNodePath)) {
                 const newPath = Path.next(parentPath);
                 Transforms.insertNodes(
                   editor,
                   {
+                    id: genNodeId(),
                     type: "paragraph",
                     children: [{ text: "" }],
                   },
@@ -371,9 +392,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         const { selection } = editor;
 
         if (selection && Range.isCollapsed(selection)) {
-          const currentNode = Node.get(editor, currentNodePath);
-          const currentParagraph = Editor.node(editor, currentNodePath);
-          const parentNode = Editor.parent(editor, currentNodePath);
+          const currentNode = Node.get(editor, _currentNodePath);
+          const currentParagraph = Editor.node(editor, _currentNodePath);
+          const parentNode = Editor.parent(editor, _currentNodePath);
           // Check if currentNode is an equation
 
           if (currentNode.type === "equation" || currentNode.type === "audio") {
@@ -381,7 +402,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           } else {
             // Check if the previous node is an equation
             const prevNodeEntry = Editor.previous(editor, {
-              at: currentNodePath,
+              at: _currentNodePath,
             });
 
             if (prevNodeEntry) {

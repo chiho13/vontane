@@ -66,6 +66,8 @@ export const WorkspaceContainer = ({ workspaceId }) => {
     },
     {
       enabled: false,
+      cacheTime: 5 * 60 * 1000, // Cache data for 5 minutes
+      staleTime: 5 * 60 * 1000, // Data is considered fresh for 5 minutes
     }
   );
 
@@ -130,7 +132,7 @@ export const WorkspaceContainer = ({ workspaceId }) => {
     return () => setLoading(false);
   }, []);
 
-  if (fetchWorkspaceIsLoading) {
+  if (isLoading) {
     return (
       <div className="mx-auto mt-4 justify-center p-4">
         <div className=" z-1000 absolute mx-auto lg:w-[980px]  ">

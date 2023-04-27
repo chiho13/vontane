@@ -30,6 +30,8 @@ import { Mirt } from "@/plugins/audioTrimmer";
 import debounce from "lodash/debounce";
 import { TextSpeechProvider } from "@/contexts/TextSpeechContext";
 import { EditorProvider } from "@/contexts/EditorContext";
+import LoadingSpinner from "@/icons/LoadingSpinner";
+import Skeleton from "@/pages/index";
 
 // import "react-mirt/dist/css/react-mirt.css";
 type Props = {
@@ -37,6 +39,7 @@ type Props = {
 };
 
 export const WorkspaceContainer = ({ workspaceId }) => {
+  const router = useRouter();
   const [selectedVoiceId, setSelectedVoiceId] = React.useState<string>("");
 
   // const [te, setEnteredText] = React.useState<string[]>([]);
@@ -50,7 +53,6 @@ export const WorkspaceContainer = ({ workspaceId }) => {
   const [status, setStatus] = useState<string>("");
   const [audioUrl, setAudioUrl] = useState<string>("");
 
-  const { profile } = useUserContext();
   const { setUpdatedWorkspace } = useWorkspaceTitleUpdate();
 
   //   const [workspaceId, setWorkSpaceId] = useState(router.query.workspaceId);
@@ -63,7 +65,7 @@ export const WorkspaceContainer = ({ workspaceId }) => {
       id: workspaceId || "",
     },
     {
-      enabled: !!workspaceId,
+      enabled: false,
     }
   );
 
@@ -83,10 +85,12 @@ export const WorkspaceContainer = ({ workspaceId }) => {
     }
   );
 
-  //   useEffect(() => {
-  //     refetchWorkspaceData();
-  //     console.log(workspaceId);
-  //   }, [router.isReady]);
+  useEffect(() => {
+    if (router.isReady) {
+      refetchWorkspaceData();
+      setFetchWorkspaceIsLoading(true);
+    }
+  }, [workspaceId, router.isReady]);
 
   const [initialSlateValue, setInitialSlateValue] = useState(null);
 
@@ -127,7 +131,14 @@ export const WorkspaceContainer = ({ workspaceId }) => {
   }, []);
 
   if (fetchWorkspaceIsLoading) {
-    return <div></div>;
+    return (
+      <div className="mx-auto mt-4 justify-center p-4">
+        <div className=" z-1000 absolute mx-auto lg:w-[980px]  ">
+          <div className="relative flex items-center justify-end"></div>
+        </div>
+        <div className="linear-gradient z-0 mx-auto mb-20 mt-20 w-full rounded-md border-2 border-gray-300 px-2 lg:h-[680px]  lg:w-[980px] lg:px-0 "></div>
+      </div>
+    );
   }
 
   function handleTextChange(value: any[]) {
@@ -141,21 +152,19 @@ export const WorkspaceContainer = ({ workspaceId }) => {
   }
 
   return (
-    <Layout profile={profile} currentWorkspaceId={workspaceId}>
-      <NewColumnProvider>
-        {!fetchWorkspaceIsLoading && initialSlateValue && workspaceId && (
-          <EditorProvider key={workspaceId}>
-            <TextSpeechProvider key={workspaceId}>
-              <DocumentEditor
-                key={workspaceId}
-                workspaceId={workspaceId}
-                handleTextChange={debounce(handleTextChange, 500)}
-                initialSlateValue={initialSlateValue}
-              />
-            </TextSpeechProvider>
-          </EditorProvider>
-        )}
-      </NewColumnProvider>
-    </Layout>
+    <NewColumnProvider>
+      {!fetchWorkspaceIsLoading && initialSlateValue && workspaceId && (
+        <EditorProvider key={workspaceId}>
+          <TextSpeechProvider key={workspaceId}>
+            <DocumentEditor
+              key={workspaceId}
+              workspaceId={workspaceId}
+              handleTextChange={debounce(handleTextChange, 500)}
+              initialSlateValue={initialSlateValue}
+            />
+          </TextSpeechProvider>
+        </EditorProvider>
+      )}
+    </NewColumnProvider>
   );
 };

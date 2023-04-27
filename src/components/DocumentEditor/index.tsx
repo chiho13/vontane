@@ -23,7 +23,6 @@ import {
 import { EditorContext } from "@/contexts/EditorContext";
 import { Slate, Editable, withReact, ReactEditor } from "slate-react";
 import { Plus, CornerDownLeft, MoreHorizontal } from "lucide-react";
-import { BlockMath } from "react-katex";
 import "katex/dist/katex.min.css";
 import "katex/dist/contrib/mhchem.min.js";
 import { AnimatePresence, motion } from "framer-motion";
@@ -38,10 +37,6 @@ import { LayoutContext } from "../Layouts/AccountLayout";
 import { y_animation_props } from "../Dropdown";
 import { findElementInSlateValue } from "./helpers/findElementInSlate";
 import { MathQuestionGenerator } from "../QuestionGenerator/Math";
-import {
-  TextSpeechProvider,
-  useTextSpeechReset,
-} from "@/contexts/TextSpeechContext";
 import { extractTextValues } from "@/components/DocumentEditor/helpers/extractText";
 
 import {
@@ -60,11 +55,9 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 
-import { useEditor } from "@/hooks/useEditor";
 import { ActiveElementProvider } from "@/contexts/ActiveElementContext";
 import { SortableElement } from "./SortableElement";
 import { ElementSelector } from "./EditorElements";
-import { EditorProvider } from "@/contexts/EditorContext";
 import { DragOverlayContent } from "./DragOverlayContent";
 
 import { findAncestorWithClass } from "@/utils/findAncestors";
@@ -80,7 +73,8 @@ import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { TextSpeech } from "@/components/TextSpeech";
 import ErrorBoundary from "../Errorboundary";
 import { textRegex } from "./helpers/textRegex";
-import { useUpdateWorkspace } from "@/hooks/useUpdateWorkspace";
+import { addMCQBlock } from "./helpers/addMCQBlock";
+
 interface DocumentEditorProps {
   workspaceId: string;
   handleTextChange?: (value: any) => void;
@@ -124,6 +118,7 @@ const StyledMiniToolbar = styled(motion.div)`
 import { EditBlockPopup } from "../EditEquationBlock";
 import { EnglishQuestionGenerator } from "../QuestionGenerator/English";
 import useTextSpeechStatusPolling from "@/hooks/useTextSpeechAPI";
+import { addEditableEquationBlock } from "./helpers/addEquationBlock";
 
 export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   workspaceId,
@@ -213,7 +208,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     (event: React.MouseEvent, path: Path) => {
       const currentpathString = JSON.stringify(path);
 
-      const sideBarOffset = isLocked ? -150 : 0;
+      const sideBarOffset = isLocked ? -240 : 0;
 
       setActivePath(currentpathString);
 
@@ -618,108 +613,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const [addButtonHoveredId, setAddButtonHoveredId] = useState(null);
 
   const handleAddMCQBlock = useCallback((path: Path) => {
-    const mcqNode = {
-      id: genNodeId(),
-      type: "mcq",
-      children: [
-        {
-          id: genNodeId(),
-          type: "list-item",
-          children: [
-            {
-              text: "",
-            },
-          ],
-        },
-        {
-          id: genNodeId(),
-          type: "ol",
-          children: [
-            {
-              id: genNodeId(),
-              type: "option-list-item",
-              children: [
-                {
-                  text: "",
-                },
-              ],
-              correctAnswer: false,
-            },
-            {
-              id: genNodeId(),
-              type: "option-list-item",
-              children: [
-                {
-                  text: "",
-                },
-              ],
-              correctAnswer: true,
-            },
-          ],
-        },
-      ],
-    };
-
-    // const mcqNode = {
-    //   id: genNodeId(),
-    //   type: "audio",
-    //   fileName: "audio.mp3",
-    //   children: [{ text: "" }],
-    // };
-
-    console.log(path);
-    const [currentNode] = Editor.node(editor, path);
-    const isEmptyNode =
-      currentNode.type === "paragraph" &&
-      currentNode.children.length === 1 &&
-      currentNode.children[0].text === "";
-    let newPath: Path;
-    if (isEmptyNode) {
-      Transforms.insertNodes(editor, mcqNode, { at: path });
-      newPath = path;
-    } else {
-      Transforms.insertNodes(editor, mcqNode, { at: Path.next(path) });
-      newPath = Path.next(path);
-    }
-    // Focus on the new list-item node
-    const listItemPath = newPath.concat([0, 0]);
-    const listItemPoint = { path: listItemPath, offset: 0 };
-    Transforms.select(editor, listItemPoint);
-    ReactEditor.focus(editor);
+    addMCQBlock(editor, path);
   }, []);
 
   const handleAddEditableEquationBlock = useCallback(
     (latex: string, path: Path) => {
-      const equationId = genNodeId();
-
-      const equationNode: CustomElement = {
-        id: equationId,
-        type: "equation",
-        altText: "",
-        latex,
-        children: [{ text: "" }],
-      };
-
-      const [currentNode] = Editor.node(editor, path);
-      const isEmptyNode =
-        currentNode.type === "paragraph" &&
-        currentNode.children.length === 1 &&
-        currentNode.children[0].text === "";
-
-      let newPath: Path;
-
-      if (isEmptyNode) {
-        Transforms.setNodes(editor, equationNode, { at: path });
-        newPath = path;
-        // Transforms.insertNodes(
-        //   editor,
-        //   { id: genNodeId(), type: "paragraph", children: [{ text: "" }] },
-        //   { at: Path.next(path) }
-        // );
-      } else {
-        Transforms.insertNodes(editor, equationNode, { at: Path.next(path) });
-        newPath = Path.next(path);
-      }
+      const newPath = addEditableEquationBlock(latex, editor, path);
 
       const [insertedEquationNode] = Editor.nodes(editor, {
         at: newPath,
@@ -1349,7 +1248,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     event.stopPropagation();
                   }}
                 >
-                  {/* <button>hello</button> */}
                   <TextSpeech key="selectedText" isSelected={true} />
                 </StyledMiniToolbar>
               )}

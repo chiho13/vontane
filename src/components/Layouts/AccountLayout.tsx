@@ -442,11 +442,11 @@ const Layout: React.FC<LayoutProps> = ({
           </SidebarContent>
         </SidebarContainer>
         <main
-          className="min-h-screen overflow-auto bg-white pt-4 lg:pl-6"
+          className="min-h-screen overflow-auto bg-white pt-4"
           style={{
-            marginLeft: isLocked && desktopbreakpoint ? "190px" : "0",
+            marginLeft: isLocked && desktopbreakpoint ? "240px" : "0",
             width:
-              isLocked && desktopbreakpoint ? "calc(100vw - 190px" : "100vw",
+              isLocked && desktopbreakpoint ? "calc(100vw - 240px" : "100vw",
             transition:
               "margin-left 300ms ease-in-out, width 300ms ease-in-out",
           }}

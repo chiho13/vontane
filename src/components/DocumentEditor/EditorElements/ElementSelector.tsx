@@ -11,6 +11,7 @@ import {
   ListItem,
   TitleElement,
   AudioElement,
+  SlideBreak,
 } from "./index";
 
 export function ElementSelector(props) {
@@ -19,6 +20,8 @@ export function ElementSelector(props) {
   switch (element.type) {
     case "title":
       return <TitleElement {...props} />;
+    case "slide":
+      return <SlideBreak {...props} />;
     case "audio":
       return <AudioElement {...props} />;
     case "paragraph":

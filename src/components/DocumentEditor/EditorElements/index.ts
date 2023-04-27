@@ -10,3 +10,4 @@ export * from "./OptionListItem";
 export * from "./QuestionItem";
 export * from "./TitleElement";
 export * from "./AudioElement";
+export * from "./SlideBreak";

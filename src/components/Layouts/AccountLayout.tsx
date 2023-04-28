@@ -118,10 +118,15 @@ transition: transform 300ms, ${(props) =>
   }
 
   ${mq.lg`
-  top: ${(props) => (props.isLocked && props.isOpen ? "0" : "70px")};
+  margin-top: ${(props) => (props.isLocked && props.isOpen ? "0" : "70px")};
   transform: ${(props) =>
-    props.isLocked || props.isOpen ? "translateX(0)" : "translateX(-270px)"};
+    props.isLocked || props.isOpen ? "translateX(0)" : "translate(-270px)"};
     height: ${(props) => (props.isLocked && props.isOpen ? "100%" : "auto")};
+
+
+    .dropdown-menu.dropdown-menu {
+      top: 50px !important;
+    }
   `}
 `;
 
@@ -376,7 +381,7 @@ const Layout: React.FC<LayoutProps> = ({
                     ref={accountDropdownRef}
                     selectedItemText={profile && profile.name}
                     image={AvatarProfile}
-                    dropdownButtonClassName="p-0 border-transparent relative outline-none border-0 shadow-none bg-transparent w-full h-[47px] justify-start transition-colors duration-300 focus:ring-2 focus:ring-black focus:ring-opacity-30 hover:bg-gray-200"
+                    dropdownButtonClassName="p-0 relative border-transparent relative outline-none border-0 shadow-none bg-transparent w-full h-[47px] justify-start transition-colors duration-300 focus:ring-2 focus:ring-black focus:ring-opacity-30 hover:bg-gray-200"
                     icon={
                       <ChevronsUpDown
                         className="w-4"

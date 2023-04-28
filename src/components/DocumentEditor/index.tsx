@@ -18,6 +18,7 @@ import {
   Element,
   Location,
   Text,
+  Point,
 } from "slate";
 
 import { EditorContext } from "@/contexts/EditorContext";
@@ -27,7 +28,7 @@ import "katex/dist/katex.min.css";
 import "katex/dist/contrib/mhchem.min.js";
 import { AnimatePresence, motion } from "framer-motion";
 import { nanoid } from "nanoid";
-
+import { debounce } from "lodash";
 import Image from "next/image";
 
 import styled, { useTheme } from "styled-components";
@@ -228,7 +229,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       const dropdownHeight = 360;
       const spaceBelowTarget = windowHeight - targetRect.bottom;
 
-      let topOffset = 10;
+      let topOffset = -40;
       if (spaceBelowTarget < dropdownHeight) {
         topOffset = spaceBelowTarget - dropdownHeight - topOffset;
       }
@@ -276,6 +277,28 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       );
 
       let updatedNode = null;
+
+      // const startOfNode = Editor.start(editor, editor.selection);
+      // const cursorAtStartOfNode =
+      //   Range.isCollapsed(editor.selection) &&
+      //   Point.equals(editor.selection.anchor, startOfNode);
+      // if (event.key === "/") {
+      //   event.preventDefault();
+      // }
+
+      const isEmpty =
+        currentNode.children.length === 1 &&
+        currentNode.children[0].text === "";
+
+      const startOfNode = Editor.start(editor, editor.selection);
+      const cursorAtStartOfNode =
+        Range.isCollapsed(editor.selection) &&
+        Point.equals(editor.selection.anchor, startOfNode);
+      if (event.nativeEvent.key === "/" && isEmpty && cursorAtStartOfNode) {
+        openMiniDropdown(_currentNodePath);
+        setusingCommandLine(true);
+        event.preventDefault();
+      }
 
       if (/^[a-zA-Z0-9-_]$/.test(event.key)) {
         const currentNode = Editor.node(editor, _currentNodePath);
@@ -713,7 +736,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       (isRoot && element.type !== "column" && element.type !== "title") ||
       isInsideColumnCell ? (
         <div
-          className="z-1000 group absolute top-1/2 left-[8px] -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center"
+          className="z-1000 group absolute top-1/2 left-[0px] -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center"
           contentEditable={false}
         >
           <button
@@ -765,18 +788,25 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   const [insertDirection, setInsertDirection] = useState(null);
 
+  const [isDragging, setIsDragging] = useState(false);
+  const [savedSelection, setSavedSelection] = useState(null);
+
   const handleDragEnd = useCallback(
     function (event) {
       const { active, over } = event;
-      if (!over || active.id === over.id) {
+      if (active.id === over.id) {
         console.log("canceled");
-        setActiveId(null);
+
+        setIsDragging(false);
+        console.log(event);
         const activeElementPath = findPathById(editor, active.id);
+        console.log(activeElementPath);
         if (activeElementPath) {
-          const endtOfActiveElement = Editor.end(editor, activeElementPath);
-          Transforms.select(editor, endtOfActiveElement);
+          const endOfActiveElement = Editor.end(editor, activeElementPath);
           ReactEditor.focus(editor);
+          Transforms.select(editor, endOfActiveElement);
         }
+        setActiveId(null);
         return;
       }
 
@@ -933,6 +963,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const handleDragStart = useCallback(function ({ active }) {
     console.log(active.id);
     setActiveId(active.id);
+    setIsDragging(true);
+    setSavedSelection(editor.selection);
   }, []);
 
   useClickOutside(
@@ -1153,10 +1185,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                       <Slate
                         editor={editor}
                         value={slatevalue}
-                        key={JSON.stringify(slatevalue)}
                         onChange={(newValue) => {
-                          // setValue(newValue);
-                          setGhostValue(newValue);
+                          setValue(newValue);
                           const extractedText = extractTextValues(newValue);
                           setTextSpeech(extractedText);
                           if (handleTextChange) {
@@ -1179,11 +1209,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                             if (!selection) return;
                             const _currentNodePath =
                               selection.anchor.path.slice(0, -1);
-
-                            if (event.nativeEvent.key === "/") {
-                              openMiniDropdown(_currentNodePath);
-                              setusingCommandLine(true);
-                            }
+                            setusingCommandLine(false);
+                            const currentNode = Node.get(
+                              editor,
+                              _currentNodePath
+                            );
 
                             if (event.key === "Backspace") {
                               const { selection } = editor;
@@ -1229,16 +1259,15 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     </div>
                   </ActiveElementProvider>
                 </SortableContext>
-                <DragOverlay>
-                  {activeId ? (
-                    <DragOverlayContent
-                      element={findElementInSlateValue(
-                        ghostslatevalue,
-                        activeId
-                      )}
-                    />
-                  ) : null}
-                </DragOverlay>
+                {isDragging && (
+                  <DragOverlay>
+                    {activeId ? (
+                      <DragOverlayContent
+                        element={findElementInSlateValue(slatevalue, activeId)}
+                      />
+                    ) : null}
+                  </DragOverlay>
+                )}
               </DndContext>
             </ErrorBoundary>
             <AnimatePresence>
@@ -1270,7 +1299,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                       setShowFloatingModal({ open: true, subject: _subject });
                       setShowDropdown(false);
                     }}
-                    searchText={searchMinidropdownText}
+                    setShowDropdown={setShowDropdown}
+                    activePath={activePath}
                   />
                 </motion.div>
               )}

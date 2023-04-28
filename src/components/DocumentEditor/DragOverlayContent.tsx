@@ -15,7 +15,6 @@ export const DragOverlayContent = ({ element }) => {
       <div
         style={{
           paddingLeft: 70,
-          transform: isLocked ? "translateX(-150px)" : "initial",
           opacity: 0.6,
         }}
       >

@@ -39,6 +39,7 @@ import { y_animation_props } from "../Dropdown";
 import { findElementInSlateValue } from "./helpers/findElementInSlate";
 import { MathQuestionGenerator } from "../QuestionGenerator/Math";
 import { extractTextValues } from "@/components/DocumentEditor/helpers/extractText";
+import { useRouter } from "next/router";
 
 import {
   DndContext,
@@ -127,6 +128,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   initialSlateValue,
 }) => {
   const theme = useTheme();
+  const router = useRouter();
   const { isLocked } = useContext(LayoutContext);
   const {
     editor,
@@ -141,6 +143,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   const [ghostslatevalue, setGhostValue] = useState(initialSlateValue);
 
+  const [currentSlateKey, setCurrentSlateKey] = useState(workspaceId);
   const [activeId, setActiveId] = useState(null);
 
   const activeIndex = activeId
@@ -203,13 +206,20 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     workspaceId
   );
 
+  const generateKey = () => {
+    const timestamp = new Date().getTime();
+    const randomNumber = Math.floor(Math.random() * 1000);
+    return `slate-key-${timestamp}-${randomNumber}`;
+  };
+
   useEffect(() => {
     setValue(initialSlateValue);
-    setGhostValue(initialSlateValue);
+    // setGhostValue(initialSlateValue);
+    setCurrentSlateKey(generateKey());
     const extractedText = extractTextValues(initialSlateValue);
     setTextSpeech(extractedText);
     console.log(editor.children);
-  }, [initialSlateValue]);
+  }, [initialSlateValue, workspaceId]);
 
   const [searchBarPosition, setSearchBarPosition] = useState(false);
 
@@ -1201,6 +1211,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                       className="relative z-0 mx-auto block rounded-md pt-4 pr-1 pb-4 pl-2 focus:outline-none focus-visible:border-gray-300"
                     >
                       <Slate
+                        key={currentSlateKey}
                         editor={editor}
                         value={slatevalue}
                         onChange={(newValue) => {

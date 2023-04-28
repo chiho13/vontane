@@ -384,9 +384,6 @@ const Layout: React.FC<LayoutProps> = ({
                       />
                     }
                   >
-                    {/* <ul>
-            <li>Logout</li>
-          </ul> */}
                     <div className="p-1" role="none">
                       <button
                         onClick={logout}
@@ -450,6 +447,7 @@ const Layout: React.FC<LayoutProps> = ({
             transition:
               "margin-left 300ms ease-in-out, width 300ms ease-in-out",
           }}
+          data-locked={isLocked}
         >
           {children}
         </main>

@@ -211,6 +211,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     console.log(editor.children);
   }, [initialSlateValue]);
 
+  const [searchBarPosition, setSearchBarPosition] = useState(false);
+
   const openMiniDropdown = useCallback(
     (path: Path) => {
       const currentpathString = JSON.stringify(path);
@@ -229,12 +231,28 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       const dropdownHeight = 360;
       const spaceBelowTarget = windowHeight - targetRect.bottom;
 
-      let topOffset = -40;
-      if (spaceBelowTarget < dropdownHeight) {
-        topOffset = spaceBelowTarget - dropdownHeight - topOffset;
-      }
+      const currentNode = Node.get(editor, path);
 
-      setDropdownTop(targetRect.bottom + topOffset);
+      const isEmpty = currentNode.children[0].text === "";
+
+      if (!isEmpty) {
+        insertNewParagraphEnter(Path.next(path));
+      }
+      console.log(isEmpty);
+      let topOffset = isEmpty ? 15 : 45;
+      let showDropdownAbove = false;
+
+      if (spaceBelowTarget < dropdownHeight) {
+        topOffset = -(dropdownHeight + (isEmpty ? 25 : -5));
+        showDropdownAbove = true;
+      }
+      setSearchBarPosition(spaceBelowTarget < dropdownHeight);
+
+      setDropdownTop(
+        showDropdownAbove
+          ? targetRect.top + topOffset
+          : targetRect.bottom + topOffset
+      );
       setDropdownLeft(targetRect.left);
       setShowDropdown((prevState) => !prevState);
     },
@@ -1301,6 +1319,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     }}
                     setShowDropdown={setShowDropdown}
                     activePath={activePath}
+                    searchBarPosition={searchBarPosition}
                   />
                 </motion.div>
               )}

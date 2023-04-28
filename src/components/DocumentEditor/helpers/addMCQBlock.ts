@@ -47,6 +47,7 @@ export const addMCQBlock = (editor, path) => {
   };
 
   const [currentNode] = Editor.node(editor, path);
+  console.log(currentNode);
   const isEmptyNode =
     currentNode.type === "paragraph" &&
     currentNode.children.length === 1 &&
@@ -55,6 +56,7 @@ export const addMCQBlock = (editor, path) => {
   let newPath;
   if (isEmptyNode) {
     Transforms.insertNodes(editor, mcqNode, { at: path });
+
     newPath = path;
   } else {
     Transforms.insertNodes(editor, mcqNode, { at: Path.next(path) });

@@ -54,7 +54,7 @@ export function SortableElement({
         }}
       >
         {readOnly ? null : (
-          <div className="flex w-[62px] translate-x-[3px] justify-end">
+          <div className="flex w-[58px] translate-x-[2px] justify-end">
             <button
               ref={setActivatorNodeRef}
               {...listeners}

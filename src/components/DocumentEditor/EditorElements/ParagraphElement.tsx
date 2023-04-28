@@ -11,7 +11,7 @@ const ParagraphStyle = styled.div`
     opacity: 0.333;
     user-select: none;
     position: absolute;
-    top: 0;
+    top: 5px;
   }
 `;
 
@@ -54,7 +54,7 @@ export function ParagraphElement(props) {
     <ParagraphStyle>
       <p
         ref={paragraphRef}
-        className={`paragraph-element w-[98%] ${
+        className={`paragraph-element mt-[5px] w-[98%] ${
           selectedElementID === element.id ? " bg-[#E0EDFB]" : ""
         }`}
         {...attributes}

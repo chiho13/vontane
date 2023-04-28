@@ -214,7 +214,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     (path: Path) => {
       const currentpathString = JSON.stringify(path);
 
-      const sideBarOffset = isLocked ? -240 : 0;
+      // const sideBarOffset = isLocked ? -240 : 0;
 
       console.log(path);
       setActivePath(currentpathString);
@@ -234,7 +234,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       }
 
       setDropdownTop(targetRect.bottom + topOffset);
-      setDropdownLeft(targetRect.left + sideBarOffset);
+      setDropdownLeft(targetRect.left);
       setShowDropdown((prevState) => !prevState);
     },
     [dropdownPositions, isLocked]
@@ -636,7 +636,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     event.stopPropagation();
     const targetRect = _element.getBoundingClientRect();
 
-    const sideBarOffset = isLocked ? -240 : 0;
     console.log(targetRect.left);
     const currentPathString = JSON.stringify(path);
     setactiveEditEquationPath((prevPath) =>
@@ -653,7 +652,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     setShowEditBlockPopup(true);
     const equationHeight = _element.offsetHeight;
     setDropdownEditBlockTop(targetRect.bottom + 60);
-    setDropdownEditBlockLeft(targetRect.left + sideBarOffset);
+    setDropdownEditBlockLeft(targetRect.left);
   };
 
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -1180,8 +1179,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                             if (!selection) return;
                             const _currentNodePath =
                               selection.anchor.path.slice(0, -1);
-                            if (event.key === "/") {
-                              // event.preventDefault();
+
+                            if (event.nativeEvent.key === "/") {
                               openMiniDropdown(_currentNodePath);
                               setusingCommandLine(true);
                             }

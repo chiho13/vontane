@@ -183,6 +183,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     y: 0,
   });
 
+  const [searchMinidropdownText, setSearchMinidropdownText] = useState<
+    string | null
+  >(null);
+
+  const [usingCommandLine, setusingCommandLine] = useState(false);
+
   const {
     setTextSpeech,
     setSelectedTextSpeech,
@@ -205,27 +211,30 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   }, [initialSlateValue]);
 
   const openMiniDropdown = useCallback(
-    (event: React.MouseEvent, path: Path) => {
+    (path: Path) => {
       const currentpathString = JSON.stringify(path);
 
       const sideBarOffset = isLocked ? -240 : 0;
 
+      console.log(path);
       setActivePath(currentpathString);
-
-      const target = event.currentTarget as HTMLDivElement;
-      const targetRect = target.getBoundingClientRect();
+      const currentElement = document.querySelector(
+        `[data-path="${JSON.stringify(path)}"]`
+      );
+      if (!currentElement) return;
+      const targetRect = currentElement.getBoundingClientRect();
 
       const windowHeight = window.innerHeight;
       const dropdownHeight = 360;
       const spaceBelowTarget = windowHeight - targetRect.bottom;
 
-      let topOffset = 50;
+      let topOffset = 10;
       if (spaceBelowTarget < dropdownHeight) {
         topOffset = spaceBelowTarget - dropdownHeight - topOffset;
       }
 
       setDropdownTop(targetRect.bottom + topOffset);
-      setDropdownLeft(targetRect.left + 60 + sideBarOffset);
+      setDropdownLeft(targetRect.left + sideBarOffset);
       setShowDropdown((prevState) => !prevState);
     },
     [dropdownPositions, isLocked]
@@ -267,6 +276,23 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       );
 
       let updatedNode = null;
+
+      if (/^[a-zA-Z0-9-_]$/.test(event.key)) {
+        const currentNode = Editor.node(editor, _currentNodePath);
+        const currentText = Node.string(currentNode[0]);
+
+        const slashIndex = currentText.lastIndexOf("/");
+        if (slashIndex !== -1) {
+          // Extract the text after the last "/" in the currentText
+          const searchText = currentText.slice(slashIndex + 1) + event.key;
+          console.log(searchText);
+          setSearchMinidropdownText(searchText);
+        } else {
+          setSearchMinidropdownText(null);
+        }
+      } else {
+        setSearchMinidropdownText(null);
+      }
 
       if (event.key === "Enter") {
         event.preventDefault();
@@ -393,6 +419,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
         if (selection && Range.isCollapsed(selection)) {
           const currentNode = Node.get(editor, _currentNodePath);
+          const _stringcurrentNode = Editor.node(editor, _currentNodePath);
+          const currentText = Node.string(_stringcurrentNode[0]);
           const currentParagraph = Editor.node(editor, _currentNodePath);
           const parentNode = Editor.parent(editor, _currentNodePath);
           // Check if currentNode is an equation
@@ -634,6 +662,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const [addButtonHoveredId, setAddButtonHoveredId] = useState(null);
 
   const handleAddMCQBlock = useCallback((path: Path) => {
+    setSearchMinidropdownText("");
     addMCQBlock(editor, path);
   }, []);
 
@@ -693,7 +722,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             onClick={(event) => {
               event.preventDefault();
               event.stopPropagation();
-              openMiniDropdown(event, ReactEditor.findPath(editor, element));
+              openMiniDropdown(ReactEditor.findPath(editor, element));
             }}
             ref={toggleRef}
           >
@@ -1131,7 +1160,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                           setGhostValue(newValue);
                           const extractedText = extractTextValues(newValue);
                           setTextSpeech(extractedText);
-                          console.log(extractedText);
                           if (handleTextChange) {
                             handleTextChange(newValue);
                           }
@@ -1148,6 +1176,51 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                           onKeyDown={handleKeyDown}
                           onKeyUp={(event) => {
                             handleSelectedText(event, editor);
+                            const { selection } = editor;
+                            if (!selection) return;
+                            const _currentNodePath =
+                              selection.anchor.path.slice(0, -1);
+                            if (event.key === "/") {
+                              // event.preventDefault();
+                              openMiniDropdown(_currentNodePath);
+                              setusingCommandLine(true);
+                            }
+
+                            if (event.key === "Backspace") {
+                              const { selection } = editor;
+
+                              if (selection && Range.isCollapsed(selection)) {
+                                const _currentNodePath =
+                                  selection.anchor.path.slice(0, -1);
+                                const _stringcurrentNode = Editor.node(
+                                  editor,
+                                  _currentNodePath
+                                );
+                                const currentText = Node.string(
+                                  _stringcurrentNode[0]
+                                );
+                                // Check if currentNode is an equation
+
+                                if (currentText.endsWith("/")) {
+                                  // setShowDropdown(false);
+                                  setSearchMinidropdownText("");
+                                } else {
+                                  const slashIndex =
+                                    currentText.lastIndexOf("/");
+                                  if (slashIndex !== -1) {
+                                    // Extract the text after the last "/" in the currentText
+                                    const searchText = currentText.slice(
+                                      slashIndex + 1
+                                    );
+                                    setSearchMinidropdownText(searchText);
+                                  } else {
+                                    setSearchMinidropdownText("");
+                                    setusingCommandLine(false);
+                                    setShowDropdown(false); // Close the mini-dropdown if there's no "/"
+                                  }
+                                }
+                              }
+                            }
                           }}
                         />
                         <Droppable>
@@ -1198,6 +1271,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                       setShowFloatingModal({ open: true, subject: _subject });
                       setShowDropdown(false);
                     }}
+                    searchText={searchMinidropdownText}
                   />
                 </motion.div>
               )}

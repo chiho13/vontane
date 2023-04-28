@@ -9,58 +9,37 @@ interface MiniDropdownProps {
   addMCQBlock: () => void;
   addEquationBlock: () => void;
   genBlock: (value: string) => void;
+  searchText: string;
 }
 
 export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
-  ({ isOpen, addMCQBlock, addEquationBlock, genBlock }, ref) => {
+  ({ isOpen, addMCQBlock, addEquationBlock, genBlock, searchText }, ref) => {
     const theme = useTheme();
-    const addBlock = (event: React.KeyboardEvent) => {
-      addEquationBlock();
-    };
 
-    const addQuizBlock = (event: React.KeyboardEvent) => {
-      addMCQBlock();
-    };
-
-    const mathQ = (event: React.KeyboardEvent) => {
-      genBlock("math");
-    };
-
-    const englishQ = (event: React.KeyboardEvent) => {
-      genBlock("english");
-    };
-
-    return (
-      <div
-        ref={ref}
-        className="dropdown-menu h-[360px] overflow-y-auto rounded-md border border-gray-200 bg-white p-2 shadow-md"
-      >
-        <motion.button
-          whileTap={{ scale: 0.97 }}
-          className="mb-1 flex w-full items-center rounded-md border-2 border-gray-100 p-3 shadow-sm transition duration-300 hover:bg-gray-100"
-          onClick={addQuizBlock}
-        >
+    const customElements = [
+      {
+        name: "Add Quiz Block",
+        action: addMCQBlock,
+        icon: (
           <div className=" flex h-[60px] w-[60px] items-center justify-center rounded-md border">
-            <CheckCircle color={theme.colors.darkergray} />
+            <CheckCircle color={theme.colors.darkergray} />)
           </div>
-          <span className="ml-4 ">Add Quiz Block</span>
-        </motion.button>
-        <motion.button
-          whileTap={{ scale: 0.97 }}
-          className="mb-1 flex w-full items-center rounded-md border-2 border-gray-100 p-3 shadow-sm transition duration-300 hover:bg-gray-100"
-          onClick={englishQ}
-        >
+        ),
+      },
+      {
+        name: "English MCQ",
+        action: () => genBlock("english"),
+        icon: (
           <div className=" flex h-[60px] w-[60px] items-center justify-center rounded-md border">
             <List color={theme.colors.darkergray} />
             <FileQuestion color={theme.colors.darkergray} />
           </div>
-          <span className="ml-4 ">English MCQ</span>
-        </motion.button>
-        <motion.button
-          whileTap={{ scale: 0.97 }}
-          className="mb-1 flex w-full items-center rounded-md border-2 border-gray-100 p-3 shadow-sm transition duration-300 hover:bg-gray-100"
-          onClick={mathQ}
-        >
+        ),
+      },
+      {
+        name: "Math Questions",
+        action: () => genBlock("math"),
+        image: (
           <Image
             src="/images/math.png"
             alt="add latex block equation"
@@ -68,14 +47,12 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
             height={60}
             className="rounded-md border"
           />
-          <span className="ml-4 ">Math Questions</span>
-        </motion.button>
-
-        <motion.button
-          whileTap={{ scale: 0.97 }}
-          className="flex w-full items-center rounded-md border-2 border-gray-100 p-3 shadow-sm transition duration-300 hover:bg-gray-100"
-          onClick={addBlock}
-        >
+        ),
+      },
+      {
+        name: "Add Block Equation",
+        action: addEquationBlock,
+        image: (
           <Image
             src="/images/tex.png"
             alt="add latex block equation"
@@ -83,8 +60,42 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
             height={60}
             className="rounded-md border"
           />
-          <span className="ml-4 ">Add Block Equation</span>
-        </motion.button>
+        ),
+      },
+    ];
+
+    const filterList = (list, searchText) => {
+      if (!searchText || searchText.length === 0) {
+        return list;
+      }
+
+      return list.filter((item) => {
+        const itemName = item.name.toLowerCase();
+        return itemName.includes(searchText.toLowerCase());
+      });
+    };
+
+    console.log(searchText);
+    const filteredList = filterList(customElements, searchText);
+
+    return (
+      <div
+        ref={ref}
+        className="dropdown-menu h-[360px] overflow-y-auto rounded-md border border-gray-200 bg-white p-2 shadow-md"
+      >
+        <ul>
+          {filteredList.map((item, index) => (
+            <motion.li
+              key={index}
+              whileTap={{ scale: 0.97 }}
+              className="mb-1 flex w-full items-center rounded-md border-2 border-gray-100 p-3 shadow-sm transition duration-300 hover:bg-gray-100"
+              onClick={item.action}
+            >
+              {item.icon || item.image}
+              <span className="ml-4 ">{item.name}</span>
+            </motion.li>
+          ))}
+        </ul>
       </div>
     );
   }

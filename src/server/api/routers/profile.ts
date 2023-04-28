@@ -6,7 +6,7 @@ import {
 } from "@/server/api/trpc";
 
 export const profileRouter = createTRPCRouter({
-  getProfile: protectedProcedure
+  getProfile: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input, ctx }) => {
       const profile = await ctx.prisma.user.findUnique({

@@ -636,7 +636,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     event.stopPropagation();
     const targetRect = _element.getBoundingClientRect();
 
-    const sideBarOffset = isLocked ? -150 : 0;
+    const sideBarOffset = isLocked ? -240 : 0;
     console.log(targetRect.left);
     const currentPathString = JSON.stringify(path);
     setactiveEditEquationPath((prevPath) =>
@@ -677,7 +677,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
       if (insertedEquationNode) {
         const { id } = insertedEquationNode[0] as CustomElement;
-        const sideBarOffset = isLocked ? -150 : 0;
+        const sideBarOffset = isLocked ? -240 : 0;
         console.log(id);
         setSelectedElementID(id);
         setShowEditBlockPopup(true);
@@ -1069,9 +1069,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             rangeForStart.setEnd(startContainer, range.startOffset);
             const rect = rangeForStart.getBoundingClientRect();
             const offsetTitle = startNode.type === "title" ? 60 : 80;
-            const sideBarOffset = isLocked ? -150 : 0;
+            const sideBarOffset = isLocked ? -240 : 0;
             setMiniToolbarPosition({
-              x: rect.left + window.scrollX + sideBarOffset,
+              x: rect.left + window.scrollX,
               y: rect.top + window.scrollY - rect.height - offsetTitle,
             });
             setShowMiniToolbar(true);

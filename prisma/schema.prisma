@@ -12,6 +12,8 @@ model user {
   name        String?
   avatar      String?
   created_at  DateTime?     @default(now()) @db.Timestamptz(6)
+  stripe_id   String?      @unique
+  is_subscribed Boolean   @default(false)
   workspaces  workspace[]
   speech_data texttospeech[]
 }

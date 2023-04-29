@@ -118,7 +118,7 @@ transition: transform 300ms, ${(props) =>
   }
 
   ${mq.lg`
-  margin-top: ${(props) => (props.isLocked && props.isOpen ? "0" : "70px")};
+  top: ${(props) => (props.isLocked && props.isOpen ? "0" : "70px")};
   transform: ${(props) =>
     props.isLocked || props.isOpen ? "translateX(0)" : "translate(-270px)"};
     height: ${(props) => (props.isLocked && props.isOpen ? "100%" : "auto")};

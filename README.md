@@ -36,8 +36,8 @@ currently under development (April)
 - [x] english questions
 - [x] connect database
 - [x] audio player block
+- [] stripe subscription (wip)
 - [] slide integration (wip)
 - [] audio trimmer
 - [] musicXML
 - [] map block
-- [] stripe subscription

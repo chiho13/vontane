@@ -78,9 +78,9 @@ export const workspaceRouter = createTRPCRouter({
     .subscription(async ({ input, ctx }) => {
       return observable<{ workspace: workspace }>((emit) => {
         const onWorkspaceUpdate = (updatedWorkspace: workspace) => {
-          if (updatedWorkspace.id === input.id) {
-            emit.next({ workspace: updatedWorkspace });
-          }
+          // if (updatedWorkspace.id === input.id) {
+          emit.next({ workspace: updatedWorkspace });
+          // }
         };
 
         ee.on("workspaceUpdated", onWorkspaceUpdate);

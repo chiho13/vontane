@@ -13,12 +13,6 @@ const Workspace: NextPage = () => {
   const { profile } = useUserContext();
   const workspaceId = router.query.workspaceId;
 
-  useEffect(() => {
-    if (!session) {
-      router.replace("/login");
-    }
-  }, [session, router]);
-
   return session ? (
     <Layout profile={profile} currentWorkspaceId={workspaceId}>
       <WorkspaceContainer workspaceId={workspaceId} />

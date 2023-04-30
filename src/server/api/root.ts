@@ -3,6 +3,7 @@ import { exampleRouter } from "@/server/api/routers/example";
 import { profileRouter } from "@/server/api/routers/profile";
 import { workspaceRouter } from "@/server/api/routers/workspace";
 import { texttospeechRouter } from "@/server/api/routers/texttospeech";
+import { checkoutRouter } from "./routers/checkout";
 import { GPTRouter } from "@/server/api/routers/gpt";
 
 /**
@@ -16,6 +17,7 @@ export const appRouter = createTRPCRouter({
   workspace: workspaceRouter,
   texttospeech: texttospeechRouter,
   gpt: GPTRouter,
+  checkout: checkoutRouter,
 });
 
 // export type definition of API

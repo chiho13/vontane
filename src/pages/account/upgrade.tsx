@@ -10,6 +10,8 @@ import { api } from "@/utils/api";
 import { useTheme } from "styled-components";
 import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
+import { getStripe } from "@/utils/stripe-client";
+import LoadingSpinner from "@/icons/LoadingSpinner";
 
 const PricingStyle = styled.section`
   .subscribe-btn {
@@ -51,7 +53,7 @@ const Upgrade: NextPage = () => {
   const theme = useTheme();
   const router = useRouter();
   const session = useSession();
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [toggle, setToggle] = useState(true);
   const toggleClass = " transform translate-x-[22px]";
@@ -61,16 +63,57 @@ const Upgrade: NextPage = () => {
   const prices = data && data[0].prices;
 
   console.log(prices);
-  const strikethroughVariants = {
-    hidden: { width: "0%" },
-    visible: { width: "100%" },
-    exit: { width: "0%" },
+  const [selectedPrice, setSelectedPrice] = useState("");
+
+  useEffect(() => {
+    if (prices) {
+      if (toggle) {
+        setSelectedPrice(prices[1].id);
+      } else {
+        setSelectedPrice(prices[0].id);
+      }
+    }
+  }, [toggle]);
+
+  useEffect(() => {
+    if (prices) {
+      setSelectedPrice(prices[1].id);
+      console.log(prices[1]);
+    }
+  }, [prices]);
+
+  const createCheckoutSessionMutation =
+    api.checkout.createCheckoutSession.useMutation();
+
+  const createCheckoutSession = async (_price: string) => {
+    if (loading) return;
+    try {
+      setLoading(true);
+      const { sessionId } = await createCheckoutSessionMutation.mutateAsync({
+        price: _price,
+      });
+
+      console.log(sessionId);
+
+      const stripe = await getStripe();
+      setLoading(false);
+      stripe?.redirectToCheckout({ sessionId });
+    } catch (error) {
+      setLoading(false);
+      console.error("Error creating checkout session:", error);
+    }
   };
 
+  useEffect(() => {
+    if (!session) {
+      router.push(`/login?next=${encodeURIComponent(router.asPath)}`);
+    }
+  }, [session, router]);
+
   const priceVariants = {
-    hidden: { opacity: 0, scale: 0.7 },
+    hidden: { opacity: 0, scale: 0.6 },
     visible: { opacity: 1, scale: 1 },
-    exit: { opacity: 0, scale: 0.7 },
+    exit: { opacity: 0, scale: 0.6 },
   };
 
   return (
@@ -82,55 +125,11 @@ const Upgrade: NextPage = () => {
       </Head>
       <main className=" block overflow-auto  bg-gradient-to-b from-[#f1f1f1] to-[#e9e9e9]">
         <Header />
-        {/* <div className="item-center flex h-screen items-center justify-center">
-          <div className="h-[420px] w-80 transform rounded-3xl border-4 border-[#0E78EF] bg-white p-8 text-center text-gray-500 shadow-xl">
-            <h1 className="text-2xl font-semibold text-[#0E78EF]">Premium</h1>
-            <p className="pt-2 tracking-wide">
-              <span className="align-top text-black">£ </span>
-              <span className="text-3xl text-black">49</span>
-              <span className="font-medium text-gray-500">/ month</span>
-            </p>
-            <hr className="border-1 mt-4 border-gray-600" />
-            <div className="pt-8">
-              <p className="flex text-left font-semibold text-gray-500">
-                <Check />
-                <span className="pl-2">
-                  <span className="text-[#0E78EF]">Unlimited</span> Docs and
-                  Slide Exports
-                </span>
-              </p>
-              <p className="flex text-left font-semibold text-gray-500">
-                <Check />
-                <span className="pl-2">
-                  <span className="text-[#0E78EF]">Unlimited</span> Usage of AI
-                </span>
-              </p>
-              <p className="flex pt-5 text-left font-semibold text-gray-500">
-                <Check />
-                <span className="pl-2">
-                  <span className="text-[#0E78EF]">Unlimited</span> Workspaces
-                </span>
-              </p>
-             
-
-              <a href="#" className="">
-                <p className="mt-8 w-full rounded-xl bg-blue-600 py-4 text-white">
-                  <span className="font-medium">Choose Plan</span>
-                  <span className="material-icons pl-2 align-middle text-sm">
-                    east
-                  </span>
-                </p>
-              </a>
-            </div>
-          </div>
-        </div>
-         */}
-
         <PricingStyle className="relative z-20 overflow-hidden bg-white pt-20 pb-12 lg:pt-[120px] lg:pb-[90px]">
           <div className="container mx-auto">
             <div className="-mx-4 flex flex-wrap">
               <div className="w-full px-4">
-                <div className="mx-auto mb-[60px] max-w-[510px] text-center lg:mb-20">
+                <div className="mx-auto mb-[20px] max-w-[510px] text-center lg:mb-10">
                   <h2 className="text-dark mb-4 text-3xl font-bold sm:text-4xl md:text-[40px]">
                     Upgrade
                   </h2>
@@ -157,16 +156,24 @@ const Upgrade: NextPage = () => {
                   }
                 ></div>
               </div>
-              <span className="flex text-lg font-semibold text-black">
+              <span className="relative flex text-lg font-semibold text-black">
                 Annual
+                <div className="absolute left-[70px] w-[80px] rounded-md border border-[0E78EF] p-1 text-xs text-gray-500">
+                  Save 38%!
+                </div>
               </span>
             </div>
             <div className="-mx-4 flex flex-wrap justify-center">
-              <div className="w-full px-4 md:w-1/2 lg:w-1/3">
+              <div className="w-full px-4 md:w-1/2 lg:w-[420px]">
                 <div className="relative z-10 mb-10 overflow-hidden rounded-xl border border-gray-200 bg-white py-10 px-8 shadow-md sm:p-12 lg:py-10 lg:px-6 xl:p-12">
-                  <span className="mb-4 block text-lg font-semibold text-[#0E78EF]">
-                    Pro Plan
+                  <span className="mb-4 block text-[28px] text-lg font-semibold text-[#0E78EF]">
+                    Pro Plan{" "}
+                    <span className="text-sm text-gray-500">
+                      {" "}
+                      {toggle ? "(Billed Monthly)" : "(Billed Annually)"}
+                    </span>
                   </span>
+
                   <h2 className=" text-dark relative mb-5 text-[42px] font-bold">
                     <div className="relative h-[70px]">
                       <AnimatePresence>
@@ -180,7 +187,7 @@ const Upgrade: NextPage = () => {
                             transition={{ duration: 0.4 }}
                             key="monthly"
                           >
-                            £49
+                            £39
                           </motion.span>
                         ) : (
                           <motion.span
@@ -198,11 +205,11 @@ const Upgrade: NextPage = () => {
                       </AnimatePresence>
                       <span className="text-body-color absolute top-[25px] left-[100px] text-base font-medium">
                         {" "}
-                        / month{" "}
+                        per month{" "}
                       </span>
                     </div>
                   </h2>
-                  <p className="text-body-color mb-8 border-b border-[#F2F2F2] pb-8 text-base">
+                  <p className="text-body-color mb-4 border-b border-[#F2F2F2] pb-4 text-base">
                     For Commercial use.
                   </p>
                   <div className="mb-7">
@@ -225,34 +232,47 @@ const Upgrade: NextPage = () => {
                       4 Months support
                     </p> */}
 
-                    <p className="flex text-left text-base font-semibold leading-loose text-gray-500">
+                    <p className="mt-3  flex items-center text-left text-base font-semibold leading-loose text-gray-500">
                       <Check />
                       <span className="pl-2">
                         <span className="text-[#0E78EF]">Unlimited</span> Docs
                         and Slide Exports
                       </span>
                     </p>
-                    <p className="flex text-left font-semibold text-gray-500">
+                    <p className="mt-2  flex items-center text-left font-semibold leading-loose text-gray-500">
                       <Check />
                       <span className="pl-2">
                         <span className="text-[#0E78EF]">Unlimited</span> Usage
                         of AI
                       </span>
                     </p>
-                    <p className="flex pt-5 text-left font-semibold text-gray-500">
+                    <p className="mt-3 flex items-center text-left font-semibold leading-loose text-gray-500">
                       <Check />
                       <span className="pl-2">
                         <span className="text-[#0E78EF]">Unlimited</span>{" "}
                         Workspaces
                       </span>
                     </p>
+                    <p className="mt-3  flex  items-center text-left font-semibold leading-loose text-gray-500">
+                      <Check />
+                      <span className="pl-2">
+                        <span className="text-[#0E78EF]">Priority</span>{" "}
+                        customer support
+                      </span>
+                    </p>
                   </div>
-                  <a
-                    href="javascript:void(0)"
-                    className="subscribe-btn block w-full rounded-md border p-4 text-center text-base font-semibold text-white transition hover:bg-opacity-10"
+                  <button
+                    onClick={() => createCheckoutSession(selectedPrice)}
+                    className="subscribe-btn flex w-full items-center justify-center rounded-md border p-4 text-center text-base font-semibold text-white transition hover:bg-opacity-10"
                   >
-                    <span>Subscribe</span>
-                  </a>
+                    <div className="flex items-center justify-center">
+                      {loading ? (
+                        <LoadingSpinner strokeColor="#ffffff" />
+                      ) : (
+                        <span className="ml-2">Subscribe</span>
+                      )}
+                    </div>
+                  </button>
                   <div>
                     <span className="absolute right-0 top-7 z-[-1]">
                       <svg

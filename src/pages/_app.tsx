@@ -9,6 +9,7 @@ import { WorkspaceTitleUpdateProvider } from "@/contexts/WorkspaceTitleContext";
 import "@/styles/globals.css";
 import { ThemeProvider } from "styled-components";
 import { TextSpeechProvider } from "@/contexts/TextSpeechContext";
+import "@stripe/stripe-js";
 interface Theme {
   colors: {
     brand: string;
@@ -60,10 +61,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
   const [supabaseClient] = useState(() => createBrowserSupabaseClient());
 
   return (
-    <SessionContextProvider
-      supabaseClient={supabaseClient}
-      initialSession={pageProps.initialSession}
-    >
+    <SessionContextProvider supabaseClient={supabaseClient}>
       <UserContextProvider>
         <ThemeProvider theme={theme}>
           <WorkspaceTitleUpdateProvider>

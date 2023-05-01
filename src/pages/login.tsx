@@ -9,12 +9,14 @@ const Login: NextPage = () => {
   const supabase = useSupabaseClient();
 
   const router = useRouter();
+  const { next } = router.query;
   const session = useSession();
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     if (session) {
-      router.replace("/");
+      // After successful login
+      router.replace(next ? decodeURIComponent(next as string) : "/");
     }
   }, [session]);
 

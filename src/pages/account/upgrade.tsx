@@ -51,10 +51,15 @@ const Upgrade: NextPage = () => {
   const router = useRouter();
   const session = useSession();
   const [loading, setLoading] = useState<boolean>(true);
+
+  const [toggle, setToggle] = useState(true);
+  const toggleClass = " transform translate-x-[22px]";
   const queryResult = api.checkout.fetchProducts.useQuery();
   const { data } = queryResult;
 
-  console.log(data);
+  const prices = data && data[0].prices;
+
+  console.log(prices);
 
   return (
     <>
@@ -120,6 +125,25 @@ const Upgrade: NextPage = () => {
                 </div>
               </div>
             </div>
+
+            <div className="relative mt-5 mb-5 flex flex-col items-center justify-center">
+              {/*   Switch Container */}
+
+              <div
+                className="relative flex h-[24px] w-[48px] cursor-pointer items-center  rounded-full border border-[#0E78EF] bg-white p-1"
+                onClick={() => {
+                  setToggle(!toggle);
+                }}
+              >
+                {/* Switch */}
+                <div
+                  className={
+                    "absolute left-[2px] h-[20px] w-[20px] transform rounded-full bg-[#0E78EF] shadow-md duration-300 ease-in-out" +
+                    (toggle ? null : toggleClass)
+                  }
+                ></div>
+              </div>
+            </div>
             <div className="-mx-4 flex flex-wrap justify-center">
               <div className="w-full px-4 md:w-1/2 lg:w-1/3">
                 <div className="relative z-10 mb-10 overflow-hidden rounded-xl border border-gray-200 bg-white py-10 px-8 shadow-md sm:p-12 lg:py-10 lg:px-6 xl:p-12">
@@ -134,7 +158,7 @@ const Upgrade: NextPage = () => {
                     </span>
                   </h2>
                   <p className="text-body-color mb-8 border-b border-[#F2F2F2] pb-8 text-base">
-                    Perfect for using in a Business website or a client project.
+                    For Commercial use.
                   </p>
                   <div className="mb-7">
                     {/* <p className="text-body-color mb-1 text-base leading-loose">

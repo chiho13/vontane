@@ -35,7 +35,7 @@ export function Header() {
           <div className="mr-4 flex items-center">
             <div className="z-10 flex h-20 items-center">
               <button
-                className="flex rounded-md bg-gray-200 p-2 transition duration-200 hover:bg-gray-300"
+                className="flex rounded-md bg-gray-200 px-4 py-2 transition duration-200 hover:bg-gray-300"
                 onClick={goBack}
               >
                 <ArrowLeft className="mr-2" /> Back

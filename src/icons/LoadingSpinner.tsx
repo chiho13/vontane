@@ -8,7 +8,7 @@ const LoadingSpinnerSVG = styled.svg`
   height: 24px;
 
   & .path {
-    stroke: #aaaaaa;
+    stroke: ${(props) => (props.strokeColor ? props.strokeColor : "#aaaaaa")};
     stroke-linecap: round;
     animation: dash 1.5s ease-in-out infinite;
   }
@@ -35,9 +35,9 @@ const LoadingSpinnerSVG = styled.svg`
   }
 `;
 
-function LoadingSpinner() {
+function LoadingSpinner({ strokeColor = "#aaaaaa" }) {
   return (
-    <LoadingSpinnerSVG viewBox="0 0 50 50">
+    <LoadingSpinnerSVG viewBox="0 0 50 50" strokeColor={strokeColor}>
       <circle
         className="path"
         cx="25"

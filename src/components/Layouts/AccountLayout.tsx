@@ -197,7 +197,7 @@ const AnimatedIcon = styled.div<{ show: boolean }>`
 interface LayoutProps {
   children: React.ReactNode;
   profile: any;
-  currentWorkspaceId?: string;
+  currentWorkspaceId?: string | string[];
 }
 
 export const LayoutContext = createContext({

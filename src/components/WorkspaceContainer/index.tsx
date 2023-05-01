@@ -25,7 +25,7 @@ import { EditorProvider } from "@/contexts/EditorContext";
 
 // import "react-mirt/dist/css/react-mirt.css";
 type WorkspaceProps = {
-  workspaceId: string;
+  workspaceId: string | string[];
 };
 
 export const WorkspaceContainer: React.FC<WorkspaceProps> = ({

@@ -10,6 +10,7 @@ import {
   fetchProducts,
 } from "@/server/lib/createStripeCustomer";
 import { getURL } from "@/utils/helpers";
+import { Stream } from "stream";
 
 export const checkoutRouter = createTRPCRouter({
   fetchProducts: protectedProcedure.query(async ({ ctx }) => {
@@ -31,9 +32,13 @@ export const checkoutRouter = createTRPCRouter({
         data: { user },
       } = await supabase.auth.getUser();
 
+      const profile = await ctx.prisma.user.findUnique({
+        where: { id: user?.id },
+      });
       const customer = await createStripeCustomerIfNeeded(ctx.prisma, {
         id: user?.id || "",
         email: user?.email || "",
+        stripe_id: profile?.stripe_id || "",
       });
 
       const session = await stripe.checkout.sessions.create({

@@ -10,24 +10,22 @@ export function Header() {
 
   const router = useRouter();
   // detect whether user has scrolled the page down by 10px
-  const scrollHandler = () => {
-    window.pageYOffset > 10 ? setTop(false) : setTop(true);
-  };
+  //   const scrollHandler = () => {
+  //     window.pageYOffset > 10 ? setTop(false) : setTop(true);
+  //   };
 
-  useEffect(() => {
-    scrollHandler();
-    window.addEventListener("scroll", scrollHandler);
-    return () => window.removeEventListener("scroll", scrollHandler);
-  }, [top]);
+  //   useEffect(() => {
+  //     scrollHandler();
+  //     window.addEventListener("scroll", scrollHandler);
+  //     return () => window.removeEventListener("scroll", scrollHandler);
+  //   }, [top]);
 
   const goBack = () => {
     router.push("/");
   };
   return (
     <header
-      className={`fixed z-30 w-full transition duration-300 ease-in-out md:bg-opacity-90 ${
-        !top ? "bg-white shadow-lg backdrop-blur-sm" : ""
-      }`}
+      className={`fixed z-30 w-full transition duration-300 ease-in-out md:bg-opacity-90`}
     >
       <div className="mx-auto max-w-6xl ">
         <div className="flex h-16 items-center justify-between md:h-20">

@@ -21,3 +21,17 @@ export async function createStripeCustomerIfNeeded(prisma, user) {
 
   return user;
 }
+
+export async function fetchProducts() {
+  const products = await stripe.products.list();
+  const prices = await stripe.prices.list();
+
+  const productsWithPrices = products.data.map((product) => {
+    const productPrices = prices.data.filter(
+      (price) => price.product === product.id
+    );
+    return { ...product, prices: productPrices };
+  });
+
+  return productsWithPrices;
+}

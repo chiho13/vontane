@@ -23,6 +23,7 @@ import {
   ChevronsLeft,
   Menu,
   ChevronsUpDown,
+  ArrowUpCircle,
 } from "lucide-react";
 
 import { LogoutIcon } from "@/icons/Logout";
@@ -134,13 +135,15 @@ transition: transform 300ms, ${(props) =>
 
 const SidebarItem = styled.li<{ activeWorkspace?: boolean }>`
   display: flex;
-
+  padding: 4px;
+  width: 100%;
+  box-sizing: border-box;
   button {
     display: flex;
     padding: 8px 24px;
-    margin: 5px;
     width: 100%;
     border-radius: 4px;
+    margin-top: 5px;
     transition: background-color 300ms ease, transform 300ms;
     color: ${({ theme }) => theme.colors.darkergray};
     background-color: ${({ theme, activeWorkspace }) =>
@@ -245,6 +248,10 @@ const Layout: React.FC<LayoutProps> = ({
   const handleWorkspaceRoute = (workspaceId: string, workspaceName: string) => {
     router.push(`/${workspaceId}`);
     refetchWorkspaces();
+  };
+
+  const upgradeAccount = () => {
+    router.push(`/account/upgrade`);
   };
 
   const createWorkspace = async () => {
@@ -437,6 +444,15 @@ const Layout: React.FC<LayoutProps> = ({
                   >
                     <Plus />{" "}
                     <span className="ml-2 text-sm">Create Workspace</span>
+                  </button>
+                </SidebarItem>
+                <SidebarItem className="fixed bottom-10 left-0">
+                  <button
+                    className=" flex items-center"
+                    onClick={upgradeAccount}
+                  >
+                    <ArrowUpCircle />{" "}
+                    <span className="ml-2 text-sm">Upgrade Account</span>
                   </button>
                 </SidebarItem>
               </ul>

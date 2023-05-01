@@ -9,6 +9,7 @@ import { Check } from "lucide-react";
 import { api } from "@/utils/api";
 import { useTheme } from "styled-components";
 import styled from "styled-components";
+import { motion, AnimatePresence } from "framer-motion";
 
 const PricingStyle = styled.section`
   .subscribe-btn {
@@ -60,6 +61,17 @@ const Upgrade: NextPage = () => {
   const prices = data && data[0].prices;
 
   console.log(prices);
+  const strikethroughVariants = {
+    hidden: { width: "0%" },
+    visible: { width: "100%" },
+    exit: { width: "0%" },
+  };
+
+  const priceVariants = {
+    hidden: { opacity: 0, scale: 0.7 },
+    visible: { opacity: 1, scale: 1 },
+    exit: { opacity: 0, scale: 0.7 },
+  };
 
   return (
     <>
@@ -126,9 +138,11 @@ const Upgrade: NextPage = () => {
               </div>
             </div>
 
-            <div className="relative mt-5 mb-5 flex flex-col items-center justify-center">
+            <div className="relative mt-5 mb-5 flex items-center justify-center gap-5">
               {/*   Switch Container */}
-
+              <span className="flex text-lg font-semibold text-black">
+                Monthly
+              </span>
               <div
                 className="relative flex h-[24px] w-[48px] cursor-pointer items-center  rounded-full border border-[#0E78EF] bg-white p-1"
                 onClick={() => {
@@ -143,6 +157,9 @@ const Upgrade: NextPage = () => {
                   }
                 ></div>
               </div>
+              <span className="flex text-lg font-semibold text-black">
+                Annual
+              </span>
             </div>
             <div className="-mx-4 flex flex-wrap justify-center">
               <div className="w-full px-4 md:w-1/2 lg:w-1/3">
@@ -150,12 +167,40 @@ const Upgrade: NextPage = () => {
                   <span className="mb-4 block text-lg font-semibold text-[#0E78EF]">
                     Pro Plan
                   </span>
-                  <h2 className="text-dark mb-5 text-[42px] font-bold">
-                    £49
-                    <span className="text-body-color text-base font-medium">
-                      {" "}
-                      / month{" "}
-                    </span>
+                  <h2 className=" text-dark relative mb-5 text-[42px] font-bold">
+                    <div className="relative h-[70px]">
+                      <AnimatePresence>
+                        {toggle ? (
+                          <motion.span
+                            className="absolute top-0 left-0 block"
+                            initial="hidden"
+                            animate="visible"
+                            exit="exit"
+                            variants={priceVariants}
+                            transition={{ duration: 0.4 }}
+                            key="monthly"
+                          >
+                            £49
+                          </motion.span>
+                        ) : (
+                          <motion.span
+                            className="absolute top-0 left-0 block"
+                            initial="hidden"
+                            animate="visible"
+                            exit="exit"
+                            variants={priceVariants}
+                            transition={{ duration: 0.4 }}
+                            key="annual"
+                          >
+                            £24
+                          </motion.span>
+                        )}
+                      </AnimatePresence>
+                      <span className="text-body-color absolute top-[25px] left-[100px] text-base font-medium">
+                        {" "}
+                        / month{" "}
+                      </span>
+                    </div>
                   </h2>
                   <p className="text-body-color mb-8 border-b border-[#F2F2F2] pb-8 text-base">
                     For Commercial use.

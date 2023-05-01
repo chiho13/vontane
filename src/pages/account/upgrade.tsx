@@ -158,7 +158,7 @@ const Upgrade: NextPage = () => {
               </div>
               <span className="relative flex text-lg font-semibold text-black">
                 Annual
-                <div className="absolute left-[70px] w-[80px] rounded-md border border-[0E78EF] p-1 text-xs text-gray-500">
+                <div className="text-bold absolute left-[70px] w-[80px] rounded-md border border-green-600 bg-[#edf9f1] p-1 text-center text-xs text-green-700">
                   Save 38%!
                 </div>
               </span>

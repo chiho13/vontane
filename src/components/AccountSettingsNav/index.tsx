@@ -18,8 +18,20 @@ export function DashboardNav({ items }: DashboardNavProps) {
     return null;
   }
 
+  const ArrowLeft = Icons.arrowLeft;
+
   return (
     <nav className="grid items-start gap-2">
+      <Link href="/" className="mb-6">
+        <span
+          className={cn(
+            "group flex items-center rounded-md px-3 py-2 text-sm  font-medium text-gray-600 transition duration-300 hover:bg-gray-200 hover:text-black"
+          )}
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          <span>Workspaces</span>
+        </span>
+      </Link>
       {items.map((item, index) => {
         const Icon = Icons[item.icon || "arrowRight"];
         return (

@@ -49,7 +49,7 @@ export const checkoutRouter = createTRPCRouter({
         mode: "subscription",
         allow_promotion_codes: true,
         subscription_data: {
-          trial_from_plan: true,
+          trial_from_plan: false,
           metadata: {},
         },
         success_url: `${getURL()}/account?success=true`,

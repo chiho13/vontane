@@ -4,13 +4,10 @@ import { useRouter } from "next/router";
 import Layout from "./layout";
 import { NextPage } from "next";
 import { DashboardHeader } from "@/components/AccountSettingsNav/header";
-import { useUserContext } from "@/contexts/UserContext";
 
-const Account: NextPage = () => {
+const Profile: NextPage = () => {
   const session = useSession();
   const router = useRouter();
-
-  const { profile } = useUserContext();
 
   useEffect(() => {
     if (!session) {
@@ -19,18 +16,15 @@ const Account: NextPage = () => {
   }, [session, router]);
 
   return (
-    <Layout titlePage="Billing">
+    <Layout titlePage="Profile">
       <div className="grid items-start gap-8">
         <DashboardHeader
-          heading="Billing"
-          text="Manage billing and your subscription plan."
+          heading="Profile"
+          text="Manage account and web app settings"
         />
-        <div className="mt-4 px-2">
-          subscribed: {profile?.is_subscribed ? "true" : "false"}
-        </div>
       </div>
     </Layout>
   );
 };
 
-export default Account;
+export default Profile;

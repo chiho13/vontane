@@ -4,7 +4,7 @@ import {
   stripe,
   createStripeCustomerIfNeeded,
   fetchProducts,
-} from "@/server/lib/createStripeCustomer";
+} from "@/server/lib/stripeHelpers";
 import { getURL } from "@/utils/helpers";
 
 export const checkoutRouter = createTRPCRouter({

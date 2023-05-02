@@ -25,24 +25,24 @@ export function Header() {
   };
   return (
     <header
-      className={`fixed z-30 w-full transition duration-300 ease-in-out md:bg-opacity-90`}
+      className={`relative z-30 w-full transition duration-300 ease-in-out md:bg-opacity-90`}
     >
-      <div className="mx-auto max-w-6xl ">
+      <div className="mx-auto max-w-[1200px] ">
         <div className="flex h-16 items-center justify-between md:h-20">
           {/* Site branding */}
           <div className="mr-4 flex items-center">
-            <div className="z-10 flex h-20 items-center">
+            {/* <div className="z-10 flex h-20 items-center">
               <button
                 className="flex rounded-md bg-gray-200 px-4 py-2 transition duration-200 hover:bg-gray-300"
                 onClick={goBack}
               >
                 <ArrowLeft className="mr-2" /> Back
               </button>
-            </div>
+            </div> */}
             <Image
               src="/images/vontanelogo.png"
-              width="200"
-              height="100"
+              width="220"
+              height="50"
               alt={"logo"}
             />
           </div>

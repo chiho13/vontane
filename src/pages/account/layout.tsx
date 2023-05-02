@@ -1,10 +1,15 @@
 import { Header } from "@/components/Header";
 import { DashboardNav } from "@/components/AccountSettingsNav";
+import Head from "next/head";
 interface DashboardLayoutProps {
+  titlePage: string;
   children?: React.ReactNode;
 }
 
-const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
+const DashboardLayout: React.FC<DashboardLayoutProps> = ({
+  children,
+  titlePage = "",
+}) => {
   const items = [
     // {
     //   title: "Workspaces",
@@ -29,6 +34,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   ];
   return (
     <div className="block min-h-screen  bg-gradient-to-b from-[#ffffff] to-[#e9e9e9]">
+      <Head>
+        <title>Vontane | Account {titlePage} </title>
+        <meta name="description" content="Vontane upgrade to pro" />
+      </Head>
       <Header />
       <div className="container mx-auto mt-10 grid flex-1 gap-12 md:max-w-[1200px] md:grid-cols-[200px_1fr]">
         <aside className="hidden w-[200px] flex-col md:flex">

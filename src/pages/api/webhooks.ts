@@ -3,6 +3,10 @@ import Stripe from "stripe";
 import { Readable } from "node:stream";
 
 import { stripe } from "@/server/lib/stripeHelpers";
+import { PrismaClient } from "@prisma/client";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { createInnerTRPCContext } from "@/server/api/trpc";
+
 // import {
 //   upsertProductRecord,
 //   upsertPriceRecord,
@@ -10,6 +14,7 @@ import { stripe } from "@/server/lib/stripeHelpers";
 // } from '@/utils/supabase-admin';
 
 // Stripe requires the raw body to construct the event.
+
 export const config = {
   api: {
     bodyParser: false,
@@ -33,9 +38,21 @@ const relevantEvents = new Set([
   "customer.subscription.created",
   "customer.subscription.updated",
   "customer.subscription.deleted",
+  "payment_intent.succeeded",
 ]);
 
-const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  const prisma = new PrismaClient();
+  // const supabase = createServerSupabaseClient({
+  //     req,
+  //     res,
+  //   });
+  const trpcContext = createInnerTRPCContext({}, req, res);
+  //   const { prisma, supabaseServerClient } = trpcContext;
+
   if (req.method === "POST") {
     const buf = await buffer(req);
     const sig = req.headers["stripe-signature"];
@@ -64,19 +81,39 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
             //   subscription.customer as string,
             //   event.type === 'customer.subscription.created'
             // );
+
+            if (
+              subscription.status === "canceled" ||
+              subscription.status === "past_due"
+            ) {
+              await prisma.user.update({
+                where: {
+                  stripe_id: subscription.customer as string,
+                },
+                data: {
+                  is_subscribed: false,
+                },
+              });
+            }
+            break;
+          case "payment_intent.succeeded":
+            const paymentIntentSucceeded = event.data.object;
+            console.log(paymentIntentSucceeded);
+            // Then define and call a function to handle the event payment_intent.succeeded
             break;
           case "checkout.session.completed":
             const checkoutSession = event.data
               .object as Stripe.Checkout.Session;
+            console.log(checkoutSession);
             if (checkoutSession.mode === "subscription") {
-              const subscriptionId = checkoutSession.subscription;
-
-              console.log("subscriptionId", subscriptionId);
-              //   await manageSubscriptionStatusChange(
-              //     subscriptionId as string,
-              //     checkoutSession.customer as string,
-              //     true
-              //   );
+              await prisma.user.update({
+                where: {
+                  stripe_id: checkoutSession.customer as string,
+                },
+                data: {
+                  is_subscribed: true,
+                },
+              });
             }
             break;
           default:
@@ -95,6 +132,4 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     res.setHeader("Allow", "POST");
     res.status(405).end("Method Not Allowed");
   }
-};
-
-export default webhookHandler;
+}

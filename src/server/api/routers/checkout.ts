@@ -1,16 +1,11 @@
 import { z } from "zod";
-import {
-  createTRPCRouter,
-  publicProcedure,
-  protectedProcedure,
-} from "@/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import {
   stripe,
   createStripeCustomerIfNeeded,
   fetchProducts,
 } from "@/server/lib/createStripeCustomer";
 import { getURL } from "@/utils/helpers";
-import { Stream } from "stream";
 
 export const checkoutRouter = createTRPCRouter({
   fetchProducts: protectedProcedure.query(async ({ ctx }) => {

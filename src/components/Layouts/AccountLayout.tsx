@@ -446,7 +446,11 @@ const Layout: React.FC<LayoutProps> = ({
                     <span className="ml-2 text-sm">Create Workspace</span>
                   </button>
                 </SidebarItem>
-                <SidebarItem className="fixed bottom-10 left-0">
+                <SidebarItem
+                  className={`${
+                    isLocked ? "fixed bottom-10 " : "relative"
+                  } left-0`}
+                >
                   <button
                     className=" flex items-center"
                     onClick={upgradeAccount}

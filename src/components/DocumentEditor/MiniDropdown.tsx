@@ -4,7 +4,8 @@ import { forwardRef, useContext, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { List, FileQuestion, CheckCircle } from "lucide-react";
 import { EditorContext } from "@/contexts/EditorContext";
-import { Editor } from "slate";
+import { Editor, Transforms } from "slate";
+import { ReactEditor } from "slate-react";
 interface MiniDropdownProps {
   isOpen: boolean;
   addMCQBlock: () => void;
@@ -104,6 +105,24 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
     console.log(search);
     const filteredList = filterList(customElements, search);
 
+    const closeOnEmptyInput = (
+      event: React.KeyboardEvent<HTMLInputElement>
+    ) => {
+      if (event.key === "Backspace") {
+        if (search.length === 0) {
+          event.preventDefault();
+          setShowDropdown(false);
+
+          Transforms.select(
+            editor,
+            Editor.start(editor, JSON.parse(activePath))
+          );
+
+          ReactEditor.focus(editor);
+        }
+      }
+    };
+
     return (
       <div className="relative" ref={ref}>
         {!searchBarPosition && (
@@ -112,6 +131,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={closeOnEmptyInput}
             placeholder="Search"
             className="absolute -top-[50px] mb-2 w-full rounded-md border border-gray-500 bg-white px-2 py-1 outline-none focus:border-blue-500"
           />
@@ -123,6 +143,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={closeOnEmptyInput}
             placeholder="Search"
             className="absolute -bottom-[50px] mt-2 w-full rounded-md border border-gray-500 bg-white px-2 py-1 outline-none focus:border-blue-500"
           />

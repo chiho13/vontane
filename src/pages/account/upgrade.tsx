@@ -222,7 +222,7 @@ const Upgrade: NextPage = () => {
             <div className="w-full px-4 lg:w-[720px]">
               <div className="relative z-10 grid gap-10 overflow-hidden rounded-xl border border-gray-200 bg-white py-10 px-8 shadow-md sm:p-12 lg:grid-cols-2 lg:py-10 lg:px-6 xl:p-10">
                 <div className="relative flex flex-col justify-between">
-                  <span className="mb-4 block text-[29px] text-lg font-semibold text-[#0E78EF]">
+                  <span className="text-[30 px] mb-4  block text-lg font-semibold text-[#0E78EF]">
                     Pro Plan{" "}
                   </span>
 

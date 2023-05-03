@@ -160,10 +160,7 @@ const Upgrade: NextPage = () => {
                   Thank you for your subscription
                 </h1>
 
-                <p className="mt-4">
-                  You are already subscribed and have access to all premium
-                  features.
-                </p>
+                <p className="mt-4">You have access to all PRO features.</p>
                 <p className="mt-4">
                   To manage your subcription go to{" "}
                   <Link

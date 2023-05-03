@@ -129,15 +129,15 @@ const Upgrade: NextPage = () => {
     if (loading) return;
     try {
       setLoading(true);
-      const { sessionId } = await createCheckoutSessionMutation.mutateAsync({
+      const { checkoutUrl } = await createCheckoutSessionMutation.mutateAsync({
         price: _price,
       });
 
-      console.log(sessionId);
-
-      const stripe = await getStripe();
+      if (checkoutUrl) {
+        void router.push(checkoutUrl);
+      }
       setLoading(false);
-      stripe?.redirectToCheckout({ sessionId });
+      // stripe?.redirectToCheckout({ sessionId });
     } catch (error) {
       setLoading(false);
       console.error("Error creating checkout session:", error);

@@ -1,15 +1,15 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import {
-  stripe,
   createStripeCustomerIfNeeded,
   fetchProducts,
-} from "@/server/lib/stripeHelpers";
+} from "@/server/stripe/stripe-webhook-handlers";
 import { getURL } from "@/utils/helpers";
 
 export const checkoutRouter = createTRPCRouter({
   fetchProducts: protectedProcedure.query(async ({ ctx }) => {
-    const products = await fetchProducts();
+    const { stripe } = ctx;
+    const products = await fetchProducts({ stripe });
     return products;
   }),
 
@@ -20,26 +20,28 @@ export const checkoutRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
+      const { stripe, supabaseServerClient, prisma, req } = ctx;
       const { price } = input;
 
-      const supabase = ctx.supabaseServerClient;
+      const supabase = supabaseServerClient;
       const {
         data: { user },
       } = await supabase.auth.getUser();
 
-      const profile = await ctx.prisma.user.findUnique({
-        where: { id: user?.id },
-      });
-      const customer = await createStripeCustomerIfNeeded(ctx.prisma, {
-        id: user?.id || "",
-        email: user?.email || "",
-        stripe_id: profile?.stripe_id || "",
+      // const profile = await ctx.prisma.user.findUnique({
+      //   where: { id: user?.id },
+      // });
+      const customerId = await createStripeCustomerIfNeeded({
+        stripe,
+        prisma,
+        userId: user?.id as string,
       });
 
-      const session = await stripe.checkout.sessions.create({
+      const checkoutSession = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
         billing_address_collection: "required",
-        customer: customer.stripe_id,
+        customer: customerId,
+        client_reference_id: user?.id,
         line_items: [
           {
             price: price,
@@ -52,10 +54,10 @@ export const checkoutRouter = createTRPCRouter({
           trial_from_plan: false,
           metadata: {},
         },
-        success_url: `${getURL()}/account?success=true`,
+        success_url: `${getURL()}/account/upgrade?success=true`,
         cancel_url: `${getURL()}/account/upgrade?canceled=true`,
       });
 
-      return { sessionId: session.id };
+      return { checkoutUrl: checkoutSession.url };
     }),
 });

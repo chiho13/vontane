@@ -24,6 +24,7 @@ import {
   Menu,
   ChevronsUpDown,
   ArrowUpCircle,
+  Settings,
 } from "lucide-react";
 
 import { LogoutIcon } from "@/icons/Logout";
@@ -397,6 +398,18 @@ const Layout: React.FC<LayoutProps> = ({
                     }
                   >
                     <div className="p-1" role="none">
+                      <Link
+                        className="flex w-full items-center rounded-md px-4  py-2 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                        role="menuitem"
+                        tabIndex={-1}
+                        id="menu-item-3"
+                        href="/account"
+                      >
+                        <Settings /> <span className="ml-2">Settings</span>
+                      </Link>
+                    </div>
+                    <hr class="my-1 h-0.5 border-t-0 bg-neutral-100 opacity-100 dark:opacity-50" />
+                    <div className="p-1" role="none">
                       <button
                         onClick={logout}
                         className="inline-flex w-full rounded-md px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
@@ -446,19 +459,21 @@ const Layout: React.FC<LayoutProps> = ({
                     <span className="ml-2 text-sm">Create Workspace</span>
                   </button>
                 </SidebarItem>
-                <SidebarItem
-                  className={`${
-                    isLocked ? "fixed bottom-10 " : "relative"
-                  } left-0`}
-                >
-                  <button
-                    className=" flex items-center"
-                    onClick={upgradeAccount}
+                {!profile?.is_subscribed && (
+                  <SidebarItem
+                    className={`${
+                      isLocked ? "fixed bottom-10 " : "relative"
+                    } left-0`}
                   >
-                    <ArrowUpCircle />{" "}
-                    <span className="ml-2 text-sm">Upgrade Account</span>
-                  </button>
-                </SidebarItem>
+                    <button
+                      className=" flex items-center"
+                      onClick={upgradeAccount}
+                    >
+                      <ArrowUpCircle />{" "}
+                      <span className="ml-2 text-sm">Upgrade Account</span>
+                    </button>
+                  </SidebarItem>
+                )}
               </ul>
             </AccountLayoutStyle>
           </SidebarContent>

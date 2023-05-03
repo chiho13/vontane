@@ -19,6 +19,7 @@ import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 import { prisma } from "@/server/db";
+import { stripe } from "@/server/stripe/client";
 
 import { TRPCError } from "@trpc/server";
 
@@ -50,8 +51,10 @@ export const createInnerTRPCContext = (
 
   return {
     prisma,
+    stripe,
     supabaseServerClient,
     req,
+    res,
   };
 };
 

@@ -22,7 +22,8 @@ const PricingStyle = styled.section`
     height: 100vh;
   }
   .subscribe-btn {
-    position: relative;
+    position: absolute;
+    bottom: 0;
     overflow: hidden;
     background-image: linear-gradient(to right, #0b89ee, #1371e9);
     transition: all 0.2s ease-in-out;
@@ -172,7 +173,7 @@ const Upgrade: NextPage = () => {
 
           <div className="relative mt-5 mb-5 flex items-center justify-center gap-5">
             {/*   Switch Container */}
-            <span className="flex text-lg font-semibold text-black">
+            <span className="flex text-lg font-semibold text-gray-500">
               Monthly
             </span>
             <div
@@ -189,110 +190,108 @@ const Upgrade: NextPage = () => {
                 }
               ></div>
             </div>
-            <span className="relative flex text-lg font-semibold text-black">
+            <span className="relative flex text-lg font-semibold text-gray-500">
               Annual
               <div className="text-bold absolute left-[70px] w-[80px] rounded-md border border-green-600 bg-[#edf9f1] p-1 text-center text-xs text-green-700">
                 Save 38%!
               </div>
             </span>
           </div>
-          <div className="-mx-4 flex flex-wrap justify-center">
-            <div className="w-full px-4 md:w-1/2 lg:w-[420px]">
-              <div className="relative z-10  overflow-hidden rounded-xl border border-gray-200 bg-white py-10 px-8 shadow-md sm:p-12 lg:py-10 lg:px-6 xl:p-10">
-                <span className="mb-4 block text-[28px] text-lg font-semibold text-[#0E78EF]">
-                  Pro Plan{" "}
-                  <span className="text-sm text-gray-500">
-                    {" "}
-                    {toggle ? "(Billed Monthly)" : "(Billed Annually)"}
+          <div className="relatve -mx-4 mb-10 flex flex-wrap justify-center">
+            <div className="w-full px-4 lg:w-[720px]">
+              <div className="relative z-10 grid gap-10 overflow-hidden rounded-xl border border-gray-200 bg-white py-10 px-8 shadow-md sm:p-12 lg:grid-cols-2 lg:py-10 lg:px-6 xl:p-10">
+                <div className="relative flex flex-col justify-between">
+                  <span className="mb-4 block text-[29px] text-lg font-semibold text-[#0E78EF]">
+                    Pro Plan{" "}
                   </span>
-                </span>
 
-                <h2 className=" text-dark relative mb-5 text-[42px] font-bold">
-                  <div className="relative h-[70px]">
-                    <AnimatePresence>
-                      {toggle ? (
-                        <motion.span
-                          className="absolute top-0 left-0 block"
-                          initial="hidden"
-                          animate="visible"
-                          exit="exit"
-                          variants={priceVariants}
-                          transition={{ duration: 0.4 }}
-                          key="monthly"
-                        >
-                          £39
-                        </motion.span>
-                      ) : (
-                        <motion.span
-                          className="absolute top-0 left-0 block"
-                          initial="hidden"
-                          animate="visible"
-                          exit="exit"
-                          variants={priceVariants}
-                          transition={{ duration: 0.4 }}
-                          key="annual"
-                        >
-                          £24
-                        </motion.span>
-                      )}
-                    </AnimatePresence>
-                    <span className="text-body-color absolute top-[25px] left-[100px] text-base font-medium">
-                      {" "}
-                      per month{" "}
-                    </span>
+                  <div className="mb-7">
+                    <p className="mt-3  flex items-center text-left text-base font-semibold leading-loose text-gray-500">
+                      <Check />
+                      <span className="pl-2">
+                        <span className="text-[#0E78EF]">Unlimited</span> Docs
+                        and Slide Exports
+                      </span>
+                    </p>
+                    <p className="mt-2  flex items-center text-left font-semibold leading-loose text-gray-500">
+                      <Check />
+                      <span className="pl-2">
+                        <span className="text-[#0E78EF]">Unlimited</span> Usage
+                        of AI
+                      </span>
+                    </p>
+                    <p className="mt-3 flex items-center text-left font-semibold leading-loose text-gray-500">
+                      <Check />
+                      <span className="pl-2">
+                        <span className="text-[#0E78EF]">Unlimited</span>{" "}
+                        Workspaces
+                      </span>
+                    </p>
+                    <p className="mt-3  flex  items-center text-left font-semibold leading-loose text-gray-500">
+                      <Check />
+                      <span className="pl-2">
+                        <span className="text-[#0E78EF]">Priority</span>{" "}
+                        customer support
+                      </span>
+                    </p>
                   </div>
-                </h2>
-                <button
-                  onClick={() => createCheckoutSession(selectedPrice)}
-                  className="subscribe-btn flex w-full items-center justify-center rounded-md border p-4 text-center text-base font-semibold text-white transition hover:bg-opacity-10"
-                >
-                  <div className="flex items-center justify-center">
-                    {loading ? (
-                      <LoadingSpinner strokeColor="#ffffff" />
-                    ) : (
-                      <span className="ml-2">Upgrade</span>
-                    )}
-                  </div>
-                </button>
-                <p className="text-body-color mb-8 mt-6 border-b border-[#F2F2F2]  pb-6  text-base">
-                  High Volume Content Creators
-                </p>
-                <div className="mb-7">
-                  <p className="mt-3  flex items-center text-left text-base font-semibold leading-loose text-gray-500">
-                    <Check />
-                    <span className="pl-2">
-                      <span className="text-[#0E78EF]">Unlimited</span> Docs and
-                      Slide Exports
-                    </span>
-                  </p>
-                  <p className="mt-2  flex items-center text-left font-semibold leading-loose text-gray-500">
-                    <Check />
-                    <span className="pl-2">
-                      <span className="text-[#0E78EF]">Unlimited</span> Usage of
-                      AI
-                    </span>
-                  </p>
-                  <p className="mt-3 flex items-center text-left font-semibold leading-loose text-gray-500">
-                    <Check />
-                    <span className="pl-2">
-                      <span className="text-[#0E78EF]">Unlimited</span>{" "}
-                      Workspaces
-                    </span>
-                  </p>
-                  <p className="mt-3  flex  items-center text-left font-semibold leading-loose text-gray-500">
-                    <Check />
-                    <span className="pl-2">
-                      <span className="text-[#0E78EF]">Priority</span> customer
-                      support
-                    </span>
-                  </p>
                 </div>
+                <div className="relative">
+                  <div className="relative h-[80px]">
+                    <h2 className=" relative mb-5 mt-10  text-[50px] font-bold text-gray-600">
+                      <AnimatePresence>
+                        {toggle ? (
+                          <motion.span
+                            className="absolute top-0 left-0 block"
+                            initial="hidden"
+                            animate="visible"
+                            exit="exit"
+                            variants={priceVariants}
+                            transition={{ duration: 0.4 }}
+                            key="monthly"
+                          >
+                            £39
+                          </motion.span>
+                        ) : (
+                          <motion.span
+                            className="absolute top-0 left-0 block"
+                            initial="hidden"
+                            animate="visible"
+                            exit="exit"
+                            variants={priceVariants}
+                            transition={{ duration: 0.4 }}
+                            key="annual"
+                          >
+                            £24
+                          </motion.span>
+                        )}
+                      </AnimatePresence>
+                    </h2>
+                  </div>
+                  <span className="absolute text-[16px] font-medium text-gray-500">
+                    {" "}
+                    per month{" "}
+                  </span>
+                  <p className="text-body-color mb-10 mt-10 border-b border-[#F2F2F2]  pb-6  text-base">
+                    {toggle ? "(Billed Monthly)" : "(Billed Annually)"}
+                  </p>
+                  <button
+                    onClick={() => createCheckoutSession(selectedPrice)}
+                    className="subscribe-btn flex w-full items-center justify-center rounded-md border p-4 text-center text-base font-semibold text-white transition hover:bg-opacity-10"
+                  >
+                    <div className="flex items-center justify-center">
+                      {loading ? (
+                        <LoadingSpinner strokeColor="#ffffff" />
+                      ) : (
+                        <span className="ml-2">Upgrade</span>
+                      )}
+                    </div>
+                  </button>
 
-                <div>
-                  <span className="absolute right-0 top-7 z-[-1]">
+                  <span className="absolute -right-10 top-0 z-[-1]">
                     <svg
-                      width="77"
-                      height="172"
+                      width="127"
+                      height="222"
                       viewBox="0 0 77 172"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"

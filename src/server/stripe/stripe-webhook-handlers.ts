@@ -62,74 +62,74 @@ export async function fetchProducts({ stripe }: { stripe: Stripe }) {
   return productsWithPrices;
 }
 
-// export const handleInvoicePaid = async ({
-//   event,
-//   stripe,
-//   prisma,
-// }: {
-//   event: Stripe.Event;
-//   stripe: Stripe;
-//   prisma: PrismaClient;
-// }) => {
-//   const invoice = event.data.object as Stripe.Invoice;
-//   const subscriptionId = invoice.subscription;
-//   const subscription = await stripe.subscriptions.retrieve(
-//     subscriptionId as string
-//   );
-//   const userId = subscription.metadata.userId;
+export const handleInvoicePaid = async ({
+  event,
+  stripe,
+  prisma,
+}: {
+  event: Stripe.Event;
+  stripe: Stripe;
+  prisma: PrismaClient;
+}) => {
+  const invoice = event.data.object as Stripe.Invoice;
+  const subscriptionId = invoice.subscription;
+  const subscription = await stripe.subscriptions.retrieve(
+    subscriptionId as string
+  );
 
-//   // update user with subscription data
-//   await prisma.user.update({
-//     where: {
-//       id: userId,
-//     },
-//     data: {
-//       stripeSubscriptionId: subscription.id,
-//       stripeSubscriptionStatus: subscription.status,
-//     },
-//   });
-// };
+  // update user with subscription data
+  await prisma.user.update({
+    where: {
+      stripe_id: subscription.customer as string,
+    },
+    data: {
+      is_subscribed: true,
+      stripeSubscriptionId: subscription.id,
+      stripeCurrentPeriodEnd: new Date(subscription.current_period_end * 1000),
+    },
+  });
+};
 
-// export const handleSubscriptionCreatedOrUpdated = async ({
-//   event,
-//   prisma,
-// }: {
-//   event: Stripe.Event;
-//   prisma: PrismaClient;
-// }) => {
-//   const subscription = event.data.object as Stripe.Subscription;
-//   const userId = subscription.metadata.userId;
+export const handleSubscriptionCreatedOrUpdated = async ({
+  event,
+  prisma,
+}: {
+  event: Stripe.Event;
+  prisma: PrismaClient;
+}) => {
+  const subscription = event.data.object as Stripe.Subscription;
+  console.log(subscription);
+  // update user with subscription data
+  await prisma.user.update({
+    where: {
+      stripe_id: subscription.customer as string,
+    },
+    data: {
+      is_subscribed: true,
+      stripeSubscriptionId: subscription.id,
+      stripeCurrentPeriodEnd: new Date(subscription.current_period_end * 1000),
+    },
+  });
+};
 
-//   // update user with subscription data
-//   await prisma.user.update({
-//     where: {
-//       id: userId,
-//     },
-//     data: {
-//       stripeSubscriptionId: subscription.id,
-//       stripeSubscriptionStatus: subscription.status,
-//     },
-//   });
-// };
+export const handleSubscriptionCanceled = async ({
+  event,
+  prisma,
+}: {
+  event: Stripe.Event;
+  prisma: PrismaClient;
+}) => {
+  const subscription = event.data.object as Stripe.Subscription;
 
-// export const handleSubscriptionCanceled = async ({
-//   event,
-//   prisma,
-// }: {
-//   event: Stripe.Event;
-//   prisma: PrismaClient;
-// }) => {
-//   const subscription = event.data.object as Stripe.Subscription;
-//   const userId = subscription.metadata.userId;
-
-//   // remove subscription data from user
-//   await prisma.user.update({
-//     where: {
-//       id: userId,
-//     },
-//     data: {
-//       stripeSubscriptionId: null,
-//       stripeSubscriptionStatus: null,
-//     },
-//   });
-// };
+  // remove subscription data from user
+  await prisma.user.update({
+    where: {
+      stripe_id: subscription.customer as string,
+    },
+    data: {
+      is_subscribed: false,
+      stripeSubscriptionId: null,
+      stripeCurrentPeriodEnd: null,
+    },
+  });
+};

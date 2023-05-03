@@ -72,39 +72,7 @@ const Upgrade: NextPage = () => {
 
   console.log(prices);
   const [selectedPrice, setSelectedPrice] = useState("");
-  const { profile } = useUserContext();
-
-  if (profile?.is_subscribed) {
-    return (
-      <Layout titlePage="Upgrade">
-        <div className="container mx-auto mt-10">
-          <div className="-mx-4 flex flex-wrap">
-            <div className="w-full px-4">
-              <div className="mx-auto mb-[20px] max-w-[510px] text-center lg:mb-5">
-                <h1 className="text-dark mb-4 text-3xl font-bold sm:text-3xl ">
-                  Thank you for your subscription
-                </h1>
-
-                <p className="mt-4">
-                  You are already subscribed and have access to all premium
-                  features.
-                </p>
-                <p className="mt-4">
-                  To manage your subcription go to{" "}
-                  <Link
-                    href="/account"
-                    className="ml-2 rounded-md bg-gray-200 p-2 transition duration-300 hover:bg-gray-300"
-                  >
-                    <span className="text-bold">Billing</span>
-                  </Link>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Layout>
-    );
-  }
+  const { profile, isLoading } = useUserContext();
 
   useEffect(() => {
     if (prices) {
@@ -115,6 +83,12 @@ const Upgrade: NextPage = () => {
       }
     }
   }, [toggle]);
+
+  useEffect(() => {
+    if (profile) {
+      setLoading(false);
+    }
+  }, [profile]);
 
   useEffect(() => {
     if (prices) {
@@ -156,6 +130,56 @@ const Upgrade: NextPage = () => {
     visible: { opacity: 1, scale: 1 },
     exit: { opacity: 0, scale: 0.6 },
   };
+
+  if (isLoading) {
+    return (
+      <Layout titlePage="Upgrade">
+        <div className="container mx-auto mt-10">
+          <div className="-mx-4 flex flex-wrap">
+            <div className="w-full px-4">
+              <div className="mx-auto mb-[20px] max-w-[510px] text-center lg:mb-5">
+                <h1 className="text-dark mb-4 text-3xl font-bold sm:text-3xl ">
+                  <LoadingSpinner />
+                </h1>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (profile?.is_subscribed) {
+    return (
+      <Layout titlePage="Upgrade">
+        <div className="container mx-auto mt-10">
+          <div className="-mx-4 flex flex-wrap">
+            <div className="w-full px-4">
+              <div className="mx-auto mb-[20px] max-w-[510px] text-center lg:mb-5">
+                <h1 className="text-dark mb-4 text-3xl font-bold sm:text-3xl ">
+                  Thank you for your subscription
+                </h1>
+
+                <p className="mt-4">
+                  You are already subscribed and have access to all premium
+                  features.
+                </p>
+                <p className="mt-4">
+                  To manage your subcription go to{" "}
+                  <Link
+                    href="/account"
+                    className="ml-2 rounded-md bg-gray-200 p-2 transition duration-300 hover:bg-gray-300"
+                  >
+                    <span className="text-bold">Billing</span>
+                  </Link>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout titlePage="Upgrade">
@@ -277,7 +301,7 @@ const Upgrade: NextPage = () => {
                   </p>
                   <button
                     onClick={() => createCheckoutSession(selectedPrice)}
-                    className="subscribe-btn flex w-full items-center justify-center rounded-md border p-4 text-center text-base font-semibold text-white transition hover:bg-opacity-10"
+                    className="subscribe-btn flex h-[50px] w-full items-center justify-center rounded-md border p-4 text-center text-base font-semibold text-white transition hover:bg-opacity-10"
                   >
                     <div className="flex items-center justify-center">
                       {loading ? (

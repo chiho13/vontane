@@ -4,8 +4,8 @@ import styled from "styled-components";
 const LoadingSpinnerSVG = styled.svg`
   animation: rotate 2s linear infinite;
   z-index: 2;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
 
   & .path {
     stroke: ${(props) => (props.strokeColor ? props.strokeColor : "#aaaaaa")};

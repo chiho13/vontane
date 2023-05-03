@@ -1,12 +1,18 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
 import { Readable } from "node:stream";
-
-import { stripe } from "@/server/lib/stripeHelpers";
+// import { prisma } from "@/server/db";
+import { stripe } from "@/server/stripe/client";
 import { PrismaClient } from "@prisma/client";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import { createInnerTRPCContext } from "@/server/api/trpc";
 
+import {
+  handleInvoicePaid,
+  handleSubscriptionCanceled,
+  handleSubscriptionCreatedOrUpdated,
+} from "@/server/stripe/stripe-webhook-handlers";
+
+import { env } from "@/env.mjs";
 // import {
 //   upsertProductRecord,
 //   upsertPriceRecord,
@@ -39,26 +45,23 @@ const relevantEvents = new Set([
   "customer.subscription.updated",
   "customer.subscription.deleted",
   "payment_intent.succeeded",
+  "invoice.payment_succeeded",
 ]);
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const prisma = new PrismaClient();
   // const supabase = createServerSupabaseClient({
   //     req,
   //     res,
   //   });
-  const trpcContext = createInnerTRPCContext({}, req, res);
   //   const { prisma, supabaseServerClient } = trpcContext;
-
+  const prisma = new PrismaClient();
   if (req.method === "POST") {
     const buf = await buffer(req);
     const sig = req.headers["stripe-signature"];
-    const webhookSecret =
-      process.env.STRIPE_WEBHOOK_SECRET_LIVE ??
-      process.env.STRIPE_WEBHOOK_SECRET;
+    const webhookSecret = env.STRIPE_WEBHOOK_SECRET;
     let event: Stripe.Event;
 
     try {
@@ -74,48 +77,21 @@ export default async function handler(
         switch (event.type) {
           case "customer.subscription.created":
           case "customer.subscription.updated":
-          case "customer.subscription.deleted":
-            const subscription = event.data.object as Stripe.Subscription;
-            // await manageSubscriptionStatusChange(
-            //   subscription.id,
-            //   subscription.customer as string,
-            //   event.type === 'customer.subscription.created'
-            // );
+            await handleSubscriptionCreatedOrUpdated({
+              event,
+              prisma,
+            });
+            break;
 
-            if (
-              subscription.status === "canceled" ||
-              subscription.status === "past_due"
-            ) {
-              await prisma.user.update({
-                where: {
-                  stripe_id: subscription.customer as string,
-                },
-                data: {
-                  is_subscribed: false,
-                },
-              });
-            }
+          case "customer.subscription.deleted":
+            await handleSubscriptionCanceled({
+              event,
+              prisma,
+            });
             break;
-          case "payment_intent.succeeded":
-            const paymentIntentSucceeded = event.data.object;
-            console.log(paymentIntentSucceeded);
-            // Then define and call a function to handle the event payment_intent.succeeded
-            break;
-          case "checkout.session.completed":
-            const checkoutSession = event.data
-              .object as Stripe.Checkout.Session;
-            console.log(checkoutSession);
-            if (checkoutSession.mode === "subscription") {
-              await prisma.user.update({
-                where: {
-                  stripe_id: checkoutSession.customer as string,
-                },
-                data: {
-                  is_subscribed: true,
-                },
-              });
-            }
-            break;
+
+          case "invoice.payment_succeeded":
+            await handleInvoicePaid({ event, stripe, prisma });
           default:
             throw new Error("Unhandled relevant event!");
         }

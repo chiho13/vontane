@@ -6,11 +6,13 @@ import { api, RouterOutputs } from "@/utils/api";
 export type UserContextType = {
   profile: null | RouterOutputs["profile"]["getProfile"];
   workspaces: null | RouterOutputs["profile"]["getProfile"]["workspaces"];
+  isLoading: boolean;
 };
 
 export const UserContext = createContext<UserContextType>({
   profile: null,
   workspaces: null,
+  isLoading: false,
 });
 
 export function UserContextProvider({
@@ -21,10 +23,10 @@ export function UserContextProvider({
   const session = useSession();
   const userId = session?.user?.id;
 
-  const { profile, workspaces } = useUserProfile(userId);
+  const { profile, workspaces, isLoading } = useUserProfile(userId);
 
   return (
-    <UserContext.Provider value={{ profile, workspaces }}>
+    <UserContext.Provider value={{ profile, workspaces, isLoading }}>
       {children}
     </UserContext.Provider>
   );
@@ -41,9 +43,9 @@ function useUserProfile(userId: string | undefined) {
       staleTime: 5 * 60 * 1000, // Data is considered fresh for 5 minutes
     }
   );
-  const { data } = queryResult;
+  const { data, isLoading } = queryResult;
   const profile = data?.profile;
   const workspaces = data?.workspaces;
 
-  return { profile, workspaces };
+  return { profile, workspaces, isLoading };
 }

@@ -13,3 +13,9 @@ export type SidebarNavItem = {
       items: NavLink[];
     }
 );
+
+export type SubscriptionPlan = {
+  name: string;
+  description: string;
+  stripePriceId: string;
+};

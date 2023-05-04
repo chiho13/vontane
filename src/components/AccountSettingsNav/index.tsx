@@ -41,13 +41,13 @@ export function DashboardNav({ items }: DashboardNavProps) {
 
       <div>
         {items.map((item, index) => {
-          const Icon = Icons[item.icon || "arrowRight"];
+          const Icon = Icons[item.icon];
           return (
             item.href && (
               <Link key={index} href={item.disabled ? "/" : item.href}>
                 <span
                   className={cn(
-                    "group flex items-center rounded-md px-3 py-2 text-sm  font-medium text-gray-600 transition duration-300 hover:bg-gray-200 hover:text-black",
+                    "group mt-1 flex items-center rounded-md px-3 py-2 text-sm  font-medium text-gray-600 transition duration-300 hover:bg-gray-200 hover:text-black",
                     path === item.href
                       ? "bg-gray-200 text-black"
                       : "transparent",

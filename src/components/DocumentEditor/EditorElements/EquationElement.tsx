@@ -4,6 +4,7 @@ import { BlockMath } from "react-katex";
 import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor } from "slate-react";
 import { Editor } from "slate";
+import { OptionMenu } from "../OptionMenu";
 
 export function EquationElement(props) {
   const { attributes, children, element } = props;
@@ -19,7 +20,7 @@ export function EquationElement(props) {
       tabIndex={0}
       data-path={JSON.stringify(path)}
       data-id={element.id}
-      className={`equation-element mr-4 flex w-auto items-center rounded-md p-2 hover:bg-gray-100 ${
+      className={` equation-element relative mr-4 flex w-auto items-center rounded-md p-2 hover:bg-gray-100 ${
         element.latex?.trim() !== "" && "justify-center"
       } 
       ${
@@ -30,6 +31,9 @@ export function EquationElement(props) {
       cursor-pointer`}
       contentEditable={false}
     >
+      <div className="absolute top-1 right-1">
+        <OptionMenu element={element} />
+      </div>
       <BlockMath math={element.latex || ""} />
 
       {element.latex?.trim() === "" && (

@@ -249,6 +249,7 @@ const Layout: React.FC<LayoutProps> = ({
   const handleWorkspaceRoute = (workspaceId: string, workspaceName: string) => {
     router.push(`/${workspaceId}`);
     refetchWorkspaces();
+    setIsLocked(false);
   };
 
   const upgradeAccount = () => {

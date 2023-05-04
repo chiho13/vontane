@@ -6,6 +6,7 @@ import { List, FileQuestion, CheckCircle } from "lucide-react";
 import { EditorContext } from "@/contexts/EditorContext";
 import { Editor, Transforms } from "slate";
 import { ReactEditor } from "slate-react";
+import { TextIcon } from "@/icons/Text";
 interface MiniDropdownProps {
   isOpen: boolean;
   addMCQBlock: () => void;
@@ -35,23 +36,38 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
 
     const { editor } = useContext(EditorContext);
     const [currentNode] = Editor.node(editor, JSON.parse(activePath));
+
+    const [focusedIndex, setFocusedIndex] = useState(0);
+
     const isEmpty =
       currentNode.children.length === 1 && currentNode.children[0].text === "";
     const customElements = [
       {
+        name: "Text",
+        description: "Just start writing",
+        action: closeDropdown,
+        icon: (
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 p-1">
+            <TextIcon strokeColor={theme.colors.darkergray} />
+          </div>
+        ),
+      },
+      {
         name: "Add Quiz Block",
+        description: "Set a multiple choice question",
         action: addMCQBlock,
         icon: (
-          <div className=" flex h-[60px] w-[60px] items-center justify-center rounded-md border">
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 p-1">
             <CheckCircle color={theme.colors.darkergray} />
           </div>
         ),
       },
       {
         name: "English MCQ",
+        description: "English multiple choice question",
         action: () => genBlock("english"),
         icon: (
-          <div className=" flex h-[60px] w-[60px] items-center justify-center rounded-md border">
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border  border-gray-300 p-1">
             <List color={theme.colors.darkergray} />
             <FileQuestion color={theme.colors.darkergray} />
           </div>
@@ -59,27 +75,29 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
       },
       {
         name: "Math Questions",
+        description: "Math question with equation block",
         action: () => genBlock("math"),
         image: (
           <Image
             src="/images/math.png"
             alt="add latex block equation"
-            width={60}
-            height={60}
-            className="rounded-md border"
+            width={44}
+            height={44}
+            className="rounded-md border border-gray-300 p-1"
           />
         ),
       },
       {
         name: "Add Block Equation",
+        description: "Display standalone equation block",
         action: addEquationBlock,
         image: (
           <Image
             src="/images/tex.png"
             alt="add latex block equation"
-            width={60}
-            height={60}
-            className="rounded-md border"
+            width={44}
+            height={44}
+            className="rounded-md border  border-gray-300 p-1"
           />
         ),
       },
@@ -105,23 +123,52 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
     console.log(search);
     const filteredList = filterList(customElements, search);
 
+    const handleArrowNavigation = (
+      event: React.KeyboardEvent<HTMLInputElement>
+    ) => {
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        setFocusedIndex((prevIndex) =>
+          Math.min(prevIndex + 1, filteredList.length - 1)
+        );
+      } else if (event.key === "ArrowUp") {
+        event.preventDefault();
+        setFocusedIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+      } else if (event.key === "Tab") {
+        event.preventDefault();
+        if (event.shiftKey) {
+          setFocusedIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+        } else {
+          setFocusedIndex((prevIndex) =>
+            Math.min(prevIndex + 1, filteredList.length - 1)
+          );
+        }
+      } else if (event.key === "Enter") {
+        event.preventDefault();
+        if (filteredList[focusedIndex]) {
+          filteredList[focusedIndex].action();
+        }
+      }
+    };
+
     const closeOnEmptyInput = (
       event: React.KeyboardEvent<HTMLInputElement>
     ) => {
       if (event.key === "Backspace") {
         if (search.length === 0) {
           event.preventDefault();
-          setShowDropdown(false);
-
-          Transforms.select(
-            editor,
-            Editor.start(editor, JSON.parse(activePath))
-          );
-
-          ReactEditor.focus(editor);
+          closeDropdown();
         }
       }
     };
+
+    function closeDropdown() {
+      setShowDropdown(false);
+
+      Transforms.select(editor, Editor.start(editor, JSON.parse(activePath)));
+
+      ReactEditor.focus(editor);
+    }
 
     return (
       <div className="relative" ref={ref}>
@@ -131,7 +178,10 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            onKeyDown={closeOnEmptyInput}
+            onKeyDown={(e) => {
+              closeOnEmptyInput(e);
+              handleArrowNavigation(e);
+            }}
             placeholder="Search"
             className="absolute -top-[50px] mb-2 w-full rounded-md border border-gray-500 bg-white px-2 py-1 outline-none focus:border-blue-500"
           />
@@ -143,7 +193,10 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            onKeyDown={closeOnEmptyInput}
+            onKeyDown={(e) => {
+              closeOnEmptyInput(e);
+              handleArrowNavigation(e);
+            }}
             placeholder="Search"
             className="absolute -bottom-[50px] mt-2 w-full rounded-md border border-gray-500 bg-white px-2 py-1 outline-none focus:border-blue-500"
           />
@@ -155,11 +208,19 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
                 <motion.button
                   key={index}
                   whileTap={{ scale: 0.97 }}
-                  className="mb-1 flex w-full items-center rounded-md border-2 border-gray-100 p-3 shadow-sm transition duration-300 hover:bg-gray-100"
+                  className={`mb-1 flex w-full items-center gap-2 rounded-md border-2 border-gray-100 p-2 shadow-sm transition duration-300 hover:bg-gray-100
+                    ${focusedIndex === index ? "bg-blue-100" : ""}
+                  `}
                   onClick={item.action}
                 >
                   {item.icon || item.image}
-                  <span className="ml-4 ">{item.name}</span>
+                  <div className="ml-2 flex-1 text-left ">
+                    <span className=" text-sm text-black">{item.name}</span>
+
+                    <div className="mt-1 overflow-hidden text-ellipsis whitespace-nowrap text-xs text-gray-500">
+                      {item.description}
+                    </div>
+                  </div>
                 </motion.button>
               </li>
             ))}

@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from "react";
 import { ReactEditor } from "slate-react";
 import { Transforms } from "slate";
 import { EditorContext } from "@/contexts/EditorContext";
-
+import { OptionMenu } from "../OptionMenu";
 interface MCQElementProps {
   attributes: any;
   children: React.ReactNode;
@@ -52,10 +52,13 @@ export const MCQElement: React.FC<MCQElementProps> = withQuestionNumbering(
     return (
       <div
         {...attributes}
-        className="mcq-element mb-4 mr-4 rounded-md border-2 bg-gray-100 p-4"
+        className="mcq-element relative mb-4 mt-4 mr-4 rounded-md border-2 bg-gray-100 p-4"
         data-id={element.id}
         data-path={JSON.stringify(path)}
       >
+        <div className="absolute top-2 right-2">
+          <OptionMenu element={element} />
+        </div>
         <div className="text-bold">Question {questionNumber}</div>
         {children}
       </div>

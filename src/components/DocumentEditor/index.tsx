@@ -238,7 +238,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       const targetRect = currentElement.getBoundingClientRect();
 
       const windowHeight = window.innerHeight;
-      const dropdownHeight = 360;
+      const dropdownHeight = 400;
       const spaceBelowTarget = windowHeight - targetRect.bottom;
 
       const currentNode = Node.get(editor, path);
@@ -253,7 +253,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       let showDropdownAbove = false;
 
       if (spaceBelowTarget < dropdownHeight) {
-        topOffset = -(dropdownHeight + (isEmpty ? 25 : -5));
+        topOffset = -(dropdownHeight + (isEmpty ? -15 : -45));
         showDropdownAbove = true;
       }
       setSearchBarPosition(spaceBelowTarget < dropdownHeight);
@@ -475,6 +475,33 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           const currentParagraph = Editor.node(editor, _currentNodePath);
           const parentNode = Editor.parent(editor, _currentNodePath);
           // Check if currentNode is an equation
+
+          if (currentNode.type === "paragraph") {
+            const prevNodeEntry = Editor.previous(editor, {
+              at: _currentNodePath,
+            });
+
+            if (prevNodeEntry) {
+              const [_prevNode] = prevNodeEntry;
+
+              if (
+                _prevNode.type === "mcq" &&
+                Editor.isStart(editor, selection.anchor, _currentNodePath)
+              ) {
+                event.preventDefault();
+                const nextParagraph = Editor.previous(editor, {
+                  at: _currentNodePath,
+                  match: (n) => n.type === "paragraph",
+                });
+
+                if (nextParagraph) {
+                  const [nextNode, nextPath] = nextParagraph;
+                  const targetPosition = Editor.end(editor, nextPath);
+                  Transforms.select(editor, targetPosition);
+                }
+              }
+            }
+          }
 
           if (currentNode.type === "equation" || currentNode.type === "audio") {
             event.preventDefault();
@@ -781,12 +808,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         </div>
       ) : null;
 
-    const optionMenu =
-      (isRoot && element.type === "mcq") || element.type === "equation" ? (
-        <div className="absolute  top-1 right-5">
-          <OptionMenu element={element} />
-        </div>
-      ) : null;
+    // const optionMenu =
+    //   (isRoot && element.type === "mcq") || element.type === "equation" ? (
+    //     <div className="absolute  top-1 right-5">
+    //       <OptionMenu element={element} />
+    //     </div>
+    //   ) : null;
 
     const shouldWrapWithSortableElement =
       (isRoot && element.type !== "column" && element.type !== "title") ||
@@ -809,7 +836,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       >
         {content}
         {addButton}
-        {optionMenu}
+        {/* {optionMenu} */}
       </div>
     );
   }, []);

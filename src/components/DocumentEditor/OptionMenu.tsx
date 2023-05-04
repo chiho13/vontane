@@ -41,7 +41,10 @@ export const OptionMenu = forwardRef<HTMLDivElement, OptionMenuProps>(
           dropdownMenuClassName="fixed top-0 w-[200px] border-0"
           icon={
             <div className="flex h-[24px] w-[24px] items-center  justify-center rounded-md bg-gray-200 p-1">
-              <MoreHorizontal color={theme.colors.darkgray} />
+              <MoreHorizontal
+                color={theme.colors.darkgray}
+                className="option-menu"
+              />
             </div>
           }
         >

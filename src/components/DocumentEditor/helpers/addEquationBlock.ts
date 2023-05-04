@@ -21,7 +21,7 @@ export const addEditableEquationBlock = (latex: string, editor, path: Path) => {
   let newPath: Path;
 
   if (isEmptyNode) {
-    Transforms.setNodes(editor, equationNode, { at: path });
+    Transforms.insertNodes(editor, equationNode, { at: path });
     newPath = path;
     // Transforms.insertNodes(
     //   editor,

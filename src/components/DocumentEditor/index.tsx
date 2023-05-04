@@ -485,8 +485,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               const [_prevNode] = prevNodeEntry;
 
               if (
-                _prevNode.type === "mcq" &&
-                Editor.isStart(editor, selection.anchor, _currentNodePath)
+                _prevNode.type === "mcq" ||
+                (_prevNode.type === "slide" &&
+                  Editor.isStart(editor, selection.anchor, _currentNodePath))
               ) {
                 event.preventDefault();
                 const nextParagraph = Editor.previous(editor, {
@@ -754,7 +755,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
       if (insertedEquationNode) {
         const { id } = insertedEquationNode[0] as CustomElement;
-        const sideBarOffset = isLocked ? -240 : 0;
         console.log(id);
         setSelectedElementID(id);
         setShowEditBlockPopup(true);
@@ -765,7 +765,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           console.log(currentElement);
           if (currentElement) {
             const targetRect = currentElement.getBoundingClientRect();
-            setDropdownEditBlockLeft(targetRect.left + sideBarOffset);
+            setDropdownEditBlockLeft(targetRect.left);
             setDropdownEditBlockTop(targetRect.bottom + 60);
             console.log(targetRect.left);
           }
@@ -808,12 +808,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         </div>
       ) : null;
 
-    // const optionMenu =
-    //   (isRoot && element.type === "mcq") || element.type === "equation" ? (
-    //     <div className="absolute  top-1 right-5">
-    //       <OptionMenu element={element} />
-    //     </div>
-    //   ) : null;
+    const optionMenu =
+      isRoot && element.type === "slide" ? (
+        <div className="absolute   top-[50%]  right-5 -translate-y-1/2 transform items-center">
+          <OptionMenu element={element} />
+        </div>
+      ) : null;
 
     const shouldWrapWithSortableElement =
       (isRoot && element.type !== "column" && element.type !== "title") ||
@@ -829,14 +829,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     );
 
     return (
-      <div
-        className="group relative"
-        // onMouseEnter={() => setAddButtonHoveredId(element.id)}
-        // onMouseLeave={() => setAddButtonHoveredId(null)}
-      >
+      <div className="group relative">
         {content}
         {addButton}
-        {/* {optionMenu} */}
+        <div className="invisible opacity-0 transition-all duration-300 group-hover:visible group-hover:opacity-100">
+          {optionMenu}
+        </div>
       </div>
     );
   }, []);

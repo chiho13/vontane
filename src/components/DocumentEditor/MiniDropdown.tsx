@@ -4,9 +4,12 @@ import { forwardRef, useContext, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { List, FileQuestion, CheckCircle } from "lucide-react";
 import { EditorContext } from "@/contexts/EditorContext";
-import { Editor, Transforms } from "slate";
+import { Editor, Path, Transforms } from "slate";
 import { ReactEditor } from "slate-react";
 import { TextIcon } from "@/icons/Text";
+import { SlideBreak } from "@/icons/SlideBreak";
+import { addSlideBreak } from "./helpers/addSlideBreak";
+
 interface MiniDropdownProps {
   isOpen: boolean;
   addMCQBlock: () => void;
@@ -53,6 +56,16 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         ),
       },
       {
+        name: "Slide Break",
+        description: "Slide mode: break the page",
+        action: addSlideBreakHandler,
+        icon: (
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 p-1">
+            <SlideBreak strokeColor={theme.colors.darkergray} />
+          </div>
+        ),
+      },
+      {
         name: "Add Quiz Block",
         description: "Set a multiple choice question",
         action: addMCQBlock,
@@ -62,31 +75,31 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
           </div>
         ),
       },
-      {
-        name: "English MCQ",
-        description: "English multiple choice question",
-        action: () => genBlock("english"),
-        icon: (
-          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border  border-gray-300 p-1">
-            <List color={theme.colors.darkergray} />
-            <FileQuestion color={theme.colors.darkergray} />
-          </div>
-        ),
-      },
-      {
-        name: "Math Questions",
-        description: "Math question with equation block",
-        action: () => genBlock("math"),
-        image: (
-          <Image
-            src="/images/math.png"
-            alt="add latex block equation"
-            width={44}
-            height={44}
-            className="rounded-md border border-gray-300 p-1"
-          />
-        ),
-      },
+      // {
+      //   name: "English MCQ",
+      //   description: "English multiple choice question",
+      //   action: () => genBlock("english"),
+      //   icon: (
+      //     <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border  border-gray-300 p-1">
+      //       <List color={theme.colors.darkergray} />
+      //       <FileQuestion color={theme.colors.darkergray} />
+      //     </div>
+      //   ),
+      // },
+      // {
+      //   name: "Math Questions",
+      //   description: "Math question with equation block",
+      //   action: () => genBlock("math"),
+      //   image: (
+      //     <Image
+      //       src="/images/math.png"
+      //       alt="add latex block equation"
+      //       width={44}
+      //       height={44}
+      //       className="rounded-md border border-gray-300 p-1"
+      //     />
+      //   ),
+      // },
       {
         name: "Add Block Equation",
         description: "Display standalone equation block",
@@ -170,6 +183,18 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
       ReactEditor.focus(editor);
     }
 
+    function addSlideBreakHandler() {
+      console.log("add slide break");
+      addSlideBreak(editor, JSON.parse(activePath));
+      setShowDropdown(false);
+      Transforms.select(
+        editor,
+        Editor.start(editor, Path.next(JSON.parse(activePath)))
+      );
+
+      ReactEditor.focus(editor);
+    }
+
     return (
       <div className="relative" ref={ref}>
         {!searchBarPosition && (
@@ -209,7 +234,11 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
                   key={index}
                   whileTap={{ scale: 0.97 }}
                   className={`mb-1 flex w-full items-center gap-2 rounded-md border-2 border-gray-100 p-2 shadow-sm transition duration-300 hover:bg-gray-100
-                    ${focusedIndex === index ? "bg-blue-100" : ""}
+                    ${
+                      focusedIndex === index
+                        ? "bg-blue-100 hover:bg-blue-200"
+                        : ""
+                    }
                   `}
                   onClick={item.action}
                 >

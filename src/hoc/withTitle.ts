@@ -5,32 +5,6 @@ export const withTitle = (editor) => {
   const { normalizeNode } = editor;
   const originalDeleteBackward = editor.deleteBackward;
 
-  const { deleteFragment } = editor;
-
-  editor.deleteFragment = () => {
-    const { selection } = editor;
-
-    if (selection) {
-      const start = Range.start(selection);
-      const end = Range.end(selection);
-      const titlePath = [0];
-
-      if (Path.isBefore(end.path, titlePath)) {
-        // If the selection ends before the title, delete as usual.
-        deleteFragment();
-      } else {
-        // If the selection includes or is after the title, remove only the content after the title.
-        const titleEndPoint = Editor.point(editor, titlePath, { edge: "end" });
-        const newSelection = {
-          anchor: titleEndPoint,
-          focus: end,
-        };
-        Transforms.setSelection(editor, newSelection);
-        deleteFragment();
-      }
-    }
-  };
-
   editor.normalizeNode = (entry) => {
     const [node, path] = entry;
 

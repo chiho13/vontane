@@ -358,11 +358,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             const newPath = Path.next(parentPath);
             if (Editor.isEnd(editor, selection.anchor, _currentNodePath)) {
               insertNewParagraphEnter(newPath);
-            } else {
-              Transforms.splitNodes(editor);
-
-              const newId = genNodeId();
-              Transforms.setNodes(editor, { id: newId }, { at: newPath });
             }
 
             console.log(_currentNodePath);
@@ -381,6 +376,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               Transforms.insertNodes(editor, newParagraph, {
                 at: _currentNodePath,
               });
+            } else {
+              Transforms.splitNodes(editor);
+
+              const newId = genNodeId();
+              Transforms.setNodes(editor, { id: newId }, { at: newPath });
             }
           }
 

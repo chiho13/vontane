@@ -29,6 +29,10 @@
   flex: 1;
 }
 
+.slide-break {
+  width: 50%;
+}
+
 .sortableElement:not(.active) .insertBefore:before,
 .sortableElement:not(.active) .insertAfter:before {
   height: 3px;

@@ -31,7 +31,7 @@ export function EquationElement(props) {
       cursor-pointer`}
       contentEditable={false}
     >
-      <div className="absolute top-1 right-1">
+      <div className="option-menu absolute top-1 right-1">
         <OptionMenu element={element} />
       </div>
       <BlockMath math={element.latex || ""} />

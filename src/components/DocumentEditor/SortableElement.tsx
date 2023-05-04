@@ -39,6 +39,7 @@ export function SortableElement({
     isDragging,
   } = useSortable({ id: element.id });
 
+  const slideBreakListener = element.type === "slide" && listeners;
   return (
     <div>
       <div
@@ -52,6 +53,7 @@ export function SortableElement({
           transition,
           transform: isSorting ? undefined : CSS.Transform.toString(transform),
         }}
+        {...slideBreakListener}
       >
         {readOnly ? null : (
           <div className="flex w-[58px] translate-x-[2px] justify-end">

@@ -839,7 +839,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       ) : null;
 
     const optionMenu =
-      isRoot && (element.type === "slide" || element.type === "equation") ? (
+      (isRoot && (element.type === "slide" || element.type === "equation")) ||
+      isInsideColumnCell ? (
         <div className="absolute   top-[50%]  right-2 -translate-y-1/2 transform items-center">
           <OptionMenu element={element} />
         </div>

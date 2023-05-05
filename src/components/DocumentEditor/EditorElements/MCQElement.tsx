@@ -3,6 +3,7 @@ import { ReactEditor } from "slate-react";
 import { Transforms } from "slate";
 import { EditorContext } from "@/contexts/EditorContext";
 import { OptionMenu } from "../OptionMenu";
+import { hasSlideElement } from "@/utils/helpers";
 interface MCQElementProps {
   attributes: any;
   children: React.ReactNode;
@@ -45,6 +46,7 @@ export const MCQElement: React.FC<MCQElementProps> = withQuestionNumbering(
   ({ element, attributes, children, questionNumber }) => {
     const { editor } = useContext(EditorContext);
     const path = ReactEditor.findPath(editor, element);
+    const hasSlide = hasSlideElement(editor.children);
 
     useEffect(() => {
       Transforms.setNodes(editor, { questionNumber }, { at: path });
@@ -52,7 +54,9 @@ export const MCQElement: React.FC<MCQElementProps> = withQuestionNumbering(
     return (
       <div
         {...attributes}
-        className="mcq-element relative mb-2 mt-2 mr-4 rounded-md border-2 bg-gray-100 p-4"
+        className={`mcq-element relative mb-2 mt-2 mr-4 rounded-md border-2 bg-gray-100 p-4
+        ${hasSlide ? "w-[95%]" : "w-full"}
+        `}
         data-id={element.id}
         data-path={JSON.stringify(path)}
       >

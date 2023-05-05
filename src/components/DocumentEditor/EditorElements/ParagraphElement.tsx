@@ -3,6 +3,7 @@ import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor, useFocused, useSelected } from "slate-react";
 import { Editor, Path } from "slate";
 import styled from "styled-components";
+import { hasSlideElement } from "@/utils/helpers";
 
 const ParagraphStyle = styled.div`
   p[data-placeholder]::after {
@@ -40,6 +41,10 @@ export function ParagraphElement(props) {
     }
   }, [editor, path, children, focused]);
 
+  const hasSlide = hasSlideElement(editor.children);
+
+  console.log("hasSlide", hasSlide);
+
   useEffect(() => {
     if (!focused && !selected) {
       setSelectedElementID("");
@@ -54,9 +59,11 @@ export function ParagraphElement(props) {
     <ParagraphStyle>
       <p
         ref={paragraphRef}
-        className={`paragraph-element w-[98%] ${
+        className={`paragraph-element  ${
           selectedElementID === element.id ? " bg-[#E0EDFB]" : ""
-        }`}
+        }
+        ${hasSlide ? "w-[95%]" : "w-[98%]"}
+        `}
         {...attributes}
         data-id={element.id}
         data-path={JSON.stringify(path)}

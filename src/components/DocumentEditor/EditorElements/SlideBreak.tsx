@@ -3,6 +3,7 @@ import { EditorContext } from "@/contexts/EditorContext";
 import React, { useContext, useState } from "react";
 import { ReactEditor } from "slate-react";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { useTheme } from "styled-components";
 
 const findSlideBreakElements = (nodes: any[]) => {
   let slideBreakElements: any[] = [];
@@ -54,6 +55,8 @@ export const SlideBreak = withSlideNumbering(
   ({ attributes, children, element, slideNumbers }) => {
     const { editor } = useContext(EditorContext);
     const path = ReactEditor.findPath(editor, element);
+
+    const theme = useTheme();
     return (
       <div
         {...attributes}
@@ -70,7 +73,9 @@ export const SlideBreak = withSlideNumbering(
             {" "}
             <div className="relative mr-1 flex flex-col items-center text-sm">
               {/* <ChevronUp className="absolute -top-5 w-4 text-gray-500" /> */}
-              <div className="w-10 text-center text-3xl text-gray-400">
+              <div
+                className={`w-10 text-center text-3xl text-[${theme.colors.brand}]`}
+              >
                 {slideNumbers.slideNumberTop}
               </div>
             </div>
@@ -79,7 +84,9 @@ export const SlideBreak = withSlideNumbering(
           <div className="mt-1  flex justify-end text-gray-500">
             <div className="relative mr-1 flex flex-col items-center text-sm">
               {/* <ChevronDown className="absolute -top-5 w-4 text-gray-500" /> */}
-              <div className="w-10 text-center text-3xl text-gray-400">
+              <div
+                className={`w-10 text-center text-3xl text-[${theme.colors.brand}]`}
+              >
                 {slideNumbers.slideNumberBottom}
               </div>
             </div>

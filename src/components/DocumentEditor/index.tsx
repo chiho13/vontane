@@ -223,6 +223,24 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   const [searchBarPosition, setSearchBarPosition] = useState(false);
 
+  const nodeIsEmpty = (currentNode) => {
+    if (
+      currentNode.children.length === 1 &&
+      currentNode.children[0].text === ""
+    ) {
+      return true;
+    }
+
+    // Iterate over all children nodes
+    for (const child of currentNode.children) {
+      // Check for different element types
+      if (child.type === "equation" || child.type === "mcq") {
+        return false;
+      }
+    }
+
+    return true;
+  };
   const openMiniDropdown = useCallback(
     (path: Path) => {
       const currentpathString = JSON.stringify(path);
@@ -243,17 +261,29 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
       const currentNode = Node.get(editor, path);
 
-      const isEmpty = currentNode.children[0].text === "";
-
+      const isEmpty =
+        currentNode.children.length === 1 &&
+        currentNode.children[0].text === "" &&
+        currentNode.type !== "equation" &&
+        currentNode.type !== "mcq" &&
+        currentNode.type !== "slide";
+      console.log(currentNode.type);
+      console.log(targetRect.height);
       if (!isEmpty) {
         insertNewParagraphEnter(Path.next(path));
+        setActivePath(JSON.stringify(Path.next(path)));
       }
       console.log(isEmpty);
-      let topOffset = isEmpty ? 15 : 45;
+      let topOffset = isEmpty ? 15 : 50;
+
       let showDropdownAbove = false;
 
       if (spaceBelowTarget < dropdownHeight) {
-        topOffset = -(dropdownHeight + (isEmpty ? -15 : -45));
+        topOffset = -(
+          dropdownHeight -
+          targetRect.height +
+          (isEmpty ? 10 : -25)
+        );
         showDropdownAbove = true;
       }
       setSearchBarPosition(spaceBelowTarget < dropdownHeight);
@@ -1218,7 +1248,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         {!showMiniToolbar && <TextSpeech />}
       </div>
       <div className="flex flex-col items-center justify-center">
-        <div className="linear-gradient z-0 mx-auto  mt-4 w-full rounded-md border-2 border-gray-300 px-2 lg:h-[680px]  lg:max-w-[980px] lg:px-0 ">
+        <div className="z-0 mx-auto  mt-4 w-full rounded-md border-2 border-gray-300 px-2 lg:h-[680px]  lg:max-w-[980px] lg:px-0 ">
           <div className="block  lg:w-full">
             <ErrorBoundary>
               <DndContext

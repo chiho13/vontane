@@ -61,6 +61,7 @@ export const SlideBreak = withSlideNumbering(
         data-id={element.id}
         data-path={JSON.stringify(path)}
         className="relative flex cursor-grab items-center"
+        contentEditable={false}
       >
         {/* <hr className="border-1 my-4 h-1 w-[98%] divide-dashed rounded bg-gray-400" />
          */}

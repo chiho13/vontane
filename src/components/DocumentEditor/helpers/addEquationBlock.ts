@@ -9,7 +9,7 @@ export const addEditableEquationBlock = (latex: string, editor, path: Path) => {
     type: "equation",
     altText: "",
     latex,
-    children: [{ text: "" }],
+    children: [{ text: " " }],
   };
 
   const [currentNode] = Editor.node(editor, path);

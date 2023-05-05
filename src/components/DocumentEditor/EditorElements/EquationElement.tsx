@@ -20,7 +20,7 @@ export function EquationElement(props) {
       tabIndex={0}
       data-path={JSON.stringify(path)}
       data-id={element.id}
-      className={` equation-element relative mr-4 flex w-auto items-center rounded-md p-2 hover:bg-gray-100 ${
+      className={` equation-element relative mr-4  flex w-[95%]  items-center rounded-md p-2 hover:bg-gray-100 ${
         element.latex?.trim() !== "" && "justify-center"
       } 
       ${
@@ -31,9 +31,6 @@ export function EquationElement(props) {
       cursor-pointer`}
       contentEditable={false}
     >
-      <div className="option-menu absolute top-1 right-1">
-        <OptionMenu element={element} />
-      </div>
       <BlockMath math={element.latex || ""} />
 
       {element.latex?.trim() === "" && (

@@ -514,10 +514,15 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             if (prevNodeEntry) {
               const [_prevNode] = prevNodeEntry;
 
+              const isStart = Editor.isStart(
+                editor,
+                selection.anchor,
+                _currentNodePath
+              );
               if (
-                _prevNode.type === "mcq" ||
-                (_prevNode.type === "slide" &&
-                  Editor.isStart(editor, selection.anchor, _currentNodePath))
+                (_prevNode.type === "mcq" && isStart) ||
+                (_prevNode.type === "slide" && isStart) ||
+                (_prevNode.type === "equation" && isStart)
               ) {
                 event.preventDefault();
                 const nextParagraph = Editor.previous(editor, {
@@ -534,34 +539,34 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             }
           }
 
-          if (currentNode.type === "equation" || currentNode.type === "audio") {
-            event.preventDefault();
-          } else {
-            // Check if the previous node is an equation
-            const prevNodeEntry = Editor.previous(editor, {
-              at: _currentNodePath,
-            });
+          // if (currentNode.type === "equation" || currentNode.type === "audio") {
+          //   event.preventDefault();
+          // } else {
+          //   // Check if the previous node is an equation
+          //   const prevNodeEntry = Editor.previous(editor, {
+          //     at: _currentNodePath,
+          //   });
 
-            if (prevNodeEntry) {
-              const [_prevNode] = prevNodeEntry;
+          //   if (prevNodeEntry) {
+          //     const [_prevNode] = prevNodeEntry;
 
-              if (
-                (_prevNode.type === "equation" || _prevNode.type === "audio") &&
-                Editor.isStart(editor, selection.anchor, _currentNodePath)
-              ) {
-                event.preventDefault();
-                const nextParagraph = Editor.previous(editor, {
-                  at: currentParagraph[1],
-                  match: (n) => n.type === "paragraph",
-                });
-                if (nextParagraph) {
-                  const [nextNode, nextPath] = nextParagraph;
-                  const targetPosition = Editor.end(editor, nextPath);
-                  Transforms.select(editor, targetPosition);
-                }
-              }
-            }
-          }
+          //     if (
+          //       (_prevNode.type === "equation" || _prevNode.type === "audio") &&
+          //       Editor.isStart(editor, selection.anchor, _currentNodePath)
+          //     ) {
+          //       event.preventDefault();
+          //       const nextParagraph = Editor.previous(editor, {
+          //         at: currentParagraph[1],
+          //         match: (n) => n.type === "paragraph",
+          //       });
+          //       if (nextParagraph) {
+          //         const [nextNode, nextPath] = nextParagraph;
+          //         const targetPosition = Editor.end(editor, nextPath);
+          //         Transforms.select(editor, targetPosition);
+          //       }
+          //     }
+          //   }
+          // }
 
           if (currentNode.type === "list-item") {
             const parentNode = Editor.parent(editor, currentNodePath);
@@ -1005,6 +1010,14 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
         if (activePath && overPath) {
           const isNearRoot = activePath.length === 1 && overPath.length === 1;
+
+          const overNode = Node.get(editor, overPath);
+
+          if (overNode.type === "slide") {
+            setCreatingNewColumn(false);
+            setInsertDirection(null);
+            return;
+          }
 
           if (isNearRoot) {
             const overElement = document.querySelector(

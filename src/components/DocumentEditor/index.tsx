@@ -839,8 +839,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       ) : null;
 
     const optionMenu =
-      isRoot && element.type === "slide" ? (
-        <div className="absolute   top-[50%]  right-5 -translate-y-1/2 transform items-center">
+      isRoot && (element.type === "slide" || element.type === "equation") ? (
+        <div className="absolute   top-[50%]  right-2 -translate-y-1/2 transform items-center">
           <OptionMenu element={element} />
         </div>
       ) : null;

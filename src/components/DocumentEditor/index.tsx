@@ -1298,15 +1298,29 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     };
   }, []);
 
-  const [showRightSidebar, setShowRightSidebar] = useState(false);
-  const initialWidth = 300;
+  const [showRightSidebar, setShowRightSidebar] = useState<boolean>(
+    JSON.parse(localStorage.getItem("showRightSidebar") || "true")
+  );
+  const [rightSideBarWidth, setRightSideBarWidth] = useState(
+    Number(localStorage.getItem("sidebarWidth")) || 300
+  );
   const minSidebarWidth = 300;
   const maxSidebarWidth = 500;
-  const { contentRef, sidebarRef, handleDrag } = useResizeSidebar(
-    initialWidth,
+  const { sidebarWidth, handleDrag } = useResizeSidebar(
+    rightSideBarWidth,
     minSidebarWidth,
     maxSidebarWidth
   );
+
+  useEffect(() => {
+    localStorage.setItem("showRightSidebar", JSON.stringify(showRightSidebar));
+    // setRightSideBarWidth(Number(localStorage.getItem("sidebarWidth")));
+  }, [showRightSidebar]);
+
+  useEffect(() => {
+    localStorage.setItem("sidebarWidth", sidebarWidth);
+    setRightSideBarWidth(sidebarWidth);
+  }, [sidebarWidth]);
 
   return (
     <div
@@ -1557,8 +1571,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               </DraggableCore>
             </div>
             <div
-              ref={sidebarRef}
               className="m-w-full mt-4 ml-2 hidden h-[680px] grow rounded-md border-2 border-gray-300  xl:right-0 xl:block"
+              style={{
+                width: `${rightSideBarWidth}px`,
+              }}
             >
               <div className="p-4">
                 <h2 className="mb-4 text-xl font-semibold">Right Sidebar</h2>

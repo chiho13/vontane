@@ -1302,9 +1302,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     JSON.parse(localStorage.getItem("showRightSidebar") || "true")
   );
   const [rightSideBarWidth, setRightSideBarWidth] = useState(
-    Number(localStorage.getItem("sidebarWidth")) || 300
+    Number(localStorage.getItem("sidebarWidth")) || 320
   );
-  const minSidebarWidth = 300;
+  const minSidebarWidth = 320;
   const maxSidebarWidth = 500;
   const { sidebarWidth, handleDrag } = useResizeSidebar(
     rightSideBarWidth,
@@ -1314,7 +1314,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   useEffect(() => {
     localStorage.setItem("showRightSidebar", JSON.stringify(showRightSidebar));
-    // setRightSideBarWidth(Number(localStorage.getItem("sidebarWidth")));
   }, [showRightSidebar]);
 
   useEffect(() => {

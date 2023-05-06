@@ -133,14 +133,14 @@ export const TextSpeech: React.FC<TextSpeechProps> = ({
 
   return (
     <>
-      <div className="relative mx-auto flex items-center lg:max-w-[980px]">
+      <div className="relative flex items-center lg:max-w-[980px]">
         <label className="text-bold mb-2 flex justify-end text-sm text-gray-400">
           {!isSelected
             ? "Convert workspace to audio"
             : "Convert selected text to audio"}
         </label>
       </div>
-      <div className="relative mx-auto flex items-center lg:max-w-[980px]">
+      <div className="relative flex items-center lg:max-w-[980px]">
         <div className="mr-4">
           <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
         </div>

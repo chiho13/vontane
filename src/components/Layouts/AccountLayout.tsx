@@ -480,7 +480,7 @@ const Layout: React.FC<LayoutProps> = ({
           </SidebarContent>
         </SidebarContainer>
         <main
-          className="min-h-screen overflow-auto bg-white pt-4"
+          className=" flex min-h-screen overflow-auto bg-white pt-4"
           style={{
             marginLeft: isLocked && desktopbreakpoint ? "240px" : "0",
             width:

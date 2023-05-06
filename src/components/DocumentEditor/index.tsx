@@ -23,13 +23,10 @@ import {
 
 import { EditorContext } from "@/contexts/EditorContext";
 import { Slate, Editable, withReact, ReactEditor } from "slate-react";
-import { Plus, CornerDownLeft, MoreHorizontal } from "lucide-react";
+import { Plus, Sidebar } from "lucide-react";
 import "katex/dist/katex.min.css";
 import "katex/dist/contrib/mhchem.min.js";
 import { AnimatePresence, motion } from "framer-motion";
-import { nanoid } from "nanoid";
-import { debounce } from "lodash";
-import Image from "next/image";
 
 import styled, { useTheme } from "styled-components";
 import useClickOutside from "@/hooks/useClickOutside";
@@ -40,6 +37,7 @@ import { findElementInSlateValue } from "./helpers/findElementInSlate";
 import { MathQuestionGenerator } from "../QuestionGenerator/Math";
 import { extractTextValues } from "@/components/DocumentEditor/helpers/extractText";
 import { useRouter } from "next/router";
+import { DraggableCore } from "react-draggable";
 
 import {
   DndContext,
@@ -76,6 +74,7 @@ import { TextSpeech } from "@/components/TextSpeech";
 import ErrorBoundary from "../Errorboundary";
 import { textRegex } from "./helpers/textRegex";
 import { addMCQBlock } from "./helpers/addMCQBlock";
+import { breakpoints } from "@/utils/breakpoints";
 
 interface DocumentEditorProps {
   workspaceId: string;
@@ -121,6 +120,8 @@ import { EditBlockPopup } from "../EditEquationBlock";
 import { EnglishQuestionGenerator } from "../QuestionGenerator/English";
 import useTextSpeechStatusPolling from "@/hooks/useTextSpeechAPI";
 import { addEditableEquationBlock } from "./helpers/addEquationBlock";
+import useSidebarResize from "@/hooks/useResizeSidebar";
+import useResizeSidebar from "@/hooks/useResizeSidebar";
 
 export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   workspaceId,
@@ -147,7 +148,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const [activeId, setActiveId] = useState(null);
 
   const activeIndex = activeId
-    ? slatevalue.findIndex((el) => el.id === activeId)
+    ? slatevalue.findIndex((el: { id: any }) => el.id === activeId)
     : -1;
 
   const [showDropdown, setShowDropdown] = useState(false);
@@ -223,7 +224,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   const [searchBarPosition, setSearchBarPosition] = useState(false);
 
-  const nodeIsEmpty = (currentNode) => {
+  const nodeIsEmpty = (currentNode: { children: string | any[] }) => {
     if (
       currentNode.children.length === 1 &&
       currentNode.children[0].text === ""
@@ -706,7 +707,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     [editor]
   );
 
-  function handleCursorClick(event, editor) {
+  function handleCursorClick(
+    event: { preventDefault: () => void; stopPropagation: () => void },
+    editor: BaseEditor & ReactEditor
+  ) {
     event.preventDefault();
     event.stopPropagation();
     const { selection } = editor;
@@ -812,68 +816,78 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   const MemoizedElementSelector = React.memo(ElementSelector);
 
-  const renderElement = useCallback((props) => {
-    const { attributes, children, element } = props;
+  const renderElement = useCallback(
+    (
+      props: JSX.IntrinsicAttributes & {
+        attributes: any;
+        children: any;
+        element: any;
+        renderElement: any;
+      }
+    ) => {
+      const { attributes, children, element } = props;
 
-    const elementPath = ReactEditor.findPath(editor, element);
-    const isRoot = elementPath.length === 1;
+      const elementPath = ReactEditor.findPath(editor, element);
+      const isRoot = elementPath.length === 1;
 
-    if (!elementPath) return;
+      if (!elementPath) return;
 
-    const [parentElement, parentPath] = Editor.parent(editor, elementPath);
-    const isInsideColumnCell = parentElement.type === "column-cell";
-    const addButton =
-      (isRoot && element.type !== "column" && element.type !== "title") ||
-      isInsideColumnCell ? (
-        <div
-          className="z-1000 group absolute top-1/2 left-[0px] -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center"
-          contentEditable={false}
-        >
-          <button
-            className="addButton rounded-md opacity-0 transition-opacity duration-300 ease-in-out hover:bg-gray-200  group-hover:opacity-100"
-            onClick={(event) => {
-              event.preventDefault();
-              event.stopPropagation();
-              openMiniDropdown(ReactEditor.findPath(editor, element));
-            }}
-            ref={toggleRef}
+      const [parentElement, parentPath] = Editor.parent(editor, elementPath);
+      const isInsideColumnCell = parentElement.type === "column-cell";
+      const addButton =
+        (isRoot && element.type !== "column" && element.type !== "title") ||
+        isInsideColumnCell ? (
+          <div
+            className="z-1000 group absolute top-1/2 left-[0px] -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center"
+            contentEditable={false}
           >
-            <Plus color={theme.colors.darkgray} />
-          </button>
+            <button
+              className="addButton rounded-md opacity-0 transition-opacity duration-300 ease-in-out hover:bg-gray-200  group-hover:opacity-100"
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                openMiniDropdown(ReactEditor.findPath(editor, element));
+              }}
+              ref={toggleRef}
+            >
+              <Plus color={theme.colors.darkgray} />
+            </button>
+          </div>
+        ) : null;
+
+      const optionMenu =
+        (isRoot && (element.type === "slide" || element.type === "equation")) ||
+        isInsideColumnCell ? (
+          <div className="absolute   top-[50%]  right-2 -translate-y-1/2 transform items-center">
+            <OptionMenu element={element} />
+          </div>
+        ) : null;
+
+      const shouldWrapWithSortableElement =
+        (isRoot && element.type !== "column" && element.type !== "title") ||
+        isInsideColumnCell;
+
+      const content = shouldWrapWithSortableElement ? (
+        <SortableElement
+          {...props}
+          renderElement={(props: any) => <MemoizedElementSelector {...props} />}
+        />
+      ) : (
+        <MemoizedElementSelector {...props} />
+      );
+
+      return (
+        <div className="group relative">
+          {content}
+          {addButton}
+          <div className="invisible opacity-0 transition-all duration-300 group-hover:visible group-hover:opacity-100">
+            {optionMenu}
+          </div>
         </div>
-      ) : null;
-
-    const optionMenu =
-      (isRoot && (element.type === "slide" || element.type === "equation")) ||
-      isInsideColumnCell ? (
-        <div className="absolute   top-[50%]  right-2 -translate-y-1/2 transform items-center">
-          <OptionMenu element={element} />
-        </div>
-      ) : null;
-
-    const shouldWrapWithSortableElement =
-      (isRoot && element.type !== "column" && element.type !== "title") ||
-      isInsideColumnCell;
-
-    const content = shouldWrapWithSortableElement ? (
-      <SortableElement
-        {...props}
-        renderElement={(props) => <MemoizedElementSelector {...props} />}
-      />
-    ) : (
-      <MemoizedElementSelector {...props} />
-    );
-
-    return (
-      <div className="group relative">
-        {content}
-        {addButton}
-        <div className="invisible opacity-0 transition-all duration-300 group-hover:visible group-hover:opacity-100">
-          {optionMenu}
-        </div>
-      </div>
-    );
-  }, []);
+      );
+    },
+    []
+  );
 
   const [insertDirection, setInsertDirection] = useState(null);
 
@@ -881,7 +895,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const [savedSelection, setSavedSelection] = useState(null);
 
   const handleDragEnd = useCallback(
-    function (event) {
+    function (event: { active: any; over: any }) {
       const { active, over } = event;
       if (active.id === over.id) {
         console.log("canceled");
@@ -1092,7 +1106,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     }
   };
 
-  function handleEditorMouseUp(event, editor) {
+  function handleEditorMouseUp(
+    event: React.MouseEvent<globalThis.Element, MouseEvent>,
+    editor: ReactEditor
+  ) {
     const equationElement = findAncestorWithClass(
       event.target,
       "equation-element"
@@ -1138,7 +1155,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     }
   }
 
-  function insertNewParagraphBelowLastNode(lastNodePath) {
+  function insertNewParagraphBelowLastNode(lastNodePath: string | any[]) {
     const newParagraph = {
       id: genNodeId(),
       type: "paragraph",
@@ -1179,7 +1196,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     }
   };
 
-  const handleSelectedText = (event, editor) => {
+  const handleSelectedText = (
+    event:
+      | React.KeyboardEvent<HTMLDivElement>
+      | React.MouseEvent<HTMLDivElement, MouseEvent>,
+    editor: BaseEditor & ReactEditor
+  ) => {
     event.stopPropagation();
     const { selection } = editor;
     if (selection && !Range.isCollapsed(selection)) {
@@ -1191,7 +1213,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         if (startContainer.nodeType === startContainer.TEXT_NODE) {
           const startPath = Editor.path(editor, selection, { edge: "start" });
           const [startNode] = Editor.parent(editor, startPath);
-          console.log(startNode);
           if (startNode.type === "paragraph" || startNode.type === "title") {
             const rangeForStart = range.cloneRange();
             rangeForStart.setEnd(startContainer, range.startOffset);
@@ -1199,8 +1220,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             const offsetTitle = startNode.type === "title" ? 60 : 80;
             const sideBarOffset = isLocked ? -240 : 0;
             setMiniToolbarPosition({
-              x: rect.left + window.scrollX,
-              y: rect.top + window.scrollY - rect.height - offsetTitle,
+              x: rect.left - 380,
+              y: rect.top + window.scrollY - rect.height - offsetTitle - 20,
             });
             setShowMiniToolbar(true);
 
@@ -1256,229 +1277,298 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     }
   }, [uploadedFileName]);
 
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    // Clean up the event listener on component unmount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  const [showRightSidebar, setShowRightSidebar] = useState(false);
+  const initialWidth = 300;
+  const minSidebarWidth = 300;
+  const maxSidebarWidth = 500;
+  const { contentRef, sidebarRef, handleDrag } = useResizeSidebar(
+    initialWidth,
+    minSidebarWidth,
+    maxSidebarWidth
+  );
+
   return (
-    <>
-      <div className="mx-auto h-[100px] justify-start p-4">
+    <div
+      className={`relative mx-auto min-w-[1000px] max-w-[1200px] ${
+        showRightSidebar && "max-w-[1400px]"
+      }`}
+    >
+      <div className="mx-auto mt-4 h-[100px] justify-start">
         {!showMiniToolbar && <TextSpeech />}
+        <button
+          className="absolute right-0 top-[60px] rounded border border-gray-400 p-1"
+          onClick={() => {
+            setShowRightSidebar((prev) => !prev);
+          }}
+        >
+          <Sidebar className="rotate-180 transform" />
+        </button>
       </div>
-      <div className="flex flex-col items-center justify-center">
-        <div className="z-0 mx-auto  mt-4 w-full rounded-md border-2 border-gray-300 px-2 lg:h-[680px]  lg:max-w-[980px] lg:px-0 ">
-          <div className="block  lg:w-full">
-            <ErrorBoundary>
-              <DndContext
-                onDragEnd={handleDragEnd}
-                onDragStart={handleDragStart}
-                sensors={sensors}
-              >
-                <SortableContext
-                  items={slatevalue}
-                  strategy={verticalListSortingStrategy}
+      <div className="flex">
+        <div className="flex flex-col items-center justify-center">
+          <div className="z-0 mx-auto  mt-4  min-w-[850px] max-w-[1000px] rounded-md border-2 border-gray-300 px-2 lg:h-[680px] lg:px-0">
+            <div className="block  lg:w-full">
+              <ErrorBoundary>
+                <DndContext
+                  onDragEnd={handleDragEnd}
+                  onDragStart={handleDragStart}
+                  sensors={sensors}
                 >
-                  <ActiveElementProvider activeIndex={activeIndex}>
-                    <div
-                      tabIndex={0}
-                      className="relative z-0 mx-auto block rounded-md pt-4 pr-1 pb-4 pl-2 focus:outline-none focus-visible:border-gray-300"
-                    >
-                      <Slate
-                        key={currentSlateKey}
-                        editor={editor}
-                        value={slatevalue}
-                        onChange={(newValue) => {
-                          setValue(newValue);
-                          const extractedText = extractTextValues(newValue);
-                          setTextSpeech(extractedText);
-                          if (handleTextChange) {
-                            handleTextChange(newValue);
-                          }
-                        }}
+                  <SortableContext
+                    items={slatevalue}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <ActiveElementProvider activeIndex={activeIndex}>
+                      <div
+                        tabIndex={0}
+                        className="relative z-0 mx-auto block rounded-md pt-4 pr-1 pb-4 pl-2 focus:outline-none focus-visible:border-gray-300"
                       >
-                        <Editable
-                          className="relative h-[640px] overflow-y-auto"
-                          renderElement={renderElement}
-                          renderLeaf={Blank}
-                          onMouseUp={(event) => {
-                            handleEditorMouseUp(event, editor);
-                            handleSelectedText(event, editor);
+                        <Slate
+                          key={currentSlateKey}
+                          editor={editor}
+                          value={slatevalue}
+                          onChange={(newValue) => {
+                            setValue(newValue);
+                            const extractedText = extractTextValues(newValue);
+                            setTextSpeech(extractedText);
+                            if (handleTextChange) {
+                              handleTextChange(newValue);
+                            }
                           }}
-                          onKeyDown={handleKeyDown}
-                          onKeyUp={(event) => {
-                            handleSelectedText(event, editor);
-                            const { selection } = editor;
-                            if (!selection) return;
-                            const _currentNodePath =
-                              selection.anchor.path.slice(0, -1);
-                            setusingCommandLine(false);
-                            const currentNode = Node.get(
-                              editor,
-                              _currentNodePath
-                            );
-
-                            if (event.key === "Backspace") {
+                        >
+                          <Editable
+                            className="relative h-[640px] overflow-y-auto"
+                            renderElement={renderElement}
+                            renderLeaf={Blank}
+                            onMouseUp={(event) => {
+                              handleEditorMouseUp(event, editor);
+                              handleSelectedText(event, editor);
+                            }}
+                            onKeyDown={handleKeyDown}
+                            onKeyUp={(event) => {
+                              handleSelectedText(event, editor);
                               const { selection } = editor;
+                              if (!selection) return;
+                              const _currentNodePath =
+                                selection.anchor.path.slice(0, -1);
+                              setusingCommandLine(false);
+                              const currentNode = Node.get(
+                                editor,
+                                _currentNodePath
+                              );
 
-                              if (selection && Range.isCollapsed(selection)) {
-                                const _currentNodePath =
-                                  selection.anchor.path.slice(0, -1);
-                                const _stringcurrentNode = Editor.node(
-                                  editor,
-                                  _currentNodePath
-                                );
-                                const currentText = Node.string(
-                                  _stringcurrentNode[0]
-                                );
-                                // Check if currentNode is an equation
+                              if (event.key === "Backspace") {
+                                const { selection } = editor;
 
-                                if (currentText.endsWith("/")) {
-                                  // setShowDropdown(false);
-                                  setSearchMinidropdownText("");
-                                } else {
-                                  const slashIndex =
-                                    currentText.lastIndexOf("/");
-                                  if (slashIndex !== -1) {
-                                    // Extract the text after the last "/" in the currentText
-                                    const searchText = currentText.slice(
-                                      slashIndex + 1
-                                    );
-                                    setSearchMinidropdownText(searchText);
-                                  } else {
+                                if (selection && Range.isCollapsed(selection)) {
+                                  const _currentNodePath =
+                                    selection.anchor.path.slice(0, -1);
+                                  const _stringcurrentNode = Editor.node(
+                                    editor,
+                                    _currentNodePath
+                                  );
+                                  const currentText = Node.string(
+                                    _stringcurrentNode[0]
+                                  );
+                                  // Check if currentNode is an equation
+
+                                  if (currentText.endsWith("/")) {
+                                    // setShowDropdown(false);
                                     setSearchMinidropdownText("");
-                                    setusingCommandLine(false);
-                                    setShowDropdown(false); // Close the mini-dropdown if there's no "/"
+                                  } else {
+                                    const slashIndex =
+                                      currentText.lastIndexOf("/");
+                                    if (slashIndex !== -1) {
+                                      // Extract the text after the last "/" in the currentText
+                                      const searchText = currentText.slice(
+                                        slashIndex + 1
+                                      );
+                                      setSearchMinidropdownText(searchText);
+                                    } else {
+                                      setSearchMinidropdownText("");
+                                      setusingCommandLine(false);
+                                      setShowDropdown(false); // Close the mini-dropdown if there's no "/"
+                                    }
                                   }
                                 }
                               }
-                            }
-                          }}
+                            }}
+                          />
+                          <Droppable>
+                            <div></div>
+                          </Droppable>
+                        </Slate>
+                      </div>
+                    </ActiveElementProvider>
+                  </SortableContext>
+                  {isDragging && (
+                    <DragOverlay>
+                      {activeId ? (
+                        <DragOverlayContent
+                          element={findElementInSlateValue(
+                            slatevalue,
+                            activeId
+                          )}
                         />
-                        <Droppable>
-                          <div></div>
-                        </Droppable>
-                      </Slate>
-                    </div>
-                  </ActiveElementProvider>
-                </SortableContext>
-                {isDragging && (
-                  <DragOverlay>
-                    {activeId ? (
-                      <DragOverlayContent
-                        element={findElementInSlateValue(slatevalue, activeId)}
-                      />
-                    ) : null}
-                  </DragOverlay>
-                )}
-              </DndContext>
-            </ErrorBoundary>
-            <AnimatePresence>
-              {showDropdown && activePath && (
-                <motion.div
-                  {...y_animation_props}
-                  className="fixed left-[120px] z-10 mx-auto mt-2 w-[320px]"
-                  style={{
-                    top: `${dropdownTop}px`,
-                    left: `${dropdownLeft}px`,
-                  }}
-                >
-                  <MiniDropdown
-                    ref={addSomethingDropdownRef}
-                    isOpen={showDropdown}
-                    addMCQBlock={() => {
-                      handleAddMCQBlock(JSON.parse(activePath));
-                      setShowDropdown(false);
-                    }}
-                    addEquationBlock={() => {
-                      handleAddEditableEquationBlock(
-                        "",
-                        JSON.parse(activePath)
-                      );
-                      setShowDropdown(false);
-                    }}
-                    genBlock={(_subject) => {
-                      console.log("add block");
-                      setShowFloatingModal({ open: true, subject: _subject });
-                      setShowDropdown(false);
-                    }}
-                    setShowDropdown={setShowDropdown}
-                    activePath={activePath}
-                    searchBarPosition={searchBarPosition}
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
-            <AnimatePresence>
-              {showEditBlockPopup && activeEditEquationPath && (
-                <>
+                      ) : null}
+                    </DragOverlay>
+                  )}
+                </DndContext>
+              </ErrorBoundary>
+              <AnimatePresence>
+                {showDropdown && activePath && (
                   <motion.div
                     {...y_animation_props}
-                    className="fixed  z-10 z-10 mx-auto mt-2 mt-2 w-[380px]"
+                    className="fixed left-[120px] z-10 mx-auto mt-2 w-[320px]"
                     style={{
-                      top: `${dropdownEditBlockTop}px`,
-                      left: `${dropdownEditBlockLeft}px`,
+                      top: `${dropdownTop}px`,
+                      left: `${dropdownLeft}px`,
                     }}
                   >
-                    <EditBlockPopup
-                      ref={editBlockDropdownRef}
-                      onChange={(latex, altText) =>
-                        handleEditLatex(
-                          latex,
-                          altText,
-                          JSON.parse(activeEditEquationPath)
-                        )
-                      }
-                      latexValue={getCurrentLatex}
-                      onClick={closeEditableDropdown}
-                      insertText={(note) => {
-                        Transforms.insertNodes(
-                          editor,
-                          {
-                            id: genNodeId(),
-                            type: "paragraph",
-                            children: [{ text: note }],
-                          },
-                          {
-                            at: Path.next(JSON.parse(activeEditEquationPath)),
-                          }
-                        );
+                    <MiniDropdown
+                      ref={addSomethingDropdownRef}
+                      isOpen={showDropdown}
+                      addMCQBlock={() => {
+                        handleAddMCQBlock(JSON.parse(activePath));
+                        setShowDropdown(false);
                       }}
+                      addEquationBlock={() => {
+                        handleAddEditableEquationBlock(
+                          "",
+                          JSON.parse(activePath)
+                        );
+                        setShowDropdown(false);
+                      }}
+                      genBlock={(_subject) => {
+                        console.log("add block");
+                        setShowFloatingModal({ open: true, subject: _subject });
+                        setShowDropdown(false);
+                      }}
+                      setShowDropdown={setShowDropdown}
+                      activePath={activePath}
+                      searchBarPosition={searchBarPosition}
                     />
                   </motion.div>
-                </>
-              )}
-            </AnimatePresence>
-            {showFloatingModal.open && (
-              <FloatingModal
-                title={getModalTitle()}
-                initialX={dropdownLeft}
-                initialY={dropdownTop}
-                onClose={() =>
-                  setShowFloatingModal({ open: false, subject: "" })
-                }
-              >
-                {renderSubjectComponent()}
-              </FloatingModal>
-            )}
-            <AnimatePresence>
-              {showMiniToolbar && (
-                <StyledMiniToolbar
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  style={{
-                    top: miniToolbarPosition.y,
-                    left: miniToolbarPosition.x,
-                  }}
-                  onMouseDown={(event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                  }}
+                )}
+              </AnimatePresence>
+              <AnimatePresence>
+                {showEditBlockPopup && activeEditEquationPath && (
+                  <>
+                    <motion.div
+                      {...y_animation_props}
+                      className="fixed  z-10 z-10 mx-auto mt-2 mt-2 w-[380px]"
+                      style={{
+                        top: `${dropdownEditBlockTop}px`,
+                        left: `${dropdownEditBlockLeft}px`,
+                      }}
+                    >
+                      <EditBlockPopup
+                        ref={editBlockDropdownRef}
+                        onChange={(latex, altText) =>
+                          handleEditLatex(
+                            latex,
+                            altText,
+                            JSON.parse(activeEditEquationPath)
+                          )
+                        }
+                        latexValue={getCurrentLatex}
+                        onClick={closeEditableDropdown}
+                        insertText={(note) => {
+                          Transforms.insertNodes(
+                            editor,
+                            {
+                              id: genNodeId(),
+                              type: "paragraph",
+                              children: [{ text: note }],
+                            },
+                            {
+                              at: Path.next(JSON.parse(activeEditEquationPath)),
+                            }
+                          );
+                        }}
+                      />
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
+              {showFloatingModal.open && (
+                <FloatingModal
+                  title={getModalTitle()}
+                  initialX={dropdownLeft}
+                  initialY={dropdownTop}
+                  onClose={() =>
+                    setShowFloatingModal({ open: false, subject: "" })
+                  }
                 >
-                  <TextSpeech key="selectedText" isSelected={true} />
-                </StyledMiniToolbar>
+                  {renderSubjectComponent()}
+                </FloatingModal>
               )}
-            </AnimatePresence>
+              <AnimatePresence>
+                {showMiniToolbar && (
+                  <StyledMiniToolbar
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    style={{
+                      top: miniToolbarPosition.y,
+                      left: miniToolbarPosition.x,
+                    }}
+                    onMouseDown={(event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                    }}
+                  >
+                    <TextSpeech key="selectedText" isSelected={true} />
+                  </StyledMiniToolbar>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </div>
+        {/* Right sidebar */}
+
+        {/* <div>Resize bar</div> */}
+        {showRightSidebar && (
+          <>
+            <div className="flex h-[680px] items-center">
+              <DraggableCore onDrag={handleDrag} axis="x">
+                <div className="mt-4 ml-2 flex hidden h-[200px] w-[5px] cursor-col-resize items-center rounded bg-gray-400 xl:block"></div>
+              </DraggableCore>
+            </div>
+            <div
+              ref={sidebarRef}
+              className="m-w-full mt-4 ml-2 hidden h-[680px] grow rounded-md border-2 border-gray-300  xl:right-0 xl:block"
+            >
+              <div className="p-4">
+                <h2 className="mb-4 text-xl font-semibold">Right Sidebar</h2>
+                <p>Content for the right sidebar goes here.</p>
+              </div>
+            </div>
+          </>
+        )}
       </div>
-    </>
+    </div>
   );
 };
 

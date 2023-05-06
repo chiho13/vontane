@@ -38,6 +38,7 @@ import { MathQuestionGenerator } from "../QuestionGenerator/Math";
 import { extractTextValues } from "@/components/DocumentEditor/helpers/extractText";
 import { useRouter } from "next/router";
 import { DraggableCore } from "react-draggable";
+import { Portal } from "react-portal";
 
 import {
   DndContext,
@@ -1323,24 +1324,37 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   return (
     <div
-      className={`relative mx-auto min-w-[1000px] max-w-[1200px] ${
-        showRightSidebar && "max-w-[1400px]"
-      }`}
+      className="max-[1400px] mx-auto"
+      style={{
+        transform: `translateX(${
+          showRightSidebar ? "0px" : `${rightSideBarWidth / 2}px`
+        })`,
+        width: `${rightSideBarWidth + 900}px`,
+        transition: "transform 0.3s ease-in-out",
+      }}
     >
       <div className="mx-auto mt-4 h-[100px] justify-start">
         {!showMiniToolbar && <TextSpeech />}
-        <button
-          className="absolute right-0 top-[60px] rounded border border-gray-400 p-1"
-          onClick={() => {
-            setShowRightSidebar((prev) => !prev);
-          }}
-        >
-          <Sidebar className="rotate-180 transform" />
-        </button>
+
+        <Portal>
+          <button
+            className="fixed right-[30px] top-[60px] rounded border border-gray-400 p-1"
+            onClick={() => {
+              setShowRightSidebar((prev) => !prev);
+            }}
+          >
+            <Sidebar className="rotate-180 transform" />
+          </button>
+        </Portal>
       </div>
       <div className="flex">
-        <div className="flex grow flex-col items-center justify-center transition duration-300">
-          <div className="z-0 mx-auto  mt-4  min-w-[900px] max-w-[1000px] rounded-md border-2 border-gray-300 px-2 lg:h-[680px] lg:px-0">
+        <div
+          className="flex flex-col items-center justify-center transition"
+          style={{
+            width: 900,
+          }}
+        >
+          <div className="z-0 mx-auto  mt-4  rounded-md border-2 border-gray-300 px-2 lg:h-[680px] lg:px-0">
             <div className="block  lg:w-full">
               <ErrorBoundary>
                 <DndContext
@@ -1562,48 +1576,41 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         {/* Right sidebar */}
 
         {/* <div>Resize bar</div> */}
-        <AnimatePresence>
-          {showRightSidebar && (
-            <>
-              <div className="flex h-[680px] items-center">
-                <DraggableCore onDrag={handleDrag}>
-                  <div className="mt-4 ml-2 flex hidden h-[200px] w-[5px] cursor-col-resize items-center rounded bg-gray-400 xl:block"></div>
-                </DraggableCore>
-              </div>
-              <motion.div
-                initial={{
-                  x: "100%",
-                  opacity: 0,
-                  width: `${rightSideBarWidth / 2}px`,
-                }}
-                animate={{
-                  x: "0%",
-                  opacity: 1,
-                  width: `${rightSideBarWidth}px`,
-                }}
-                exit={{
-                  x: "100%",
-                  opacity: 0,
-                  width: 0,
-                }}
-                transition={{
-                  x: { duration: 0.5 },
-                  opacity: { duration: 0.3 }, // Update the duration for opacity transition
-                  width: { duration: 0.5 },
-                }}
-                className="m-w-full mt-4 ml-2 hidden h-[680px] grow rounded-md border-2 border-gray-300  xl:right-0 xl:block"
-                style={{
-                  width: `${rightSideBarWidth}px`,
-                }}
-              >
-                <div className="p-4">
-                  <h2 className="mb-4 text-xl font-semibold">Right Sidebar</h2>
-                  <p>Content for the right sidebar goes here.</p>
-                </div>
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>
+
+        {/* {showRightSidebar && ( */}
+        <>
+          <div
+            style={{
+              opacity: showRightSidebar ? "1" : "0",
+              transition: "opacity 0.3s ease-in-out",
+              pointerEvents: showRightSidebar ? "auto" : "none",
+            }}
+            className="flex h-[680px] items-center"
+          >
+            <DraggableCore onDrag={handleDrag}>
+              <div className="mt-4 ml-2 flex hidden h-[200px] w-[5px] cursor-col-resize items-center rounded bg-gray-400 xl:block"></div>
+            </DraggableCore>
+          </div>
+          <div
+            className="m-w-full mt-4 ml-2 hidden h-[680px] grow rounded-md border-2 border-gray-300  xl:right-0 xl:block"
+            style={{
+              transform: `translateX(${
+                showRightSidebar ? "0px" : `${rightSideBarWidth}px`
+              })`,
+              flexBasis: `${rightSideBarWidth}px`,
+              opacity: showRightSidebar ? "1" : "0",
+              pointerEvents: showRightSidebar ? "auto" : "none",
+              transition:
+                "width 0.3s ease-in-out, opacity 0.4s ease-in-out, transform 0.3s ease-in-out",
+            }}
+          >
+            <div className="p-4">
+              <h2 className="mb-4 text-xl font-semibold">Right Sidebar</h2>
+              <p>Content for the right sidebar goes here.</p>
+            </div>
+          </div>
+        </>
+        {/* )} */}
       </div>
     </div>
   );

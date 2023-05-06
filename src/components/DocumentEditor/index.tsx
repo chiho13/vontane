@@ -1339,8 +1339,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         </button>
       </div>
       <div className="flex">
-        <div className="flex flex-col items-center justify-center">
-          <div className="z-0 mx-auto  mt-4  min-w-[850px] max-w-[1000px] rounded-md border-2 border-gray-300 px-2 lg:h-[680px] lg:px-0">
+        <div className="flex grow flex-col items-center justify-center transition duration-300">
+          <div className="z-0 mx-auto  mt-4  min-w-[900px] max-w-[1000px] rounded-md border-2 border-gray-300 px-2 lg:h-[680px] lg:px-0">
             <div className="block  lg:w-full">
               <ErrorBoundary>
                 <DndContext
@@ -1562,26 +1562,48 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         {/* Right sidebar */}
 
         {/* <div>Resize bar</div> */}
-        {showRightSidebar && (
-          <>
-            <div className="flex h-[680px] items-center">
-              <DraggableCore onDrag={handleDrag} axis="x">
-                <div className="mt-4 ml-2 flex hidden h-[200px] w-[5px] cursor-col-resize items-center rounded bg-gray-400 xl:block"></div>
-              </DraggableCore>
-            </div>
-            <div
-              className="m-w-full mt-4 ml-2 hidden h-[680px] grow rounded-md border-2 border-gray-300  xl:right-0 xl:block"
-              style={{
-                width: `${rightSideBarWidth}px`,
-              }}
-            >
-              <div className="p-4">
-                <h2 className="mb-4 text-xl font-semibold">Right Sidebar</h2>
-                <p>Content for the right sidebar goes here.</p>
+        <AnimatePresence>
+          {showRightSidebar && (
+            <>
+              <div className="flex h-[680px] items-center">
+                <DraggableCore onDrag={handleDrag}>
+                  <div className="mt-4 ml-2 flex hidden h-[200px] w-[5px] cursor-col-resize items-center rounded bg-gray-400 xl:block"></div>
+                </DraggableCore>
               </div>
-            </div>
-          </>
-        )}
+              <motion.div
+                initial={{
+                  x: "100%",
+                  opacity: 0,
+                  width: `${rightSideBarWidth / 2}px`,
+                }}
+                animate={{
+                  x: "0%",
+                  opacity: 1,
+                  width: `${rightSideBarWidth}px`,
+                }}
+                exit={{
+                  x: "100%",
+                  opacity: 0,
+                  width: 0,
+                }}
+                transition={{
+                  x: { duration: 0.5 },
+                  opacity: { duration: 0.3 }, // Update the duration for opacity transition
+                  width: { duration: 0.5 },
+                }}
+                className="m-w-full mt-4 ml-2 hidden h-[680px] grow rounded-md border-2 border-gray-300  xl:right-0 xl:block"
+                style={{
+                  width: `${rightSideBarWidth}px`,
+                }}
+              >
+                <div className="p-4">
+                  <h2 className="mb-4 text-xl font-semibold">Right Sidebar</h2>
+                  <p>Content for the right sidebar goes here.</p>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

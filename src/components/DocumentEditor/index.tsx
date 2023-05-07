@@ -1307,11 +1307,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   );
   const minSidebarWidth = 320;
   const maxSidebarWidth = 500;
-  const { sidebarWidth, handleDrag } = useResizeSidebar(
-    rightSideBarWidth,
-    minSidebarWidth,
-    maxSidebarWidth
-  );
+  const { sidebarWidth, handleDrag, isDraggingRightSideBar, handleDragStop } =
+    useResizeSidebar(rightSideBarWidth, minSidebarWidth, maxSidebarWidth);
 
   useEffect(() => {
     localStorage.setItem("showRightSidebar", JSON.stringify(showRightSidebar));
@@ -1324,7 +1321,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   return (
     <div
-      className="max-[1400px] relative mx-auto"
+      className="max-[1400px] relative mx-auto px-4"
       style={{
         right: !showRightSidebar ? -rightSideBarWidth / 2 : 0,
         width: `${rightSideBarWidth + 900}px`,
@@ -1585,12 +1582,18 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             }}
             className="flex h-[680px] items-center"
           >
-            <DraggableCore onDrag={handleDrag}>
-              <div className="mt-4 ml-2 flex hidden h-[200px] w-[5px] cursor-col-resize items-center rounded bg-gray-400 xl:block"></div>
+            <DraggableCore onDrag={handleDrag} onStop={handleDragStop}>
+              <div
+                className={`flex hidden w-[26px] justify-center opacity-0 ${
+                  isDraggingRightSideBar && "opacity-100"
+                } transition duration-300 hover:opacity-100 lg:block`}
+              >
+                <div className="mt-4 ml-2 flex h-[200px] w-[8px]  cursor-col-resize items-center rounded bg-gray-400 "></div>
+              </div>
             </DraggableCore>
           </div>
           <div
-            className="m-w-full mt-4 ml-2 hidden h-[680px] grow rounded-md border-2 border-gray-300  xl:right-0 xl:block"
+            className="m-w-full mt-4 hidden h-[680px] grow rounded-md border-2 border-gray-300   lg:block"
             style={{
               transform: `translateX(${
                 showRightSidebar ? "0px" : `${rightSideBarWidth}px`

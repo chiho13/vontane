@@ -121,7 +121,6 @@ import { EditBlockPopup } from "../EditEquationBlock";
 import { EnglishQuestionGenerator } from "../QuestionGenerator/English";
 import useTextSpeechStatusPolling from "@/hooks/useTextSpeechAPI";
 import { addEditableEquationBlock } from "./helpers/addEquationBlock";
-import useSidebarResize from "@/hooks/useResizeSidebar";
 import useResizeSidebar from "@/hooks/useResizeSidebar";
 
 export const DocumentEditor: React.FC<DocumentEditorProps> = ({
@@ -1232,7 +1231,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             const endRect = endRange.getBoundingClientRect();
 
             const selectionRect = range.getBoundingClientRect();
-            const offsetTitle = startNode.type === "title" ? 60 : 80;
+            const offsetTitle = 80;
+            const sideBarOffset = isLocked ? 95 : 0;
+            const rightSideBarOffset = showRightSidebar
+              ? rightSideBarWidth / 2
+              : 0;
 
             // Get all rectangles that make up the selection
             const rects = range.getClientRects();
@@ -1241,7 +1244,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             const leftPosition = rects[0].left;
 
             setMiniToolbarPosition({
-              x: leftPosition + window.scrollX - 470, // Adjust the offset based on the toolbar width
+              x:
+                leftPosition +
+                window.scrollX -
+                470 -
+                sideBarOffset +
+                rightSideBarOffset, // Adjust the offset based on the toolbar width
               y:
                 Math.min(startRect.top, selectionRect.top, endRect.top) +
                 window.scrollY -

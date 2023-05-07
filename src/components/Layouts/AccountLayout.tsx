@@ -482,9 +482,11 @@ const Layout: React.FC<LayoutProps> = ({
         <main
           className=" flex min-h-screen overflow-auto bg-white pt-4"
           style={{
-            marginLeft: isLocked && desktopbreakpoint ? "240px" : "0",
+            marginLeft: isLocked && desktopbreakpoint ? "240px" : "50px",
             width:
-              isLocked && desktopbreakpoint ? "calc(100vw - 240px" : "100vw",
+              isLocked && desktopbreakpoint
+                ? "calc(100vw - 240px)"
+                : "calc(100vw - 50px)",
             transition:
               "margin-left 300ms ease-in-out, width 300ms ease-in-out",
           }}

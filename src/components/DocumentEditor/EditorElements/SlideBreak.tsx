@@ -68,7 +68,7 @@ export const SlideBreak = withSlideNumbering(
       >
         {/* <hr className="border-1 my-4 h-1 w-[98%] divide-dashed rounded bg-gray-400" />
          */}
-        <div className="mt-3 mb-3 block w-[95%] w-full text-center">
+        <div className="mt-3 mb-3 block w-[95%] text-center">
           <div className="mb-2 flex justify-end text-gray-500">
             {" "}
             <div className="relative mr-1 flex flex-col items-center text-sm">

@@ -1324,13 +1324,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   return (
     <div
-      className="max-[1400px] mx-auto"
+      className="max-[1400px] relative mx-auto"
       style={{
-        transform: `translateX(${
-          showRightSidebar ? "0px" : `${rightSideBarWidth / 2}px`
-        })`,
+        right: !showRightSidebar ? -rightSideBarWidth / 2 : 0,
         width: `${rightSideBarWidth + 900}px`,
-        transition: "transform 0.3s ease-in-out",
+        transition: "right 0.3s ease-in-out",
       }}
     >
       <div className="mx-auto mt-4 h-[100px] justify-start">

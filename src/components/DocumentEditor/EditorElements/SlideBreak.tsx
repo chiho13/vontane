@@ -33,7 +33,7 @@ const withSlideNumbering = (Component) => {
     const isAdjacent = slideBreakIndex < slideBreakElements.length - 1;
     const isLastSlide = slideBreakIndex === slideBreakElements.length - 1;
 
-    const slideNumberTop = slideBreakIndex + 1;
+    const slideNumberTop = slideBreakIndex + 2;
     const slideNumberBottom = slideBreakIndex + 2;
 
     return (
@@ -68,29 +68,20 @@ export const SlideBreak = withSlideNumbering(
       >
         {/* <hr className="border-1 my-4 h-1 w-[98%] divide-dashed rounded bg-gray-400" />
          */}
-        <div className="mt-3 mb-3 block w-[95%] text-center">
+        <div className="mt-3 mb-3 flex w-[95%] items-center text-center">
+          <div className="mr-2 block h-[5px] grow -translate-y-1 border-b-2 border-gray-400"></div>
           <div className="mb-2 flex justify-end text-gray-500">
             {" "}
             <div className="relative mr-1 flex flex-col items-center text-sm">
               {/* <ChevronUp className="absolute -top-5 w-4 text-gray-500" /> */}
               <div
-                className={`w-10 text-center text-3xl text-[${theme.colors.brand}]`}
+                className={`w-10 text-center text-base text-[${theme.colors.brand}]`}
               >
                 {slideNumbers.slideNumberTop}
               </div>
             </div>
           </div>
-          <div className="mr-2 block h-[5px] -translate-y-1 border-b-4 border-dashed border-gray-400"></div>
-          <div className="mt-1  flex justify-end text-gray-500">
-            <div className="relative mr-1 flex flex-col items-center text-sm">
-              {/* <ChevronDown className="absolute -top-5 w-4 text-gray-500" /> */}
-              <div
-                className={`w-10 text-center text-3xl text-[${theme.colors.brand}]`}
-              >
-                {slideNumbers.slideNumberBottom}
-              </div>
-            </div>
-          </div>
+          <div className="mr-2 block h-[5px] grow -translate-y-1 border-b-2 border-gray-400"></div>
         </div>
         {children}
       </div>

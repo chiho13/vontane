@@ -66,13 +66,12 @@ const ToggleButtonWrapper = styled.div`
   top: 0;
   padding-top: 15px;
   left: 0;
-  z-index: 10;
+  z-index: 100;
   display: block;
   height: 45px;
   width: 45px;
   display: flex;
   justify-content: center;
-  background: #f7f7f7;
 
   ${mq.lg`
     height: 100%;
@@ -96,7 +95,6 @@ position: fixed;
 top: 0;
 height: 100%;
 width: 240px;
-z-index: 100;
 transform: ${(props) =>
   props.isLocked && props.isOpen ? "translateX(0)" : "translateX(-240px)"};
   background: rgb(251, 251, 250); 
@@ -485,11 +483,9 @@ const Layout: React.FC<LayoutProps> = ({
         <main
           className=" flex min-h-screen overflow-auto bg-[#f7f7f7] pt-4"
           style={{
-            marginLeft: isLocked && desktopbreakpoint ? "240px" : "45px",
+            marginLeft: isLocked && desktopbreakpoint ? "240px" : "0",
             width:
-              isLocked && desktopbreakpoint
-                ? "calc(100vw - 240px)"
-                : "calc(100vw - 45px)",
+              isLocked && desktopbreakpoint ? "calc(100vw - 240px)" : "100vw",
             transition:
               "margin-left 300ms ease-in-out, width 300ms ease-in-out",
           }}

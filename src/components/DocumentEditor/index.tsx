@@ -106,13 +106,14 @@ declare module "slate" {
 }
 
 const EditableStyle = styled.div`
+  padding: 5px;
   .editable-scrollbar::-webkit-scrollbar {
     width: 6px;
     border-radius: 3px;
   }
 
   .editable-scrollbar::-webkit-scrollbar-track {
-    background: #ffffff;
+    background: transparent;
     border-radius: 3px;
   }
 
@@ -725,23 +726,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     [editor]
   );
 
-  function handleCursorClick(
-    event: { preventDefault: () => void; stopPropagation: () => void },
-    editor: BaseEditor & ReactEditor
-  ) {
-    event.preventDefault();
-    event.stopPropagation();
-    const { selection } = editor;
-
-    if (selection) {
-      const startPosition = selection.anchor;
-      const [currentNode, currentNodePath] = Editor.parent(
-        editor,
-        startPosition.path
-      );
-    }
-  }
-
   const handleEditLatex = (value: string, altText: string, path: Path) => {
     const latex = value;
     const equationNode = {
@@ -1238,7 +1222,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           const startPath = Editor.path(editor, selection, { edge: "start" });
           const [startNode] = Editor.parent(editor, startPath);
 
-          if (startNode.type === "paragraph" || startNode.type === "title") {
+          if (startNode.type === "paragraph") {
             const startRange = document.createRange();
             startRange.setStart(startContainer, range.startOffset);
             startRange.setEnd(startContainer, range.startOffset);
@@ -1263,7 +1247,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
             // Calculate mini toolbar position
             const toolbarWidth = 200; // Update this value according to your toolbar width
-            let initialX = selectionRect.left - textEditorLeft;
+            let initialX = firstRect.left - textEditorLeft;
 
             // if (window.innerWidth > 1200) {
             //   initialX += selectionRect.width / 2 - toolbarWidth / 2;
@@ -1275,7 +1259,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             );
 
             setMiniToolbarPosition({
-              x: x - 2,
+              x: x - 7,
               y: firstRect.top - textEditorRect.top - 60,
             });
             setShowMiniToolbar(true);
@@ -1391,10 +1375,13 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         {!showMiniToolbar && <TextSpeech />}
       </div> */}
       <div className="flex justify-center">
-        <div className="flex flex-col items-center justify-center transition">
+        <div className="block">
           <div
-            className="relative  z-0  mt-4 w-full rounded-md  border-2 border-gray-300 bg-white px-2 lg:w-[800px] lg:px-0 xl:h-[680px]"
+            className="relative  z-0  mt-4 w-full rounded-md  border-2 border-gray-300 bg-white px-2 lg:w-[800px] lg:px-0"
             ref={textEditorRef}
+            style={{
+              height: "calc(100vh - 90px)",
+            }}
           >
             <button
               className="absolute -top-[50px] right-0 z-10 hidden rounded border border-gray-400 bg-white p-1 xl:block"
@@ -1416,26 +1403,29 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     strategy={verticalListSortingStrategy}
                   >
                     <ActiveElementProvider activeIndex={activeIndex}>
-                      <div
-                        tabIndex={0}
-                        className="relative z-0 mx-auto block rounded-md pt-4 pr-1 pb-4 pl-2 focus:outline-none focus-visible:border-gray-300"
-                      >
-                        <Slate
-                          key={currentSlateKey}
-                          editor={editor}
-                          value={slatevalue}
-                          onChange={(newValue) => {
-                            setValue(newValue);
-                            const extractedText = extractTextValues(newValue);
-                            setTextSpeech(extractedText);
-                            if (handleTextChange) {
-                              handleTextChange(newValue);
-                            }
-                          }}
+                      <EditableStyle>
+                        <div
+                          tabIndex={0}
+                          className="editable-scrollbar relative z-0 mx-auto block overflow-y-auto rounded-md pt-4 pr-1 pb-4 pl-2 focus:outline-none  focus-visible:border-gray-300"
                         >
-                          <EditableStyle>
+                          <Slate
+                            key={currentSlateKey}
+                            editor={editor}
+                            value={slatevalue}
+                            onChange={(newValue) => {
+                              setValue(newValue);
+                              const extractedText = extractTextValues(newValue);
+                              setTextSpeech(extractedText);
+                              if (handleTextChange) {
+                                handleTextChange(newValue);
+                              }
+                            }}
+                          >
                             <Editable
-                              className="editable-scrollbar relative h-[640px] overflow-y-auto"
+                              className=" relative"
+                              style={{
+                                height: "calc(100vh - 140px)",
+                              }}
                               renderElement={renderElement}
                               renderLeaf={Blank}
                               onMouseUp={(event) => {
@@ -1495,32 +1485,32 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                                 }
                               }}
                             />
-                          </EditableStyle>
-                          <Droppable>
-                            <div></div>
-                          </Droppable>
-                        </Slate>
-                        <AnimatePresence>
-                          {showMiniToolbar && (
-                            <StyledMiniToolbar
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              exit={{ opacity: 0 }}
-                              style={{
-                                top: miniToolbarPosition.y,
-                                left: miniToolbarPosition.x,
-                              }}
-                              onMouseDown={(event) => {
-                                event.preventDefault();
-                                event.stopPropagation();
-                              }}
-                            >
-                              hello
-                              {/* <TextSpeech key="selectedText" isSelected={true} /> */}
-                            </StyledMiniToolbar>
-                          )}
-                        </AnimatePresence>
-                      </div>
+                            <Droppable>
+                              <div></div>
+                            </Droppable>
+                          </Slate>
+                          <AnimatePresence>
+                            {showMiniToolbar && (
+                              <StyledMiniToolbar
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                style={{
+                                  top: miniToolbarPosition.y,
+                                  left: miniToolbarPosition.x,
+                                }}
+                                onMouseDown={(event) => {
+                                  event.preventDefault();
+                                  event.stopPropagation();
+                                }}
+                              >
+                                hello
+                                {/* <TextSpeech key="selectedText" isSelected={true} /> */}
+                              </StyledMiniToolbar>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      </EditableStyle>
                     </ActiveElementProvider>
                   </SortableContext>
                   {isDragging && (
@@ -1628,11 +1618,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             </div>
           </div>
         </div>
-        {/* Right sidebar */}
-
-        {/* <div>Resize bar</div> */}
-
-        {/* {showRightSidebar && ( */}
         <>
           <div
             style={{
@@ -1644,20 +1629,21 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           >
             <DraggableCore onDrag={handleDrag} onStop={handleDragStop}>
               <div
-                className={`flex hidden w-[26px] justify-center opacity-0 ${
+                className={`hidden w-[22px] opacity-0 ${
                   isDraggingRightSideBar && "opacity-100"
                 } transition duration-300 hover:opacity-100 lg:block`}
               >
-                <div className="mt-4 ml-2 flex h-[200px] w-[8px]  cursor-col-resize items-center rounded bg-gray-400 "></div>
+                <div className="mx-auto mt-4 block h-[200px] w-[8px]  cursor-col-resize rounded bg-[#b4b4b4] "></div>
               </div>
             </DraggableCore>
           </div>
           <div
-            className="m-w-full mt-4 hidden h-[680px] grow rounded-md border-2 border-gray-300   xl:block"
+            className="m-w-full mt-4 hidden grow rounded-md border-2 border-gray-300 bg-white   xl:block"
             style={{
               transform: `translateX(${
                 showRightSidebar ? "0px" : `${rightSideBarWidth}px`
               })`,
+              height: "calc(100vh - 90px)",
               flexBasis: `${rightSideBarWidth}px`,
               opacity: showRightSidebar ? "1" : "0",
               pointerEvents: showRightSidebar ? "auto" : "none",

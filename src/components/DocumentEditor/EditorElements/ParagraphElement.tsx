@@ -43,8 +43,6 @@ export function ParagraphElement(props) {
 
   const hasSlide = hasSlideElement(editor.children);
 
-  console.log("hasSlide", hasSlide);
-
   useEffect(() => {
     if (!focused && !selected) {
       setSelectedElementID("");

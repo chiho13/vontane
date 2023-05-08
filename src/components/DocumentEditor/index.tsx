@@ -1240,6 +1240,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             const textEditorWidth = textEditorRect.width;
             const textEditorLeft = textEditorRect.left;
 
+            // Get all rectangles that make up the selection
+            const rects = range.getClientRects();
+            const firstRect = rects[0];
+
             // Calculate mini toolbar position
             const toolbarWidth = 200; // Update this value according to your toolbar width
             let initialX = selectionRect.left - textEditorLeft;
@@ -1254,11 +1258,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             );
 
             setMiniToolbarPosition({
-              x: x,
-              y:
-                Math.min(startRect.top, selectionRect.top, endRect.top) -
-                textEditorRect.top -
-                50, // Adjust this value according to your toolbar height
+              x: x - 2,
+              y: firstRect.top - textEditorRect.top - 60,
             });
             setShowMiniToolbar(true);
 

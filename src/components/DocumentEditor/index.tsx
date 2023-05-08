@@ -1662,7 +1662,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           >
             <div className="p-4">
               <h2 className="mb-4 text-xl font-semibold">Right Sidebar</h2>
-              <p>Content for the right sidebar goes here.</p>
+              <p>Hi</p>
             </div>
           </div>
         </>

@@ -1377,19 +1377,22 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       <div className="flex justify-center">
         <div className="block">
           <div
-            className="relative  z-0  mt-4 w-full rounded-md  border-2 border-gray-300 bg-white px-2 lg:w-[800px] lg:px-0"
+            className="relative  z-0  mt-4 w-full rounded-md  border border-gray-300 bg-white px-2 lg:w-[800px] lg:px-0"
             ref={textEditorRef}
             style={{
               height: "calc(100vh - 90px)",
             }}
           >
             <button
-              className="absolute -top-[50px] right-0 z-10 hidden rounded border border-gray-400 bg-white p-1 xl:block"
+              className="absolute -top-[50px] right-0 z-10 hidden rounded border border-gray-300 bg-white p-1 xl:block"
               onClick={() => {
                 setShowRightSidebar((prev) => !prev);
               }}
             >
-              <Sidebar className="rotate-180 transform" />
+              <Sidebar
+                className="rotate-180 transform"
+                color={theme.colors.darkergray}
+              />
             </button>
             <div className="block  lg:w-full">
               <ErrorBoundary>
@@ -1638,12 +1641,13 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             </DraggableCore>
           </div>
           <div
-            className="m-w-full mt-4 hidden grow rounded-md border-2 border-gray-300 bg-white   xl:block"
+            className="m-w-full mt-4 hidden grow rounded-md border border-gray-300 bg-white   xl:block"
             style={{
               transform: `translateX(${
                 showRightSidebar ? "0px" : `${rightSideBarWidth}px`
               })`,
               height: "calc(100vh - 90px)",
+              minWidth: "270px",
               flexBasis: `${rightSideBarWidth}px`,
               opacity: showRightSidebar ? "1" : "0",
               pointerEvents: showRightSidebar ? "auto" : "none",

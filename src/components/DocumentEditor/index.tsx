@@ -1358,7 +1358,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   return (
     <div
-      className="max-[1400px] relative mx-auto px-4"
+      className="max-[1400px] relative mx-auto mt-5 px-4"
       style={{
         right:
           windowSize.width > breakpoints.xl
@@ -1373,20 +1373,20 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       {/* <div className="mx-auto mt-4 h-[100px] justify-start">
         {!showMiniToolbar && <TextSpeech />}
       </div> */}
-      <button
-        className="fixed right-[30px] top-[60px] hidden rounded border border-gray-400 p-1 xl:block"
-        onClick={() => {
-          setShowRightSidebar((prev) => !prev);
-        }}
-      >
-        <Sidebar className="rotate-180 transform" />
-      </button>
       <div className="flex justify-center">
         <div className="flex flex-col items-center justify-center transition">
           <div
             className="relative  z-0  mt-4 w-full rounded-md  border-2 border-gray-300 px-2 lg:w-[900px] lg:px-0 xl:h-[680px]"
             ref={textEditorRef}
           >
+            <button
+              className="absolute top-[10px] right-[10px] z-10 hidden rounded border border-gray-400 bg-white p-1 xl:block"
+              onClick={() => {
+                setShowRightSidebar((prev) => !prev);
+              }}
+            >
+              <Sidebar className="rotate-180 transform" />
+            </button>
             <div className="block  lg:w-full">
               <ErrorBoundary>
                 <DndContext

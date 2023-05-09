@@ -45,6 +45,28 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   //   editor.selection = lastActiveSelection;
   const urlInputRef = useRef(null);
 
+  const getActiveLinkUrl = (editor) => {
+    let linkUrl = "";
+    for (const [node] of Editor.nodes(editor, {
+      match: (n) =>
+        !Editor.isEditor(n) && SlateElement.isElement(n) && n.type === "link",
+    })) {
+      if (node.url) {
+        linkUrl = node.url;
+        break;
+      }
+    }
+    return linkUrl;
+  };
+
+  const hasURL = getActiveLinkUrl(editor);
+
+  useEffect(() => {
+    if (openLink) {
+      setInputValue(getActiveLinkUrl(editor));
+    }
+  }, [openLink, editor]);
+
   useEffect(() => {
     if (openLink) {
       ReactEditor.blur(editor);
@@ -69,6 +91,11 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         !Editor.isEditor(n) && SlateElement.isElement(n) && n.type === "link",
     });
     return !!link;
+  };
+
+  const unLink = () => {
+    unwrapLink(editor);
+    setShowMiniToolbar(false);
   };
 
   const insertLink = (url) => {
@@ -180,12 +207,20 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               onBlur={(e) => e.preventDefault()}
             />
             <button
-              className={`grow p-1 font-semibold text-[${theme.colors.brand}]`}
+              className={`grow p-1 text-sm font-semibold text-[${theme.colors.brand}]`}
               type="submit"
             >
               Apply
             </button>
           </form>
+          {hasURL && (
+            <button
+              className={`grow p-1 pr-2 text-sm font-semibold text-[${theme.colors.brand}]`}
+              onClick={unLink}
+            >
+              Unlink
+            </button>
+          )}
         </div>
       )}
     </div>

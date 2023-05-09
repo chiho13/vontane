@@ -16,7 +16,16 @@ import {
 
 export function ElementSelector(props) {
   const { element, attributes, children } = props;
-
+  const InlineChromiumBugfix = () => (
+    <span
+      contentEditable={false}
+      style={{
+        fontSize: 0,
+      }}
+    >
+      {String.fromCodePoint(160) /* Non-breaking space */}
+    </span>
+  );
   switch (element.type) {
     case "title":
       return <TitleElement {...props} />;
@@ -26,6 +35,16 @@ export function ElementSelector(props) {
       return <AudioElement {...props} />;
     case "paragraph":
       return <ParagraphElement {...props} />;
+    case "link":
+      return (
+        <a
+          {...props.attributes}
+          className="inline text-blue-500 underline"
+          href={props.element.url}
+        >
+          {children}
+        </a>
+      );
     case "list-item":
       return <ListItem {...props} />;
     case "equation":

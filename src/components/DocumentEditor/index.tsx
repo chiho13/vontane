@@ -105,23 +105,6 @@ declare module "slate" {
   }
 }
 
-const EditableStyle = styled.div`
-  .editable-scrollbar::-webkit-scrollbar {
-    width: 6px;
-    border-radius: 3px;
-  }
-
-  .editable-scrollbar::-webkit-scrollbar-track {
-    background: #ffffff;
-    border-radius: 3px;
-  }
-
-  .editable-scrollbar::-webkit-scrollbar-thumb {
-    background: #dddddd;
-    border-radius: 3px;
-  }
-`;
-
 const StyledMiniToolbar = styled(motion.div)`
   position: absolute;
   z-index: 20;
@@ -1270,7 +1253,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             // }
 
             const x = Math.max(
-              Math.min(initialX, textEditorWidth - toolbarWidth - 20),
+              Math.min(initialX, textEditorWidth - toolbarWidth),
               0
             );
 
@@ -1357,9 +1340,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     JSON.parse(localStorage.getItem("showRightSidebar") || "true")
   );
   const [rightSideBarWidth, setRightSideBarWidth] = useState(
-    Number(localStorage.getItem("sidebarWidth")) || 370
+    Number(localStorage.getItem("sidebarWidth")) || 320
   );
-  const minSidebarWidth = 370;
+  const minSidebarWidth = 320;
   const maxSidebarWidth = 500;
   const { sidebarWidth, handleDrag, isDraggingRightSideBar, handleDragStop } =
     useResizeSidebar(rightSideBarWidth, minSidebarWidth, maxSidebarWidth);
@@ -1375,7 +1358,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   return (
     <div
-      className="max-[1400px] relative mx-auto mt-10 px-4"
+      className="max-[1400px] relative mx-auto mt-5 px-4"
       style={{
         right:
           windowSize.width > breakpoints.xl
@@ -1383,7 +1366,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               ? -rightSideBarWidth / 2
               : 0
             : 0,
-        width: `${rightSideBarWidth + 800}px`,
+        width: `${rightSideBarWidth + 900}px`,
         transition: "right 0.3s ease-in-out",
       }}
     >
@@ -1393,11 +1376,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       <div className="flex justify-center">
         <div className="flex flex-col items-center justify-center transition">
           <div
-            className="relative  z-0  mt-4 w-full rounded-md  border-2 border-gray-300 bg-white px-2 lg:w-[800px] lg:px-0 xl:h-[680px]"
+            className="relative  z-0  mt-4 w-full rounded-md  border-2 border-gray-300 px-2 lg:w-[900px] lg:px-0 xl:h-[680px]"
             ref={textEditorRef}
           >
             <button
-              className="absolute -top-[50px] right-0 z-10 hidden rounded border border-gray-400 bg-white p-1 xl:block"
+              className="absolute top-[10px] right-[10px] z-10 hidden rounded border border-gray-400 bg-white p-1 xl:block"
               onClick={() => {
                 setShowRightSidebar((prev) => !prev);
               }}
@@ -1433,69 +1416,64 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                             }
                           }}
                         >
-                          <EditableStyle>
-                            <Editable
-                              className="editable-scrollbar relative h-[640px] overflow-y-auto"
-                              renderElement={renderElement}
-                              renderLeaf={Blank}
-                              onMouseUp={(event) => {
-                                handleEditorMouseUp(event, editor);
-                                handleSelectedText(event, editor);
-                              }}
-                              onKeyDown={handleKeyDown}
-                              onKeyUp={(event) => {
-                                handleSelectedText(event, editor);
+                          <Editable
+                            className="relative h-[640px] overflow-y-auto"
+                            renderElement={renderElement}
+                            renderLeaf={Blank}
+                            onMouseUp={(event) => {
+                              handleEditorMouseUp(event, editor);
+                              handleSelectedText(event, editor);
+                            }}
+                            onKeyDown={handleKeyDown}
+                            onKeyUp={(event) => {
+                              handleSelectedText(event, editor);
+                              const { selection } = editor;
+                              if (!selection) return;
+                              const _currentNodePath =
+                                selection.anchor.path.slice(0, -1);
+                              setusingCommandLine(false);
+                              const currentNode = Node.get(
+                                editor,
+                                _currentNodePath
+                              );
+
+                              if (event.key === "Backspace") {
                                 const { selection } = editor;
-                                if (!selection) return;
-                                const _currentNodePath =
-                                  selection.anchor.path.slice(0, -1);
-                                setusingCommandLine(false);
-                                const currentNode = Node.get(
-                                  editor,
-                                  _currentNodePath
-                                );
 
-                                if (event.key === "Backspace") {
-                                  const { selection } = editor;
+                                if (selection && Range.isCollapsed(selection)) {
+                                  const _currentNodePath =
+                                    selection.anchor.path.slice(0, -1);
+                                  const _stringcurrentNode = Editor.node(
+                                    editor,
+                                    _currentNodePath
+                                  );
+                                  const currentText = Node.string(
+                                    _stringcurrentNode[0]
+                                  );
+                                  // Check if currentNode is an equation
 
-                                  if (
-                                    selection &&
-                                    Range.isCollapsed(selection)
-                                  ) {
-                                    const _currentNodePath =
-                                      selection.anchor.path.slice(0, -1);
-                                    const _stringcurrentNode = Editor.node(
-                                      editor,
-                                      _currentNodePath
-                                    );
-                                    const currentText = Node.string(
-                                      _stringcurrentNode[0]
-                                    );
-                                    // Check if currentNode is an equation
-
-                                    if (currentText.endsWith("/")) {
-                                      // setShowDropdown(false);
-                                      setSearchMinidropdownText("");
+                                  if (currentText.endsWith("/")) {
+                                    // setShowDropdown(false);
+                                    setSearchMinidropdownText("");
+                                  } else {
+                                    const slashIndex =
+                                      currentText.lastIndexOf("/");
+                                    if (slashIndex !== -1) {
+                                      // Extract the text after the last "/" in the currentText
+                                      const searchText = currentText.slice(
+                                        slashIndex + 1
+                                      );
+                                      setSearchMinidropdownText(searchText);
                                     } else {
-                                      const slashIndex =
-                                        currentText.lastIndexOf("/");
-                                      if (slashIndex !== -1) {
-                                        // Extract the text after the last "/" in the currentText
-                                        const searchText = currentText.slice(
-                                          slashIndex + 1
-                                        );
-                                        setSearchMinidropdownText(searchText);
-                                      } else {
-                                        setSearchMinidropdownText("");
-                                        setusingCommandLine(false);
-                                        setShowDropdown(false); // Close the mini-dropdown if there's no "/"
-                                      }
+                                      setSearchMinidropdownText("");
+                                      setusingCommandLine(false);
+                                      setShowDropdown(false); // Close the mini-dropdown if there's no "/"
                                     }
                                   }
                                 }
-                              }}
-                            />
-                          </EditableStyle>
+                              }
+                            }}
+                          />
                           <Droppable>
                             <div></div>
                           </Droppable>

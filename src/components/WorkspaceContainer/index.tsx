@@ -167,7 +167,7 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = ({
     // const extractedText = extractTextValues(value);
     // setTextSpeech(extractedText);
     updateWorkspace(value);
-    console.log(value);
+
     // setInitialSlateValue(value);
     // console.log(extractedText);
     setUpdatedWorkspace({ title: value[0].children[0].text, id: workspaceId });

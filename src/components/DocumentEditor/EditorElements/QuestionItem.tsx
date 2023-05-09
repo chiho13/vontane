@@ -10,7 +10,7 @@ const ListItemStyle = styled.div`
     opacity: 0.333;
     user-select: none;
     position: absolute;
-    top: 0;
+    top: 40px;
   }
 `;
 

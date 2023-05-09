@@ -7,6 +7,10 @@
   opacity: 0;
 }
 
+.addButton {
+  opacity: 0;
+}
+
 .sortableElement {
   display: flex;
   gap: 15px;
@@ -21,6 +25,9 @@
 
 .sortableElement:hover .handle {
   background: #f0f0f0;
+  opacity: 1;
+}
+.sortableElement:hover .addButton {
   opacity: 1;
 }
 

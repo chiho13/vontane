@@ -96,6 +96,9 @@ type CustomElement = {
 };
 
 type CustomText = {
+  url: string | undefined;
+  highlighted: any;
+  link: any;
   highlight: any;
   blank: any;
   strikethrough: any;
@@ -168,6 +171,22 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   } = useContext(EditorContext);
 
   const [slatevalue, setValue] = useState(initialSlateValue);
+
+  // [
+  //   {
+  //     id: "SDfdsfsdfsdfsdf",
+  //     type: "paragraph",
+  //     children: [
+  //       { text: "" },
+  //       {
+  //         id: "jfklsjfklsdfds",
+  //         type: "link",
+  //         url: "https://www.google.com",
+  //         children: [{ text: "Google" }],
+  //       },
+  //     ],
+  //   },
+  // ]
 
   const [ghostslatevalue, setGhostValue] = useState(initialSlateValue);
 
@@ -418,10 +437,22 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           if (parentNode.type === "paragraph") {
             const newPath = Path.next(parentPath);
             if (Editor.isEnd(editor, selection.anchor, _currentNodePath)) {
-              insertNewParagraphEnter(newPath);
+              // insertNewParagraphEnter(newPath);
+              const newPath = Path.next(parentPath);
+              Transforms.insertNodes(
+                editor,
+                {
+                  id: genNodeId(),
+                  type: "paragraph",
+                  children: [{ text: "" }],
+                },
+                { at: newPath }
+              );
+              Transforms.select(editor, newPath);
             }
 
             console.log(_currentNodePath);
+
             if (
               Editor.isStart(editor, editor.selection.anchor, _currentNodePath)
             ) {
@@ -442,6 +473,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
               const newId = genNodeId();
               Transforms.setNodes(editor, { id: newId }, { at: newPath });
+              Transforms.select(editor, Editor.start(editor, newPath));
             }
           }
 
@@ -530,6 +562,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         const { selection } = editor;
 
         if (selection && Range.isCollapsed(selection)) {
+          // Do nothing if there is a range selected
+
+          // Get the node before the current selection
+
+          // If the node before the selection is a paragraph, merge the nodes
+
           const currentNode = Node.get(editor, _currentNodePath);
           const _stringcurrentNode = Editor.node(editor, _currentNodePath);
           const currentText = Node.string(_stringcurrentNode[0]);
@@ -856,7 +894,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             contentEditable={false}
           >
             <button
-              className="addButton rounded-md opacity-0  ease-in-out hover:bg-gray-200  group-hover:opacity-100"
+              className="addButton  rounded-md ease-in-out hover:bg-gray-200"
               onClick={(event) => {
                 event.preventDefault();
                 event.stopPropagation();
@@ -884,6 +922,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       const content = shouldWrapWithSortableElement ? (
         <SortableElement
           {...props}
+          addButton={addButton}
           renderElement={(props: any) => <MemoizedElementSelector {...props} />}
         />
       ) : (
@@ -891,13 +930,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       );
 
       return (
-        <div className="group relative">
+        <>
           {content}
-          {addButton}
-          <div className="invisible opacity-0 transition-all duration-300 group-hover:visible group-hover:opacity-100">
+          {/* <div className="invisible opacity-0 transition-all duration-300 group-hover:visible group-hover:opacity-100">
             {optionMenu}
-          </div>
-        </div>
+          </div>  */}
+        </>
       );
     },
     []
@@ -1226,50 +1264,34 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   );
   const [dynamicToolbarWidth, setToolbarWidth] = useState(200);
   const [openLink, setOpenLink] = useState(false);
-  const calculateToolbarPosition = () => {
-    // Get the text editor's dimensions
-    const textEditorRect = textEditorRef.current.getBoundingClientRect();
-    const textEditorWidth = textEditorRect.width;
-    const textEditorLeft = textEditorRect.left;
+  const [lastActiveSelection, setLastActiveSelection] = useState<Range>();
 
-    // Get all rectangles that make up the selection
-    const rects = range.getClientRects();
-    const firstRect = rects[0];
+  useEffect(() => {
+    console.log(editor.selection);
+    if (editor.selection != null) setLastActiveSelection(editor.selection);
+  }, [editor.selection]);
 
-    // Calculate mini toolbar position
-    const toolbarWidth = dynamicToolbarWidth; // Update this value according to your toolbar width
-    let initialX = firstRect.left - textEditorLeft;
+  const decorate = ([node, path]) => {
+    if (lastActiveSelection != null && openLink) {
+      console.log("decorate");
+      const intersection = Range.intersection(
+        lastActiveSelection,
+        Editor.range(editor, path)
+      );
 
-    // if (window.innerWidth > 1200) {
-    //   initialX += selectionRect.width / 2 - toolbarWidth / 2;
-    // }
+      if (intersection == null) {
+        return [];
+      }
 
-    const x = Math.max(
-      Math.min(initialX, textEditorWidth - toolbarWidth - 20),
-      0
-    );
+      const range = {
+        highlighted: true,
+        ...intersection,
+      };
 
-    const y =
-      firstRect.top -
-      window.scrollY -
-      textEditorRect.top -
-      60 +
-      textEditorRef.current.scrollTop;
-
-    return { x, y };
+      return [range];
+    }
+    return [];
   };
-
-  // Add an effect that recalculates toolbar position when toolbarWidth changes
-  // useEffect(() => {
-  //   if (openLink) {
-  //     setMiniToolbarPosition((prevPosition) => {
-  //       return {
-  //         ...prevPosition, // spread the rest of the properties
-  //         x: prevPosition.x - 250,
-  //       };
-  //     });
-  //   }
-  // }, [dynamicToolbarWidth, openLink]);
 
   const handleSelectedText = useCallback(
     (
@@ -1500,6 +1522,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                             onChange={(newValue) => {
                               setValue(newValue);
 
+                              console.log(JSON.stringify(newValue));
                               // const extractedText = extractTextValues(newValue);
                               // setTextSpeech(extractedText);
                               if (handleTextChange) {
@@ -1513,6 +1536,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                                 style={{
                                   height: "calc(100vh - 140px)",
                                 }}
+                                decorate={decorate}
                                 renderElement={renderElement}
                                 renderLeaf={Leaf}
                                 onMouseUp={(event) => {
@@ -1597,6 +1621,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                                   setToolbarWidth={setToolbarWidth}
                                   openLink={openLink}
                                   setOpenLink={setOpenLink}
+                                  setShowMiniToolbar={setShowMiniToolbar}
+                                  lastActiveSelection={lastActiveSelection}
                                 />
                                 {/* <TextSpeech key="selectedText" isSelected={true} /> */}
                               </StyledMiniToolbar>

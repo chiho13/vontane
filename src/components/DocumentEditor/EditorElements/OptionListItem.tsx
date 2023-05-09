@@ -10,6 +10,7 @@ const StyledOptionListItem = styled.li`
   padding: 8px;
   width: auto;
   display: list-item;
+  background: #ffffff;
 
   span[data-placeholder]::after {
     content: attr(data-placeholder);

@@ -68,11 +68,11 @@ export const SlideBreak = withSlideNumbering(
       >
         {/* <hr className="border-1 my-4 h-1 w-[98%] divide-dashed rounded bg-gray-400" />
          */}
-        <div className="mt-1 mb-1 flex w-[95%] items-center text-center">
+        <div className="mt-3 mb-3 flex w-[95%] items-center text-center">
           <div className="mr-2 block h-[5px] grow -translate-y-1 border-b-2 border-gray-400"></div>
-          <div className=" flex justify-end text-gray-500">
+          <div className="mb-2 flex justify-end text-gray-500">
             {" "}
-            <div className="relative -top-[2px] mr-1 flex flex-col items-center text-sm">
+            <div className="relative mr-1 flex flex-col items-center text-sm">
               {/* <ChevronUp className="absolute -top-5 w-4 text-gray-500" /> */}
               <div
                 className={`w-10 text-center text-base text-[${theme.colors.brand}]`}

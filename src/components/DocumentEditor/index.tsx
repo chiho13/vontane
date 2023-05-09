@@ -39,8 +39,6 @@ import { extractTextValues } from "@/components/DocumentEditor/helpers/extractTe
 import { useRouter } from "next/router";
 import { DraggableCore } from "react-draggable";
 import { Portal } from "react-portal";
-import { Toolbar } from "@/components/Toolbar";
-import { up_animation_props } from "@/config/framer";
 
 import {
   DndContext,
@@ -69,7 +67,7 @@ import { useNewColumn } from "@/contexts/NewColumnContext";
 import { useSensor, useSensors, MouseSensor } from "@dnd-kit/core";
 import { findPathById, createColumns } from "./helpers/createColumns";
 import { FloatingModal } from "@/components/FloatingModal";
-import { Leaf } from "./LeafElements/TextLeaf";
+import { Blank } from "./LeafElements/Blank";
 import { MiniDropdown } from "./MiniDropdown";
 import { OptionMenu } from "./OptionMenu";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
@@ -96,12 +94,6 @@ type CustomElement = {
 };
 
 type CustomText = {
-  highlight: any;
-  blank: any;
-  strikethrough: any;
-  underline: any;
-  italic: any;
-  bold: any;
   text: string;
 };
 
@@ -135,10 +127,11 @@ const StyledMiniToolbar = styled(motion.div)`
   position: absolute;
   z-index: 20;
   display: block;
-  border-radius: 6px;
-  border: 1px solid #eeeeee;
-  background: #ffffff;
-  padding: 4px;
+  width: 200px;
+  border-radius: 4px;
+  border: 1px solid #cbd5e0;
+  background-color: white;
+  padding: 0.5rem;
   box-shadow: 0 10px 20px rgba(50, 50, 50, 0.19),
     0 6px 6px rgba(50, 50, 50, 0.23);
 `;
@@ -148,7 +141,6 @@ import { EnglishQuestionGenerator } from "../QuestionGenerator/English";
 import useTextSpeechStatusPolling from "@/hooks/useTextSpeechAPI";
 import { addEditableEquationBlock } from "./helpers/addEquationBlock";
 import useResizeSidebar from "@/hooks/useResizeSidebar";
-import { debounce } from "lodash";
 
 export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   workspaceId,
@@ -355,15 +347,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         return;
       }
 
-      setIsTyping(true);
       const _currentNodePath = selection.anchor.path.slice(0, -1);
       const startPosition = selection.anchor;
       const [currentNode, currentNodePath] = Editor.parent(
         editor,
         startPosition.path
       );
-
-      setIsTyping(currentNode.id);
 
       let updatedNode = null;
 
@@ -826,8 +815,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     },
     []
   );
-  const [isTyping, setIsTyping] = useState("");
-  const debouncedSetIsTyping = debounce(setIsTyping, 1000);
+
   const MemoizedElementSelector = React.memo(ElementSelector);
 
   const renderElement = useCallback(
@@ -856,7 +844,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             contentEditable={false}
           >
             <button
-              className="addButton rounded-md opacity-0  ease-in-out hover:bg-gray-200  group-hover:opacity-100"
+              className="addButton rounded-md opacity-0 transition-opacity duration-300 ease-in-out hover:bg-gray-200  group-hover:opacity-100"
               onClick={(event) => {
                 event.preventDefault();
                 event.stopPropagation();
@@ -1133,7 +1121,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       const pathString = equationElement.getAttribute("data-path");
       if (pathString) {
         const path = JSON.parse(pathString);
-        setActivePath(path);
         openEditBlockPopup(equationElement, event, path);
         return;
       }
@@ -1212,153 +1199,89 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     }
   };
 
-  const toolbarRef = useRef(null);
-  useClickOutside(
-    toolbarRef,
-    () => {
-      if (showMiniToolbar) {
-        setShowMiniToolbar(false);
-        setToolbarWidth(200);
-        setOpenLink(false);
-      }
-    },
-    textEditorRef
-  );
-  const [dynamicToolbarWidth, setToolbarWidth] = useState(200);
-  const [openLink, setOpenLink] = useState(false);
-  const calculateToolbarPosition = () => {
-    // Get the text editor's dimensions
-    const textEditorRect = textEditorRef.current.getBoundingClientRect();
-    const textEditorWidth = textEditorRect.width;
-    const textEditorLeft = textEditorRect.left;
+  const handleSelectedText = (
+    event:
+      | React.KeyboardEvent<HTMLDivElement>
+      | React.MouseEvent<HTMLDivElement, MouseEvent>,
+    editor: BaseEditor & ReactEditor
+  ) => {
+    event.stopPropagation();
+    const { selection } = editor;
+    if (selection && !Range.isCollapsed(selection)) {
+      const domSelection = window.getSelection();
+      if (domSelection && domSelection.rangeCount > 0) {
+        const range = domSelection.getRangeAt(0);
+        const startContainer = range.startContainer;
+        const endContainer = range.endContainer;
+        const endOffset = range.endOffset;
 
-    // Get all rectangles that make up the selection
-    const rects = range.getClientRects();
-    const firstRect = rects[0];
+        if (
+          startContainer.nodeType === startContainer.TEXT_NODE &&
+          endContainer.nodeType === endContainer.TEXT_NODE
+        ) {
+          const startPath = Editor.path(editor, selection, { edge: "start" });
+          const [startNode] = Editor.parent(editor, startPath);
 
-    // Calculate mini toolbar position
-    const toolbarWidth = dynamicToolbarWidth; // Update this value according to your toolbar width
-    let initialX = firstRect.left - textEditorLeft;
+          if (startNode.type === "paragraph") {
+            const startRange = document.createRange();
+            startRange.setStart(startContainer, range.startOffset);
+            startRange.setEnd(startContainer, range.startOffset);
+            const startRect = startRange.getBoundingClientRect();
 
-    // if (window.innerWidth > 1200) {
-    //   initialX += selectionRect.width / 2 - toolbarWidth / 2;
-    // }
+            const endRange = document.createRange();
+            endRange.setStart(endContainer, endOffset);
+            endRange.setEnd(endContainer, endOffset);
+            const endRect = endRange.getBoundingClientRect();
 
-    const x = Math.max(
-      Math.min(initialX, textEditorWidth - toolbarWidth - 20),
-      0
-    );
+            const selectionRect = range.getBoundingClientRect();
 
-    const y =
-      firstRect.top -
-      window.scrollY -
-      textEditorRect.top -
-      60 +
-      textEditorRef.current.scrollTop;
+            // Get the text editor's dimensions
+            const textEditorRect =
+              textEditorRef.current.getBoundingClientRect();
+            const textEditorWidth = textEditorRect.width;
+            const textEditorLeft = textEditorRect.left;
 
-    return { x, y };
-  };
+            // Get all rectangles that make up the selection
+            const rects = range.getClientRects();
+            const firstRect = rects[0];
 
-  // Add an effect that recalculates toolbar position when toolbarWidth changes
-  // useEffect(() => {
-  //   if (openLink) {
-  //     setMiniToolbarPosition((prevPosition) => {
-  //       return {
-  //         ...prevPosition, // spread the rest of the properties
-  //         x: prevPosition.x - 250,
-  //       };
-  //     });
-  //   }
-  // }, [dynamicToolbarWidth, openLink]);
+            // Calculate mini toolbar position
+            const toolbarWidth = 200; // Update this value according to your toolbar width
+            let initialX = firstRect.left - textEditorLeft;
 
-  const handleSelectedText = useCallback(
-    (
-      event:
-        | React.KeyboardEvent<HTMLDivElement>
-        | React.MouseEvent<HTMLDivElement, MouseEvent>,
-      editor: BaseEditor & ReactEditor
-    ) => {
-      event.stopPropagation();
+            // if (window.innerWidth > 1200) {
+            //   initialX += selectionRect.width / 2 - toolbarWidth / 2;
+            // }
 
-      const { selection } = editor;
-      if (selection && !Range.isCollapsed(selection)) {
-        const domSelection = window.getSelection();
-        if (domSelection && domSelection.rangeCount > 0) {
-          const range = domSelection.getRangeAt(0);
-          const startContainer = range.startContainer;
-          const endContainer = range.endContainer;
-          const endOffset = range.endOffset;
+            const x = Math.max(
+              Math.min(initialX, textEditorWidth - toolbarWidth - 20),
+              0
+            );
 
-          if (
-            startContainer.nodeType === startContainer.TEXT_NODE &&
-            endContainer.nodeType === endContainer.TEXT_NODE
-          ) {
-            const startPath = Editor.path(editor, selection, { edge: "start" });
-            const [startNode] = Editor.parent(editor, startPath);
+            setMiniToolbarPosition({
+              x: x,
+              y:
+                firstRect.top -
+                window.scrollY -
+                textEditorRect.top -
+                60 +
+                textEditorRef.current.scrollTop,
+            });
+            setShowMiniToolbar(true);
 
-            if (startNode.type === "paragraph") {
-              const startRange = document.createRange();
-              startRange.setStart(startContainer, range.startOffset);
-              startRange.setEnd(startContainer, range.startOffset);
-              const startRect = startRange.getBoundingClientRect();
-
-              const endRange = document.createRange();
-              endRange.setStart(endContainer, endOffset);
-              endRange.setEnd(endContainer, endOffset);
-              const endRect = endRange.getBoundingClientRect();
-
-              const selectionRect = range.getBoundingClientRect();
-
-              // Get the text editor's dimensions
-              const textEditorRect =
-                textEditorRef.current.getBoundingClientRect();
-              const textEditorWidth = textEditorRect.width;
-              const textEditorLeft = textEditorRect.left;
-
-              // Get all rectangles that make up the selection
-              const rects = range.getClientRects();
-              const firstRect = rects[0];
-
-              // Calculate mini toolbar position
-              const toolbarWidth = 400; // Update this value according to your toolbar width
-              let initialX = firstRect.left - textEditorLeft;
-
-              // if (window.innerWidth > 1200) {
-              //   initialX += selectionRect.width / 2 - toolbarWidth / 2;
-              // }
-
-              const x = Math.max(
-                Math.min(initialX, textEditorWidth - toolbarWidth - 20),
-                0
-              );
-
-              setMiniToolbarPosition({
-                x: x,
-                y:
-                  firstRect.top -
-                  window.scrollY -
-                  textEditorRect.top -
-                  60 +
-                  textEditorRef.current.scrollTop,
-              });
-              setShowMiniToolbar(true);
-
-              const selectedText = Editor.string(editor, selection);
-              const extractedText = textRegex(selectedText);
-              console.log(extractedText);
-              setTextSpeech(null);
-              setSelectedTextSpeech([extractedText]);
-            }
+            const selectedText = Editor.string(editor, selection);
+            const extractedText = textRegex(selectedText);
+            console.log(extractedText);
+            setTextSpeech(null);
+            setSelectedTextSpeech([extractedText]);
           }
         }
-      } else {
-        setSelectedTextSpeech(null);
-        setShowMiniToolbar(false);
-        setOpenLink(false);
       }
-    },
-    [dynamicToolbarWidth]
-  );
+    } else {
+      setSelectedTextSpeech(null);
+      setShowMiniToolbar(false);
+    }
+  };
 
   useEffect(() => {
     if (uploadedFileName) {
@@ -1499,89 +1422,86 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                             value={slatevalue}
                             onChange={(newValue) => {
                               setValue(newValue);
-
-                              // const extractedText = extractTextValues(newValue);
-                              // setTextSpeech(extractedText);
+                              const extractedText = extractTextValues(newValue);
+                              setTextSpeech(extractedText);
                               if (handleTextChange) {
                                 handleTextChange(newValue);
                               }
                             }}
                           >
-                            <Droppable>
-                              <Editable
-                                className=" relative"
-                                style={{
-                                  height: "calc(100vh - 140px)",
-                                }}
-                                renderElement={renderElement}
-                                renderLeaf={Leaf}
-                                onMouseUp={(event) => {
-                                  handleEditorMouseUp(event, editor);
-                                  handleSelectedText(event, editor);
-                                }}
-                                spellCheck={false}
-                                onKeyDown={handleKeyDown}
-                                onKeyUp={(event) => {
-                                  handleSelectedText(event, editor);
-                                  debouncedSetIsTyping("");
+                            <Editable
+                              className=" relative"
+                              style={{
+                                height: "calc(100vh - 140px)",
+                              }}
+                              renderElement={renderElement}
+                              renderLeaf={Blank}
+                              onMouseUp={(event) => {
+                                handleEditorMouseUp(event, editor);
+                                handleSelectedText(event, editor);
+                              }}
+                              onKeyDown={handleKeyDown}
+                              onKeyUp={(event) => {
+                                handleSelectedText(event, editor);
+                                const { selection } = editor;
+                                if (!selection) return;
+                                const _currentNodePath =
+                                  selection.anchor.path.slice(0, -1);
+                                setusingCommandLine(false);
+                                const currentNode = Node.get(
+                                  editor,
+                                  _currentNodePath
+                                );
 
+                                if (event.key === "Backspace") {
                                   const { selection } = editor;
-                                  if (!selection) return;
-                                  const _currentNodePath =
-                                    selection.anchor.path.slice(0, -1);
-                                  setusingCommandLine(false);
-                                  const currentNode = Node.get(
-                                    editor,
-                                    _currentNodePath
-                                  );
 
-                                  if (event.key === "Backspace") {
-                                    const { selection } = editor;
+                                  if (
+                                    selection &&
+                                    Range.isCollapsed(selection)
+                                  ) {
+                                    const _currentNodePath =
+                                      selection.anchor.path.slice(0, -1);
+                                    const _stringcurrentNode = Editor.node(
+                                      editor,
+                                      _currentNodePath
+                                    );
+                                    const currentText = Node.string(
+                                      _stringcurrentNode[0]
+                                    );
+                                    // Check if currentNode is an equation
 
-                                    if (
-                                      selection &&
-                                      Range.isCollapsed(selection)
-                                    ) {
-                                      const _currentNodePath =
-                                        selection.anchor.path.slice(0, -1);
-                                      const _stringcurrentNode = Editor.node(
-                                        editor,
-                                        _currentNodePath
-                                      );
-                                      const currentText = Node.string(
-                                        _stringcurrentNode[0]
-                                      );
-                                      // Check if currentNode is an equation
-
-                                      if (currentText.endsWith("/")) {
-                                        // setShowDropdown(false);
-                                        setSearchMinidropdownText("");
+                                    if (currentText.endsWith("/")) {
+                                      // setShowDropdown(false);
+                                      setSearchMinidropdownText("");
+                                    } else {
+                                      const slashIndex =
+                                        currentText.lastIndexOf("/");
+                                      if (slashIndex !== -1) {
+                                        // Extract the text after the last "/" in the currentText
+                                        const searchText = currentText.slice(
+                                          slashIndex + 1
+                                        );
+                                        setSearchMinidropdownText(searchText);
                                       } else {
-                                        const slashIndex =
-                                          currentText.lastIndexOf("/");
-                                        if (slashIndex !== -1) {
-                                          // Extract the text after the last "/" in the currentText
-                                          const searchText = currentText.slice(
-                                            slashIndex + 1
-                                          );
-                                          setSearchMinidropdownText(searchText);
-                                        } else {
-                                          setSearchMinidropdownText("");
-                                          setusingCommandLine(false);
-                                          setShowDropdown(false); // Close the mini-dropdown if there's no "/"
-                                        }
+                                        setSearchMinidropdownText("");
+                                        setusingCommandLine(false);
+                                        setShowDropdown(false); // Close the mini-dropdown if there's no "/"
                                       }
                                     }
                                   }
-                                }}
-                              />
+                                }
+                              }}
+                            />
+                            <Droppable>
+                              <div></div>
                             </Droppable>
                           </Slate>
                           <AnimatePresence>
                             {showMiniToolbar && (
                               <StyledMiniToolbar
-                                ref={toolbarRef}
-                                {...up_animation_props}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
                                 style={{
                                   top: miniToolbarPosition.y,
@@ -1592,12 +1512,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                                   event.stopPropagation();
                                 }}
                               >
-                                <Toolbar
-                                  path={activePath}
-                                  setToolbarWidth={setToolbarWidth}
-                                  openLink={openLink}
-                                  setOpenLink={setOpenLink}
-                                />
+                                hello
                                 {/* <TextSpeech key="selectedText" isSelected={true} /> */}
                               </StyledMiniToolbar>
                             )}

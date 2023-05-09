@@ -5,6 +5,7 @@
   cursor: grab;
   display: flex;
   opacity: 0;
+  transition: all 0.3s ease;
 }
 
 .sortableElement {

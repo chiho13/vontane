@@ -1259,13 +1259,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             );
 
             setMiniToolbarPosition({
-              x: x,
-              y:
-                firstRect.top -
-                window.scrollY -
-                textEditorRect.top -
-                60 +
-                textEditorRef.current.scrollTop,
+              x: x - 7,
+              y: firstRect.top - textEditorRect.top - 60,
             });
             setShowMiniToolbar(true);
 
@@ -1383,6 +1378,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         <div className="block">
           <div
             className="relative  z-0  mt-4 w-full rounded-md  border border-gray-300 bg-white px-2 lg:w-[800px] lg:px-0"
+            ref={textEditorRef}
             style={{
               height: "calc(100vh - 90px)",
             }}
@@ -1412,7 +1408,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     <ActiveElementProvider activeIndex={activeIndex}>
                       <EditableStyle>
                         <div
-                          ref={textEditorRef}
                           tabIndex={0}
                           className="editable-scrollbar relative z-0 mx-auto block overflow-y-auto rounded-md pt-4 pr-1 pb-4 pl-2 focus:outline-none  focus-visible:border-gray-300"
                         >

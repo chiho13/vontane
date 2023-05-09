@@ -1,14 +1,5 @@
 // withTitle.js
-import {
-  Transforms,
-  Node,
-  Range,
-  Path,
-  Editor,
-  Point,
-  Element,
-  Text,
-} from "slate";
+import { Transforms, Node, Range, Path, Editor } from "slate";
 
 export const withTitle = (editor) => {
   const { normalizeNode } = editor;
@@ -29,15 +20,6 @@ export const withTitle = (editor) => {
       const paragraphNode = { type: "paragraph", children: [{ text: "" }] };
       Transforms.setNodes(editor, paragraphNode, { at: path });
       return;
-    }
-
-    if (node.type === "paragraph") {
-      // Check if it has more than one child
-
-      if (node.children.length > 1) {
-        // If so, it's valid according to our custom schema, so we return
-        return;
-      }
     }
 
     // Fall back to the original `normalizeNode`
@@ -75,55 +57,6 @@ export const withTitle = (editor) => {
 
     originalDeleteBackward(unit);
     // Fall back to the original `deleteBackward`
-  };
-
-  return editor;
-};
-
-export const withCustomDelete = (editor) => {
-  const { deleteBackward } = editor;
-
-  editor.deleteBackward = (unit) => {
-    const { selection } = editor;
-
-    if (selection && Range.isCollapsed(selection)) {
-      const parentBlock = Editor.above(editor, {
-        match: (n) => Editor.isBlock(editor, n),
-      });
-
-      if (parentBlock) {
-        const [, parentPath] = parentBlock;
-        const startAtParent = Editor.start(editor, parentPath);
-
-        if (Point.equals(selection.anchor, startAtParent)) {
-          const prevBlock = Editor.before(editor, parentPath);
-
-          if (prevBlock) {
-            const [prevNode] = Editor.node(editor, prevBlock);
-            if (Element.isElement(prevNode) && prevNode.children.length > 0) {
-              const lastChild = prevNode.children[prevNode.children.length - 1];
-
-              if (lastChild.type === "link") {
-                const endOfPrevNode = Editor.end(editor, prevBlock);
-                const pointBeforeLink = Editor.before(editor, endOfPrevNode);
-                if (pointBeforeLink) {
-                  Transforms.splitNodes(editor, {
-                    at: selection,
-                    match: (n) => Editor.isBlock(editor, n),
-                  });
-                  const text = Node.string(parentBlock[0]);
-                  Transforms.insertText(editor, text, { at: endOfPrevNode });
-                  Transforms.removeNodes(editor, { at: parentPath });
-                }
-                return;
-              }
-            }
-          }
-        }
-      }
-    }
-
-    deleteBackward(unit);
   };
 
   return editor;

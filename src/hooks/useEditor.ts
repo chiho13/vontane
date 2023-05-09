@@ -7,9 +7,8 @@ import { createEditor, Editor, Path, Range, Transforms } from "slate";
 import { withID } from "@/hoc/withID";
 import { withHistory } from "slate-history";
 import { withColumns } from "@/hoc/withColumns";
-import { withTitle, withCustomDelete } from "@/hoc/withTitle";
+import { withTitle } from "@/hoc/withTitle";
 import { genNodeId } from "@/hoc/withID";
-import isUrl from "is-url";
 
 const withNormalizePasting = (editor) => {
   const { insertData } = editor;
@@ -41,32 +40,11 @@ const withNormalizePasting = (editor) => {
   return editor;
 };
 
-const wrapLink = (editor, url: string) => {
-  // if (isLinkActive(editor)) {
-  //   unwrapLink(editor)
-  // }
-
-  const { selection } = editor;
-  const isCollapsed = selection && Range.isCollapsed(selection);
-  const link = {
-    type: "link",
-    url,
-    children: isCollapsed ? [{ text: url }] : [],
-  };
-
-  if (isCollapsed) {
-    Transforms.insertNodes(editor, link);
-  } else {
-    Transforms.wrapNodes(editor, link, { split: true });
-    Transforms.collapse(editor, { edge: "end" });
-  }
-};
-
 export function useEditor() {
   const editor = useMemo(
     () =>
       withNormalizePasting(
-        withCustomDelete(withTitle(withHistory(withReact(createEditor()))))
+        withTitle(withHistory(withColumns(withReact(createEditor()))))
       ),
     []
   );

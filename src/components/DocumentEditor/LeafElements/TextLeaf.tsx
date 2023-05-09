@@ -21,14 +21,6 @@ export const Leaf: React.FC<RenderLeafProps> = ({
     children = <del>{children}</del>;
   }
 
-  if (leaf.highlighted) {
-    children = (
-      <span {...attributes} className="bg-blue-200">
-        {children}
-      </span>
-    );
-  }
-
   if (leaf.blank) {
     return (
       <span

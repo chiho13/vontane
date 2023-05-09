@@ -3,14 +3,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { FaBold } from "react-icons/fa";
 import { FiItalic, FiUnderline } from "react-icons/fi";
 import { ImStrikethrough, ImLink } from "react-icons/im";
-import { genNodeId } from "@/hoc/withID";
-import {
-  Editor,
-  Transforms,
-  Text,
-  Range,
-  Element as SlateElement,
-} from "slate";
+import { Editor, Transforms, Text } from "slate";
 import { ReactEditor } from "slate-react";
 import { useTheme } from "styled-components";
 import { X } from "lucide-react";
@@ -20,8 +13,6 @@ type ToolbarProps = {
   setToolbarWidth: (value: number) => void;
   openLink: boolean;
   setOpenLink: (value: boolean) => void;
-  lastActiveSelection: any;
-  setShowMiniToolbar: (value: boolean) => void;
 };
 
 export const Toolbar: React.FC<ToolbarProps> = ({
@@ -29,22 +20,12 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   setToolbarWidth,
   openLink,
   setOpenLink,
-  lastActiveSelection,
-  setShowMiniToolbar,
 }) => {
   const { editor } = useContext(EditorContext);
-
-  const { isInline } = editor;
-
-  editor.isInline = (element) =>
-    ["link"].includes(element.type) || isInline(element);
-
   const theme = useTheme();
   const [inputValue, setInputValue] = useState("");
 
-  //   editor.selection = lastActiveSelection;
   const urlInputRef = useRef(null);
-
   useEffect(() => {
     if (openLink) {
       ReactEditor.blur(editor);
@@ -54,54 +35,6 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
-  };
-
-  const unwrapLink = (editor) => {
-    Transforms.unwrapNodes(editor, {
-      match: (n) =>
-        !Editor.isEditor(n) && SlateElement.isElement(n) && n.type === "link",
-    });
-  };
-
-  const isLinkActive = (editor) => {
-    const [link] = Editor.nodes(editor, {
-      match: (n) =>
-        !Editor.isEditor(n) && SlateElement.isElement(n) && n.type === "link",
-    });
-    return !!link;
-  };
-
-  const insertLink = (url) => {
-    if (isLinkActive(editor)) {
-      unwrapLink(editor);
-    }
-
-    const { selection } = editor;
-    const isCollapsed = selection && Range.isCollapsed(selection);
-    const link = {
-      id: genNodeId(),
-      type: "link",
-      url,
-      children: isCollapsed ? [{ text: url }] : [],
-    };
-
-    if (isCollapsed) {
-      Transforms.insertNodes(editor, link);
-    } else {
-      Transforms.wrapNodes(editor, link, { split: true });
-      Transforms.collapse(editor, { edge: "end" });
-    }
-
-    setShowMiniToolbar(false);
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault(); // Prevent page reload
-
-    console.log(inputValue);
-    insertLink(inputValue);
-    setInputValue(""); // Clear the input field
-    setOpenLink(false); // Close the link input
   };
 
   const toggleFormat = (editor: ReactEditor, format: string) => {
@@ -170,22 +103,19 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           {/* <button className="p-1">
             <X color={theme.colors.darkgray} />
           </button> */}
-          <form onSubmit={handleSubmit} className="flex w-full">
-            <input
-              ref={urlInputRef}
-              className=" h-[34px] w-[75%] rounded border border-gray-400 px-1 focus:border-[#007AFF] focus:outline-none "
-              value={inputValue}
-              placeholder="Enter URL"
-              onChange={handleInputChange}
-              onBlur={(e) => e.preventDefault()}
-            />
-            <button
-              className={`grow p-1 font-semibold text-[${theme.colors.brand}]`}
-              type="submit"
-            >
-              Apply
-            </button>
-          </form>
+          <input
+            ref={urlInputRef}
+            className=" h-[34px] w-[75%] rounded border border-gray-400 px-1 focus:border-[#007AFF] focus:outline-none "
+            value={inputValue}
+            placeholder="Enter URL"
+            onChange={handleInputChange}
+            onBlur={(e) => e.preventDefault()}
+          />
+          <button
+            className={`grow p-1 font-semibold text-[${theme.colors.brand}]`}
+          >
+            Apply
+          </button>
         </div>
       )}
     </div>

@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState, useRef } from "react";
 import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor, useFocused, useSelected } from "slate-react";
-import { Editor, Path, Node } from "slate";
+import { Editor, Path } from "slate";
 import styled from "styled-components";
 import { hasSlideElement } from "@/utils/helpers";
 
@@ -60,6 +60,7 @@ export function ParagraphElement(props) {
         className={`paragraph-element  ${
           selectedElementID === element.id ? " bg-[#E0EDFB]" : ""
         }
+        ${hasSlide ? "w-[95%]" : "w-[98%]"}
         `}
         {...attributes}
         data-id={element.id}

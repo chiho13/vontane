@@ -6,7 +6,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import classes from "./styles/SortableElement.module.css";
 import { default as classNames } from "classnames";
-import { GripVertical, Plus } from "lucide-react";
+import { GripVertical } from "lucide-react";
 import { useTheme } from "styled-components";
 import { EditorContext } from "@/contexts/EditorContext";
 import React, { useContext, useMemo, useState } from "react";
@@ -18,7 +18,6 @@ export function SortableElement({
   children,
   element,
   renderElement,
-  addButton,
 }) {
   const { activeIndex } = useActiveElement();
   const readOnly = useReadOnly();
@@ -58,18 +57,6 @@ export function SortableElement({
       >
         {readOnly ? null : (
           <div className="flex w-[58px] translate-x-[2px] justify-end">
-            {/* <button
-              className={classes.handle}
-              onClick={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                openMiniDropdown();
-              }}
-              // ref={toggleRef}
-            >
-              <Plus color={theme.colors.darkgray} />
-            </button> */}
-            <div className={classNames(classes.addButton)}>{addButton}</div>
             <button
               ref={setActivatorNodeRef}
               {...listeners}

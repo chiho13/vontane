@@ -1318,7 +1318,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             const startPath = Editor.path(editor, selection, { edge: "start" });
             const [startNode] = Editor.parent(editor, startPath);
 
-            if (startNode.type === "paragraph") {
+            if (startNode.type === "paragraph" || startNode.type === "link") {
               const startRange = document.createRange();
               startRange.setStart(startContainer, range.startOffset);
               startRange.setEnd(startContainer, range.startOffset);

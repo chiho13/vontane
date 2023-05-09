@@ -109,7 +109,6 @@ const StyledMiniToolbar = styled(motion.div)`
   position: absolute;
   z-index: 20;
   display: block;
-  width: 200px;
   border-radius: 4px;
   border: 1px solid #cbd5e0;
   background-color: white;
@@ -894,7 +893,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   const [isDragging, setIsDragging] = useState(false);
   const [savedSelection, setSavedSelection] = useState(null);
-  const textEditorRef = useRef(null);
 
   const handleDragEnd = useCallback(
     function (event: { active: any; over: any }) {
@@ -1233,32 +1231,29 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             const endRect = endRange.getBoundingClientRect();
 
             const selectionRect = range.getBoundingClientRect();
+            const offsetTitle = 80;
+            const sideBarOffset = isLocked ? 95 : 0;
+            const rightSideBarOffset = showRightSidebar
+              ? rightSideBarWidth / 2
+              : 0;
 
-            // Get the text editor's dimensions
-            const textEditorRect =
-              textEditorRef.current.getBoundingClientRect();
-            const textEditorWidth = textEditorRect.width;
-            const textEditorLeft = textEditorRect.left;
+            // Get all rectangles that make up the selection
+            const rects = range.getClientRects();
 
-            // Calculate mini toolbar position
-            const toolbarWidth = 200; // Update this value according to your toolbar width
-            let initialX = selectionRect.left - textEditorLeft;
-
-            // if (window.innerWidth > 1200) {
-            //   initialX += selectionRect.width / 2 - toolbarWidth / 2;
-            // }
-
-            const x = Math.max(
-              Math.min(initialX, textEditorWidth - toolbarWidth),
-              0
-            );
+            // Find the left position of the first rectangle of the first line
+            const leftPosition = rects[0].left;
 
             setMiniToolbarPosition({
-              x: x,
+              x:
+                leftPosition +
+                window.scrollX -
+                470 -
+                sideBarOffset +
+                rightSideBarOffset, // Adjust the offset based on the toolbar width
               y:
-                Math.min(startRect.top, selectionRect.top, endRect.top) -
-                textEditorRect.top -
-                50, // Adjust this value according to your toolbar height
+                Math.min(startRect.top, selectionRect.top, endRect.top) +
+                window.scrollY -
+                offsetTitle,
             });
             setShowMiniToolbar(true);
 
@@ -1359,12 +1354,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     <div
       className="max-[1400px] relative mx-auto px-4"
       style={{
-        right:
-          windowSize.width > breakpoints.xl
-            ? !showRightSidebar
-              ? -rightSideBarWidth / 2
-              : 0
-            : 0,
+        right: !showRightSidebar ? -rightSideBarWidth / 2 : 0,
         width: `${rightSideBarWidth + 900}px`,
         transition: "right 0.3s ease-in-out",
       }}
@@ -1373,18 +1363,20 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         {!showMiniToolbar && <TextSpeech />}
       </div> */}
       <button
-        className="fixed right-[30px] top-[60px] hidden rounded border border-gray-400 p-1 xl:block"
+        className="fixed right-[30px] top-[60px] rounded border border-gray-400 p-1"
         onClick={() => {
           setShowRightSidebar((prev) => !prev);
         }}
       >
         <Sidebar className="rotate-180 transform" />
       </button>
-      <div className="flex justify-center">
+      <div className="flex">
         <div className="flex flex-col items-center justify-center transition">
           <div
-            className="relative  z-0  mt-4 w-full rounded-md  border-2 border-gray-300 px-2 lg:w-[900px] lg:px-0 xl:h-[680px]"
-            ref={textEditorRef}
+            className="z-0  mt-4  rounded-md border-2 border-gray-300 px-2 lg:h-[680px] lg:px-0"
+            style={{
+              width: 900,
+            }}
           >
             <div className="block  lg:w-full">
               <ErrorBoundary>
@@ -1630,7 +1622,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             </DraggableCore>
           </div>
           <div
-            className="m-w-full mt-4 hidden h-[680px] grow rounded-md border-2 border-gray-300   xl:block"
+            className="m-w-full mt-4 hidden h-[680px] grow rounded-md border-2 border-gray-300   lg:block"
             style={{
               transform: `translateX(${
                 showRightSidebar ? "0px" : `${rightSideBarWidth}px`

@@ -12,17 +12,6 @@ const Workspace: NextPage = () => {
   const router = useRouter();
   const { profile } = useUserContext();
   const workspaceId = router.query.workspaceId;
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (session) {
-      setLoading(false);
-    }
-  }, [session]);
-
-  if (loading) {
-    return <div></div>;
-  }
 
   return session ? (
     <Layout profile={profile} currentWorkspaceId={workspaceId}>

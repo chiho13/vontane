@@ -80,6 +80,8 @@ export const withTitle = (editor) => {
   return editor;
 };
 
+// custom delete for inline link elements
+
 export const withCustomDelete = (editor) => {
   const { deleteBackward } = editor;
 

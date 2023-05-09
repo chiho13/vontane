@@ -1481,9 +1481,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       <div className="flex justify-center">
         <div className="block">
           <div
-            className="relative  z-0  mt-4 w-full rounded-md  border border-gray-300 bg-white px-2 lg:w-[800px] lg:px-0"
+            className="relative  z-0  mt-4 w-[90vw] rounded-md  border border-gray-300 bg-white px-2 lg:w-[800px] lg:px-0"
             style={{
-              height: "calc(100vh - 90px)",
+              height: "calc(100vh - 120px)",
             }}
           >
             <button
@@ -1534,7 +1534,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                               <Editable
                                 className=" relative"
                                 style={{
-                                  height: "calc(100vh - 140px)",
+                                  height: "calc(100vh - 170px)",
                                 }}
                                 decorate={decorate}
                                 renderElement={renderElement}
@@ -1762,7 +1762,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               transform: `translateX(${
                 showRightSidebar ? "0px" : `${rightSideBarWidth}px`
               })`,
-              height: "calc(100vh - 90px)",
+              height: "calc(100vh - 120px)",
               minWidth: "270px",
               flexBasis: `${rightSideBarWidth}px`,
               opacity: showRightSidebar ? "1" : "0",

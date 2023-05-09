@@ -1210,42 +1210,19 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       if (domSelection && domSelection.rangeCount > 0) {
         const range = domSelection.getRangeAt(0);
         const startContainer = range.startContainer;
-        const endContainer = range.endContainer;
-        const endOffset = range.endOffset;
 
-        if (
-          startContainer.nodeType === startContainer.TEXT_NODE &&
-          endContainer.nodeType === endContainer.TEXT_NODE
-        ) {
+        if (startContainer.nodeType === startContainer.TEXT_NODE) {
           const startPath = Editor.path(editor, selection, { edge: "start" });
           const [startNode] = Editor.parent(editor, startPath);
-
           if (startNode.type === "paragraph" || startNode.type === "title") {
-            const startRange = document.createRange();
-            startRange.setStart(startContainer, range.startOffset);
-            startRange.setEnd(startContainer, range.startOffset);
-            const startRect = startRange.getBoundingClientRect();
-
-            const endRange = document.createRange();
-            endRange.setStart(endContainer, endOffset);
-            endRange.setEnd(endContainer, endOffset);
-            const endRect = endRange.getBoundingClientRect();
-
-            const selectionRect = range.getBoundingClientRect();
+            const rangeForStart = range.cloneRange();
+            rangeForStart.setEnd(startContainer, range.startOffset);
+            const rect = rangeForStart.getBoundingClientRect();
             const offsetTitle = startNode.type === "title" ? 60 : 80;
-
-            // Get all rectangles that make up the selection
-            const rects = range.getClientRects();
-
-            // Find the left position of the first rectangle of the first line
-            const leftPosition = rects[0].left;
-
+            const sideBarOffset = isLocked ? -240 : 0;
             setMiniToolbarPosition({
-              x: leftPosition + window.scrollX - 470, // Adjust the offset based on the toolbar width
-              y:
-                Math.min(startRect.top, selectionRect.top, endRect.top) +
-                window.scrollY -
-                offsetTitle,
+              x: rect.left - 380,
+              y: rect.top + window.scrollY - rect.height - offsetTitle - 20,
             });
             setShowMiniToolbar(true);
 
@@ -1351,25 +1328,28 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         transition: "right 0.3s ease-in-out",
       }}
     >
-      {/* <div className="mx-auto mt-4 h-[100px] justify-start">
+      <div className="mx-auto mt-4 h-[100px] justify-start">
         {!showMiniToolbar && <TextSpeech />}
-      </div> */}
-      <button
-        className="fixed right-[30px] top-[60px] rounded border border-gray-400 p-1"
-        onClick={() => {
-          setShowRightSidebar((prev) => !prev);
-        }}
-      >
-        <Sidebar className="rotate-180 transform" />
-      </button>
-      <div className="flex">
-        <div className="flex flex-col items-center justify-center transition">
-          <div
-            className="z-0  mt-4  rounded-md border-2 border-gray-300 px-2 lg:h-[680px] lg:px-0"
-            style={{
-              width: 900,
+
+        <Portal>
+          <button
+            className="fixed right-[30px] top-[60px] rounded border border-gray-400 p-1"
+            onClick={() => {
+              setShowRightSidebar((prev) => !prev);
             }}
           >
+            <Sidebar className="rotate-180 transform" />
+          </button>
+        </Portal>
+      </div>
+      <div className="flex">
+        <div
+          className="flex flex-col items-center justify-center transition"
+          style={{
+            width: 900,
+          }}
+        >
+          <div className="z-0 mx-auto  mt-4  rounded-md border-2 border-gray-300 px-2 lg:h-[680px] lg:px-0">
             <div className="block  lg:w-full">
               <ErrorBoundary>
                 <DndContext
@@ -1461,26 +1441,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                             <div></div>
                           </Droppable>
                         </Slate>
-                        <AnimatePresence>
-                          {showMiniToolbar && (
-                            <StyledMiniToolbar
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              exit={{ opacity: 0 }}
-                              style={{
-                                top: miniToolbarPosition.y,
-                                left: miniToolbarPosition.x,
-                              }}
-                              onMouseDown={(event) => {
-                                event.preventDefault();
-                                event.stopPropagation();
-                              }}
-                            >
-                              hello
-                              {/* <TextSpeech key="selectedText" isSelected={true} /> */}
-                            </StyledMiniToolbar>
-                          )}
-                        </AnimatePresence>
                       </div>
                     </ActiveElementProvider>
                   </SortableContext>
@@ -1586,6 +1546,25 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                   {renderSubjectComponent()}
                 </FloatingModal>
               )}
+              <AnimatePresence>
+                {showMiniToolbar && (
+                  <StyledMiniToolbar
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    style={{
+                      top: miniToolbarPosition.y,
+                      left: miniToolbarPosition.x,
+                    }}
+                    onMouseDown={(event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                    }}
+                  >
+                    <TextSpeech key="selectedText" isSelected={true} />
+                  </StyledMiniToolbar>
+                )}
+              </AnimatePresence>
             </div>
           </div>
         </div>

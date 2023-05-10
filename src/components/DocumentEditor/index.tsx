@@ -922,11 +922,13 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       const [parentElement, parentPath] = Editor.parent(editor, elementPath);
       const isInsideColumnCell =
         parentElement.type === "column-cell" ||
-        parentElement.type === "bulleted-list";
+        parentElement.type === "bulleted-list" ||
+        parentElement.type === "numbered-list";
       const addButton =
         (isRoot &&
           element.type !== "column" &&
           element.type !== "bulleted-list" &&
+          element.type !== "numbered-list" &&
           element.type !== "title") ||
         isInsideColumnCell ? (
           <div
@@ -959,6 +961,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         (isRoot &&
           element.type !== "column" &&
           element.type !== "bulleted-list" &&
+          element.type !== "numbered-list" &&
           element.type !== "title") ||
         isInsideColumnCell;
 
@@ -1010,7 +1013,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       }
 
       // Find the nodes using the ir IDs
-      setSelectedElementID(active.id);
+      // setSelectedElementID(active.id);
 
       console.log("active", active.id, "over", over.id);
       const fromPath = findPathById(editor, active.id);

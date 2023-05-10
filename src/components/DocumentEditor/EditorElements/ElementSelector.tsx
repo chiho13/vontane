@@ -40,6 +40,16 @@ export function ElementSelector(props) {
           {children}
         </a>
       );
+    case "numbered-list":
+      return (
+        <ol
+          data-path={JSON.stringify(path)}
+          className="list-decimal"
+          {...attributes}
+        >
+          {children}
+        </ol>
+      );
     case "bulleted-list":
       return (
         <ul

@@ -117,7 +117,8 @@ declare module "slate" {
 }
 
 const EditableStyle = styled.div`
-  padding: 5px;
+  margin-top: 5px;
+  padding-right: 10px;
   .editable-scrollbar::-webkit-scrollbar {
     width: 6px;
     border-radius: 3px;
@@ -610,6 +611,21 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           // Check if currentNode is an equation
 
           console.log(currentNode.type);
+
+          if (currentNode.type === "list") {
+            let newProperties = {
+              type: "paragraph",
+            };
+
+            const backToParagraph =
+              currentNode.children[0].text === "" ||
+              Editor.isStart(editor, editor.selection.anchor, _currentNodePath);
+
+            if (backToParagraph) {
+              event.preventDefault();
+              Transforms.setNodes(editor, newProperties);
+            }
+          }
           if (currentNode.type === "paragraph") {
             const prevNodeEntry = Editor.previous(editor, {
               at: _currentNodePath,
@@ -1563,7 +1579,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                         <div
                           ref={textEditorRef}
                           tabIndex={0}
-                          className="editable-scrollbar relative z-0 mx-auto block overflow-y-auto rounded-md pt-4 pr-1 pb-4 pl-2 focus:outline-none  focus-visible:border-gray-300"
+                          className="editable-scrollbar relative z-0 mx-auto block overflow-y-auto rounded-md pt-4 pr-1 pb-4 focus:outline-none  focus-visible:border-gray-300"
                         >
                           <Slate
                             key={currentSlateKey}

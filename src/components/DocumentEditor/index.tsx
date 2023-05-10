@@ -626,6 +626,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               Transforms.setNodes(editor, newProperties);
             }
           }
+
+          // Check if the current node is a paragraph and the cursor is at the start
+
           if (currentNode.type === "paragraph") {
             const prevNodeEntry = Editor.previous(editor, {
               at: _currentNodePath,
@@ -639,6 +642,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 selection.anchor,
                 _currentNodePath
               );
+
               if (
                 (_prevNode.type === "mcq" && isStart) ||
                 (_prevNode.type === "slide" && isStart) ||

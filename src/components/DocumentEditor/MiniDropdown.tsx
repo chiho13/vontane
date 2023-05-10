@@ -9,6 +9,7 @@ import { ReactEditor } from "slate-react";
 import { TextIcon } from "@/icons/Text";
 import { SlideBreak } from "@/icons/SlideBreak";
 import { addSlideBreak } from "./helpers/addSlideBreak";
+import { genNodeId } from "@/hoc/withID";
 
 interface MiniDropdownProps {
   isOpen: boolean;
@@ -181,6 +182,22 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
       Transforms.select(editor, Editor.start(editor, JSON.parse(activePath)));
 
       ReactEditor.focus(editor);
+
+      if (currentNode.type !== "paragraph") {
+        const newNode = {
+          id: genNodeId(),
+          type: "paragraph",
+          children: [{ text: "" }],
+        };
+
+        Transforms.insertNodes(editor, newNode, {
+          at: Path.next(JSON.parse(activePath)),
+        });
+        Transforms.select(
+          editor,
+          Editor.start(editor, Path.next(JSON.parse(activePath)))
+        );
+      }
     }
 
     function addSlideBreakHandler() {

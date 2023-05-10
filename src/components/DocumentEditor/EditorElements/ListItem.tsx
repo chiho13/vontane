@@ -65,6 +65,11 @@ export function ListItem(props) {
   const bulletList = parent[0].type === "bulleted-list";
   const itemNumber = isNumberedList ? path[path.length - 1] + 1 : null; // Calculate the item number based on the path
 
+  let placeholderText = "";
+  if (element.children[0].text === "") {
+    placeholderText = selected ? "Press '/' for commands" : "List";
+  }
+
   return (
     <ListItemStyle>
       <li
@@ -77,7 +82,7 @@ export function ListItem(props) {
         {...attributes}
         data-id={element.id}
         data-path={JSON.stringify(path)}
-        data-placeholder={shouldShowPlaceholder ? "Press '/' for commands" : ""}
+        data-placeholder={placeholderText}
       >
         {/* {isNumberedList && <span contentEditable={false}>{itemNumber}. </span>} */}
         {children}

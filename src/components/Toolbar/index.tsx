@@ -3,6 +3,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { FaBold } from "react-icons/fa";
 import { FiItalic, FiUnderline } from "react-icons/fi";
 import { ImStrikethrough, ImLink } from "react-icons/im";
+import { List } from "lucide-react";
 import { genNodeId } from "@/hoc/withID";
 import {
   Editor,
@@ -45,6 +46,8 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   //   editor.selection = lastActiveSelection;
   const urlInputRef = useRef(null);
 
+  const LIST_TYPES = ["numbered-list", "bulleted-list"];
+
   const getActiveLinkUrl = (editor) => {
     let linkUrl = "";
     for (const [node] of Editor.nodes(editor, {
@@ -57,6 +60,59 @@ export const Toolbar: React.FC<ToolbarProps> = ({
       }
     }
     return linkUrl;
+  };
+
+  const isBlockActive = (editor, format, blockType = "type") => {
+    const { selection } = editor;
+    if (!selection) return false;
+
+    const [match] = Array.from(
+      Editor.nodes(editor, {
+        at: Editor.unhangRange(editor, selection),
+        match: (n) =>
+          !Editor.isEditor(n) &&
+          SlateElement.isElement(n) &&
+          n[blockType] === format,
+      })
+    );
+
+    return !!match;
+  };
+
+  const toggleBlock = (editor, format) => {
+    const isActive = isBlockActive(editor, format, "type");
+    const isList = LIST_TYPES.includes(format);
+
+    Transforms.unwrapNodes(editor, {
+      match: (n) =>
+        !Editor.isEditor(n) &&
+        SlateElement.isElement(n) &&
+        LIST_TYPES.includes(n.type),
+      split: true,
+    });
+
+    const id = genNodeId();
+    let newProperties: Partial<SlateElement>;
+
+    if (isActive && isList) {
+      // If the current block is a list item, turn it into a paragraph
+      newProperties = {
+        id: id,
+        type: "paragraph",
+      };
+    } else {
+      newProperties = {
+        id: id,
+        type: isList ? "list" : format,
+      };
+    }
+
+    Transforms.setNodes<SlateElement>(editor, newProperties);
+
+    if (!isActive && isList) {
+      const block = { type: format, children: [] };
+      Transforms.wrapNodes(editor, block);
+    }
   };
 
   const hasURL = getActiveLinkUrl(editor);
@@ -149,7 +205,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 
   return (
     <div
-      className="relative flex h-[34px] items-center px-1"
+      className="relative flex h-[40px] items-center"
       style={{
         width: 400,
         transition: "all 0.2s ease-in-out",
@@ -157,43 +213,69 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     >
       {!openLink && (
         <>
-          <button
-            className="rounded-lg p-2 transition duration-300 hover:bg-gray-200"
-            onClick={() => toggleFormat(editor, "bold")}
-          >
-            <FaBold color={theme.colors.darkblue} />
-          </button>
-          <button
-            className="rounded-lg p-2 transition duration-300 hover:bg-gray-200"
-            onClick={() => toggleFormat(editor, "italic")}
-          >
-            <FiItalic color={theme.colors.darkblue} />
-          </button>
-          <button
-            className="rounded-lg p-2 transition duration-300 hover:bg-gray-200"
-            onClick={() => toggleFormat(editor, "underline")}
-          >
-            <FiUnderline color={theme.colors.darkblue} />
-          </button>
-          <button
-            className="rounded-lg p-2 transition duration-300 hover:bg-gray-200"
-            onClick={() => toggleFormat(editor, "strikethrough")}
-          >
-            <ImStrikethrough color={theme.colors.darkblue} />
-          </button>
-          <button
-            className="rounded-lg p-2 transition duration-300 hover:bg-gray-200"
-            onClick={() => {
-              setOpenLink(true);
-            }}
-          >
-            <ImLink color={theme.colors.darkblue} />
-          </button>
+          <div className="flex  p-1">
+            <button
+              className="flex items-center  rounded-lg  p-2 transition duration-300 hover:bg-gray-200"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                toggleFormat(editor, "bold");
+              }}
+            >
+              <FaBold color={theme.colors.darkblue} />
+            </button>
+            <button
+              className="flex items-center  rounded-lg p-2 transition duration-300 hover:bg-gray-200"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                toggleFormat(editor, "italic");
+              }}
+            >
+              <FiItalic color={theme.colors.darkblue} />
+            </button>
+            <button
+              className="flex items-center  rounded-lg p-2 transition duration-300 hover:bg-gray-200"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                toggleFormat(editor, "underline");
+              }}
+            >
+              <FiUnderline color={theme.colors.darkblue} />
+            </button>
+            <button
+              className="flex items-center rounded-lg p-2 transition duration-300 hover:bg-gray-200"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                toggleFormat(editor, "strikethrough");
+              }}
+            >
+              <ImStrikethrough color={theme.colors.darkblue} />
+            </button>
+            <button
+              className=" flex items-center  rounded-lg p-2 transition duration-300 hover:bg-gray-200"
+              onMouseDown={() => {
+                setOpenLink(true);
+              }}
+            >
+              <ImLink color={theme.colors.darkblue} />
+            </button>
+          </div>
+          <div className="h-full w-[1px] bg-gray-200"></div>
+          <div className="flex  p-1">
+            <button
+              className="flex  items-center    rounded-lg  p-2 transition duration-300 hover:bg-gray-200"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                toggleBlock(editor, "bulleted-list");
+              }}
+            >
+              <List width={16} height={16} color={theme.colors.darkblue} />
+            </button>
+          </div>
         </>
       )}
 
       {openLink && (
-        <div className=" absolute left-0  flex w-full items-center bg-white">
+        <div className=" absolute left-0  flex w-full items-center bg-white p-1">
           {/* <button className="p-1">
             <X color={theme.colors.darkgray} />
           </button> */}

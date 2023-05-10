@@ -14,7 +14,7 @@ const ListItemStyle = styled.div`
   }
 `;
 
-export function ListItem(props) {
+export function QuestionItem(props) {
   const { editor } = useContext(EditorContext);
   const { attributes, children, element } = props;
   const path = ReactEditor.findPath(editor, element);

@@ -1463,7 +1463,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   return (
     <div
-      className="max-[1400px] relative mx-auto mt-10 px-4"
+      className="max-[1400px] relative mx-auto mt-[50px] px-4"
       style={{
         right:
           windowSize.width > breakpoints.xl

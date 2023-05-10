@@ -3,7 +3,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { FaBold } from "react-icons/fa";
 import { FiItalic, FiUnderline } from "react-icons/fi";
 import { ImStrikethrough, ImLink } from "react-icons/im";
-import { List } from "lucide-react";
+import { List, ListOrdered } from "lucide-react";
 import { genNodeId } from "@/hoc/withID";
 import {
   Editor,
@@ -97,12 +97,10 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     if (isActive && isList) {
       // If the current block is a list item, turn it into a paragraph
       newProperties = {
-        id: id,
         type: "paragraph",
       };
     } else {
       newProperties = {
-        id: id,
         type: isList ? "list" : format,
       };
     }
@@ -269,6 +267,19 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               }}
             >
               <List width={16} height={16} color={theme.colors.darkblue} />
+            </button>
+            <button
+              className="flex  items-center    rounded-lg  p-2 transition duration-300 hover:bg-gray-200"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                toggleBlock(editor, "numbered-list");
+              }}
+            >
+              <ListOrdered
+                width={16}
+                height={16}
+                color={theme.colors.darkblue}
+              />
             </button>
           </div>
         </>

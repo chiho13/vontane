@@ -1,4 +1,6 @@
-import React from "react";
+import { EditorContext } from "@/contexts/EditorContext";
+import React, { useContext } from "react";
+import { ReactEditor } from "slate-react";
 import {
   ParagraphElement,
   DefaultElement,
@@ -8,24 +10,17 @@ import {
   MCQElement,
   OptionList,
   OptionListItem,
-  ListItem,
+  QuestionItem,
   TitleElement,
   AudioElement,
   SlideBreak,
+  ListItem,
 } from "./index";
 
 export function ElementSelector(props) {
   const { element, attributes, children } = props;
-  const InlineChromiumBugfix = () => (
-    <span
-      contentEditable={false}
-      style={{
-        fontSize: 0,
-      }}
-    >
-      {String.fromCodePoint(160) /* Non-breaking space */}
-    </span>
-  );
+  const { editor } = useContext(EditorContext);
+  const path = ReactEditor.findPath(editor, element);
   switch (element.type) {
     case "title":
       return <TitleElement {...props} />;
@@ -45,8 +40,20 @@ export function ElementSelector(props) {
           {children}
         </a>
       );
-    case "list-item":
+    case "bulleted-list":
+      return (
+        <ul
+          data-path={JSON.stringify(path)}
+          className="list-disc"
+          {...attributes}
+        >
+          {children}
+        </ul>
+      );
+    case "list":
       return <ListItem {...props} />;
+    case "question-item":
+      return <QuestionItem {...props} />;
     case "equation":
       return <EquationElement {...props} />;
     case "column":

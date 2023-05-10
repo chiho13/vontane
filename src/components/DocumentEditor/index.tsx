@@ -141,7 +141,6 @@ const StyledMiniToolbar = styled(motion.div)`
   border-radius: 6px;
   border: 1px solid #eeeeee;
   background: #ffffff;
-  padding: 4px;
   box-shadow: 0 10px 20px rgba(50, 50, 50, 0.19),
     0 6px 6px rgba(50, 50, 50, 0.23);
 `;
@@ -374,6 +373,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         return;
       }
 
+      const [parentNode, parentPath] = Editor.parent(
+        editor,
+        selection.anchor.path
+      );
+
       setIsTyping(true);
       const _currentNodePath = selection.anchor.path.slice(0, -1);
       const startPosition = selection.anchor;
@@ -429,11 +433,41 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         event.preventDefault();
 
         if (selection) {
-          const [parentNode, parentPath] = Editor.parent(
-            editor,
-            selection.anchor.path
-          );
+          console.log(parentNode.type);
 
+          if (parentNode.type === "list") {
+            const newPath = Path.next(parentPath);
+            if (Editor.isEnd(editor, selection.anchor, _currentNodePath)) {
+              // insertNewParagraphEnter(newPath);
+              const newPath = Path.next(parentPath);
+              Transforms.insertNodes(
+                editor,
+                {
+                  id: genNodeId(),
+                  type: "list",
+                  children: [{ text: "" }],
+                },
+                { at: newPath }
+              );
+              Transforms.select(editor, newPath);
+            }
+            if (
+              Editor.isStart(editor, editor.selection.anchor, _currentNodePath)
+            ) {
+              const listItem = {
+                id: genNodeId(),
+                type: "list",
+                children: [{ text: "" }],
+              };
+              Transforms.insertNodes(editor, listItem);
+            } else {
+              Transforms.splitNodes(editor);
+
+              const newId = genNodeId();
+              Transforms.setNodes(editor, { id: newId }, { at: newPath });
+              Transforms.select(editor, Editor.start(editor, newPath));
+            }
+          }
           if (parentNode.type === "paragraph") {
             const newPath = Path.next(parentPath);
             if (Editor.isEnd(editor, selection.anchor, _currentNodePath)) {
@@ -575,6 +609,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           const parentNode = Editor.parent(editor, _currentNodePath);
           // Check if currentNode is an equation
 
+          console.log(currentNode.type);
           if (currentNode.type === "paragraph") {
             const prevNodeEntry = Editor.previous(editor, {
               at: _currentNodePath,
@@ -885,9 +920,14 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       if (!elementPath) return;
 
       const [parentElement, parentPath] = Editor.parent(editor, elementPath);
-      const isInsideColumnCell = parentElement.type === "column-cell";
+      const isInsideColumnCell =
+        parentElement.type === "column-cell" ||
+        parentElement.type === "bulleted-list";
       const addButton =
-        (isRoot && element.type !== "column" && element.type !== "title") ||
+        (isRoot &&
+          element.type !== "column" &&
+          element.type !== "bulleted-list" &&
+          element.type !== "title") ||
         isInsideColumnCell ? (
           <div
             className="z-1000 group absolute top-1/2 left-[0px] -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center"
@@ -916,7 +956,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         ) : null;
 
       const shouldWrapWithSortableElement =
-        (isRoot && element.type !== "column" && element.type !== "title") ||
+        (isRoot &&
+          element.type !== "column" &&
+          element.type !== "bulleted-list" &&
+          element.type !== "title") ||
         isInsideColumnCell;
 
       const content = shouldWrapWithSortableElement ? (
@@ -1318,7 +1361,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             const startPath = Editor.path(editor, selection, { edge: "start" });
             const [startNode] = Editor.parent(editor, startPath);
 
-            if (startNode.type === "paragraph" || startNode.type === "link") {
+            if (
+              startNode.type === "paragraph" ||
+              startNode.type === "link" ||
+              startNode.type === "list"
+            ) {
               const startRange = document.createRange();
               startRange.setStart(startContainer, range.startOffset);
               startRange.setEnd(startContainer, range.startOffset);

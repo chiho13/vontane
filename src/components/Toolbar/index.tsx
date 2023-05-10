@@ -149,7 +149,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 
   return (
     <div
-      className="relative flex h-[38px] items-center px-1"
+      className="relative flex h-[34px] items-center px-1"
       style={{
         width: 400,
         transition: "all 0.2s ease-in-out",
@@ -200,7 +200,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           <form onSubmit={handleSubmit} className="flex w-full">
             <input
               ref={urlInputRef}
-              className=" h-[34px] w-[75%] rounded border border-gray-400 px-1 focus:border-[#007AFF] focus:outline-none "
+              className=" h-[30px] w-[75%] rounded border border-gray-400 px-1 focus:border-[#007AFF] focus:outline-none "
               value={inputValue}
               placeholder="Enter URL"
               onChange={handleInputChange}

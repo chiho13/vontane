@@ -226,7 +226,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
             className="absolute -bottom-[50px] mt-2 w-full rounded-md border border-gray-500 bg-white px-2 py-1 outline-none focus:border-blue-500"
           />
         )}
-        <div className="dropdown-menu h-[360px] overflow-y-auto rounded-md border border-gray-200 bg-white p-2 shadow-md">
+        <div className="dropdown-menu h-[40vh] max-h-[320px] overflow-y-auto rounded-md border border-gray-200 bg-white p-2 shadow-md">
           <ul>
             {filteredList.map((item, index) => (
               <li>

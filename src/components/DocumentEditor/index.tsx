@@ -303,7 +303,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       const targetRect = currentElement.getBoundingClientRect();
 
       const windowHeight = window.innerHeight;
-      const dropdownHeight = 400;
+      const dropdownHeight = addSomethingDropdownRef.current?.offsetHeight;
       const spaceBelowTarget = windowHeight - targetRect.bottom;
 
       const currentNode = Node.get(editor, path);
@@ -1649,9 +1649,17 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               <AnimatePresence>
                 {showDropdown && activePath && (
                   <motion.div
-                    {...y_animation_props}
+                    // {...y_animation_props}
+                    initial={{ scale: 0.95, opacity: 0 }}
+                    animate={{ scale: [0.95, 1.01, 1], opacity: [0, 1, 1] }}
+                    exit={{ scale: 0.95, opacity: 0 }}
+                    transition={{
+                      ease: [0.54, 0.88, 0.43, 1],
+                      duration: 0.3,
+                    }}
                     className="fixed left-[120px] z-10 mx-auto mt-2 w-[320px]"
                     style={{
+                      transformOrigin: "top left",
                       top: `${dropdownTop}px`,
                       left: `${dropdownLeft}px`,
                     }}

@@ -62,6 +62,7 @@ import { ActiveElementProvider } from "@/contexts/ActiveElementContext";
 import { SortableElement } from "./SortableElement";
 import { ElementSelector } from "./EditorElements";
 import { DragOverlayContent } from "./DragOverlayContent";
+import { RightSideBar } from "@/components/RightSidebar";
 
 import { findAncestorWithClass } from "@/utils/findAncestors";
 
@@ -1838,26 +1839,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               </div>
             </DraggableCore>
           </div>
-          <div
-            className="m-w-full mt-4 hidden grow rounded-md border border-gray-300 bg-white   xl:block"
-            style={{
-              transform: `translateX(${
-                showRightSidebar ? "0px" : `${rightSideBarWidth}px`
-              })`,
-              height: "calc(100vh - 120px)",
-              minWidth: "270px",
-              flexBasis: `${rightSideBarWidth}px`,
-              opacity: showRightSidebar ? "1" : "0",
-              pointerEvents: showRightSidebar ? "auto" : "none",
-              transition:
-                "width 0.3s ease-in-out, opacity 0.4s ease-in-out, transform 0.3s ease-in-out",
-            }}
-          >
-            <div className="p-4">
-              <h2 className="mb-4 text-xl font-semibold">Right Sidebar</h2>
-              <p>Hi</p>
-            </div>
-          </div>
+          <RightSideBar
+            showRightSidebar={showRightSidebar}
+            rightSideBarWidth={rightSideBarWidth}
+          />
         </>
         {/* )} */}
       </div>

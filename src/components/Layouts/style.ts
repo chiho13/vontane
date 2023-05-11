@@ -6,10 +6,6 @@ export const AccountLayoutStyle = styled.header`
     width: 100%;
   }
 
-  .dropdown-menu.dropdown-menu {
-    left: 18px;
-  }
-
   .dropdown_textbutton.dropdown_textbutton {
     max-width: 100px;
     margin-right: 8px;

@@ -171,6 +171,7 @@ function Dropdown(
     dropdownMenuNonPortalOverride,
     minHeight = 0,
     usePortal = false,
+    callback,
   }: DropdownProps,
   ref: ForwardedRef<DropdownRef>
 ) {
@@ -237,6 +238,22 @@ function Dropdown(
     };
   };
 
+  const findFirstFocusableElement = (
+    parent: HTMLElement
+  ): HTMLElement | null => {
+    const focusableElements = [
+      "a[href]",
+      "button:not([disabled])",
+      "textarea:not([disabled])",
+      "input[type='text']:not([disabled])",
+      "select:not([disabled])",
+      "[tabindex]:not([tabindex='-1'])",
+    ];
+
+    const query = focusableElements.join(", ");
+    return parent.querySelector(query);
+  };
+
   // const updateButtonPosition = useCallback(() => {
   //   console.log(toggleRef.current);
 
@@ -252,7 +269,26 @@ function Dropdown(
     } else {
       toggleDropdown(dropdownId);
     }
+
+    if (callback) {
+      callback(activeDropdown === dropdownId);
+    }
   };
+
+  // useEffect(() => {
+  //   if (isOpen) {
+  //     wrapperRef.current?.focus();
+  //   }
+  // }, [isOpen]);
+
+  useEffect(() => {
+    if (isOpen) {
+      const firstFocusableElement = findFirstFocusableElement(
+        wrapperRef.current
+      );
+      firstFocusableElement?.focus();
+    }
+  }, [isOpen]);
 
   const handleClose = () => {
     toggleDropdown(null);
@@ -273,7 +309,7 @@ function Dropdown(
             window.scrollY +
             toggleButtonRect.height +
             10,
-          right:
+          left:
             window.innerWidth -
             (toggleButtonRect.left + toggleButtonRect.width + 80),
         };
@@ -350,8 +386,8 @@ function Dropdown(
                   role="menu"
                   aria-orientation="vertical"
                   aria-labelledby="voices-dropdown"
-                  tabIndex={-1}
                   ref={wrapperRef}
+                  tabIndex={-1}
                   style={{
                     top: buttonPosition.top,
                     right: buttonPosition.right,
@@ -364,15 +400,15 @@ function Dropdown(
               <motion.div
                 {...animation_props}
                 id={dropdownId}
-                className={`dropdown-menu z-10000 fixed left-0  top-12 mt-2 w-full min-w-[100px] origin-top-right border-2 bg-white shadow-lg ring-1 ring-black ring-opacity-5 lg:rounded-md ${_dropdownMenuNonPortalOverride}`}
+                className={`dropdown-menu z-10000 fixed left-0  top-12 mt-2 w-full min-w-[200px] origin-top-right border-2 bg-white shadow-lg ring-1 ring-black ring-opacity-5 lg:rounded-md ${_dropdownMenuNonPortalOverride}`}
                 role="menu"
                 aria-orientation="vertical"
                 aria-labelledby="voices-dropdown"
-                tabIndex={-1}
                 ref={wrapperRef}
-                style={{
-                  top: buttonPosition.top,
-                }}
+                tabIndex={-1}
+                // style={{
+                //   top: buttonPosition.top,
+                // }}
               >
                 {children}
               </motion.div>

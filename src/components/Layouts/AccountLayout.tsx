@@ -407,7 +407,7 @@ const Layout: React.FC<LayoutProps> = ({
                         <Settings /> <span className="ml-2">Settings</span>
                       </Link>
                     </div>
-                    <hr class="my-1 h-0.5 border-t-0 bg-neutral-100 opacity-100 dark:opacity-50" />
+                    <hr className="my-1 h-0.5 border-t-0 bg-neutral-100 opacity-100 dark:opacity-50" />
                     <div className="p-1" role="none">
                       <button
                         onClick={logout}

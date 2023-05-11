@@ -1240,7 +1240,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       const pathString = equationElement.getAttribute("data-path");
       if (pathString) {
         const path = JSON.parse(pathString);
-        setActivePath(path);
+        // setActivePath(pathString);
         openEditBlockPopup(equationElement, event, path);
         return;
       }
@@ -1372,6 +1372,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       event.stopPropagation();
 
       const { selection } = editor;
+      if (selection) {
+        const _currentNodePath = selection.anchor.path.slice(0, -1);
+        console.log(_currentNodePath);
+        setActivePath(JSON.stringify(_currentNodePath));
+      }
       if (selection && !Range.isCollapsed(selection)) {
         const domSelection = window.getSelection();
         if (domSelection && domSelection.rangeCount > 0) {
@@ -1540,7 +1545,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   return (
     <div
-      className="max-[1400px] relative mx-auto mt-[50px] px-4"
+      className="max-[1400px] relative mx-auto mt-[20px] px-4"
       style={{
         right:
           windowSize.width > breakpoints.xl
@@ -1555,26 +1560,29 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       {/* <div className="mx-auto mt-4 h-[100px] justify-start">
         {!showMiniToolbar && <TextSpeech />}
       </div> */}
-      <MainToolbar path={activePath} />
+
+      <div className="flex w-full justify-between lg:w-[800px]">
+        <MainToolbar path={activePath} />
+        <button
+          className=" right-0 z-10 hidden h-[36px] rounded border border-gray-300 bg-white p-1 xl:block"
+          onClick={() => {
+            setShowRightSidebar((prev) => !prev);
+          }}
+        >
+          <Sidebar
+            className="rotate-180 transform"
+            color={theme.colors.darkergray}
+          />
+        </button>
+      </div>
       <div className="flex justify-center">
         <div className="block">
           <div
-            className="relative  z-0  mt-4 w-[90vw] rounded-md  border border-gray-300 bg-white px-2 lg:w-[800px] lg:px-0"
+            className="relative  z-0  mt-3 w-[90vw] rounded-md  border border-gray-300 bg-white px-2 lg:w-[800px] lg:px-0"
             style={{
               height: "calc(100vh - 120px)",
             }}
           >
-            <button
-              className="absolute -top-[50px] right-0 z-10 hidden rounded border border-gray-300 bg-white p-1 xl:block"
-              onClick={() => {
-                setShowRightSidebar((prev) => !prev);
-              }}
-            >
-              <Sidebar
-                className="rotate-180 transform"
-                color={theme.colors.darkergray}
-              />
-            </button>
             <div className="block  lg:w-full">
               <ErrorBoundary>
                 <DndContext

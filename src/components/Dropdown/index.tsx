@@ -400,7 +400,7 @@ function Dropdown(
               <motion.div
                 {...animation_props}
                 id={dropdownId}
-                className={`dropdown-menu z-10000 fixed left-0  top-12 mt-2 w-full min-w-[200px] origin-top-right border-2 bg-white shadow-lg ring-1 ring-black ring-opacity-5 lg:rounded-md ${_dropdownMenuNonPortalOverride}`}
+                className={`dropdown-menu z-10000 fixed left-0  top-12 mt-2 w-full min-w-[200px] origin-top-right  bg-white shadow-lg ring-1 ring-black ring-opacity-5 lg:rounded-md ${_dropdownMenuNonPortalOverride}`}
                 role="menu"
                 aria-orientation="vertical"
                 aria-labelledby="voices-dropdown"

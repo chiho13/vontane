@@ -10,6 +10,7 @@ import { TextIcon } from "@/icons/Text";
 import { SlideBreak } from "@/icons/SlideBreak";
 import { addSlideBreak } from "./helpers/addSlideBreak";
 import { genNodeId } from "@/hoc/withID";
+import { useArrowNavigation } from "@/hooks/useArrowNavigation";
 
 interface MiniDropdownProps {
   isOpen: boolean;
@@ -40,9 +41,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
 
     const { editor } = useContext(EditorContext);
     const [currentNode] = Editor.node(editor, JSON.parse(activePath));
-
-    const [focusedIndex, setFocusedIndex] = useState(0);
-
+    const [isKeyboardNav, setIsKeyboardNav] = useState(false);
     const isEmpty =
       currentNode.children.length === 1 && currentNode.children[0].text === "";
     const customElements = [
@@ -117,6 +116,9 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
       },
     ];
 
+    const { focusedIndex, setFocusedIndex, handleArrowNavigation } =
+      useArrowNavigation(customElements, 0, closeDropdown);
+
     useEffect(() => {
       if (isOpen) {
         searchInputRef.current.focus();
@@ -136,34 +138,6 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
 
     console.log(search);
     const filteredList = filterList(customElements, search);
-
-    const handleArrowNavigation = (
-      event: React.KeyboardEvent<HTMLInputElement>
-    ) => {
-      if (event.key === "ArrowDown") {
-        event.preventDefault();
-        setFocusedIndex((prevIndex) =>
-          Math.min(prevIndex + 1, filteredList.length - 1)
-        );
-      } else if (event.key === "ArrowUp") {
-        event.preventDefault();
-        setFocusedIndex((prevIndex) => Math.max(prevIndex - 1, 0));
-      } else if (event.key === "Tab") {
-        event.preventDefault();
-        if (event.shiftKey) {
-          setFocusedIndex((prevIndex) => Math.max(prevIndex - 1, 0));
-        } else {
-          setFocusedIndex((prevIndex) =>
-            Math.min(prevIndex + 1, filteredList.length - 1)
-          );
-        }
-      } else if (event.key === "Enter") {
-        event.preventDefault();
-        if (filteredList[focusedIndex]) {
-          filteredList[focusedIndex].action();
-        }
-      }
-    };
 
     const closeOnEmptyInput = (
       event: React.KeyboardEvent<HTMLInputElement>
@@ -222,6 +196,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={(e) => {
               closeOnEmptyInput(e);
+              setIsKeyboardNav(true);
               handleArrowNavigation(e);
             }}
             placeholder="Search"
@@ -243,16 +218,26 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
             className="absolute -bottom-[50px] mt-2 w-full rounded-md border border-gray-500 bg-white px-2 py-1 outline-none focus:border-blue-500"
           />
         )}
-        <div className="dropdown-menu h-[40vh] max-h-[320px] overflow-y-auto rounded-md border border-gray-200 bg-white p-2 shadow-md">
+        <div
+          className="dropdown-menu h-[40vh] max-h-[320px] overflow-y-auto rounded-md border border-gray-200 bg-white p-2 shadow-md"
+          onMouseLeave={() => {
+            setIsKeyboardNav(false);
+            setFocusedIndex(-1);
+          }}
+        >
           <ul>
             {filteredList.map((item, index) => (
               <li>
                 <motion.button
                   key={index}
                   whileTap={{ scale: 0.97 }}
-                  className={`mb-1 flex w-full items-center gap-2 rounded-md border-2 border-gray-100 p-2 shadow-sm transition duration-300 hover:bg-gray-200
+                  className={`mb-1 flex w-full items-center gap-2 rounded-md border-2 border-gray-100 p-2 shadow-sm transition duration-300
                     ${focusedIndex === index ? "bg-gray-200" : ""}
                   `}
+                  onMouseOver={() => {
+                    if (isKeyboardNav) return;
+                    setFocusedIndex(index);
+                  }}
                   onClick={item.action}
                 >
                   {item.icon || item.image}

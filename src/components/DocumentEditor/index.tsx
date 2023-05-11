@@ -42,6 +42,8 @@ import { Portal } from "react-portal";
 import { Toolbar } from "@/components/Toolbar";
 import { up_animation_props } from "@/config/framer";
 
+import { MainToolbar } from "@/components/MainToolbar";
+
 import {
   DndContext,
   DragOverlay,
@@ -1553,6 +1555,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       {/* <div className="mx-auto mt-4 h-[100px] justify-start">
         {!showMiniToolbar && <TextSpeech />}
       </div> */}
+      <MainToolbar path={activePath} />
       <div className="flex justify-center">
         <div className="block">
           <div

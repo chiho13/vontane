@@ -260,24 +260,24 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           <div className="h-full w-[1px] bg-gray-200"></div>
           <div className="flex  p-1">
             <button
-              className="flex  items-center    rounded-lg  p-2 transition duration-300 hover:bg-gray-200"
+              className="flex  h-[32px] w-[32px] items-center justify-center  rounded-lg  p-1 transition duration-300 hover:bg-gray-200"
               onMouseDown={(e) => {
                 e.preventDefault();
                 toggleBlock(editor, "bulleted-list");
               }}
             >
-              <List width={16} height={16} color={theme.colors.darkblue} />
+              <List width={20} height={20} color={theme.colors.darkblue} />
             </button>
             <button
-              className="flex  items-center    rounded-lg  p-2 transition duration-300 hover:bg-gray-200"
+              className="flex  h-[32px]  w-[32px]   items-center justify-center rounded-lg  p-1 transition duration-300 hover:bg-gray-200"
               onMouseDown={(e) => {
                 e.preventDefault();
                 toggleBlock(editor, "numbered-list");
               }}
             >
               <ListOrdered
-                width={16}
-                height={16}
+                width={20}
+                height={20}
                 color={theme.colors.darkblue}
               />
             </button>

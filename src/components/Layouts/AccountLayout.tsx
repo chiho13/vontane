@@ -9,6 +9,7 @@ import ChevronDown from "@/icons/ChevronDown";
 import { useRouter } from "next/router";
 import { Plus } from "lucide-react";
 import { workspace } from "@prisma/client";
+import { useLocalStorage } from "usehooks-ts";
 
 import { mq, breakpoints } from "@/utils/breakpoints";
 import {
@@ -214,12 +215,9 @@ const Layout: React.FC<LayoutProps> = ({
   const router = useRouter();
 
   const { updatedWorkspace } = useWorkspaceTitleUpdate();
-  const [isLocked, setIsLocked] = useState<boolean>(
-    JSON.parse(localStorage.getItem("isLocked") || "true")
-  );
-  const [isOpen, setIsOpen] = useState<boolean>(
-    JSON.parse(localStorage.getItem("isOpen") || "true")
-  );
+  const [isLocked, setIsLocked] = useLocalStorage("isLocked", true);
+  const [isOpen, setIsOpen] = useLocalStorage("isOpen", true);
+
   const desktopbreakpoint = window.screen.width > breakpoints.lg;
 
   const [showChevronRight, setShowChevronRight] = useState(false);

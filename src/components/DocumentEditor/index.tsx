@@ -78,7 +78,7 @@ import ErrorBoundary from "../Errorboundary";
 import { textRegex } from "./helpers/textRegex";
 import { addMCQBlock } from "./helpers/addMCQBlock";
 import { breakpoints } from "@/utils/breakpoints";
-
+import { useLocalStorage } from "usehooks-ts";
 interface DocumentEditorProps {
   workspaceId: string;
   handleTextChange?: (value: any) => void;
@@ -1511,12 +1511,16 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     };
   }, []);
 
-  const [showRightSidebar, setShowRightSidebar] = useState<boolean>(
-    JSON.parse(localStorage.getItem("showRightSidebar") || "true")
+  const [showRightSidebar, setShowRightSidebar] = useLocalStorage(
+    "showRightSidebar",
+    true
   );
-  const [rightSideBarWidth, setRightSideBarWidth] = useState(
-    Number(localStorage.getItem("sidebarWidth")) || 370
+
+  const [rightSideBarWidth, setRightSideBarWidth] = useLocalStorage(
+    "sidebarWidth",
+    370
   );
+
   const minSidebarWidth = 370;
   const maxSidebarWidth = 500;
   const { sidebarWidth, handleDrag, isDraggingRightSideBar, handleDragStop } =

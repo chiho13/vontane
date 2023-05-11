@@ -185,14 +185,24 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     setOpenLink(false); // Close the link input
   };
 
+  const isFormatActive = (editor, format) => {
+    let isActive = true;
+    for (const [node] of Editor.nodes(editor, {
+      match: Text.isText,
+      at: editor.selection,
+      universal: true,
+      voids: false,
+    })) {
+      if (!node[format]) {
+        isActive = false;
+        break;
+      }
+    }
+
+    return isActive;
+  };
+
   const toggleFormat = (editor: ReactEditor, format: string) => {
-    const isFormatActive = (editor, format) => {
-      const [match] = Editor.nodes(editor, {
-        match: (n) => n[format] === true,
-        mode: "all",
-      });
-      return !!match;
-    };
     const isActive = isFormatActive(editor, format);
     Transforms.setNodes(
       editor,
@@ -219,7 +229,13 @@ export const Toolbar: React.FC<ToolbarProps> = ({
                 toggleFormat(editor, "bold");
               }}
             >
-              <FaBold color={theme.colors.darkblue} />
+              <FaBold
+                color={
+                  isFormatActive(editor, "bold")
+                    ? theme.colors.brand
+                    : theme.colors.darkblue
+                }
+              />
             </button>
             <button
               className="flex items-center  rounded-lg p-2 transition duration-300 hover:bg-gray-200"
@@ -228,7 +244,13 @@ export const Toolbar: React.FC<ToolbarProps> = ({
                 toggleFormat(editor, "italic");
               }}
             >
-              <FiItalic color={theme.colors.darkblue} />
+              <FiItalic
+                color={
+                  isFormatActive(editor, "italic")
+                    ? theme.colors.brand
+                    : theme.colors.darkblue
+                }
+              />
             </button>
             <button
               className="flex items-center  rounded-lg p-2 transition duration-300 hover:bg-gray-200"
@@ -237,7 +259,13 @@ export const Toolbar: React.FC<ToolbarProps> = ({
                 toggleFormat(editor, "underline");
               }}
             >
-              <FiUnderline color={theme.colors.darkblue} />
+              <FiUnderline
+                color={
+                  isFormatActive(editor, "underline")
+                    ? theme.colors.brand
+                    : theme.colors.darkblue
+                }
+              />
             </button>
             <button
               className="flex items-center rounded-lg p-2 transition duration-300 hover:bg-gray-200"
@@ -246,7 +274,13 @@ export const Toolbar: React.FC<ToolbarProps> = ({
                 toggleFormat(editor, "strikethrough");
               }}
             >
-              <ImStrikethrough color={theme.colors.darkblue} />
+              <ImStrikethrough
+                color={
+                  isFormatActive(editor, "strikethrough")
+                    ? theme.colors.brand
+                    : theme.colors.darkblue
+                }
+              />
             </button>
             <button
               className=" flex items-center  rounded-lg p-2 transition duration-300 hover:bg-gray-200"
@@ -254,7 +288,9 @@ export const Toolbar: React.FC<ToolbarProps> = ({
                 setOpenLink(true);
               }}
             >
-              <ImLink color={theme.colors.darkblue} />
+              <ImLink
+                color={hasURL ? theme.colors.brand : theme.colors.darkblue}
+              />
             </button>
           </div>
           <div className="h-full w-[1px] bg-gray-200"></div>

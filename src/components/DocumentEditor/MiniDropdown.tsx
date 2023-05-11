@@ -250,12 +250,8 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
                 <motion.button
                   key={index}
                   whileTap={{ scale: 0.97 }}
-                  className={`mb-1 flex w-full items-center gap-2 rounded-md border-2 border-gray-100 p-2 shadow-sm transition duration-300 hover:bg-gray-100
-                    ${
-                      focusedIndex === index
-                        ? "bg-blue-100 hover:bg-blue-200"
-                        : ""
-                    }
+                  className={`mb-1 flex w-full items-center gap-2 rounded-md border-2 border-gray-100 p-2 shadow-sm transition duration-300 hover:bg-gray-200
+                    ${focusedIndex === index ? "bg-gray-200" : ""}
                   `}
                   onClick={item.action}
                 >

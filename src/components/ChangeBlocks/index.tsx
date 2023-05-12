@@ -8,6 +8,7 @@ import { genNodeId } from "@/hoc/withID";
 import Dropdown, { DropdownProvider } from "../Dropdown";
 import { useArrowNavigation } from "@/hooks/useArrowNavigation";
 import { FaCaretDown } from "react-icons/fa";
+import { toggleBlock } from "../DocumentEditor/helpers/toggleBlock";
 import {
   Editor,
   Transforms,
@@ -18,7 +19,7 @@ import {
 import { ReactEditor } from "slate-react";
 import { useTheme } from "styled-components";
 
-export const ChangeBlocks = ({ toggleBlock }) => {
+export const ChangeBlocks = () => {
   const { editor } = useContext(EditorContext);
 
   const theme = useTheme();

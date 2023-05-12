@@ -44,6 +44,7 @@ import { Toolbar } from "@/components/Toolbar";
 import { up_animation_props } from "@/config/framer";
 
 import { slightbouncey } from "@/config/framer";
+import { toggleBlock } from "./helpers/toggleBlock";
 
 import {
   DndContext,
@@ -434,6 +435,39 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         setSearchMinidropdownText(null);
       }
 
+      // if (event.key === ' ' && editor.children[editor.selection.anchor.path[0]].text.startsWith('- ')) {
+
+      //   event.preventDefault(); // Prevent the space from being added
+      //   if (currentNode.type === "paragraph") {
+      //     Transforms.delete(editor, { unit: 'line' }); // Remove the '- ' that was typed
+      //   }
+
+      // }
+
+      if (event.key === " ") {
+        const currentNode = Editor.node(editor, _currentNodePath);
+        const currentText = Node.string(currentNode[0]);
+
+        const slashIndex = currentText.lastIndexOf("-");
+        if (currentText.startsWith("-")) {
+          // Get the current selection in the editor
+          const { selection } = editor;
+
+          if (selection) {
+            event.preventDefault();
+            // Unwrap any existing list items
+
+            if (parentNode.type === "paragraph") {
+              toggleBlock(editor, "bulleted-list");
+              Transforms.delete(editor, { unit: "character", reverse: true });
+              // Transforms.move(editor, { distance: 1, unit: "character" });
+              // const start = Editor.start(editor, selection.focus.path);
+              // Transforms.select(editor, start);
+            }
+          }
+        }
+      }
+
       if (event.key === "Enter") {
         event.preventDefault();
 
@@ -627,7 +661,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
             if (backToParagraph) {
               event.preventDefault();
-              Transforms.setNodes(editor, newProperties);
+              // Transforms.setNodes(editor, newProperties);
+              toggleBlock(editor, "paragraph");
             }
           }
 

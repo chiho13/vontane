@@ -7,6 +7,10 @@ import { List, ListOrdered } from "lucide-react";
 import { genNodeId } from "@/hoc/withID";
 import { ChangeBlocks } from "../ChangeBlocks";
 import {
+  isBlockActive,
+  toggleBlock,
+} from "../DocumentEditor/helpers/toggleBlock";
+import {
   Editor,
   Transforms,
   Text,
@@ -63,56 +67,56 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     return linkUrl;
   };
 
-  const isBlockActive = (editor, format, blockType = "type") => {
-    const { selection } = editor;
-    if (!selection) return false;
+  // const isBlockActive = (editor, format, blockType = "type") => {
+  //   const { selection } = editor;
+  //   if (!selection) return false;
 
-    const [match] = Array.from(
-      Editor.nodes(editor, {
-        at: Editor.unhangRange(editor, selection),
-        match: (n) =>
-          !Editor.isEditor(n) &&
-          SlateElement.isElement(n) &&
-          n[blockType] === format,
-      })
-    );
+  //   const [match] = Array.from(
+  //     Editor.nodes(editor, {
+  //       at: Editor.unhangRange(editor, selection),
+  //       match: (n) =>
+  //         !Editor.isEditor(n) &&
+  //         SlateElement.isElement(n) &&
+  //         n[blockType] === format,
+  //     })
+  //   );
 
-    return !!match;
-  };
+  //   return !!match;
+  // };
 
-  const toggleBlock = (editor, format) => {
-    const isActive = isBlockActive(editor, format, "type");
-    const isList = LIST_TYPES.includes(format);
+  // const toggleBlock = (editor, format) => {
+  //   const isActive = isBlockActive(editor, format, "type");
+  //   const isList = LIST_TYPES.includes(format);
 
-    Transforms.unwrapNodes(editor, {
-      match: (n) =>
-        !Editor.isEditor(n) &&
-        SlateElement.isElement(n) &&
-        LIST_TYPES.includes(n.type),
-      split: true,
-    });
+  //   Transforms.unwrapNodes(editor, {
+  //     match: (n) =>
+  //       !Editor.isEditor(n) &&
+  //       SlateElement.isElement(n) &&
+  //       LIST_TYPES.includes(n.type),
+  //     split: true,
+  //   });
 
-    const id = genNodeId();
-    let newProperties: Partial<SlateElement>;
+  //   const id = genNodeId();
+  //   let newProperties: Partial<SlateElement>;
 
-    if (isActive && isList) {
-      // If the current block is a list item, turn it into a paragraph
-      newProperties = {
-        type: "paragraph",
-      };
-    } else {
-      newProperties = {
-        type: isList ? "list" : format,
-      };
-    }
+  //   if (isActive && isList) {
+  //     // If the current block is a list item, turn it into a paragraph
+  //     newProperties = {
+  //       type: "paragraph",
+  //     };
+  //   } else {
+  //     newProperties = {
+  //       type: isList ? "list" : format,
+  //     };
+  //   }
 
-    Transforms.setNodes<SlateElement>(editor, newProperties);
+  //   Transforms.setNodes<SlateElement>(editor, newProperties);
 
-    if (!isActive && isList) {
-      const block = { type: format, children: [] };
-      Transforms.wrapNodes(editor, block);
-    }
-  };
+  //   if (!isActive && isList) {
+  //     const block = { type: format, children: [] };
+  //     Transforms.wrapNodes(editor, block);
+  //   }
+  // };
 
   const hasURL = getActiveLinkUrl(editor);
 
@@ -220,9 +224,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         transition: "all 0.2s ease-in-out",
       }}
     >
-      <ChangeBlocks
-        toggleBlock={(editor, format) => toggleBlock(editor, format)}
-      />
+      <ChangeBlocks />
       {!openLink && (
         <>
           <div className="flex  p-1">

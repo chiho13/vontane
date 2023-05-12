@@ -2,7 +2,14 @@ import { motion } from "framer-motion";
 import { useTheme } from "styled-components";
 import { forwardRef, useContext, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { List, FileQuestion, CheckCircle } from "lucide-react";
+import {
+  List,
+  FileQuestion,
+  CheckCircle,
+  Heading1,
+  Heading2,
+  Heading3,
+} from "lucide-react";
 import { EditorContext } from "@/contexts/EditorContext";
 import { Editor, Path, Transforms } from "slate";
 import { ReactEditor } from "slate-react";
@@ -11,6 +18,7 @@ import { SlideBreak } from "@/icons/SlideBreak";
 import { addSlideBreak } from "./helpers/addSlideBreak";
 import { genNodeId } from "@/hoc/withID";
 import { useArrowNavigation } from "@/hooks/useArrowNavigation";
+import { toggleBlock } from "./helpers/toggleBlock";
 
 interface MiniDropdownProps {
   isOpen: boolean;
@@ -114,10 +122,37 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
           />
         ),
       },
+      {
+        name: "Heading 1",
+        description: "Big Section heading",
+        action: () => addHeading("heading-one"),
+        icon: (
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 p-1">
+            <Heading1 color={theme.colors.darkergray} />
+          </div>
+        ),
+      },
+      {
+        name: "Heading 2",
+        description: "Medium Section heading",
+        action: () => addHeading("heading-two"),
+        icon: (
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 p-1">
+            <Heading2 color={theme.colors.darkergray} />
+          </div>
+        ),
+      },
+      {
+        name: "Heading 3",
+        description: "Small Section heading",
+        action: () => addHeading("heading-three"),
+        icon: (
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 p-1">
+            <Heading3 color={theme.colors.darkergray} />
+          </div>
+        ),
+      },
     ];
-
-    const { focusedIndex, setFocusedIndex, handleArrowNavigation } =
-      useArrowNavigation(customElements, 0, closeDropdown);
 
     useEffect(() => {
       if (isOpen) {
@@ -136,19 +171,34 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
       });
     };
 
-    console.log(search);
     const filteredList = filterList(customElements, search);
-
+    const { focusedIndex, setFocusedIndex, handleArrowNavigation } =
+      useArrowNavigation(filteredList, 0, closeDropdown);
     const closeOnEmptyInput = (
       event: React.KeyboardEvent<HTMLInputElement>
     ) => {
       if (event.key === "Backspace") {
         if (search.length === 0) {
           event.preventDefault();
-          closeDropdown();
+          setShowDropdown(false);
+
+          Transforms.select(
+            editor,
+            Editor.start(editor, JSON.parse(activePath))
+          );
+
+          ReactEditor.focus(editor);
         }
       }
     };
+
+    function addHeading(heading: string) {
+      toggleBlock(editor, heading);
+      setShowDropdown(false);
+      Transforms.select(editor, Editor.start(editor, JSON.parse(activePath)));
+
+      ReactEditor.focus(editor);
+    }
 
     function closeDropdown() {
       setShowDropdown(false);

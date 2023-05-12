@@ -1,14 +1,14 @@
 import { useContext, useEffect, useState, useRef } from "react";
 import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor, useFocused, useSelected } from "slate-react";
-import { Editor, Path, Node } from "slate";
+import { Editor, Path, Node, Range } from "slate";
 import styled from "styled-components";
 import { hasSlideElement } from "@/utils/helpers";
 
 const HeadingElementStyle = styled.div`
-  &[data-type="h1"],
-  &[data-type="h2"],
-  &[data-type="h3"] {
+  & h1,
+  & h2,
+  & h3 {
     &[data-placeholder]::after {
       content: attr(data-placeholder);
       pointer-events: none;
@@ -40,6 +40,11 @@ export function HeadingElement(props) {
     "heading-two": "text-3xl",
     "heading-three": "text-2xl",
   };
+  const placeHolderMap = {
+    "heading-one": "Heading 1",
+    "heading-two": "Heading 2",
+    "heading-three": "Heading 3",
+  };
   useEffect(() => {
     if (editor && path) {
       const isFirstElement = Path.equals(path, [0]);
@@ -57,12 +62,10 @@ export function HeadingElement(props) {
     }
   }, [focused, selected]);
 
-  const shouldShowPlaceholder =
-    (isVisible && (!focused || (focused && editor.children.length === 1))) ||
-    (focused && selected && element.children[0].text === "");
+  const shouldShowPlaceholder = element.children[0].text === "";
 
   return (
-    <HeadingElementStyle>
+    <HeadingElementStyle data-type={tag}>
       <HeadingTag
         ref={paragraphRef}
         className={`${
@@ -73,7 +76,11 @@ export function HeadingElement(props) {
         {...attributes}
         data-id={element.id}
         data-path={JSON.stringify(path)}
-        data-placeholder={shouldShowPlaceholder ? "Press '/' for commands" : ""}
+        data-placeholder={
+          shouldShowPlaceholder
+            ? placeHolderMap[element.type as keyof typeof placeHolderMap]
+            : ""
+        }
       >
         {children}
       </HeadingTag>

@@ -13,7 +13,6 @@ export function useArrowNavigation(
   const handleArrowNavigation = (
     event: React.KeyboardEvent<HTMLInputElement>
   ) => {
-    const { editor } = useContext(EditorContext);
     if (event.key === "ArrowDown") {
       event.preventDefault();
       setFocusedIndex((prevIndex) => (prevIndex + 1) % elements.length);

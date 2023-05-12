@@ -62,54 +62,6 @@ export const ChangeBlocks = ({ toggleBlock }) => {
     </div>
   );
 
-  const isBlockActive = (editor, format, blockType = "type") => {
-    const { selection } = editor;
-    if (!selection) return false;
-
-    const [match] = Array.from(
-      Editor.nodes(editor, {
-        at: Editor.unhangRange(editor, selection),
-        match: (n) =>
-          !Editor.isEditor(n) &&
-          SlateElement.isElement(n) &&
-          n[blockType] === format,
-      })
-    );
-
-    return !!match;
-  };
-
-  const LIST_TYPES = ["numbered-list", "bulleted-list"];
-
-  //   const toggleBlock = (editor, format) => {
-  //     const isActive = isBlockActive(editor, format, "type");
-  //     const { selection } = editor;
-  //     console.log(selection.anchor.path);
-  //     const isList = LIST_TYPES.includes(format);
-  //     const _path = JSON.parse(JSON.stringify(selection.anchor.path));
-  //     Transforms.unwrapNodes(editor, {
-  //       match: (n) =>
-  //         !Editor.isEditor(n) &&
-  //         SlateElement.isElement(n) &&
-  //         LIST_TYPES.includes(n.type),
-  //       split: true,
-  //     });
-
-  //     const id = genNodeId();
-  //     let newProperties: Partial<SlateElement>;
-
-  //     // If the current block is a list item, turn it into a paragraph
-  //     newProperties = {
-  //       type: isActive ? "paragraph" : isList ? "list" : format,
-  //     };
-
-  //     Transforms.setNodes<SlateElement>(editor, newProperties);
-
-  //     if (!isActive && isList) {
-  //       const block = { type: format, children: [] };
-  //       Transforms.wrapNodes(editor, block);
-  //     }
-  //   };
   const { focusedIndex, setFocusedIndex, handleArrowNavigation } =
     useArrowNavigation(changeBlockElements, -1, () => {
       if (changeTextBlock.current) {

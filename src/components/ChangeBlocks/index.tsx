@@ -82,7 +82,7 @@ export const ChangeBlocks = () => {
             <Dropdown
               dropdownId="changeBlockDropdown"
               ref={changeTextBlock}
-              dropdownButtonClassName="p-1 px-2 flex items-center h-[32px] relative border outline-none border-2 shadow-none bg-transparent w-full  justify-start transition-colors duration-300  border focus:outline-none focus-within:ring-2 focus-within:ring-black focus-within:ring-opacity-40 hover:bg-gray-200"
+              dropdownButtonClassName="p-1 px-2 flex items-center h-[32px] relative border outline-none border-2 shadow-none bg-transparent w-full  justify-start transition-colors duration-300  border focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-opacity-40 hover:bg-gray-200"
               icon={TextBlockIcon}
               dropdownMenuNonPortalOverride="top-[38px]  border-black lg:absolute w-[200px]"
             >

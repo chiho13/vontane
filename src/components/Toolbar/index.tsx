@@ -9,6 +9,8 @@ import { ChangeBlocks } from "../ChangeBlocks";
 import {
   isBlockActive,
   toggleBlock,
+  isFormatActive,
+  toggleFormat,
 } from "../DocumentEditor/helpers/toggleBlock";
 import {
   Editor,
@@ -22,20 +24,16 @@ import { useTheme } from "styled-components";
 import { X } from "lucide-react";
 
 type ToolbarProps = {
-  path: string;
-  setToolbarWidth: (value: number) => void;
   openLink: boolean;
+  showMiniToolbar: boolean;
   setOpenLink: (value: boolean) => void;
-  lastActiveSelection: any;
   setShowMiniToolbar: (value: boolean) => void;
 };
 
 export const Toolbar: React.FC<ToolbarProps> = ({
-  path,
-  setToolbarWidth,
   openLink,
+  showMiniToolbar,
   setOpenLink,
-  lastActiveSelection,
   setShowMiniToolbar,
 }) => {
   const { editor } = useContext(EditorContext);
@@ -48,7 +46,6 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   const theme = useTheme();
   const [inputValue, setInputValue] = useState("");
 
-  //   editor.selection = lastActiveSelection;
   const urlInputRef = useRef(null);
 
   const LIST_TYPES = ["numbered-list", "bulleted-list"];
@@ -67,56 +64,21 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     return linkUrl;
   };
 
-  // const isBlockActive = (editor, format, blockType = "type") => {
-  //   const { selection } = editor;
-  //   if (!selection) return false;
+  const toolbarRef = useRef(null);
 
-  //   const [match] = Array.from(
-  //     Editor.nodes(editor, {
-  //       at: Editor.unhangRange(editor, selection),
-  //       match: (n) =>
-  //         !Editor.isEditor(n) &&
-  //         SlateElement.isElement(n) &&
-  //         n[blockType] === format,
-  //     })
-  //   );
+  const findFirstFocusableElement = (parent) => {
+    const focusableElements = [
+      "a[href]",
+      "button:not([disabled])",
+      "textarea:not([disabled])",
+      "input[type='text']:not([disabled])",
+      "select:not([disabled])",
+      "[tabindex]:not([tabindex='-1'])",
+    ];
 
-  //   return !!match;
-  // };
-
-  // const toggleBlock = (editor, format) => {
-  //   const isActive = isBlockActive(editor, format, "type");
-  //   const isList = LIST_TYPES.includes(format);
-
-  //   Transforms.unwrapNodes(editor, {
-  //     match: (n) =>
-  //       !Editor.isEditor(n) &&
-  //       SlateElement.isElement(n) &&
-  //       LIST_TYPES.includes(n.type),
-  //     split: true,
-  //   });
-
-  //   const id = genNodeId();
-  //   let newProperties: Partial<SlateElement>;
-
-  //   if (isActive && isList) {
-  //     // If the current block is a list item, turn it into a paragraph
-  //     newProperties = {
-  //       type: "paragraph",
-  //     };
-  //   } else {
-  //     newProperties = {
-  //       type: isList ? "list" : format,
-  //     };
-  //   }
-
-  //   Transforms.setNodes<SlateElement>(editor, newProperties);
-
-  //   if (!isActive && isList) {
-  //     const block = { type: format, children: [] };
-  //     Transforms.wrapNodes(editor, block);
-  //   }
-  // };
+    const query = focusableElements.join(", ");
+    return parent.current ? parent.current.querySelector(query) : null;
+  };
 
   const hasURL = getActiveLinkUrl(editor);
 
@@ -190,39 +152,15 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     setOpenLink(false); // Close the link input
   };
 
-  const isFormatActive = (editor, format) => {
-    let isActive = true;
-    for (const [node] of Editor.nodes(editor, {
-      match: Text.isText,
-      at: editor.selection,
-      universal: true,
-      voids: false,
-    })) {
-      if (!node[format]) {
-        isActive = false;
-        break;
-      }
-    }
-
-    return isActive;
-  };
-
-  const toggleFormat = (editor: ReactEditor, format: string) => {
-    const isActive = isFormatActive(editor, format);
-    Transforms.setNodes(
-      editor,
-      { [format]: isActive ? null : true },
-      { match: (n) => Text.isText(n), split: true }
-    );
-  };
-
   return (
     <div
-      className="relative flex h-[40px] items-center"
+      className="relative flex h-[40px] items-center focus:ring-2 focus:ring-black"
       style={{
         minWidth: 350,
         transition: "all 0.2s ease-in-out",
       }}
+      tabIndex={-1}
+      ref={toolbarRef}
     >
       <ChangeBlocks />
       {!openLink && (

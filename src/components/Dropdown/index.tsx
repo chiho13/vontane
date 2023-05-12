@@ -275,12 +275,6 @@ function Dropdown(
     }
   };
 
-  // useEffect(() => {
-  //   if (isOpen) {
-  //     wrapperRef.current?.focus();
-  //   }
-  // }, [isOpen]);
-
   useEffect(() => {
     if (isOpen) {
       const firstFocusableElement = findFirstFocusableElement(

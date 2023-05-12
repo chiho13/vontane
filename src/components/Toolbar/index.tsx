@@ -5,6 +5,7 @@ import { FiItalic, FiUnderline } from "react-icons/fi";
 import { ImStrikethrough, ImLink } from "react-icons/im";
 import { List, ListOrdered } from "lucide-react";
 import { genNodeId } from "@/hoc/withID";
+import { ChangeBlocks } from "../ChangeBlocks";
 import {
   Editor,
   Transforms,
@@ -215,10 +216,13 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     <div
       className="relative flex h-[40px] items-center"
       style={{
-        width: 400,
+        minWidth: 350,
         transition: "all 0.2s ease-in-out",
       }}
     >
+      <ChangeBlocks
+        toggleBlock={(editor, format) => toggleBlock(editor, format)}
+      />
       {!openLink && (
         <>
           <div className="flex  p-1">
@@ -238,7 +242,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               />
             </button>
             <button
-              className="flex items-center  rounded-lg p-2 transition duration-300 hover:bg-gray-200"
+              className="ml-1 flex  items-center  rounded-lg p-2 transition duration-300 hover:bg-gray-200"
               onMouseDown={(e) => {
                 e.preventDefault();
                 toggleFormat(editor, "italic");
@@ -253,7 +257,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               />
             </button>
             <button
-              className="flex items-center  rounded-lg p-2 transition duration-300 hover:bg-gray-200"
+              className="ml-1 flex  items-center  rounded-lg p-2 transition duration-300 hover:bg-gray-200"
               onMouseDown={(e) => {
                 e.preventDefault();
                 toggleFormat(editor, "underline");
@@ -268,7 +272,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               />
             </button>
             <button
-              className="flex items-center rounded-lg p-2 transition duration-300 hover:bg-gray-200"
+              className="ml-1 flex  items-center rounded-lg p-2 transition duration-300 hover:bg-gray-200"
               onMouseDown={(e) => {
                 e.preventDefault();
                 toggleFormat(editor, "strikethrough");
@@ -283,7 +287,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               />
             </button>
             <button
-              className=" flex items-center  rounded-lg p-2 transition duration-300 hover:bg-gray-200"
+              className=" ml-1 flex items-center   rounded-lg p-2 transition duration-300 hover:bg-gray-200"
               onMouseDown={() => {
                 setOpenLink(true);
               }}
@@ -296,7 +300,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           <div className="h-full w-[1px] bg-gray-200"></div>
           <div className="flex  p-1">
             <button
-              className="flex  h-[32px] w-[32px] items-center justify-center  rounded-lg  p-1 transition duration-300 hover:bg-gray-200"
+              className="ml-1  flex h-[32px] w-[32px] items-center justify-center  rounded-lg  p-1 transition duration-300 hover:bg-gray-200"
               onMouseDown={(e) => {
                 e.preventDefault();
                 toggleBlock(editor, "bulleted-list");
@@ -305,7 +309,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               <List width={20} height={20} color={theme.colors.darkblue} />
             </button>
             <button
-              className="flex  h-[32px]  w-[32px]   items-center justify-center rounded-lg  p-1 transition duration-300 hover:bg-gray-200"
+              className="ml-1  mr-1 flex  h-[32px]  w-[32px] items-center justify-center rounded-lg  p-1 transition duration-300 hover:bg-gray-200"
               onMouseDown={(e) => {
                 e.preventDefault();
                 toggleBlock(editor, "numbered-list");

@@ -232,7 +232,11 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
                   key={index}
                   whileTap={{ scale: 0.97 }}
                   className={`mb-1 flex w-full items-center gap-2 rounded-md border-2 border-gray-100 p-2 shadow-sm transition duration-300
-                    ${focusedIndex === index ? "bg-gray-200" : ""}
+                    ${
+                      focusedIndex === index
+                        ? "border-gray-200 bg-gray-200"
+                        : ""
+                    }
                   `}
                   onMouseOver={() => {
                     if (isKeyboardNav) return;

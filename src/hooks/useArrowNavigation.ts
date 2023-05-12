@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { EditorContext } from "@/contexts/EditorContext";
+import { useContext, useState } from "react";
+import { ReactEditor } from "slate-react";
 
 // This hook takes an array of actions (like your changeBlockElements array) and a callback to close the dropdown
 export function useArrowNavigation(
@@ -11,6 +13,7 @@ export function useArrowNavigation(
   const handleArrowNavigation = (
     event: React.KeyboardEvent<HTMLInputElement>
   ) => {
+    const { editor } = useContext(EditorContext);
     if (event.key === "ArrowDown") {
       event.preventDefault();
       setFocusedIndex((prevIndex) => (prevIndex + 1) % elements.length);

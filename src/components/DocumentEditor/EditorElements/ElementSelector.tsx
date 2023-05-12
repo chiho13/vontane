@@ -2,6 +2,7 @@ import { EditorContext } from "@/contexts/EditorContext";
 import React, { useContext } from "react";
 import { ReactEditor } from "slate-react";
 import {
+  HeadingElement,
   ParagraphElement,
   DefaultElement,
   EquationElement,
@@ -28,6 +29,14 @@ export function ElementSelector(props) {
       return <SlideBreak {...props} />;
     case "audio":
       return <AudioElement {...props} />;
+    case "heading-one":
+      return <HeadingElement {...props} tag="h1" />;
+    case "heading-two":
+      return <HeadingElement {...props} tag="h2" />;
+
+    case "heading-three":
+      return <HeadingElement {...props} tag="h3" />;
+
     case "paragraph":
       return <ParagraphElement {...props} />;
     case "link":

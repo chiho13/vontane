@@ -18,6 +18,7 @@ interface Theme {
     darkgray: string;
     darkergray: string;
     darkblue: string;
+    dark: string;
   };
   background: {
     white: string;
@@ -49,6 +50,7 @@ const theme: Theme = {
     gray: "#eeeeee",
     darkgray: "#999999",
     darkergray: "#666666",
+    dark: "#333333",
     darkblue: "#092e6b",
   },
   background: {

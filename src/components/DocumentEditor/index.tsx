@@ -33,6 +33,7 @@ import useClickOutside from "@/hooks/useClickOutside";
 
 import { LayoutContext } from "../Layouts/AccountLayout";
 import { y_animation_props } from "../Dropdown";
+
 import { findElementInSlateValue } from "./helpers/findElementInSlate";
 import { MathQuestionGenerator } from "../QuestionGenerator/Math";
 import { extractTextValues } from "@/components/DocumentEditor/helpers/extractText";
@@ -42,7 +43,7 @@ import { Portal } from "react-portal";
 import { Toolbar } from "@/components/Toolbar";
 import { up_animation_props } from "@/config/framer";
 
-import { MainToolbar } from "@/components/ChangeBlocks";
+import { slightbouncey } from "@/config/framer";
 
 import {
   DndContext,
@@ -1739,13 +1740,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 {showDropdown && activePath && (
                   <motion.div
                     // {...y_animation_props}
-                    initial={{ scale: 0.95, opacity: 0 }}
-                    animate={{ scale: [0.95, 1.01, 1], opacity: [0, 1, 1] }}
-                    exit={{ scale: 0.95, opacity: 0 }}
-                    transition={{
-                      ease: [0.54, 0.88, 0.43, 1],
-                      duration: 0.3,
-                    }}
+                    {...slightbouncey}
                     className="fixed left-[120px] z-10 mx-auto mt-2 w-[320px]"
                     style={{
                       transformOrigin: "top left",

@@ -16,7 +16,7 @@ import { motion, AnimatePresence, useCycle } from "framer-motion";
 import { mq, breakpoints } from "@/utils/breakpoints";
 import { Portal } from "react-portal";
 import { useTheme } from "styled-components";
-
+import { slightbouncey } from "@/config/framer";
 export interface DropdownContextType {
   activeDropdown: string | null;
   toggleDropdown: (dropdownId: string | null) => void;
@@ -189,7 +189,7 @@ function Dropdown(
   const desktopbreakpoint = window.screen.width > breakpoints.lg;
 
   const animation_props = desktopbreakpoint
-    ? y_animation_props
+    ? slightbouncey
     : slide_up_animation_props;
   const [menuHeight, setMenuHeight] = useState<number | null>(null);
   const dropdownMenuRef = useRef<HTMLDivElement>(null);
@@ -389,6 +389,7 @@ function Dropdown(
                   ref={wrapperRef}
                   tabIndex={-1}
                   style={{
+                    transformOrigin: "top left",
                     top: buttonPosition.top,
                     right: buttonPosition.right,
                   }}
@@ -406,6 +407,9 @@ function Dropdown(
                 aria-labelledby="voices-dropdown"
                 ref={wrapperRef}
                 tabIndex={-1}
+                style={{
+                  transformOrigin: "top left",
+                }}
                 // style={{
                 //   top: buttonPosition.top,
                 // }}

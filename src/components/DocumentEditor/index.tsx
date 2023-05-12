@@ -44,7 +44,7 @@ import { Toolbar } from "@/components/Toolbar";
 import { up_animation_props } from "@/config/framer";
 
 import { slightbouncey } from "@/config/framer";
-import { toggleBlock } from "./helpers/toggleBlock";
+import { toggleBlock, toggleFormat } from "./helpers/toggleBlock";
 
 import {
   DndContext,
@@ -84,6 +84,8 @@ import { textRegex } from "./helpers/textRegex";
 import { addMCQBlock } from "./helpers/addMCQBlock";
 import { breakpoints } from "@/utils/breakpoints";
 import { useLocalStorage } from "usehooks-ts";
+import { HOTKEYS } from "@/config/hotkeys";
+import isHotkey from "is-hotkey";
 interface DocumentEditorProps {
   workspaceId: string;
   handleTextChange?: (value: any) => void;
@@ -360,6 +362,14 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
       if (!selection || !ReactEditor.isFocused(editor)) {
         return;
+      }
+
+      for (const hotkey in HOTKEYS) {
+        if (isHotkey(hotkey, event as any)) {
+          event.preventDefault();
+          const mark = HOTKEYS[hotkey];
+          toggleFormat(editor, mark);
+        }
       }
 
       const [parentNode, parentPath] = Editor.parent(
@@ -1708,12 +1718,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                                 }}
                               >
                                 <Toolbar
-                                  path={activePath}
-                                  setToolbarWidth={setToolbarWidth}
+                                  showMiniToolbar={showMiniToolbar}
                                   openLink={openLink}
                                   setOpenLink={setOpenLink}
                                   setShowMiniToolbar={setShowMiniToolbar}
-                                  lastActiveSelection={lastActiveSelection}
                                 />
                                 {/* <TextSpeech key="selectedText" isSelected={true} /> */}
                               </StyledMiniToolbar>

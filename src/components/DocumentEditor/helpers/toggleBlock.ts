@@ -66,3 +66,35 @@ export const toggleBlock = (
     Transforms.wrapNodes(editor, block);
   }
 };
+
+export const isFormatActive = (
+  editor: BaseEditor & ReactEditor,
+  format: string
+) => {
+  let isActive = true;
+  for (const [node] of Editor.nodes(editor, {
+    match: Text.isText,
+    at: editor.selection,
+    universal: true,
+    voids: false,
+  })) {
+    if (!node[format]) {
+      isActive = false;
+      break;
+    }
+  }
+
+  return isActive;
+};
+
+export const toggleFormat = (
+  editor: BaseEditor & ReactEditor,
+  format: string
+) => {
+  const isActive = isFormatActive(editor, format);
+  Transforms.setNodes(
+    editor,
+    { [format]: isActive ? null : true },
+    { match: (n) => Text.isText(n), split: true }
+  );
+};

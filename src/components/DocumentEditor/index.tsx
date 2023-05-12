@@ -176,23 +176,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   } = useContext(EditorContext);
 
   const [slatevalue, setValue] = useState(initialSlateValue);
-
-  // [
-  //   {
-  //     id: "SDfdsfsdfsdfsdf",
-  //     type: "paragraph",
-  //     children: [
-  //       { text: "" },
-  //       {
-  //         id: "jfklsjfklsdfds",
-  //         type: "link",
-  //         url: "https://www.google.com",
-  //         children: [{ text: "Google" }],
-  //       },
-  //     ],
-  //   },
-  // ]
-
   const [ghostslatevalue, setGhostValue] = useState(initialSlateValue);
 
   const [currentSlateKey, setCurrentSlateKey] = useState(workspaceId);
@@ -396,14 +379,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
       let updatedNode = null;
 
-      // const startOfNode = Editor.start(editor, editor.selection);
-      // const cursorAtStartOfNode =
-      //   Range.isCollapsed(editor.selection) &&
-      //   Point.equals(editor.selection.anchor, startOfNode);
-      // if (event.key === "/") {
-      //   event.preventDefault();
-      // }
-
       const isEmpty =
         currentNode.children.length === 1 &&
         currentNode.children[0].text === "";
@@ -434,15 +409,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       } else {
         setSearchMinidropdownText(null);
       }
-
-      // if (event.key === ' ' && editor.children[editor.selection.anchor.path[0]].text.startsWith('- ')) {
-
-      //   event.preventDefault(); // Prevent the space from being added
-      //   if (currentNode.type === "paragraph") {
-      //     Transforms.delete(editor, { unit: 'line' }); // Remove the '- ' that was typed
-      //   }
-
-      // }
 
       if (event.key === " ") {
         const currentNode = Editor.node(editor, _currentNodePath);
@@ -1888,7 +1854,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             rightSideBarWidth={rightSideBarWidth}
           />
         </>
-        {/* )} */}
       </div>
     </div>
   );

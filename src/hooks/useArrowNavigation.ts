@@ -4,7 +4,7 @@ import { ReactEditor } from "slate-react";
 
 // This hook takes an array of actions (like your changeBlockElements array) and a callback to close the dropdown
 export function useArrowNavigation(
-  elements: any[],
+  elements: any,
   initialIndex: number,
   closeDropdown
 ) {

@@ -347,7 +347,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     Transforms.select(editor, Editor.start(editor, newPath));
   }
 
-  function splitTitleNode(newPath: Path, _currentNodePath: any) {
+  function splitTitleNode(newPath: Path) {
     Transforms.splitNodes(editor);
     Transforms.setNodes(
       editor,
@@ -389,9 +389,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
       let updatedNode = null;
 
-      const isEmpty =
-        currentNode.children.length === 1 &&
-        currentNode.children[0].text === "";
+      const isEmpty = currentNode.children[0].text === "";
 
       const startOfNode = Editor.start(editor, editor.selection);
       const cursorAtStartOfNode =
@@ -483,7 +481,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               Transforms.select(editor, Editor.start(editor, newPath));
             }
           }
-          if (parentNode.type === "paragraph") {
+          if (
+            parentNode.type === "paragraph" ||
+            parentNode.type === "heading-one" ||
+            parentNode.type === "heading-two" ||
+            parentNode.type === "heading-three"
+          ) {
             const newPath = Path.next(parentPath);
             if (Editor.isEnd(editor, selection.anchor, _currentNodePath)) {
               // insertNewParagraphEnter(newPath);
@@ -518,7 +521,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 at: _currentNodePath,
               });
             } else {
-              Transforms.splitNodes(editor);
+              if (parentNode.type !== "paragraph") {
+                splitTitleNode(Path.next(_currentNodePath));
+              } else {
+                Transforms.splitNodes(editor);
+              }
 
               const newId = genNodeId();
               Transforms.setNodes(editor, { id: newId }, { at: newPath });
@@ -578,7 +585,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 Transforms.select(editor, newPath);
               } else {
                 const newPath = Path.next(parentPath);
-                splitTitleNode(newPath, _currentNodePath);
+                splitTitleNode(newPath);
               }
             } else {
               // Otherwise, split the nodes and create a new paragraph as before
@@ -587,7 +594,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 const newPath = Path.next(parentPath);
                 insertNewParagraphEnter(newPath);
               } else {
-                splitTitleNode(parentPath, _currentNodePath);
+                splitTitleNode(parentPath);
               }
             }
           }
@@ -671,6 +678,23 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
                 if (nextParagraph) {
                   const [nextNode, nextPath] = nextParagraph;
+                  const targetPosition = Editor.end(editor, nextPath);
+                  Transforms.select(editor, targetPosition);
+                }
+              }
+
+              if (
+                Node.string(_prevNode) === "" &&
+                _prevNode.type !== "paragraph" &&
+                isStart
+              ) {
+                event.preventDefault();
+                const heading = Editor.previous(editor, {
+                  at: _currentNodePath,
+                });
+
+                if (heading) {
+                  const [nextNode, nextPath] = heading;
                   const targetPosition = Editor.end(editor, nextPath);
                   Transforms.select(editor, targetPosition);
                 }
@@ -1270,7 +1294,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     const lastNode = editor.children[editor.children.length - 1];
     const lastNodePath = ReactEditor.findPath(editor, lastNode);
 
-    if (lastNode.type === "equation" || lastNode.type === "audio") {
+    if (
+      lastNode.type === "equation" ||
+      lastNode.type === "audio" ||
+      lastNode.type === "slide"
+    ) {
       insertNewParagraphBelowLastNode(lastNodePath);
       event.stopPropagation();
       return;

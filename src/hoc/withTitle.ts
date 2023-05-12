@@ -31,15 +31,6 @@ export const withTitle = (editor) => {
       return;
     }
 
-    if (node.type === "paragraph") {
-      // Check if it has more than one child
-
-      if (node.children.length > 1) {
-        // If so, it's valid according to our custom schema, so we return
-        return;
-      }
-    }
-
     // Fall back to the original `normalizeNode`
     normalizeNode(entry);
   };

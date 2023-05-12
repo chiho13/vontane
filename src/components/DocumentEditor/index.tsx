@@ -42,7 +42,7 @@ import { Portal } from "react-portal";
 import { Toolbar } from "@/components/Toolbar";
 import { up_animation_props } from "@/config/framer";
 
-import { MainToolbar } from "@/components/MainToolbar";
+import { MainToolbar } from "@/components/ChangeBlocks";
 
 import {
   DndContext,
@@ -1395,7 +1395,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             if (
               startNode.type === "paragraph" ||
               startNode.type === "link" ||
-              startNode.type === "list"
+              startNode.type === "list" ||
+              startNode.type === "heading-one" ||
+              startNode.type === "heading-two" ||
+              startNode.type === "heading-three"
             ) {
               const startRange = document.createRange();
               startRange.setStart(startContainer, range.startOffset);
@@ -1561,8 +1564,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         {!showMiniToolbar && <TextSpeech />}
       </div> */}
 
-      <div className="flex w-full justify-between lg:w-[800px]">
-        <MainToolbar path={activePath} />
+      <div className="flex w-full justify-end lg:w-[800px]">
+        {/* <MainToolbar path={activePath} /> */}
         <button
           className=" right-0 z-10 hidden h-[36px] rounded border border-gray-300 bg-white p-1 xl:block"
           onClick={() => {
@@ -1599,7 +1602,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                         <div
                           ref={textEditorRef}
                           tabIndex={0}
-                          className="editable-scrollbar relative z-0 mx-auto block overflow-y-auto rounded-md pt-4 pr-1 pb-4 focus:outline-none  focus-visible:border-gray-300"
+                          className="editable-scrollbar relative z-0 mx-auto block overflow-y-auto  overflow-x-hidden rounded-md pt-4 pr-1 pb-4 focus:outline-none  focus-visible:border-gray-300"
                         >
                           <Slate
                             key={currentSlateKey}

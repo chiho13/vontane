@@ -22,8 +22,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       icon: "billing",
     },
     {
-      title: "Profile",
-      href: "/account/profile",
+      title: "Settings",
+      href: "/account/settings",
       icon: "settings",
     },
     {
@@ -39,12 +39,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         <meta name="description" content="Vontane upgrade to pro" />
       </Head>
       <Header />
-      <div className="container mx-auto mt-10 grid flex-1 gap-12 md:max-w-[1200px] md:grid-cols-[200px_1fr]">
-        <aside className="hidden w-[200px] flex-col md:flex">
+      <div className="container mx-auto mt-10 grid flex-1 gap-12 lg:max-w-[1200px] lg:grid-cols-[200px_1fr]">
+        <aside className="hidden w-[200px] flex-col lg:flex">
           {/* <div>something</div> */}
           <DashboardNav items={items} />
         </aside>
-        <main className="flex w-full flex-1 flex-col overflow-hidden">
+        <main className="mx-auto flex w-[90%] flex-1 flex-col overflow-hidden lg:w-full">
           {children}
         </main>
       </div>

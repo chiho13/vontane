@@ -2,44 +2,16 @@ import React from "react";
 import styled from "styled-components";
 
 const LoadingSpinnerSVG = styled.svg`
-  animation: rotate 2s linear infinite;
   z-index: 2;
   width: 20px;
   height: 20px;
-
-  & .path {
-    stroke: ${(props) => (props.strokeColor ? props.strokeColor : "#aaaaaa")};
-    stroke-linecap: round;
-    animation: dash 1.5s ease-in-out infinite;
-  }
-
-  @keyframes rotate {
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-
-  @keyframes dash {
-    0% {
-      stroke-dasharray: 1, 150;
-      stroke-dashoffset: 0;
-    }
-    50% {
-      stroke-dasharray: 90, 150;
-      stroke-dashoffset: -35;
-    }
-    100% {
-      stroke-dasharray: 90, 150;
-      stroke-dashoffset: -124;
-    }
-  }
 `;
 
-function LoadingSpinner({ strokeColor = "#aaaaaa" }) {
+function LoadingSpinner({ strokeColor = "stroke-gray-400" }) {
   return (
-    <LoadingSpinnerSVG viewBox="0 0 50 50" strokeColor={strokeColor}>
+    <LoadingSpinnerSVG viewBox="0 0 50 50" className="animate-rotate">
       <circle
-        className="path"
+        className={`animate-dash ${strokeColor}`}
         cx="25"
         cy="25"
         r="20"

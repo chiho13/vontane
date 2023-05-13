@@ -5,7 +5,7 @@ import Layout from "./layout";
 import { NextPage } from "next";
 import { DashboardHeader } from "@/components/AccountSettingsNav/header";
 
-const Profile: NextPage = () => {
+const Settings: NextPage = () => {
   const session = useSession();
   const router = useRouter();
 
@@ -16,15 +16,22 @@ const Profile: NextPage = () => {
   }, [session, router]);
 
   return (
-    <Layout titlePage="Profile">
-      <div className="grid items-start gap-8">
+    <Layout titlePage="Settings">
+      <div className=" ml-4 grid items-start gap-8 lg:ml-0">
         <DashboardHeader
-          heading="Profile"
+          heading="Settings"
           text="Manage account and web app settings"
         />
+        <div className="w-[90%] rounded-lg border bg-white text-black shadow-sm lg:w-[50%]">
+          <div className="flex flex-col space-y-1.5 p-6">
+            <h3 className="text-lg font-semibold leading-none tracking-tight">
+              Display
+            </h3>
+          </div>
+        </div>
       </div>
     </Layout>
   );
 };
 
-export default Profile;
+export default Settings;

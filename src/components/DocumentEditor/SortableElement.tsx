@@ -58,17 +58,6 @@ export function SortableElement({
       >
         {readOnly ? null : (
           <div className="flex w-[58px] translate-x-[2px] justify-end">
-            {/* <button
-              className={classes.handle}
-              onClick={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                openMiniDropdown();
-              }}
-              // ref={toggleRef}
-            >
-              <Plus color={theme.colors.darkgray} />
-            </button> */}
             <div className={classNames(classes.addButton)}>{addButton}</div>
             <button
               ref={setActivatorNodeRef}
@@ -76,7 +65,7 @@ export function SortableElement({
               className={classes.handle}
               contentEditable={false}
             >
-              <GripVertical color={theme.colors.darkgray} width={20} />
+              <GripVertical className="stroke-darkgray" width={20} />
             </button>
           </div>
         )}

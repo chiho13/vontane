@@ -36,28 +36,6 @@ import { useUserContext } from "@/contexts/UserContext";
 import { useWorkspaceTitleUpdate } from "@/contexts/WorkspaceTitleContext";
 import { api } from "@/utils/api";
 
-const Header = styled.header`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: ${({ theme }) => theme.colors.brand};
-`;
-
-const Navbar = styled.nav`
-  display: flex;
-  gap: 1rem;
-`;
-
-const NavLink = styled.a`
-  font-weight: bold;
-  color: ${({ theme }) => theme.colors.brand};
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
-  }
-`;
-
 const SidebarContainer = styled.div`
   position: relative;
 `;
@@ -81,14 +59,9 @@ const ToggleButtonWrapper = styled.div`
 
 const ToggleButton = styled.a`
   background-color: transparent;
-  color: ${({ theme }) => theme.colors.darkgray};
   border-radius: 0.25rem;
   transition: background-color 300ms ease;
   height: 24px;
-
-  &:hover {
-    background-color: ${({ theme }) => theme.colors.gray};
-  }
 `;
 
 const SidebarContent = styled.div<{ isLocked: boolean; isOpen: boolean }>`
@@ -101,8 +74,7 @@ transform: ${(props) =>
   background: rgb(251, 251, 250); 
 padding: 0;
 z-index: 10;
-border: ${(props) =>
-  !props.isLocked && props.isOpen && `1px solid  ${props.theme.colors.gray}`} ;
+ 
 border-left: none;
 border-top-right-radius:  ${(props) =>
   !props.isLocked && props.isOpen && "4px"};
@@ -148,16 +120,7 @@ const SidebarItem = styled.li<{ activeWorkspace?: boolean }>`
     border-radius: 4px;
     margin-top: 5px;
     transition: background-color 300ms ease, transform 300ms;
-    color: ${({ theme }) => theme.colors.darkergray};
-    background-color: ${({ theme, activeWorkspace }) =>
-      activeWorkspace ? theme.colors.gray : "transparent"};
-    font-weight: ${({ activeWorkspace }) =>
-      activeWorkspace ? "bold" : "normal"};
     overflow: hidden;
-
-    &:hover {
-      background-color: ${({ theme }) => theme.colors.gray};
-    }
 
     &:active {
       transform: scale(0.97);
@@ -374,7 +337,12 @@ const Layout: React.FC<LayoutProps> = ({
             }}
             onMouseEnter={handleMouseEnter}
           >
-            <ToggleButton role="button" href="#" onClick={toggleSidebarLock}>
+            <ToggleButton
+              className="text-darkergray hover:bg-gray-200"
+              role="button"
+              href="#"
+              onClick={toggleSidebarLock}
+            >
               {isLocked ? <TooltipChevronLeft /> : <ChevronRightToMenu />}
             </ToggleButton>
           </ToggleButtonWrapper>
@@ -389,12 +357,7 @@ const Layout: React.FC<LayoutProps> = ({
                     selectedItemText={profile && profile.name}
                     image={AvatarProfile}
                     dropdownButtonClassName="p-0 relative border-transparent relative outline-none border-0 shadow-none bg-transparent w-full h-[47px] justify-start transition-colors duration-300 focus:ring-2 focus:ring-black focus:ring-opacity-30 hover:bg-gray-200"
-                    icon={
-                      <ChevronsUpDown
-                        className="w-4"
-                        color={theme.colors.darkgray}
-                      />
-                    }
+                    icon={<ChevronsUpDown className="w-4 text-darkgray" />}
                   >
                     <div className="p-1" role="none">
                       <Link
@@ -434,14 +397,16 @@ const Layout: React.FC<LayoutProps> = ({
                         : workspaceName;
 
                     return (
-                      <SidebarItem
-                        key={workspace.id}
-                        activeWorkspace={currentWorkspaceId === workspace.id}
-                      >
+                      <SidebarItem key={workspace.id}>
                         <button
                           onClick={() => handleWorkspaceRoute(workspace.id, "")}
+                          className={`hover:bg-gray-200 ${
+                            currentWorkspaceId === workspace.id
+                              ? "bg-gray-200 font-bold"
+                              : "transparent"
+                          }`}
                         >
-                          <span className="text-sm">
+                          <span className="text-sm text-darkergray ">
                             {displayName || "Untitled"}
                           </span>
                         </button>
@@ -451,11 +416,13 @@ const Layout: React.FC<LayoutProps> = ({
 
                 <SidebarItem>
                   <button
-                    className="flex items-center"
+                    className="flex items-center hover:bg-gray-200"
                     onClick={createWorkspace}
                   >
-                    <Plus />{" "}
-                    <span className="ml-2 text-sm">Create Workspace</span>
+                    <Plus className="text-darkergray" />{" "}
+                    <span className="ml-2 text-sm text-darkergray">
+                      Create Workspace
+                    </span>
                   </button>
                 </SidebarItem>
                 {!profile?.is_subscribed && (
@@ -465,11 +432,13 @@ const Layout: React.FC<LayoutProps> = ({
                     } left-0`}
                   >
                     <button
-                      className=" flex items-center"
+                      className={`flex items-center hover:bg-gray-200`}
                       onClick={upgradeAccount}
                     >
-                      <ArrowUpCircle />{" "}
-                      <span className="ml-2 text-sm">Upgrade Account</span>
+                      <ArrowUpCircle className="text-darkergray" />{" "}
+                      <span className="ml-2 text-sm text-darkergray">
+                        Upgrade Account
+                      </span>
                     </button>
                   </SidebarItem>
                 )}

@@ -138,7 +138,7 @@ const Upgrade: NextPage = () => {
           <div className="-mx-4 flex flex-wrap">
             <div className="w-full px-4">
               <div className="mx-auto mb-[20px] max-w-[510px] text-center lg:mb-5">
-                <h1 className="text-dark mb-4 text-3xl font-bold sm:text-3xl ">
+                <h1 className="mb-4 text-3xl font-bold text-dark sm:text-3xl ">
                   <LoadingSpinner />
                 </h1>
               </div>
@@ -156,7 +156,7 @@ const Upgrade: NextPage = () => {
           <div className="-mx-4 flex flex-wrap">
             <div className="w-full px-4">
               <div className="mx-auto mb-[20px] max-w-[510px] text-center lg:mb-5">
-                <h1 className="text-dark mb-4 text-3xl font-bold sm:text-3xl ">
+                <h1 className="mb-4 text-3xl font-bold text-dark sm:text-3xl ">
                   Thank you for your subscription
                 </h1>
 
@@ -185,7 +185,7 @@ const Upgrade: NextPage = () => {
           <div className="-mx-4 flex flex-wrap">
             <div className="w-full px-4">
               <div className="mx-auto mb-[20px] max-w-[510px] text-center lg:mb-5">
-                <h1 className="text-dark mb-4 text-3xl font-bold sm:text-4xl ">
+                <h1 className="mb-4 text-3xl font-bold text-dark sm:text-4xl ">
                   Upgrade
                 </h1>
               </div>
@@ -302,7 +302,7 @@ const Upgrade: NextPage = () => {
                   >
                     <div className="flex items-center justify-center">
                       {loading ? (
-                        <LoadingSpinner strokeColor="#ffffff" />
+                        <LoadingSpinner strokeColor="stroke-white" />
                       ) : (
                         <span className="ml-2">Upgrade</span>
                       )}

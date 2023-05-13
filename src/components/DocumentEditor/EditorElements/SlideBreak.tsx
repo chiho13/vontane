@@ -75,7 +75,7 @@ export const SlideBreak = withSlideNumbering(
             <div className="relative -top-[2px] mr-1 flex flex-col items-center text-sm">
               {/* <ChevronUp className="absolute -top-5 w-4 text-gray-500" /> */}
               <div
-                className={`w-10 text-center text-base font-semibold text-[${theme.colors.brand}]`}
+                className={`w-10 text-center text-base font-semibold text-brand`}
               >
                 {slideNumbers.slideNumberTop}
               </div>

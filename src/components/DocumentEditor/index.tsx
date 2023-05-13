@@ -995,7 +995,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             contentEditable={false}
           >
             <button
-              className="addButton  rounded-md ease-in-out hover:bg-gray-200"
+              className="addButton rounded-md  p-1 ease-in-out hover:bg-gray-200"
               onClick={(event) => {
                 event.preventDefault();
                 event.stopPropagation();
@@ -1003,7 +1003,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               }}
               ref={toggleRef}
             >
-              <Plus color={theme.colors.darkgray} />
+              <Plus className="stroke-darkgray" />
             </button>
           </div>
         ) : null;
@@ -1600,8 +1600,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         transition: "right 0.3s ease-in-out",
       }}
     >
-      {/* <div className="mx-auto mt-4 h-[100px] justify-start">
-        {!showMiniToolbar && <TextSpeech />}
+      {/* <div className="mx-auto mt-4 justify-start">
+        <TextSpeech />
       </div> */}
 
       <div className="flex w-full justify-end lg:w-[800px]">
@@ -1612,10 +1612,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             setShowRightSidebar((prev) => !prev);
           }}
         >
-          <Sidebar
-            className="rotate-180 transform"
-            color={theme.colors.darkergray}
-          />
+          <Sidebar className="rotate-180 transform stroke-darkergray" />
         </button>
       </div>
       <div className="flex justify-center">

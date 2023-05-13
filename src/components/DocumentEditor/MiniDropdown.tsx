@@ -59,7 +59,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         action: closeDropdown,
         icon: (
           <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 p-1">
-            <TextIcon strokeColor={theme.colors.darkergray} />
+            <TextIcon />
           </div>
         ),
       },
@@ -69,7 +69,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         action: addSlideBreakHandler,
         icon: (
           <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 p-1">
-            <SlideBreak strokeColor={theme.colors.darkergray} />
+            <SlideBreak />
           </div>
         ),
       },
@@ -79,7 +79,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         action: addMCQBlock,
         icon: (
           <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 p-1">
-            <CheckCircle color={theme.colors.darkergray} />
+            <CheckCircle className="stroke-darkergray" />
           </div>
         ),
       },
@@ -128,7 +128,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         action: () => addHeading("heading-one"),
         icon: (
           <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 p-1">
-            <Heading1 color={theme.colors.darkergray} />
+            <Heading1 className="stroke-darkergray" />
           </div>
         ),
       },
@@ -138,7 +138,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         action: () => addHeading("heading-two"),
         icon: (
           <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 p-1">
-            <Heading2 color={theme.colors.darkergray} />
+            <Heading2 className="stroke-darkergray" />
           </div>
         ),
       },
@@ -148,7 +148,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         action: () => addHeading("heading-three"),
         icon: (
           <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 p-1">
-            <Heading3 color={theme.colors.darkergray} />
+            <Heading3 className="stroke-darkergray" />
           </div>
         ),
       },

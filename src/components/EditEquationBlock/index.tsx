@@ -51,7 +51,7 @@ const InfoToolTip = () => {
         <Tooltip>
           <TooltipTrigger>
             <div className="cursor-pointer rounded-full transition duration-200 hover:bg-gray-200">
-              <Info color={theme.colors.darkgray} width={20} />
+              <Info className="text-brand" width={20} />
             </div>
           </TooltipTrigger>
           <TooltipContent className="w-[120px] border-black" side="left">
@@ -249,10 +249,9 @@ export const EditBlockPopup = React.forwardRef<
                   className="rounded-md p-1 transition duration-200 hover:bg-gray-200"
                 >
                   <Send
-                    color={theme.colors.darkgray}
                     width={24}
                     height={24}
-                    className="text-red group-hover:text-black"
+                    className="text-red stroke-darkgray group-hover:text-black"
                   />
                 </button>
               )}
@@ -298,7 +297,7 @@ export const EditBlockPopup = React.forwardRef<
           onClick={onClick}
         >
           <span className="mr-1">Done</span>
-          <CornerDownLeft color="white" width={16} />
+          <CornerDownLeft className="stroke-white" width={16} />
         </button>
       </div>
     </EditBlockPopupStyle>

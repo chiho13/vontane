@@ -1,4 +1,4 @@
-export const TextIcon = ({ strokeColor = "currentColor" }) => {
+export const TextIcon = () => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -6,7 +6,7 @@ export const TextIcon = ({ strokeColor = "currentColor" }) => {
       height="28"
       viewBox="0 0 24 24"
       fill="none"
-      stroke={strokeColor}
+      className="stroke-darkergray"
       stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"

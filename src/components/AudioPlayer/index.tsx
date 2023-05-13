@@ -148,7 +148,7 @@ function AudioPlayer({ audioURL, fileName, element }: Props): JSX.Element {
         onClick={isPlaying ? handlePause : handlePlay}
         className="play_pause_button"
       >
-        {isPlaying ? <PauseIcon theme={theme} /> : <PlayIcon theme={theme} />}
+        {isPlaying ? <PauseIcon /> : <PlayIcon />}
       </button>
 
       <div className="audioPlayer_current-time">
@@ -156,7 +156,7 @@ function AudioPlayer({ audioURL, fileName, element }: Props): JSX.Element {
       </div>
 
       <div
-        className="audioPlayer_timeline_container"
+        className="audioPlayer_timeline_container group"
         onMouseDown={handleSeekStart}
         onMouseUp={handleSeekEnd}
         onMouseMove={handleSeekMove}
@@ -165,7 +165,7 @@ function AudioPlayer({ audioURL, fileName, element }: Props): JSX.Element {
       >
         <div className="audioPlayer_timeline">
           <div
-            className="audioPlayer_timeline_track"
+            className="audioPlayer_timeline_track group-hover:bg-brand"
             style={{
               width: `${
                 seekValue === seekMax

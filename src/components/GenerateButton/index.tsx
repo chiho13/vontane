@@ -16,6 +16,7 @@ function GenerateButton({
 }: GenerateButtonProps) {
   return (
     <GenerateButtonStyle
+      className="text-brand"
       isDisabled={isDisabled}
       onClick={onClick}
       disabled={isDisabled || audioIsLoading}

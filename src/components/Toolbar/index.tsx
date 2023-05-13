@@ -174,11 +174,11 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               }}
             >
               <FaBold
-                color={
+                className={`${
                   isFormatActive(editor, "bold")
-                    ? theme.colors.brand
-                    : theme.colors.darkblue
-                }
+                    ? "text-brand"
+                    : "text-darkblue"
+                }`}
               />
             </button>
             <button
@@ -189,11 +189,11 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               }}
             >
               <FiItalic
-                color={
+                className={`${
                   isFormatActive(editor, "italic")
-                    ? theme.colors.brand
-                    : theme.colors.darkblue
-                }
+                    ? "text-brand"
+                    : "text-darkblue"
+                }`}
               />
             </button>
             <button
@@ -204,11 +204,11 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               }}
             >
               <FiUnderline
-                color={
+                className={`${
                   isFormatActive(editor, "underline")
-                    ? theme.colors.brand
-                    : theme.colors.darkblue
-                }
+                    ? "text-brand"
+                    : "text-darkblue"
+                }`}
               />
             </button>
             <button
@@ -219,11 +219,11 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               }}
             >
               <ImStrikethrough
-                color={
+                className={`${
                   isFormatActive(editor, "strikethrough")
-                    ? theme.colors.brand
-                    : theme.colors.darkblue
-                }
+                    ? "text-brand"
+                    : "text-darkblue"
+                }`}
               />
             </button>
             <button
@@ -233,7 +233,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               }}
             >
               <ImLink
-                color={hasURL ? theme.colors.brand : theme.colors.darkblue}
+                className={`${hasURL ? "text-brand" : "text-darkblue"}`}
               />
             </button>
           </div>
@@ -246,7 +246,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
                 toggleBlock(editor, "bulleted-list");
               }}
             >
-              <List width={20} height={20} color={theme.colors.darkblue} />
+              <List width={20} height={20} className="text-darkblue" />
             </button>
             <button
               className="ml-1  mr-1 flex  h-[32px]  w-[32px] items-center justify-center rounded-lg  p-1 transition duration-300 hover:bg-gray-200"
@@ -255,11 +255,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
                 toggleBlock(editor, "numbered-list");
               }}
             >
-              <ListOrdered
-                width={20}
-                height={20}
-                color={theme.colors.darkblue}
-              />
+              <ListOrdered width={20} height={20} className="text-darkblue" />
             </button>
           </div>
         </>
@@ -267,9 +263,6 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 
       {openLink && (
         <div className=" absolute left-0  flex w-full items-center bg-white p-1">
-          {/* <button className="p-1">
-            <X color={theme.colors.darkgray} />
-          </button> */}
           <form onSubmit={handleSubmit} className="flex w-full">
             <input
               ref={urlInputRef}
@@ -280,7 +273,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               onBlur={(e) => e.preventDefault()}
             />
             <button
-              className={`grow p-1 text-sm font-semibold text-[${theme.colors.brand}]`}
+              className="grow p-1 text-sm font-semibold text-brand"
               type="submit"
             >
               Apply
@@ -288,7 +281,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           </form>
           {hasURL && (
             <button
-              className={`grow p-1 pr-2 text-sm font-semibold text-[${theme.colors.brand}]`}
+              className="grow p-1 pr-2 text-sm font-semibold text-brand"
               onClick={unLink}
             >
               Unlink

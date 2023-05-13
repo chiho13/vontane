@@ -41,10 +41,7 @@ export const OptionMenu = forwardRef<HTMLDivElement, OptionMenuProps>(
           dropdownMenuClassName="fixed top-0 w-[200px] border-0"
           icon={
             <div className="flex h-[24px] w-[24px] items-center  justify-center rounded-md bg-gray-200 p-1">
-              <MoreHorizontal
-                color={theme.colors.darkgray}
-                className="option-menu"
-              />
+              <MoreHorizontal className="option-menu stroke-darkergray" />
             </div>
           }
         >
@@ -56,7 +53,7 @@ export const OptionMenu = forwardRef<HTMLDivElement, OptionMenuProps>(
               tabIndex={-1}
               id="menu-item-3"
             >
-              <Trash2 color={theme.colors.darkgray} className="mr-2 w-5" />
+              <Trash2 className="mr-4 w-5  stroke-darkergray" />
               Delete
             </button>
           </div>

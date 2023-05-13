@@ -32,22 +32,22 @@ export const ChangeBlocks = () => {
     {
       name: "Text",
       action: () => toggleBlock(editor, "paragraph"),
-      icon: <Type color={theme.colors.dark} width={16} height={16} />,
+      icon: <Type className="stroke-darkblue" width={16} height={16} />,
     },
     {
       name: "Heading 1",
       action: () => toggleBlock(editor, "heading-one"),
-      icon: <Heading1 color={theme.colors.dark} width={18} height={18} />,
+      icon: <Heading1 className="stroke-darkblue" width={18} height={18} />,
     },
     {
       name: "Heading 2",
       action: () => toggleBlock(editor, "heading-two"),
-      icon: <Heading2 color={theme.colors.dark} width={18} height={18} />,
+      icon: <Heading2 className="stroke-darkblue" width={18} height={18} />,
     },
     {
       name: "Heading 3",
       action: () => toggleBlock(editor, "heading-three"),
-      icon: <Heading3 color={theme.colors.dark} width={18} height={18} />,
+      icon: <Heading3 className="stroke-darkblue" width={18} height={18} />,
     },
   ];
   const [selectedBlock, setSelectedBlock] = useState(0);
@@ -59,7 +59,7 @@ export const ChangeBlocks = () => {
         {" "}
         {changeBlockElements[selectedBlock]["name"]}
       </span>
-      <FaCaretDown className="w-4" color={theme.colors.darkblue} />
+      <FaCaretDown className="w-4 text-darkblue" />
     </div>
   );
 
@@ -82,16 +82,10 @@ export const ChangeBlocks = () => {
             <Dropdown
               dropdownId="changeBlockDropdown"
               ref={changeTextBlock}
-              dropdownButtonClassName="p-1 px-2 flex items-center h-[32px] relative border outline-none border-2 shadow-none bg-transparent w-full  justify-start transition-colors duration-300  border focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-opacity-40 hover:bg-gray-200"
+              dropdownButtonClassName="p-1 px-2 flex text-darkblue items-center h-[32px] relative border outline-none border-2 shadow-none bg-transparent w-full  justify-start transition-colors duration-300  border focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-opacity-40 hover:bg-gray-200"
               icon={TextBlockIcon}
               dropdownMenuNonPortalOverride="top-[38px]  border-black lg:absolute w-[200px]"
             >
-              {/* <input
-                ref={dropdownMenu}
-                type="text"
-                className="opacity- absolute h-[0px]"
-              
-              /> */}
               <div
                 className="p-2"
                 role="none"
@@ -124,7 +118,7 @@ export const ChangeBlocks = () => {
                       }}
                     >
                       {element.icon}
-                      <span className="ml-3">{element.name}</span>
+                      <span className="ml-3 text-darkblue">{element.name}</span>
                     </button>
                   );
                 })}

@@ -14,15 +14,15 @@ export const AudioPlayerStyle: StyledComponent<"div", any> = styled.div`
   margin-top: 5px;
   margin-bottom: 5px;
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  background: ${(props) => props.theme.background.white};}
 
-  .audioPlayer_current-time, .audioPlayer_max-time {
+  .audioPlayer_current-time,
+  .audioPlayer_max-time {
     display: block;
     font-size: 14px;
     margin-left: 10px;
-    width: 35px
+    width: 35px;
   }
-    
+
   .audioPlayer_timeline_container {
     position: relative;
     top: 1px;
@@ -32,10 +32,6 @@ export const AudioPlayerStyle: StyledComponent<"div", any> = styled.div`
     display: flex;
     align-items: center;
     margin-left: 16px;
-
-    &:hover .audioPlayer_timeline_track {
-        background-color: ${(props) => props.theme.colors.brand};
-      }
   }
 
   .audioPlayer_timeline {
@@ -45,10 +41,7 @@ export const AudioPlayerStyle: StyledComponent<"div", any> = styled.div`
     position: relative;
     cursor: pointer;
     border-radius: 3px;
-   
-  } 
-
-
+  }
 
   .audioPlayer_timeline_track {
     height: 6px;
@@ -58,11 +51,9 @@ export const AudioPlayerStyle: StyledComponent<"div", any> = styled.div`
     left: 0;
     border-top-left-radius: 3px;
     border-bottom-left-radius: 3px;
-    -webkit-backface-visibility: hidden
-
-    .finished & {
-        border-top-right-radius: 3px;
-        border-bottom-right-radius: 3px;
+    -webkit-backface-visibility: hidden .finished & {
+      border-top-right-radius: 3px;
+      border-bottom-right-radius: 3px;
     }
   }
 
@@ -77,7 +68,7 @@ export const AudioPlayerStyle: StyledComponent<"div", any> = styled.div`
     border-radius: 50%;
     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   }
-  
+
   .play_pause_button:active .play-icon {
     transform: scale(0.9);
   }
@@ -85,9 +76,9 @@ export const AudioPlayerStyle: StyledComponent<"div", any> = styled.div`
   .play_pause_button:active .pause-icon {
     transform: scale(0.9);
   }
-  
-  .play-icon, .pause-icon {
+
+  .play-icon,
+  .pause-icon {
     transition: transform 0.1s ease-in-out;
   }
-
 `;

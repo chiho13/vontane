@@ -53,10 +53,7 @@ const TopicList = ({
           >
             {topic}
             {!isLastLevel && (
-              <ChevronRight
-                className="ml-2 w-4"
-                color={theme.colors.darkgray}
-              />
+              <ChevronRight className="ml-2 w-4 text-darkgray" />
             )}
           </div>
           {isLastLevel && topic === selectedValue && (

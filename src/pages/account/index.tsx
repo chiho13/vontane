@@ -11,7 +11,7 @@ import LoadingSpinner from "@/icons/LoadingSpinner";
 import Link from "next/link";
 import { formatDate } from "@/utils/formatDate";
 import { api } from "@/utils/api";
-
+import colors from "tailwindcss/colors";
 const Account: NextPage = () => {
   const session = useSession();
   const router = useRouter();
@@ -62,7 +62,7 @@ const Account: NextPage = () => {
           heading="Billing"
           text="Manage billing and your subscription plan."
         />
-        <div className="rounded-lg border bg-white text-black shadow-sm">
+        <div className="rounded-lg border bg-white text-black shadow-sm lg:w-[80%]">
           <div className="flex flex-col space-y-1.5 p-6">
             <h3 className="text-lg font-semibold leading-none tracking-tight">
               Subscription Plan
@@ -79,17 +79,13 @@ const Account: NextPage = () => {
                 <button
                   disabled={isPortalLoading}
                   onClick={createPortal}
-                  className={`disabled:pointer-event-none mr-2 mt-5 inline-flex items-center rounded-lg border border-gray-200 bg-white py-2.5 px-5 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-[${
-                    theme.colors.brand
-                  }] transition duration-300 focus:z-10 focus:text-[${
-                    theme.colors.brand
-                  }] focus:ring-1 focus:ring-black  dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white
+                  className={`disabled:pointer-event-none mr-2 mt-5 inline-flex items-center rounded-lg border border-gray-200 bg-white py-2.5 px-5 text-sm font-medium text-gray-900 transition duration-300 hover:bg-gray-100 hover:text-brand focus:z-10 focus:text-brand focus:ring-1 focus:ring-black  dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white
                 ${isPortalLoading ? "pointer-events-none opacity-50" : ""}
                 `}
                 >
                   {isPortalLoading && (
                     <div className="mr-3">
-                      <LoadingSpinner strokeColor={theme.colors.brand} />
+                      <LoadingSpinner strokeColor="stroke-brand" />
                     </div>
                   )}
                   <span>Manage Subscription</span>
@@ -97,7 +93,7 @@ const Account: NextPage = () => {
               ) : (
                 <Link
                   href="/account/upgrade"
-                  className={`disabled:pointer-event-none mr-2 mt-5 inline-flex items-center rounded-lg border border-gray-200 bg-white py-2.5 px-5 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-[${theme.colors.brand}] transition duration-300 focus:z-10 focus:text-[${theme.colors.brand}] focus:ring-1 focus:ring-black  dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white
+                  className={`disabled:pointer-event-none mr-2 mt-5 inline-flex items-center rounded-lg border border-gray-200 bg-white py-2.5 px-5 text-sm font-medium text-gray-900 transition duration-300 hover:bg-gray-100 hover:text-brand focus:z-10 focus:text-brand focus:ring-1 focus:ring-black  dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white
               `}
                 >
                   <span>Upgrade</span>

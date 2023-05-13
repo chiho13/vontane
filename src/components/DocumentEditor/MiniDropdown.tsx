@@ -236,6 +236,24 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
       ReactEditor.focus(editor);
     }
 
+    const listRefs = useRef([]);
+    const scrollContainerRef = useRef(null);
+    listRefs.current = [];
+    const addToRefs = (el) => {
+      if (el && !listRefs.current.includes(el)) {
+        listRefs.current.push(el);
+      }
+    };
+
+    useEffect(() => {
+      if (isKeyboardNav && listRefs.current[focusedIndex]) {
+        listRefs.current[focusedIndex].scrollIntoView({
+          behavior: "smooth",
+          block: "end",
+        });
+      }
+    }, [focusedIndex, isKeyboardNav]);
+
     return (
       <div className="relative" ref={ref}>
         {!searchBarPosition && (
@@ -269,6 +287,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
           />
         )}
         <div
+          ref={scrollContainerRef}
           className="dropdown-menu h-[40vh] max-h-[320px] overflow-y-auto rounded-md border border-gray-200 bg-white p-2 shadow-md"
           onMouseLeave={() => {
             setIsKeyboardNav(false);
@@ -277,7 +296,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         >
           <ul>
             {filteredList.map((item, index) => (
-              <li>
+              <li ref={addToRefs}>
                 <motion.button
                   key={index}
                   whileTap={{ scale: 0.97 }}

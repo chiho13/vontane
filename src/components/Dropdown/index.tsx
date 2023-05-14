@@ -340,7 +340,7 @@ function Dropdown(
   const _dropdownMenuNonPortalOverride =
     dropdownMenuNonPortalOverride || "dark:bg-muted lg:absolute";
   const dropdownMenuStyleOverride =
-    dropdownMenuClassName || "fixed left-0  top-12 mt-2 w-full";
+    dropdownMenuClassName || "fixed left-0 top-12 mt-2 w-full";
   return (
     <>
       {desktopbreakpoint && (
@@ -376,7 +376,7 @@ function Dropdown(
                 <motion.div
                   {...animation_props}
                   id={dropdownId}
-                  className={`dropdown-menu z-10000 min-w-[100px] origin-top-right border-2 bg-white shadow-lg ring-1 ring-black ring-opacity-5 lg:absolute lg:rounded-md ${dropdownMenuStyleOverride}`}
+                  className={`dropdown-menu z-10000 min-w-[100px] origin-top-right border-2 bg-white shadow-lg  ring-1 ring-black ring-opacity-5 dark:border-gray-700 dark:bg-muted dark:text-foreground lg:absolute lg:rounded-md ${dropdownMenuStyleOverride}`}
                   role="menu"
                   aria-orientation="vertical"
                   aria-labelledby="voices-dropdown"

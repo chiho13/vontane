@@ -25,7 +25,6 @@
 }
 
 .sortableElement:hover .handle {
-  background: #f0f0f0;
   opacity: 1;
 }
 .sortableElement:hover .addButton {

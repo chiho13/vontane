@@ -40,7 +40,7 @@ export function EquationElement(props) {
             alt="add latex block equation"
             width={50}
             height={50}
-            className="opacity-30"
+            className="rounded-md opacity-30 dark:bg-white"
           />
           <span className="ml-4 opacity-30">Add Block Equation</span>
         </div>

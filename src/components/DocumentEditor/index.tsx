@@ -991,7 +991,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             contentEditable={false}
           >
             <button
-              className="addButton rounded-md  ease-in-out hover:bg-gray-200"
+              className="addButton rounded-md  ease-in-out hover:bg-gray-200 dark:hover:bg-accent"
               onClick={(event) => {
                 event.preventDefault();
                 event.stopPropagation();

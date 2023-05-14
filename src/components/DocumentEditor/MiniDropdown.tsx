@@ -58,7 +58,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         description: "Just start writing",
         action: closeDropdown,
         icon: (
-          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 p-1">
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1">
             <TextIcon />
           </div>
         ),
@@ -68,7 +68,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         description: "Slide mode: break the page",
         action: addSlideBreakHandler,
         icon: (
-          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 p-1">
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1">
             <SlideBreak />
           </div>
         ),
@@ -78,7 +78,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         description: "Set a multiple choice question",
         action: addMCQBlock,
         icon: (
-          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 p-1">
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1">
             <CheckCircle className="stroke-darkergray" />
           </div>
         ),
@@ -118,7 +118,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
             alt="add latex block equation"
             width={44}
             height={44}
-            className="rounded-md border  border-gray-300 p-1"
+            className="rounded-md border  border-gray-300 bg-white p-1"
           />
         ),
       },
@@ -127,7 +127,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         description: "Big Section heading",
         action: () => addHeading("heading-one"),
         icon: (
-          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 p-1">
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1">
             <Heading1 className="stroke-darkergray" />
           </div>
         ),
@@ -137,7 +137,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         description: "Medium Section heading",
         action: () => addHeading("heading-two"),
         icon: (
-          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 p-1">
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1">
             <Heading2 className="stroke-darkergray" />
           </div>
         ),
@@ -147,7 +147,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         description: "Small Section heading",
         action: () => addHeading("heading-three"),
         icon: (
-          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 p-1">
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1">
             <Heading3 className="stroke-darkergray" />
           </div>
         ),
@@ -287,7 +287,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         )}
         <div
           ref={ref}
-          className="dropdown-menu h-[320px] overflow-y-auto rounded-md border border-gray-200 bg-white p-2 shadow-md"
+          className="dropdown-menu h-[320px] overflow-y-auto rounded-md border border-gray-200 bg-white p-2 shadow-md dark:border-gray-700 dark:bg-muted"
           onMouseLeave={() => {
             setIsKeyboardNav(false);
             setFocusedIndex(-1);
@@ -299,10 +299,10 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
                 <motion.button
                   key={index}
                   whileTap={{ scale: 0.97 }}
-                  className={`mb-1 flex w-full items-center gap-2 rounded-md border-2 border-gray-100 p-2 shadow-sm transition duration-300
+                  className={`mb-1 flex w-full items-center gap-2 rounded-md border-2 border-gray-100 p-2 shadow-sm transition duration-300 dark:border-gray-700
                     ${
                       focusedIndex === index
-                        ? "border-gray-200 bg-gray-200"
+                        ? "border-gray-200 bg-gray-200 dark:bg-accent"
                         : ""
                     }
                   `}
@@ -314,7 +314,9 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
                 >
                   {item.icon || item.image}
                   <div className="ml-2 flex-1 text-left ">
-                    <span className=" text-sm text-black">{item.name}</span>
+                    <span className=" text-sm text-black dark:text-foreground">
+                      {item.name}
+                    </span>
 
                     <div className="mt-1 overflow-hidden text-ellipsis whitespace-nowrap text-xs text-gray-500">
                       {item.description}

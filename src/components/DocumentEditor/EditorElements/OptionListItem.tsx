@@ -10,7 +10,6 @@ const StyledOptionListItem = styled.li`
   padding: 8px;
   width: auto;
   display: list-item;
-  background: #ffffff;
 
   span[data-placeholder]::after {
     content: attr(data-placeholder);
@@ -71,7 +70,7 @@ export const OptionListItem = ({ attributes, children, element }) => {
   return (
     <StyledOptionListItem
       {...attributes}
-      className={`linear-gradient-right rounded border-2 ${
+      className={`rounded border-2 bg-white dark:border-gray-700 dark:bg-muted ${
         checked ? "border-blue-500" : "border-gray-200"
       }`}
     >

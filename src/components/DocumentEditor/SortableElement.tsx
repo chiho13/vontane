@@ -62,7 +62,7 @@ export function SortableElement({
             <button
               ref={setActivatorNodeRef}
               {...listeners}
-              className={classes.handle}
+              className={`${classes.handle} hover:bg-gray-200 dark:hover:bg-accent`}
               contentEditable={false}
             >
               <GripVertical className="stroke-darkgray" width={20} />

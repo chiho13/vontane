@@ -156,7 +156,7 @@ const Upgrade: NextPage = () => {
           <div className="-mx-4 flex flex-wrap">
             <div className="w-full px-4">
               <div className="mx-auto mb-[20px] max-w-[510px] text-center lg:mb-5">
-                <h1 className="mb-4 text-3xl font-bold text-dark sm:text-3xl ">
+                <h1 className="mb-4 text-3xl font-bold text-dark dark:text-white sm:text-3xl ">
                   Thank you for your subscription
                 </h1>
 
@@ -165,7 +165,7 @@ const Upgrade: NextPage = () => {
                   To manage your subcription go to{" "}
                   <Link
                     href="/account"
-                    className="ml-2 rounded-md bg-gray-200 p-2 transition duration-300 hover:bg-gray-300"
+                    className="ml-2 rounded-md border border-foreground bg-background p-2 text-foreground transition duration-300 hover:bg-gray-300"
                   >
                     <span className="text-bold">Billing</span>
                   </Link>

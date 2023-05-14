@@ -51,7 +51,10 @@ const InfoToolTip = () => {
         <Tooltip>
           <TooltipTrigger>
             <div className="cursor-pointer rounded-full transition duration-200 hover:bg-gray-200">
-              <Info className="text-brand" width={20} />
+              <Info
+                className="text-brand dark:text-muted-foreground"
+                width={20}
+              />
             </div>
           </TooltipTrigger>
           <TooltipContent className="w-[120px] border-black" side="left">
@@ -223,7 +226,7 @@ export const EditBlockPopup = React.forwardRef<
   return (
     <EditBlockPopupStyle
       ref={ref}
-      className="block rounded-md border border-gray-200 bg-gray-100 p-2 shadow-md"
+      className="block rounded-md border border-gray-200 bg-gray-100 p-2 shadow-md dark:border-gray-700 dark:bg-accent"
     >
       <div className="flex">
         <form
@@ -234,7 +237,7 @@ export const EditBlockPopup = React.forwardRef<
           <input
             autoFocus
             onChange={onChangeFindEquation}
-            className="indent-text block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500  focus:outline-none focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+            className="indent-text block w-full rounded-lg border border-gray-300 bg-gray-50  p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:outline-none  focus:ring-blue-500 dark:border-gray-600 dark:bg-accent  dark:text-white dark:placeholder-gray-400 dark:focus:border-white dark:focus:ring-blue-500"
             placeholder="Search equations, formulas, reactions..."
           />
           <div className="group flex items-center">
@@ -265,7 +268,7 @@ export const EditBlockPopup = React.forwardRef<
           aria-label={altText}
           aria-live="off"
           value={value}
-          className="w-full resize-none rounded-md border border-gray-200 bg-transparent p-2 focus:border-[#007AFF] focus:outline-none"
+          className="w-full resize-none rounded-md border border-gray-200 bg-transparent p-2 focus:border-[#007AFF] focus:outline-none dark:border-gray-700"
           onChange={onEquationChange}
           placeholder="TEX code"
         />
@@ -293,11 +296,14 @@ export const EditBlockPopup = React.forwardRef<
       )}
       <div className="mt-3 flex justify-end">
         <button
-          className="flex items-center rounded-md bg-[#007AFF] px-2 py-1  text-sm text-white  shadow-sm transition duration-300 hover:bg-[#006EE6] "
+          className="flex items-center rounded-md bg-[#007AFF] px-2 py-1  text-sm text-white shadow-sm transition duration-300 hover:bg-[#006EE6] dark:bg-foreground dark:text-background "
           onClick={onClick}
         >
           <span className="mr-1">Done</span>
-          <CornerDownLeft className="stroke-white" width={16} />
+          <CornerDownLeft
+            className="stroke-white dark:stroke-background"
+            width={16}
+          />
         </button>
       </div>
     </EditBlockPopupStyle>

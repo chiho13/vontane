@@ -64,7 +64,7 @@ const Account: NextPage = () => {
         />
         <div className="rounded-lg border bg-transparent text-black shadow-sm lg:w-[80%]">
           <div className="flex flex-col space-y-1.5 p-6">
-            <h3 className="text-lg font-semibold leading-none tracking-tight">
+            <h3 className="text-lg font-semibold leading-none tracking-tight dark:text-foreground">
               Subscription Plan
             </h3>
 
@@ -72,7 +72,7 @@ const Account: NextPage = () => {
               You are currently on the <strong>{plan.name}</strong> plan.
             </p>
 
-            <div className="pt-3"> {plan.description}</div>
+            <div className="pt-3 dark:text-foreground"> {plan.description}</div>
 
             <div className="flex flex flex-col items-start items-center  space-y-2 md:flex-row md:justify-between md:space-x-0">
               {profile?.is_subscribed ? (
@@ -103,7 +103,7 @@ const Account: NextPage = () => {
               {profile?.is_subscribed ? (
                 <p className="rounded-full text-sm text-gray-500">
                   Your plan renews on{" "}
-                  <span className="font-semibold text-gray-600">
+                  <span className="font-semibold text-gray-600 dark:text-muted-foreground">
                     {formatDate(profile?.stripeCurrentPeriodEnd.getTime())}.
                   </span>
                 </p>

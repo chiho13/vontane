@@ -1,8 +1,6 @@
 import React from "react";
 import { saveAs } from "file-saver";
 import { Download } from "lucide-react";
-import styled, { useTheme } from "styled-components";
-import { downloadAudio } from "../../api/downloadApi";
 
 import {
   Tooltip,
@@ -20,7 +18,6 @@ export function DownloadButton({
   audioURL,
   fileName,
 }: DownloadButtonProps): JSX.Element {
-  const theme = useTheme();
   async function handleDownload() {
     if (!audioURL) return;
     try {

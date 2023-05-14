@@ -101,9 +101,8 @@ export const FloatingModal: React.FC<FloatingModalProps> = ({
         style={{ left: position.x, top: position.y }}
       >
         <X
-          className="absolute right-2 top-2 cursor-pointer"
+          className="absolute right-2 top-2 cursor-pointer text-darkgray"
           onClick={onClose}
-          color={theme.colors.darkgray}
         />
         <div className="mb-2 flex select-none items-center font-bold">
           <div className="mr-1 cursor-move rounded p-1 text-gray-500 hover:bg-gray-100">

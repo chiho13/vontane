@@ -5,6 +5,7 @@
   cursor: grab;
   display: flex;
   opacity: 0;
+  background: transparent;
 }
 
 .addButton {

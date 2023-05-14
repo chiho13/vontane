@@ -33,7 +33,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     },
   ];
   return (
-    <div className="block min-h-screen  bg-gradient-to-b from-[#ffffff] to-[#fefefe]">
+    <div className="block min-h-screen  bg-background">
       <Head>
         <title>Vontane | Account {titlePage} </title>
         <meta name="description" content="Vontane upgrade to pro" />

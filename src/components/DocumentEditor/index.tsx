@@ -292,7 +292,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       const targetRect = currentElement.getBoundingClientRect();
 
       const windowHeight = window.innerHeight;
-      const dropdownHeight = addSomethingDropdownRef.current?.offsetHeight;
+      const dropdownHeight = 370;
+      console.log(dropdownHeight);
       const spaceBelowTarget = windowHeight - targetRect.bottom;
 
       const currentNode = Node.get(editor, path);
@@ -315,11 +316,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       let showDropdownAbove = false;
 
       if (spaceBelowTarget < dropdownHeight) {
-        topOffset = -(
-          dropdownHeight -
-          targetRect.height +
-          (isEmpty ? 10 : -25)
-        );
+        topOffset = -(dropdownHeight - targetRect.height + (isEmpty ? 5 : -25));
         showDropdownAbove = true;
       }
       setSearchBarPosition(spaceBelowTarget < dropdownHeight);
@@ -332,7 +329,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       setDropdownLeft(targetRect.left);
       setShowDropdown((prevState) => !prevState);
     },
-    [dropdownPositions, isLocked]
+    [dropdownPositions, isLocked, showDropdown, activePath]
   );
 
   function insertNewParagraphEnter(newPath: Path) {
@@ -1617,7 +1614,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       <div className="flex">
         <div className="block">
           <div
-            className="relative  z-0  mt-3 w-[90vw] rounded-md  border border-gray-300 bg-white px-2 dark:border-gray-700 dark:bg-muted dark:text-foreground lg:w-[800px] lg:px-0"
+            className="relative  z-0  mt-3 w-[90vw] rounded-md  border border-gray-300 bg-white px-2 dark:border-gray-700 dark:bg-muted/50 dark:text-foreground lg:w-[800px] lg:px-0"
             style={{
               height: "calc(100vh - 120px)",
             }}
@@ -1729,7 +1726,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                           <AnimatePresence>
                             {showMiniToolbar && (
                               <StyledMiniToolbar
-                                className=" bg-white dark:border-gray-700 dark:bg-background"
+                                className=" bg-white dark:border-gray-700 dark:bg-muted"
                                 ref={toolbarRef}
                                 {...up_animation_props}
                                 exit={{ opacity: 0 }}
@@ -1775,15 +1772,15 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                   <motion.div
                     // {...y_animation_props}
                     {...slightbouncey}
-                    className="fixed left-[120px] z-10 mx-auto mt-2 w-[320px]"
+                    className="fixed left-[120px] z-10 mx-auto mt-2 block w-[320px]"
                     style={{
                       transformOrigin: "top left",
                       top: `${dropdownTop}px`,
                       left: `${dropdownLeft}px`,
                     }}
+                    ref={addSomethingDropdownRef}
                   >
                     <MiniDropdown
-                      ref={addSomethingDropdownRef}
                       isOpen={showDropdown}
                       addMCQBlock={() => {
                         handleAddMCQBlock(JSON.parse(activePath));

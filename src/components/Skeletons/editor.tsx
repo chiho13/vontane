@@ -14,7 +14,7 @@ export const EditorSkeleton = () => {
       <div className="flex justify-center">
         <div className="block">
           <div
-            className="relative z-0  mt-4 block w-full rounded-md  border border-gray-300 bg-white  px-2 dark:border-gray-700  dark:bg-accent lg:w-[800px] lg:px-0"
+            className="relative z-0  mt-4 block w-full rounded-md  border border-gray-300 bg-white  px-2 dark:border-gray-700  dark:bg-muted/50 lg:w-[800px] lg:px-0"
             style={{
               height: "calc(100vh - 120px)",
             }}
@@ -41,7 +41,7 @@ export const EditorSkeleton = () => {
               </div>
             </div>
             <div
-              className="m-w-full mt-4 hidden grow rounded-md border border-gray-300 bg-white  dark:border-gray-700  dark:bg-accent  xl:block"
+              className="m-w-full mt-4 hidden grow rounded-md border border-gray-300 bg-white  dark:border-gray-700  dark:bg-muted/50  xl:block"
               style={{
                 height: "calc(100vh - 120px)",
                 minWidth: "270px",

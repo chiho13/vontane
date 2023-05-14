@@ -995,7 +995,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             contentEditable={false}
           >
             <button
-              className="addButton rounded-md  p-1 ease-in-out hover:bg-gray-200"
+              className="addButton rounded-md  ease-in-out hover:bg-gray-200"
               onClick={(event) => {
                 event.preventDefault();
                 event.stopPropagation();
@@ -1618,7 +1618,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       <div className="flex justify-center">
         <div className="block">
           <div
-            className="relative  z-0  mt-3 w-[90vw] rounded-md  border border-gray-300 bg-white px-2 lg:w-[800px] lg:px-0"
+            className="relative  z-0  mt-3 w-[90vw] rounded-md  border border-gray-300 bg-white px-2 dark:border-gray-700 dark:bg-accent dark:text-lightgray lg:w-[800px] lg:px-0"
             style={{
               height: "calc(100vh - 120px)",
             }}

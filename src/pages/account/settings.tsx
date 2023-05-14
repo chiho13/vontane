@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import Layout from "./layout";
 import { NextPage } from "next";
 import { DashboardHeader } from "@/components/AccountSettingsNav/header";
+import { ModeToggle } from "@/components/mode-toggle";
 
 const Settings: NextPage = () => {
   const session = useSession();
@@ -22,11 +23,13 @@ const Settings: NextPage = () => {
           heading="Settings"
           text="Manage account and web app settings"
         />
-        <div className="w-[90%] rounded-lg border bg-white text-black shadow-sm lg:w-[50%]">
+        <div className="w-[90%] rounded-lg border border-gray-300 bg-transparent text-black shadow-sm dark:border-accent lg:w-[50%]">
           <div className="flex flex-col space-y-1.5 p-6">
-            <h3 className="text-lg font-semibold leading-none tracking-tight">
+            <h3 className="mb-4 text-lg font-semibold leading-none tracking-tight text-foreground">
               Display
             </h3>
+
+            <ModeToggle />
           </div>
         </div>
       </div>

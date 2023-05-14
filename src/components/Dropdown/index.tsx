@@ -338,7 +338,7 @@ function Dropdown(
     " border-2 border-gray-300 bg-white px-4 py-2 shadow-md shadow-sm outline-none hover:bg-gray-50 focus-visible:border-gray-400";
 
   const _dropdownMenuNonPortalOverride =
-    dropdownMenuNonPortalOverride || "lg:absolute";
+    dropdownMenuNonPortalOverride || "dark:bg-muted lg:absolute";
   const dropdownMenuStyleOverride =
     dropdownMenuClassName || "fixed left-0  top-12 mt-2 w-full";
   return (

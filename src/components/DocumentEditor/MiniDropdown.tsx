@@ -237,7 +237,6 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
     }
 
     const listRefs = useRef([]);
-    const scrollContainerRef = useRef(null);
     listRefs.current = [];
     const addToRefs = (el) => {
       if (el && !listRefs.current.includes(el)) {
@@ -255,7 +254,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
     }, [focusedIndex, isKeyboardNav]);
 
     return (
-      <div className="relative" ref={ref}>
+      <div className="relative">
         {!searchBarPosition && (
           <input
             ref={searchInputRef}
@@ -268,7 +267,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
               handleArrowNavigation(e);
             }}
             placeholder="Search"
-            className="absolute -top-[50px] mb-2 w-full rounded-md border border-gray-500 bg-white px-2 py-1 outline-none focus:border-blue-500"
+            className="absolute -top-[50px] mb-2 w-full rounded-md border border-gray-500 bg-white px-2 py-1 outline-none focus:border-blue-500 dark:bg-muted dark:focus:border-foreground"
           />
         )}
 
@@ -283,12 +282,12 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
               handleArrowNavigation(e);
             }}
             placeholder="Search"
-            className="absolute -bottom-[50px] mt-2 w-full rounded-md border border-gray-500 bg-white px-2 py-1 outline-none focus:border-blue-500"
+            className="absolute -bottom-[50px] mt-2 w-full rounded-md border border-gray-500 bg-white px-2 py-1 outline-none focus:border-blue-500 dark:bg-muted dark:focus:border-foreground"
           />
         )}
         <div
-          ref={scrollContainerRef}
-          className="dropdown-menu h-[40vh] max-h-[320px] overflow-y-auto rounded-md border border-gray-200 bg-white p-2 shadow-md"
+          ref={ref}
+          className="dropdown-menu h-[320px] overflow-y-auto rounded-md border border-gray-200 bg-white p-2 shadow-md"
           onMouseLeave={() => {
             setIsKeyboardNav(false);
             setFocusedIndex(-1);

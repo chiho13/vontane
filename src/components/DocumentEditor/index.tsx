@@ -148,7 +148,6 @@ const StyledMiniToolbar = styled(motion.div)`
   display: block;
   border-radius: 6px;
   border: 1px solid #eeeeee;
-  background: #ffffff;
   box-shadow: 0 10px 20px rgba(50, 50, 50, 0.19),
     0 6px 6px rgba(50, 50, 50, 0.23);
 `;
@@ -1607,15 +1606,15 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       <div className="flex w-full justify-end lg:w-[800px]">
         {/* <MainToolbar path={activePath} /> */}
         <button
-          className=" right-0 z-10 hidden h-[36px] rounded border border-gray-300 bg-white p-1 xl:block"
+          className="z-10 hidden h-[36px] rounded border border-gray-300 bg-white p-1 dark:border-gray-700 dark:bg-muted xl:block"
           onClick={() => {
             setShowRightSidebar((prev) => !prev);
           }}
         >
-          <Sidebar className="rotate-180 transform stroke-darkergray" />
+          <Sidebar className="rotate-180 transform text-darkergray dark:text-muted-foreground" />
         </button>
       </div>
-      <div className="flex justify-center">
+      <div className="flex">
         <div className="block">
           <div
             className="relative  z-0  mt-3 w-[90vw] rounded-md  border border-gray-300 bg-white px-2 dark:border-gray-700 dark:bg-muted dark:text-foreground lg:w-[800px] lg:px-0"
@@ -1730,6 +1729,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                           <AnimatePresence>
                             {showMiniToolbar && (
                               <StyledMiniToolbar
+                                className=" bg-white dark:border-gray-700 dark:bg-background"
                                 ref={toolbarRef}
                                 {...up_animation_props}
                                 exit={{ opacity: 0 }}
@@ -1878,7 +1878,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                   isDraggingRightSideBar && "opacity-100"
                 } transition duration-300 hover:opacity-100 lg:block`}
               >
-                <div className="mx-auto mt-4 block h-[200px] w-[8px]  cursor-col-resize rounded bg-[#b4b4b4] "></div>
+                <div className="mx-auto mt-4 block h-[200px] w-[8px]  cursor-col-resize rounded bg-[#b4b4b4] dark:bg-muted-foreground"></div>
               </div>
             </DraggableCore>
           </div>

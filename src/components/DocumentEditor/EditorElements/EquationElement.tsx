@@ -20,7 +20,7 @@ export function EquationElement(props) {
       tabIndex={0}
       data-path={JSON.stringify(path)}
       data-id={element.id}
-      className={` equation-element relative mr-4  flex w-[95%]  items-center rounded-md p-2 hover:bg-gray-100 ${
+      className={` equation-element relative mr-4  flex w-[95%]  items-center rounded-md p-2 hover:bg-gray-100 dark:bg-accent ${
         element.latex?.trim() !== "" && "justify-center"
       } 
       ${

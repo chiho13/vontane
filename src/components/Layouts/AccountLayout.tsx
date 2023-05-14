@@ -447,7 +447,7 @@ const Layout: React.FC<LayoutProps> = ({
           </SidebarContent>
         </SidebarContainer>
         <main
-          className=" flex min-h-screen overflow-auto bg-muted pt-4"
+          className=" flex min-h-screen overflow-auto bg-[#f7f7f7] pt-4 dark:bg-muted"
           style={{
             marginLeft: isLocked && desktopbreakpoint ? "240px" : "0",
             width:

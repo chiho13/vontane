@@ -71,7 +71,6 @@ height: 100%;
 width: 240px;
 transform: ${(props) =>
   props.isLocked && props.isOpen ? "translateX(0)" : "translateX(-240px)"};
-  background: rgb(251, 251, 250); 
 padding: 0;
 z-index: 10;
  
@@ -347,7 +346,11 @@ const Layout: React.FC<LayoutProps> = ({
             </ToggleButton>
           </ToggleButtonWrapper>
 
-          <SidebarContent isLocked={isLocked} isOpen={isOpen}>
+          <SidebarContent
+            isLocked={isLocked}
+            isOpen={isOpen}
+            className="bg-[#f4f4f4] dark:bg-accent"
+          >
             <AccountLayoutStyle>
               <div className="z-10 flex items-center p-1">
                 <DropdownProvider>
@@ -400,13 +403,15 @@ const Layout: React.FC<LayoutProps> = ({
                       <SidebarItem key={workspace.id}>
                         <button
                           onClick={() => handleWorkspaceRoute(workspace.id, "")}
-                          className={`hover:bg-gray-200 ${
+                          className={` hover:bg-gray-300 dark:hover:bg-muted ${
                             currentWorkspaceId === workspace.id
-                              ? "bg-gray-200 font-bold"
+                              ? "bg-gray-300 font-bold dark:bg-muted"
                               : "transparent"
                           }`}
                         >
-                          <span className="text-sm text-darkergray ">
+                          <span
+                            className={`text-sm text-darkergray  dark:text-foreground`}
+                          >
                             {displayName || "Untitled"}
                           </span>
                         </button>
@@ -416,11 +421,11 @@ const Layout: React.FC<LayoutProps> = ({
 
                 <SidebarItem>
                   <button
-                    className="flex items-center hover:bg-gray-200"
+                    className="flex items-center hover:bg-gray-200 dark:hover:bg-muted"
                     onClick={createWorkspace}
                   >
-                    <Plus className="text-darkergray" />{" "}
-                    <span className="ml-2 text-sm text-darkergray">
+                    <Plus className="text-darkergray  dark:text-foreground " />{" "}
+                    <span className="ml-4 text-sm text-darkergray  dark:text-foreground">
                       Create Workspace
                     </span>
                   </button>
@@ -432,11 +437,11 @@ const Layout: React.FC<LayoutProps> = ({
                     } left-0`}
                   >
                     <button
-                      className={`flex items-center hover:bg-gray-200`}
+                      className={`flex items-center hover:bg-gray-200 dark:hover:bg-muted`}
                       onClick={upgradeAccount}
                     >
-                      <ArrowUpCircle className="text-darkergray" />{" "}
-                      <span className="ml-2 text-sm text-darkergray">
+                      <ArrowUpCircle className="text-darkergray dark:text-foreground " />{" "}
+                      <span className="ml-4 text-sm text-darkergray  dark:text-foreground ">
                         Upgrade Account
                       </span>
                     </button>

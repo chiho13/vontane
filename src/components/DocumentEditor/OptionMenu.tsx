@@ -37,11 +37,11 @@ export const OptionMenu = forwardRef<HTMLDivElement, OptionMenuProps>(
           dropdownId="option-menu"
           ref={optionMenuRef}
           usePortal={true}
-          dropdownButtonClassName="p-0 border-transparent relative outline-none border-0 shadow-none bg-transparent w-full h-[24px] justify-start transition-colors duration-300 focus:ring-2 focus:ring-black focus:ring-opacity-30"
+          dropdownButtonClassName="p-0 border-transparent relative outline-none border-0 shadow-none bg-transparent w-full h-[26px] justify-start transition-colors duration-300 focus:ring-2 focus:ring-black focus:ring-opacity-30 dark:border dark:border-gray-700"
           dropdownMenuClassName="fixed top-0 w-[200px] border-0"
           icon={
             <div className="flex h-[24px] w-[24px] items-center  justify-center rounded-md bg-gray-200 p-1 dark:bg-muted">
-              <MoreHorizontal className="option-menu stroke-darkergray dark:stroke-foreground" />
+              <MoreHorizontal className="option-menu stroke-darkergray dark:stroke-muted-foreground" />
             </div>
           }
         >

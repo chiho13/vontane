@@ -26,7 +26,6 @@ export const VoiceDropdownStyle = styled.div`
   }
 
   .close-icon:hover path {
-    stroke: #888888;
     transition: stroke 0.3s ease;
   }
 
@@ -115,12 +114,10 @@ export const VoiceDropdownStyle = styled.div`
     top: 10px;
 
     td {
-      border-bottom: 1px solid #e6ebf4;
       text-transform: capitalize;
     }
   }
   .voiceItemContainer:hover {
-    background-color: #eeeeee;
     transition: all 0.3s ease;
   }
 
@@ -150,7 +147,6 @@ export const VoiceDropdownStyle = styled.div`
 
     tr:first-child th {
       padding: 0;
-      background: #ffffff;
     }
 
     tr:first-child th:first-child {

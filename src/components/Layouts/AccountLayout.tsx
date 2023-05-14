@@ -75,6 +75,7 @@ padding: 0;
 z-index: 10;
  
 border-left: none;
+border-right-width: ${(props) => props.isLocked && props.isOpen && "1px"};
 border-top-right-radius:  ${(props) =>
   !props.isLocked && props.isOpen && "4px"};
 border-bottom-right-radius:  ${(props) =>
@@ -191,6 +192,7 @@ const Layout: React.FC<LayoutProps> = ({
 
   async function logout() {
     await supabase.auth.signOut();
+    router.push("/");
   }
 
   const [workspaces, setWorkspaces] = useState<workspace[]>([]);
@@ -352,7 +354,7 @@ const Layout: React.FC<LayoutProps> = ({
           <SidebarContent
             isLocked={isLocked}
             isOpen={isOpen}
-            className="bg-[#f4f4f4] dark:bg-accent"
+            className="bg-[#f4f4f4] dark:border-gray-700 dark:bg-muted"
           >
             <AccountLayoutStyle>
               <div className="z-10 flex items-center p-1">
@@ -362,7 +364,7 @@ const Layout: React.FC<LayoutProps> = ({
                     ref={accountDropdownRef}
                     selectedItemText={profile && profile.name}
                     image={AvatarProfile}
-                    dropdownButtonClassName="p-0 relative border-transparent relative outline-none border-0 shadow-none bg-transparent w-full h-[47px] justify-start transition-colors duration-300 focus:ring-2 focus:ring-black focus:ring-opacity-30 hover:bg-gray-200 dark:hover:bg-muted"
+                    dropdownButtonClassName="p-0 relative border-transparent relative outline-none border-0 shadow-none bg-transparent w-full h-[47px] justify-start transition-colors duration-300 focus:ring-2 focus:ring-black focus:ring-opacity-30 hover:bg-gray-200 dark:hover:bg-accent"
                     icon={
                       <ChevronsUpDown className="w-4 text-darkgray dark:text-muted-foreground" />
                     }
@@ -375,8 +377,8 @@ const Layout: React.FC<LayoutProps> = ({
                         id="menu-item-3"
                         href="/account"
                       >
-                        <Settings className="dark:text-muted-foreground " />{" "}
-                        <span className="ml-2 dark:text-muted-foreground ">
+                        <Settings className="dark:text-foreground " />{" "}
+                        <span className="ml-2 dark:text-foreground ">
                           Settings
                         </span>
                       </Link>
@@ -391,9 +393,7 @@ const Layout: React.FC<LayoutProps> = ({
                         id="menu-item-3"
                       >
                         <LogoutIcon />{" "}
-                        <span className="dark:text-muted-foreground ">
-                          Log out
-                        </span>
+                        <span className="dark:text-foreground ">Log out</span>
                       </button>
                     </div>
                   </Dropdown>
@@ -414,9 +414,9 @@ const Layout: React.FC<LayoutProps> = ({
                       <SidebarItem key={workspace.id}>
                         <button
                           onClick={() => handleWorkspaceRoute(workspace.id, "")}
-                          className={` hover:bg-gray-300 dark:hover:bg-muted ${
+                          className={` hover:bg-gray-300 dark:hover:bg-accent ${
                             currentWorkspaceId === workspace.id
-                              ? "bg-gray-300 font-bold dark:bg-muted"
+                              ? "bg-gray-300 font-bold dark:bg-accent"
                               : "transparent"
                           }`}
                         >
@@ -432,7 +432,7 @@ const Layout: React.FC<LayoutProps> = ({
 
                 <SidebarItem>
                   <button
-                    className="flex items-center hover:bg-gray-200 dark:hover:bg-muted"
+                    className="flex items-center hover:bg-gray-200 dark:hover:bg-accent"
                     onClick={createWorkspace}
                   >
                     <Plus className="text-darkergray  dark:text-foreground " />{" "}
@@ -448,7 +448,7 @@ const Layout: React.FC<LayoutProps> = ({
                     } left-0`}
                   >
                     <button
-                      className={`flex items-center hover:bg-gray-200 dark:hover:bg-muted`}
+                      className={`flex items-center hover:bg-gray-200 dark:hover:bg-accent`}
                       onClick={upgradeAccount}
                     >
                       <ArrowUpCircle className="text-darkergray dark:text-foreground " />{" "}

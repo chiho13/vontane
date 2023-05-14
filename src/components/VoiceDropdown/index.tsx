@@ -358,7 +358,7 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
       <tr
         key={index}
         onClick={(e) => handleVoiceSelection(voice.voiceId, voice.name)}
-        className="voiceItemContainer"
+        className="cursor-pointer transition duration-200 hover:bg-gray-200 hover:dark:bg-accent"
         tabIndex={0}
         role="row"
         aria-label={`Selected Voice: ${voice.name}, ${voice.accent} accent, ${voice.age} age, ${voice.style} style, ${voice.tempo} tempo`}
@@ -424,24 +424,24 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
           selectedItemText={selectedItemText}
           ref={voicesDropdownRef}
           icon={<ChevronDown className="ml-4 w-4" />}
-          dropdownMenuNonPortalOverride={`right-0 mx-auto lg:w-[900px] ${
-            showMiniToolbar ? " top:0" : ""
-          }`}
+          dropdownMenuNonPortalOverride={`right-0 dark:bg-muted mx-auto lg:absolute lg:w-[900px]`}
         >
           <div>
             {desktopbreakpoint && (
               <div>
                 {filters.length > 0 && (
-                  <div className="filter_label inline-flex justify-center bg-white px-4 py-2 text-sm font-medium text-gray-700 ">
+                  <div className="filter_label inline-flex justify-center bg-white px-4 py-2 text-sm font-medium text-gray-700  dark:bg-muted ">
                     <div>
-                      <span>Filters:</span>
+                      <span className="dark:text-muted-foreground">
+                        Filters:
+                      </span>
 
                       {filters.map((filter) => {
                         const { key, value } = filter;
                         return (
                           <span
                             key={`${key}-${value}`}
-                            className="filter_pill mr-2 inline-flex items-center bg-gray-100 text-sm font-medium text-gray-800"
+                            className="filter_pill mr-2 inline-flex items-center bg-gray-100 text-sm font-medium text-gray-800 dark:bg-muted-foreground"
                           >
                             {`${key}: ${value}`}
                             {/* using string interpolation */}
@@ -458,7 +458,7 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
                                 viewBox="0 0 24 24"
                                 strokeWidth="1.5"
                                 stroke="currentColor"
-                                className="close-icon h-4 w-4 fill-current text-gray-500"
+                                className="close-icon h-4 w-4 fill-current text-gray-500 dark:text-darkblue"
                               >
                                 <path
                                   strokeLinecap="round"
@@ -473,7 +473,7 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
                     </div>
 
                     <button
-                      className="filter_reset inline-flex justify-center rounded-md border-2 border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm outline-none hover:bg-gray-50 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
+                      className="filter_reset inline-flex justify-center rounded-md border-2 border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm outline-none hover:bg-gray-50 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50 dark:border-gray-700 dark:bg-accent dark:text-foreground"
                       onClick={(e) => {
                         e.stopPropagation();
                         clearFilters();
@@ -526,9 +526,9 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
               />
             )}
 
-            <div className="dropdown_table_wrapper table-responsive">
-              <table className="dropdown_table w-full table-auto">
-                <thead className="voiceTitles w-full p-4">
+            <div className="dropdown_table_wrapper table-responsive ">
+              <table className="dropdown_table w-full table-auto ">
+                <thead className="voiceTitles w-full bg-white p-4 dark:bg-muted">
                   {desktopbreakpoint && (
                     <tr>
                       <th className="nameHeader text-left text-sm sm:text-base">

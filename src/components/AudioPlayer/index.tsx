@@ -10,6 +10,7 @@ import React from "react";
 
 import { DownloadButton } from "../DownloadButton";
 import { OptionMenu } from "../DocumentEditor/OptionMenu";
+import { IoIosPlay, IoIosPause } from "react-icons/io";
 
 interface Props {
   audioURL: string | null;
@@ -143,12 +144,16 @@ function AudioPlayer({ audioURL, fileName, element }: Props): JSX.Element {
   };
 
   return (
-    <AudioPlayerStyle>
+    <AudioPlayerStyle className="border border-gray-300 bg-white dark:border-gray-700 dark:bg-background">
       <button
         onClick={isPlaying ? handlePause : handlePlay}
-        className="play_pause_button"
+        className="play_pause_button relative flex h-[30px] w-[30px] items-center justify-center rounded-full bg-brand dark:bg-foreground "
       >
-        {isPlaying ? <PauseIcon /> : <PlayIcon />}
+        {isPlaying ? (
+          <IoIosPause className="pause-icon h-6 w-6 text-white dark:text-brand" />
+        ) : (
+          <IoIosPlay className="play-icon relative left-[1px]  h-6 w-6 text-white dark:text-brand" />
+        )}
       </button>
 
       <div className="audioPlayer_current-time">
@@ -156,7 +161,7 @@ function AudioPlayer({ audioURL, fileName, element }: Props): JSX.Element {
       </div>
 
       <div
-        className="audioPlayer_timeline_container group"
+        className="audioPlayer_timeline_container group "
         onMouseDown={handleSeekStart}
         onMouseUp={handleSeekEnd}
         onMouseMove={handleSeekMove}

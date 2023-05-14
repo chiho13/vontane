@@ -62,7 +62,7 @@ const Account: NextPage = () => {
           heading="Billing"
           text="Manage billing and your subscription plan."
         />
-        <div className="rounded-lg border bg-transparent text-black shadow-sm lg:w-[80%]">
+        <div className="rounded-lg border bg-transparent text-black shadow-sm dark:border-gray-700 lg:w-[80%]">
           <div className="flex flex-col space-y-1.5 p-6">
             <h3 className="text-lg font-semibold leading-none tracking-tight dark:text-foreground">
               Subscription Plan

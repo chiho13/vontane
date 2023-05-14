@@ -11,9 +11,7 @@ export const GenerateButtonStyle: StyledComponent<
 > = styled.button<GenerateButtonStyleProps>`
   display: flex;
   align-items: center;
-  background-color: #fff;
-  color: #777777;
-  border: 2px solid #dddddd;
+
   font-weight: bold;
   padding: 10px 10px;
   width: 44px;

@@ -16,7 +16,7 @@ function GenerateButton({
 }: GenerateButtonProps) {
   return (
     <GenerateButtonStyle
-      className="text-brand"
+      className="border-2 bg-white disabled:opacity-50 dark:border-gray-700  dark:bg-muted dark:text-foreground dark:text-muted-foreground dark:hover:bg-accent "
       isDisabled={isDisabled}
       onClick={onClick}
       disabled={isDisabled || audioIsLoading}

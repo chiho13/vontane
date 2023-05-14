@@ -1603,12 +1603,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       <div className="flex w-full justify-end lg:w-[800px]">
         {/* <MainToolbar path={activePath} /> */}
         <button
-          className="z-10 hidden h-[36px] rounded border border-gray-300 bg-white p-1 dark:border-gray-700 dark:bg-muted xl:block"
+          className="group z-10 hidden h-[36px] rounded border border-gray-300 bg-white p-1 transition duration-300 hover:border-brand dark:border-gray-700 dark:bg-muted dark:hover:border-foreground xl:block"
           onClick={() => {
             setShowRightSidebar((prev) => !prev);
           }}
         >
-          <Sidebar className="rotate-180 transform text-darkergray dark:text-muted-foreground" />
+          <Sidebar className="rotate-180 transform text-darkergray transition duration-300 group-hover:text-brand dark:text-muted-foreground dark:group-hover:text-foreground" />
         </button>
       </div>
       <div className="flex">

@@ -7,10 +7,9 @@ export const AudioPlayerStyle: StyledComponent<"div", any> = styled.div`
   width: 98%;
   padding-left: 20px;
   padding-right: 20px;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-top: 15px;
+  padding-bottom: 15px;
   border-radius: 8px;
-  border: 2px solid #eeeeee;
   margin-top: 5px;
   margin-bottom: 5px;
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
@@ -27,7 +26,7 @@ export const AudioPlayerStyle: StyledComponent<"div", any> = styled.div`
     position: relative;
     top: 1px;
     height: 20px;
-    width: 100%;
+    flex-grow: 1;
     background: transparent;
     display: flex;
     align-items: center;

@@ -83,7 +83,7 @@ box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
   0 2px 4px -1px rgba(0, 0, 0, 0.06)};
 transition: transform 300ms, ${(props) =>
   props.isLocked && props.isOpen
-    ? "top 100ms, height 100ms"
+    ? "top 100ms, height 400ms"
     : "top 500ms, height 1000ms"};
 
   header {
@@ -96,9 +96,9 @@ transition: transform 300ms, ${(props) =>
   top: ${(props) => (props.isLocked && props.isOpen ? "0" : "70px")};
   transform: ${(props) =>
     props.isLocked || props.isOpen ? "translateX(0)" : "translate(-270px)"};
-    height: ${(props) => (props.isLocked && props.isOpen ? "100%" : "auto")};
+    height: ${(props) => (props.isLocked && props.isOpen ? "100%" : "80%")};
 
-
+    
     .dropdown-menu.dropdown-menu {
       top: 50px !important;
     }

@@ -19,6 +19,7 @@ export function DashboardNav({ items }: DashboardNavProps) {
   const supabase = useSupabaseClient();
   async function logout() {
     await supabase.auth.signOut();
+    router.push("/");
   }
 
   if (!items?.length) {

@@ -23,7 +23,7 @@ const Settings: NextPage = () => {
           heading="Settings"
           text="Manage account and web app settings"
         />
-        <div className="w-[90%] rounded-lg border border-gray-300 bg-transparent text-black shadow-sm dark:border-accent lg:w-[50%]">
+        <div className="w-[90%] rounded-lg border border-gray-300 bg-transparent text-black shadow-sm dark:border-gray-700 lg:w-[50%]">
           <div className="flex flex-col space-y-1.5 p-6">
             <h3 className="mb-4 text-lg font-semibold leading-none tracking-tight text-foreground">
               Display

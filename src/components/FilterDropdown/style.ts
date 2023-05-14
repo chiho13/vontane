@@ -19,10 +19,6 @@ export const FilterDropdownStyle: StyledComponent<"div", any> = styled.div`
 
   .filter_optionItems {
     text-transform: capitalize;
-    &:hover {
-      background-color: #eee;
-      transition: all 0.3s ease;
-    }
 
     img {
       margin-right: 10px;

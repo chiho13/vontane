@@ -358,7 +358,7 @@ function Dropdown(
       <DropdownStyle className="dropdown_wrapper relative flex justify-end">
         <button
           type="button"
-          className={`dropdown-toggle  inline-flex items-center rounded-md text-sm font-medium text-gray-700 ${dropdownButtonStyleOverride}`}
+          className={`dropdown-toggle  inline-flex items-center rounded-md text-sm font-medium text-gray-700 dark:text-foreground ${dropdownButtonStyleOverride}`}
           aria-expanded={isOpen}
           aria-haspopup="true"
           id="dropdown"
@@ -395,7 +395,7 @@ function Dropdown(
               <motion.div
                 {...animation_props}
                 id={dropdownId}
-                className={`dropdown-menu z-10000 fixed left-0  top-12 mt-2 w-full min-w-[200px] origin-top-right  bg-white shadow-lg ring-1 ring-black ring-opacity-5 lg:rounded-md ${_dropdownMenuNonPortalOverride}`}
+                className={`dropdown-menu z-10000 fixed left-0  top-12 mt-2 w-full min-w-[200px] origin-top-right  bg-white  shadow-lg ring-1 ring-black ring-opacity-5 dark:border dark:border-gray-700 dark:bg-muted lg:rounded-md ${_dropdownMenuNonPortalOverride}`}
                 role="menu"
                 aria-orientation="vertical"
                 aria-labelledby="voices-dropdown"

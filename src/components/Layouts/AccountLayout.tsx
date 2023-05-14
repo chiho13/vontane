@@ -83,8 +83,8 @@ box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
   0 2px 4px -1px rgba(0, 0, 0, 0.06)};
 transition: transform 300ms, ${(props) =>
   props.isLocked && props.isOpen
-    ? "top 100ms, height 400ms"
-    : "top 500ms, height 1000ms"};
+    ? "top 200ms, height 200ms"
+    : "top 500ms, height 200ms"};
 
   header {
     transition: ${(props) =>
@@ -292,8 +292,11 @@ const Layout: React.FC<LayoutProps> = ({
               )}
             </AnimatedIcon>
           </TooltipTrigger>
-          <TooltipContent className="border-black" side="left">
-            <p className="text-[12px] text-white">Lock Sidebar Open</p>
+          <TooltipContent
+            className="border-black  dark:bg-white dark:text-muted"
+            side="left"
+          >
+            <p className="text-[12px]">Lock Sidebar Open</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -305,10 +308,10 @@ const Layout: React.FC<LayoutProps> = ({
       <TooltipProvider delayDuration={0}>
         <Tooltip>
           <TooltipTrigger>
-            <ChevronsLeft />
+            <ChevronsLeft className="dark:text-muted-foreground" />
           </TooltipTrigger>
-          <TooltipContent className="border-black">
-            <p className="text-[12px] text-white">Close Sidebar</p>
+          <TooltipContent className="dark:bg-white dark:text-muted">
+            <p className="text-[12px]">Close Sidebar</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -337,7 +340,7 @@ const Layout: React.FC<LayoutProps> = ({
             onMouseEnter={handleMouseEnter}
           >
             <ToggleButton
-              className="text-darkergray hover:bg-gray-200"
+              className="text-darkergray hover:bg-gray-200 hover:dark:bg-background"
               role="button"
               href="#"
               onClick={toggleSidebarLock}
@@ -359,30 +362,38 @@ const Layout: React.FC<LayoutProps> = ({
                     ref={accountDropdownRef}
                     selectedItemText={profile && profile.name}
                     image={AvatarProfile}
-                    dropdownButtonClassName="p-0 relative border-transparent relative outline-none border-0 shadow-none bg-transparent w-full h-[47px] justify-start transition-colors duration-300 focus:ring-2 focus:ring-black focus:ring-opacity-30 hover:bg-gray-200"
-                    icon={<ChevronsUpDown className="w-4 text-darkgray" />}
+                    dropdownButtonClassName="p-0 relative border-transparent relative outline-none border-0 shadow-none bg-transparent w-full h-[47px] justify-start transition-colors duration-300 focus:ring-2 focus:ring-black focus:ring-opacity-30 hover:bg-gray-200 dark:hover:bg-muted"
+                    icon={
+                      <ChevronsUpDown className="w-4 text-darkgray dark:text-muted-foreground" />
+                    }
                   >
                     <div className="p-1" role="none">
                       <Link
-                        className="flex w-full items-center rounded-md px-4  py-2 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                        className="flex w-full items-center rounded-md px-4  py-2 text-left text-sm text-gray-700 transition duration-200 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-accent"
                         role="menuitem"
                         tabIndex={-1}
                         id="menu-item-3"
                         href="/account"
                       >
-                        <Settings /> <span className="ml-2">Settings</span>
+                        <Settings className="dark:text-muted-foreground " />{" "}
+                        <span className="ml-2 dark:text-muted-foreground ">
+                          Settings
+                        </span>
                       </Link>
                     </div>
-                    <hr className="my-1 h-0.5 border-t-0 bg-neutral-100 opacity-100 dark:opacity-50" />
+                    <hr className="my-1 h-0.5 border-t-0 bg-neutral-100 opacity-100 dark:opacity-20" />
                     <div className="p-1" role="none">
                       <button
                         onClick={logout}
-                        className="inline-flex w-full rounded-md px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                        className="inline-flex w-full rounded-md px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-accent"
                         role="menuitem"
                         tabIndex={-1}
                         id="menu-item-3"
                       >
-                        <LogoutIcon /> Log out
+                        <LogoutIcon />{" "}
+                        <span className="dark:text-muted-foreground ">
+                          Log out
+                        </span>
                       </button>
                     </div>
                   </Dropdown>
@@ -452,7 +463,7 @@ const Layout: React.FC<LayoutProps> = ({
           </SidebarContent>
         </SidebarContainer>
         <main
-          className=" flex min-h-screen overflow-auto bg-[#f7f7f7] pt-4 dark:bg-muted"
+          className=" flex min-h-screen overflow-auto bg-[#f7f7f7] pt-4 dark:bg-background"
           style={{
             marginLeft: isLocked && desktopbreakpoint ? "240px" : "0",
             width:

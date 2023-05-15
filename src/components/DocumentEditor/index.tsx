@@ -1295,15 +1295,15 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     const lastNode = editor.children[editor.children.length - 1];
     const lastNodePath = ReactEditor.findPath(editor, lastNode);
 
-    if (
-      lastNode.type === "equation" ||
-      lastNode.type === "audio" ||
-      lastNode.type === "slide"
-    ) {
-      insertNewParagraphBelowLastNode(lastNodePath);
-      event.stopPropagation();
-      return;
-    }
+    // if (
+    //   lastNode.type === "equation" ||
+    //   lastNode.type === "audio" ||
+    //   lastNode.type === "slide"
+    // ) {
+    //   insertNewParagraphBelowLastNode(lastNodePath);
+    //   event.stopPropagation();
+    //   return;
+    // }
 
     const lastNodeDOM = document.querySelector(
       `[data-path="${JSON.stringify(lastNodePath)}"]`
@@ -1312,7 +1312,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     const clickedY = event.clientY;
     const isLastNodeEmpty =
       lastNode.children.length === 1 && lastNode.children[0].text === "";
-
     if (clickedY > lastNodeRect.bottom && !isLastNodeEmpty) {
       insertNewParagraphBelowLastNode(lastNodePath);
       event.stopPropagation();
@@ -1330,10 +1329,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       .concat(lastNodePath[lastNodePath.length - 1] + 1);
     Transforms.insertNodes(editor, newParagraph, { at: newPath });
     const leafNodePath = newPath.concat(0);
-    Transforms.setSelection(editor, {
-      anchor: { path: leafNodePath, offset: 0 },
-      focus: { path: leafNodePath, offset: 0 },
-    });
+    Transforms.select(editor, Editor.start(editor, newPath));
   }
 
   const renderSubjectComponent = () => {

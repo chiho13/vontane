@@ -49,7 +49,7 @@ export function DashboardNav({ items }: DashboardNavProps) {
               <Link key={index} href={item.disabled ? "/" : item.href}>
                 <span
                   className={cn(
-                    "group mt-1 flex items-center rounded-md px-3 py-2 text-sm font-medium  text-gray-600 transition duration-300 hover:bg-accent hover:text-black dark:text-foreground",
+                    "group mt-1 flex items-center rounded-md px-3 py-2 text-sm font-medium  text-gray-600 transition duration-300 hover:bg-accent dark:text-foreground",
                     path === item.href
                       ? "bg-accent dark:text-foreground "
                       : "transparent",

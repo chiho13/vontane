@@ -291,7 +291,7 @@ const Layout: React.FC<LayoutProps> = ({
           <TooltipTrigger>
             <AnimatedIcon show={showChevronRight}>
               {showChevronRight && desktopbreakpoint ? (
-                <ChevronsRight />
+                <ChevronsRight className="dark:group-hover:text-foreground" />
               ) : (
                 <Menu />
               )}
@@ -313,7 +313,7 @@ const Layout: React.FC<LayoutProps> = ({
       <TooltipProvider delayDuration={0}>
         <Tooltip>
           <TooltipTrigger>
-            <ChevronsLeft className="dark:text-muted-foreground" />
+            <ChevronsLeft className="dark:text-muted-foreground dark:group-hover:text-foreground" />
           </TooltipTrigger>
           <TooltipContent className="dark:bg-white dark:text-muted">
             <p className="text-[12px]">Close Sidebar</p>
@@ -345,7 +345,7 @@ const Layout: React.FC<LayoutProps> = ({
             onMouseEnter={handleMouseEnter}
           >
             <ToggleButton
-              className="text-darkergray hover:bg-gray-200 hover:dark:bg-background"
+              className="group text-darkergray hover:bg-gray-200 hover:dark:bg-accent"
               role="button"
               href="#"
               onClick={toggleSidebarLock}

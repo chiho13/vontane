@@ -15,27 +15,69 @@ const ListItemStyle = styled.div`
     user-select: none;
     position: absolute;
     top: 0;
+    left: 21px;
   }
 
-  margin-left: 20px;
+  // margin-left: 20px;
 `;
 
-export function ListItem(props) {
+const findAllNumberedLists = (nodes) => {
+  let numberedLists = [];
+  let currentListIndex = 0;
+
+  nodes.forEach((node) => {
+    if (node.type !== "numbered-list") {
+      currentListIndex++; // Increment list index when a non-numbered-list node is encountered
+    } else {
+      numberedLists.push({
+        ...node,
+        listIndex: currentListIndex,
+      });
+    }
+  });
+
+  return numberedLists;
+};
+
+const withListNumbering = (Component) => {
+  return (props) => {
+    const { element } = props;
+    const { editor } = useContext(EditorContext);
+
+    if (!editor) {
+      return <Component {...props} questionNumber={null} />;
+    }
+
+    // Find all numbered-list elements within the editor
+    const numberedLists = findAllNumberedLists(editor.children);
+
+    // Assign number to each numbered list based on its position in the array
+    const listNumber = numberedLists.reduce((num, list, index) => {
+      if (list.id === element.id) {
+        return numberedLists
+          .slice(0, index + 1)
+          .filter((el) => el.listIndex === list.listIndex).length;
+      }
+      return num;
+    }, 0);
+
+    return <Component {...props} listNumber={listNumber} />;
+  };
+};
+
+export const ListItem = withListNumbering((props) => {
   const {
     editor,
     showEditBlockPopup,
     selectedElementID,
     setSelectedElementID,
   } = useContext(EditorContext);
-  const { attributes, children, element } = props;
+  const { attributes, children, element, listType, listNumber } = props;
   const path = ReactEditor.findPath(editor, element);
   const [isVisible, setIsVisible] = useState(false);
-  const parent = Editor.parent(editor, path);
   const focused = useFocused();
   const selected = useSelected();
   const listItemRef = useRef(null);
-
-  const [bgClass, setBGClass] = useState(true);
 
   useEffect(() => {
     if (editor && path) {
@@ -50,20 +92,13 @@ export function ListItem(props) {
     }
   }, [editor, path, children, focused]);
 
-  const hasSlide = hasSlideElement(editor.children);
-
   useEffect(() => {
     if (!focused && !selected) {
       setSelectedElementID("");
     }
   }, [focused, selected]);
 
-  const shouldShowPlaceholder =
-    focused && selected && element.children[0].text === "";
-
-  const isNumberedList = parent[0].type === "numbered-list";
-  const bulletList = parent[0].type === "bulleted-list";
-  const itemNumber = isNumberedList ? path[path.length - 1] + 1 : null; // Calculate the item number based on the path
+  const isNumberedList = listType === "numbered";
 
   let placeholderText = "";
   if (element.children[0].text === "") {
@@ -78,15 +113,20 @@ export function ListItem(props) {
           selectedElementID === element.id ? " bg-[#E0EDFB]" : "bg-transparent"
         }
         transition duration-1000 ease-in-out
+        ${isNumberedList && "ml-1 list-none"}
         `}
         {...attributes}
         data-id={element.id}
         data-path={JSON.stringify(path)}
         data-placeholder={placeholderText}
       >
-        {/* {isNumberedList && <span contentEditable={false}>{itemNumber}. </span>} */}
+        {isNumberedList && (
+          <span contentEditable={false} className="mr-[2px]">
+            {listNumber}.{" "}
+          </span>
+        )}
         {children}
       </li>
     </ListItemStyle>
   );
-}
+});

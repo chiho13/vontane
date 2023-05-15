@@ -49,28 +49,31 @@ export function ElementSelector(props) {
           {children}
         </a>
       );
-    case "numbered-list":
-      return (
-        <ol
-          data-path={JSON.stringify(path)}
-          className="list-decimal"
-          {...attributes}
-        >
-          {children}
-        </ol>
-      );
+    // case "numbered-list":
+    //   return (
+    //     <ol
+    //       data-path={JSON.stringify(path)}
+    //       className="list-decimal"
+    //       {...attributes}
+    //     >
+    //       {children}
+    //     </ol>
+    //   );
+    // case "bulleted-list":
+    //   return (
+    //     <ul
+    //       data-path={JSON.stringify(path)}
+    //       className="list-disc"
+    //       {...attributes}
+    //     >
+    //       {children}
+    //     </ul>
+    //   );
     case "bulleted-list":
-      return (
-        <ul
-          data-path={JSON.stringify(path)}
-          className="list-disc"
-          {...attributes}
-        >
-          {children}
-        </ul>
-      );
-    case "list":
-      return <ListItem {...props} />;
+      return <ListItem {...props} listType="bullet" />;
+
+    case "numbered-list":
+      return <ListItem {...props} listType="numbered" />;
     case "question-item":
       return <QuestionItem {...props} />;
     case "equation":

@@ -55,7 +55,7 @@ export const EditorSkeleton = () => {
               </div>
             </div>
             <div
-              className="m-w-full mt-3 hidden grow rounded-md border border-gray-300 bg-white  dark:border-gray-700  dark:bg-muted/70  xl:block"
+              className="m-w-full mt-3 hidden grow rounded-md border border-gray-300 bg-white  dark:border-gray-700  dark:bg-muted  xl:block"
               style={{
                 height: "calc(100vh - 120px)",
                 minWidth: "270px",

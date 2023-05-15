@@ -26,7 +26,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
   return (
     <div
-      className="m-w-full bg-w mt-3 hidden grow rounded-md border border-gray-300 bg-white px-2 dark:border-gray-700 dark:bg-muted/70 dark:text-lightgray xl:block"
+      className="m-w-full bg-w mt-3 hidden grow rounded-md border border-gray-300 bg-white px-2 dark:border-gray-700 dark:bg-muted dark:text-lightgray xl:block"
       style={rightSidebarStyle}
     >
       <div className="p-4">

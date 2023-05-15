@@ -57,6 +57,7 @@ export const SlideBreak = withSlideNumbering(
     const path = ReactEditor.findPath(editor, element);
 
     const theme = useTheme();
+
     return (
       <div
         {...attributes}

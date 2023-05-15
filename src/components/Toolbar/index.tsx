@@ -162,13 +162,13 @@ export const Toolbar: React.FC<ToolbarProps> = ({
       tabIndex={-1}
       ref={toolbarRef}
     >
-      <ChangeBlocks />
+      <ChangeBlocks openLink={openLink} />
       <div className="h-full w-[1px] bg-gray-200 dark:bg-gray-700"></div>
       {!openLink && (
         <>
           <div className="flex  p-1">
             <button
-              className="flex items-center  rounded-lg  p-2 transition duration-300 hover:bg-gray-200 hover:dark:bg-accent"
+              className="flex items-center  rounded-lg  p-2 transition duration-300 hover:bg-gray-200 hover:dark:bg-muted"
               onMouseDown={(e) => {
                 e.preventDefault();
                 toggleFormat(editor, "bold");
@@ -183,7 +183,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               />
             </button>
             <button
-              className="ml-1 flex  items-center  rounded-lg p-2 transition duration-300 hover:bg-gray-200 hover:dark:bg-accent"
+              className="ml-1 flex  items-center  rounded-lg p-2 transition duration-300 hover:bg-gray-200 hover:dark:bg-muted"
               onMouseDown={(e) => {
                 e.preventDefault();
                 toggleFormat(editor, "italic");
@@ -198,7 +198,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               />
             </button>
             <button
-              className="ml-1 flex  items-center  rounded-lg p-2 transition duration-300 hover:bg-gray-200 hover:dark:bg-accent"
+              className="ml-1 flex  items-center  rounded-lg p-2 transition duration-300 hover:bg-gray-200 hover:dark:bg-muted"
               onMouseDown={(e) => {
                 e.preventDefault();
                 toggleFormat(editor, "underline");
@@ -213,7 +213,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               />
             </button>
             <button
-              className="ml-1 flex  items-center rounded-lg p-2 transition duration-300 hover:bg-gray-200 hover:dark:bg-accent"
+              className="ml-1 flex  items-center rounded-lg p-2 transition duration-300 hover:bg-gray-200 hover:dark:bg-muted"
               onMouseDown={(e) => {
                 e.preventDefault();
                 toggleFormat(editor, "strikethrough");
@@ -228,7 +228,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               />
             </button>
             <button
-              className=" ml-1 flex items-center   rounded-lg p-2 transition duration-300 hover:bg-gray-200 hover:dark:bg-accent"
+              className=" ml-1 flex items-center   rounded-lg p-2 transition duration-300 hover:bg-gray-200 hover:dark:bg-muted"
               onMouseDown={() => {
                 setOpenLink(true);
               }}
@@ -243,7 +243,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           <div className="h-full w-[1px] bg-gray-200 dark:bg-gray-700"></div>
           <div className="flex  p-1">
             <button
-              className="ml-1  flex h-[32px] w-[32px] items-center justify-center  rounded-lg  p-1 transition duration-300 hover:bg-gray-200 hover:dark:bg-accent"
+              className="ml-1  flex h-[32px] w-[32px] items-center justify-center  rounded-lg  p-1 transition duration-300 hover:bg-gray-200 hover:dark:bg-muted"
               onMouseDown={(e) => {
                 e.preventDefault();
                 toggleBlock(editor, "bulleted-list");
@@ -260,7 +260,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               />
             </button>
             <button
-              className="ml-1  mr-1 flex  h-[32px]  w-[32px] items-center justify-center rounded-lg  p-1 transition duration-300 hover:bg-gray-200 hover:dark:bg-accent"
+              className="ml-1  mr-1 flex  h-[32px]  w-[32px] items-center justify-center rounded-lg  p-1 transition duration-300 hover:bg-gray-200 hover:dark:bg-muted"
               onMouseDown={(e) => {
                 e.preventDefault();
                 toggleBlock(editor, "numbered-list");
@@ -281,11 +281,11 @@ export const Toolbar: React.FC<ToolbarProps> = ({
       )}
 
       {openLink && (
-        <div className=" absolute left-0  flex w-full items-center bg-white p-1 dark:border-gray-700 dark:bg-muted">
+        <div className=" absolute left-0  flex w-full items-center bg-white p-1 dark:border-gray-700 dark:bg-secondary">
           <form onSubmit={handleSubmit} className="flex w-full">
             <input
               ref={urlInputRef}
-              className=" h-[30px] w-[75%] rounded border border-gray-400 px-1 focus:border-[#007AFF] focus:outline-none dark:bg-muted dark:focus:border-foreground "
+              className=" h-[30px] w-[75%] rounded border border-gray-400 px-1 focus:border-[#007AFF] focus:outline-none dark:bg-secondary dark:focus:border-foreground "
               value={inputValue}
               placeholder="Enter URL"
               onChange={handleInputChange}
@@ -300,7 +300,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           </form>
           {hasURL && (
             <button
-              className="grow p-1 pr-2 text-sm font-semibold text-brand dark:text-foreground"
+              className="grow p-1 pr-2 text-sm font-semibold text-brand dark:text-foreground "
               onClick={unLink}
             >
               Unlink

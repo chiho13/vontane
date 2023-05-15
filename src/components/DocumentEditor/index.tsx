@@ -1614,7 +1614,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       <div className="flex">
         <div className="block">
           <div
-            className="relative  z-0  mt-3 w-[90vw] rounded-md  border border-gray-300 bg-white px-2 dark:border-gray-700 dark:bg-muted/70 dark:text-accent-foreground lg:w-[780px] lg:px-0"
+            className="relative  z-0  mt-3 w-[90vw] rounded-md  border border-gray-300 bg-white px-2 dark:border-gray-700 dark:bg-muted/70 dark:text-foreground lg:w-[780px] lg:px-0"
             style={{
               height: "calc(100vh - 120px)",
             }}
@@ -1726,7 +1726,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                           <AnimatePresence>
                             {showMiniToolbar && (
                               <StyledMiniToolbar
-                                className=" bg-white dark:border-gray-700 dark:bg-muted"
+                                className=" bg-white dark:border-gray-700 dark:bg-secondary"
                                 ref={toolbarRef}
                                 {...up_animation_props}
                                 exit={{ opacity: 0 }}

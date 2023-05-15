@@ -371,6 +371,9 @@ const Layout: React.FC<LayoutProps> = ({
                     icon={
                       <ChevronsUpDown className="w-4 text-darkgray dark:text-muted-foreground" />
                     }
+                    dropdownMenuNonPortalOverride={
+                      "lg:absolute left-5 dark:bg-muted"
+                    }
                   >
                     <div className="p-1" role="none">
                       <Link
@@ -390,7 +393,7 @@ const Layout: React.FC<LayoutProps> = ({
                     <div className="p-1" role="none">
                       <button
                         onClick={logout}
-                        className="inline-flex w-full rounded-md px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-accent"
+                        className="h-[40 px]  inline-flex w-full rounded-md px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:bg-gray-100 hover:text-gray-900 dark:text-foreground dark:hover:bg-accent"
                         role="menuitem"
                         tabIndex={-1}
                         id="menu-item-3"

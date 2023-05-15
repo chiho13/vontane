@@ -19,7 +19,7 @@ import {
 import { ReactEditor } from "slate-react";
 import { useTheme } from "styled-components";
 
-export const ChangeBlocks = () => {
+export const ChangeBlocks = ({ openLink }) => {
   const { editor } = useContext(EditorContext);
 
   const theme = useTheme();
@@ -94,6 +94,14 @@ export const ChangeBlocks = () => {
       }
     });
 
+  useEffect(() => {
+    if (openLink) {
+      if (changeTextBlock.current) {
+        changeTextBlock.current.handleClose();
+      }
+    }
+  }, [openLink]);
+
   return (
     <div className="relative ml-1 flex h-[32px] items-center pr-1">
       <>
@@ -106,9 +114,9 @@ export const ChangeBlocks = () => {
             <Dropdown
               dropdownId="changeBlockDropdown"
               ref={changeTextBlock}
-              dropdownButtonClassName="p-1 px-2 flex text-darkblue items-center h-[32px] relative border outline-none border-0  dark:border-gray-700 shadow-none bg-transparent w-full  justify-start transition-colors duration-300  border focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-opacity-40 hover:bg-gray-200 dark:hover:bg-accent"
+              dropdownButtonClassName="p-1 px-2 flex text-darkblue items-center h-[32px] relative border outline-none border-0  dark:border-gray-700 shadow-none bg-transparent w-full  justify-start transition-colors duration-300  border focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-opacity-40 hover:bg-gray-200 dark:hover:bg-muted"
               icon={TextBlockIcon}
-              dropdownMenuNonPortalOverride="top-[38px] -left-[5px] border-black dark:bg-muted lg:absolute w-[200px]"
+              dropdownMenuNonPortalOverride="top-[38px] border-black dark:bg-secondary lg:absolute w-[200px]"
             >
               <div
                 className="p-2"
@@ -133,7 +141,7 @@ export const ChangeBlocks = () => {
                       className={`inline-flex w-full items-center rounded-md px-4 py-2 text-left text-sm font-semibold text-darkblue text-[#333333] transition duration-200 focus:outline-none dark:text-foreground
                         ${
                           focusedIndex === index
-                            ? "bg-gray-200 dark:bg-accent"
+                            ? "bg-gray-200 dark:bg-muted"
                             : ""
                         }
                         `}

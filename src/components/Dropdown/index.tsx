@@ -346,12 +346,14 @@ function Dropdown(
       {desktopbreakpoint && (
         <AnimatePresence>
           {activeDropdown === dropdownId && (
-            <motion.div {...clickoutside_props}>
-              <div
-                className="closeOutside pointer-events-none fixed top-0 left-0 h-full w-screen opacity-50"
-                // onClick={handleClose}
-              ></div>
-            </motion.div>
+            <Portal>
+              <motion.div {...clickoutside_props}>
+                <div
+                  className="closeOutside z-1  fixed top-0 left-0 h-full w-screen  opacity-50"
+                  // onClick={handleClose}
+                ></div>
+              </motion.div>
+            </Portal>
           )}
         </AnimatePresence>
       )}
@@ -362,7 +364,7 @@ function Dropdown(
           aria-expanded={isOpen}
           aria-haspopup="true"
           id="dropdown"
-          onClick={handleDropdownClick}
+          onMouseDown={handleDropdownClick}
           ref={toggleRef}
         >
           {image}

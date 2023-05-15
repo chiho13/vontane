@@ -19,6 +19,7 @@ export function SortableElement({
   element,
   renderElement,
   addButton,
+  optionMenu,
 }) {
   const { activeIndex } = useActiveElement();
   const readOnly = useReadOnly();
@@ -46,7 +47,8 @@ export function SortableElement({
       <div
         className={classNames(
           classes.sortableElement,
-          isDragging && classes.active
+          isDragging && classes.active,
+          "group"
         )}
         ref={setNodeRef}
         {...sortableAttributes}
@@ -54,7 +56,6 @@ export function SortableElement({
           transition,
           transform: isSorting ? undefined : CSS.Transform.toString(transform),
         }}
-        {...slideBreakListener}
       >
         {readOnly ? null : (
           <div className="flex w-[58px] translate-x-[2px] justify-end">
@@ -85,8 +86,13 @@ export function SortableElement({
               classes.createNewColumnRight
           )}
         >
-          {renderElement({ attributes, children, element })}
+          <div {...slideBreakListener}>
+            {renderElement({ attributes, children, element })}
+          </div>
         </div>
+        {/* <div className={classNames(classes.optionMenu)}> */}
+        {optionMenu}
+        {/* </div> */}
       </div>
     </div>
   );

@@ -38,13 +38,13 @@ export const toggleBlock = (
   const isActive = isBlockActive(editor, format, "type");
   const isList = LIST_TYPES.includes(format);
 
-  Transforms.unwrapNodes(editor, {
-    match: (n) =>
-      !Editor.isEditor(n) &&
-      SlateElement.isElement(n) &&
-      LIST_TYPES.includes(n.type),
-    split: true,
-  });
+  //   Transforms.unwrapNodes(editor, {
+  //     match: (n) =>
+  //       !Editor.isEditor(n) &&
+  //       SlateElement.isElement(n) &&
+  //       LIST_TYPES.includes(n.type),
+  //     split: true,
+  //   });
 
   let newProperties: Partial<SlateElement>;
 
@@ -55,16 +55,16 @@ export const toggleBlock = (
     };
   } else {
     newProperties = {
-      type: isList ? "list" : format,
+      type: format,
     };
   }
 
   Transforms.setNodes<SlateElement>(editor, newProperties);
 
-  if (!isActive && isList) {
-    const block = { type: format, children: [] };
-    Transforms.wrapNodes(editor, block);
-  }
+  //   if (!isActive && isList) {
+  //     const block = { type: format, children: [] };
+  //     Transforms.wrapNodes(editor, block);
+  //   }
 };
 
 export const isFormatActive = (

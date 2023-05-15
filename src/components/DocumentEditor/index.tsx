@@ -352,6 +352,24 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     );
   }
 
+  const insertNewNode = (editor, parentPath, nodeType) => {
+    const newPath = Path.next(parentPath);
+    const newNode = {
+      id: genNodeId(),
+      type: nodeType,
+      children: [{ text: "" }],
+    };
+    Transforms.insertNodes(editor, newNode, { at: newPath });
+    Transforms.select(editor, newPath);
+  };
+
+  const splitNodeAndSetNewId = (editor, newPath) => {
+    Transforms.splitNodes(editor);
+    const newId = genNodeId();
+    Transforms.setNodes(editor, { id: newId }, { at: newPath });
+    Transforms.select(editor, Editor.start(editor, newPath));
+  };
+
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
       const { selection } = editor;
@@ -444,39 +462,34 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         if (selection) {
           console.log(parentNode.type);
 
-          if (parentNode.type === "list") {
+          if (["numbered-list", "bulleted-list"].includes(parentNode.type)) {
             const newPath = Path.next(parentPath);
-            if (Editor.isEnd(editor, selection.anchor, _currentNodePath)) {
-              // insertNewParagraphEnter(newPath);
-              const newPath = Path.next(parentPath);
-              Transforms.insertNodes(
+
+            if (Node.string(parentNode) === "") {
+              event.preventDefault();
+              Transforms.setNodes(
                 editor,
-                {
-                  id: genNodeId(),
-                  type: "list",
-                  children: [{ text: "" }],
-                },
-                { at: newPath }
+                { type: "paragraph" },
+                { at: _currentNodePath }
               );
-              Transforms.select(editor, newPath);
+
+              Transforms.select(editor, Editor.start(editor, _currentNodePath));
+              return;
             }
+
+            if (Editor.isEnd(editor, selection.anchor, _currentNodePath)) {
+              insertNewNode(editor, parentPath, parentNode.type);
+            }
+
             if (
               Editor.isStart(editor, editor.selection.anchor, _currentNodePath)
             ) {
-              const listItem = {
-                id: genNodeId(),
-                type: "list",
-                children: [{ text: "" }],
-              };
-              Transforms.insertNodes(editor, listItem);
+              insertNewNode(editor, _currentNodePath, parentNode.type);
             } else {
-              Transforms.splitNodes(editor);
-
-              const newId = genNodeId();
-              Transforms.setNodes(editor, { id: newId }, { at: newPath });
-              Transforms.select(editor, Editor.start(editor, newPath));
+              splitNodeAndSetNewId(editor, newPath);
             }
           }
+
           if (
             parentNode.type === "paragraph" ||
             parentNode.type === "heading-one" ||
@@ -629,7 +642,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
           console.log(currentNode.type);
 
-          if (currentNode.type === "list") {
+          if (["numbered-list", "bulleted-list"].includes(currentNode.type)) {
             let newProperties = {
               type: "paragraph",
             };
@@ -980,11 +993,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         parentElement.type === "bulleted-list" ||
         parentElement.type === "numbered-list";
       const addButton =
-        (isRoot &&
-          element.type !== "column" &&
-          element.type !== "bulleted-list" &&
-          element.type !== "numbered-list" &&
-          element.type !== "title") ||
+        (isRoot && element.type !== "column" && element.type !== "title") ||
         isInsideColumnCell ? (
           <div
             className="z-1000 group absolute top-1/2 left-[0px] -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center"
@@ -1013,11 +1022,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         ) : null;
 
       const shouldWrapWithSortableElement =
-        (isRoot &&
-          element.type !== "column" &&
-          element.type !== "bulleted-list" &&
-          element.type !== "numbered-list" &&
-          element.type !== "title") ||
+        (isRoot && element.type !== "column" && element.type !== "title") ||
         isInsideColumnCell;
 
       const content = shouldWrapWithSortableElement ? (
@@ -1431,7 +1436,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             if (
               startNode.type === "paragraph" ||
               startNode.type === "link" ||
-              startNode.type === "list" ||
+              startNode.type === "bulleted-list" ||
+              startNode.type === "numbered-list" ||
               startNode.type === "heading-one" ||
               startNode.type === "heading-two" ||
               startNode.type === "heading-three"

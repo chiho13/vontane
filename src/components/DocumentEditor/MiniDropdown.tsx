@@ -58,7 +58,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         description: "Just start writing",
         action: closeDropdown,
         icon: (
-          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1">
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
             <TextIcon />
           </div>
         ),
@@ -68,7 +68,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         description: "Slide mode: break the page",
         action: addSlideBreakHandler,
         icon: (
-          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1">
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
             <SlideBreak />
           </div>
         ),
@@ -78,7 +78,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         description: "Set a multiple choice question",
         action: addMCQBlock,
         icon: (
-          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1">
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
             <CheckCircle className="stroke-darkergray" />
           </div>
         ),
@@ -118,7 +118,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
             alt="add latex block equation"
             width={44}
             height={44}
-            className="rounded-md border  border-gray-300 bg-white p-1"
+            className="rounded-md border  border-gray-300 bg-white p-1 dark:opacity-80"
           />
         ),
       },
@@ -127,7 +127,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         description: "Big Section heading",
         action: () => addHeading("heading-one"),
         icon: (
-          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1">
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
             <Heading1 className="stroke-darkergray" />
           </div>
         ),
@@ -137,7 +137,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         description: "Medium Section heading",
         action: () => addHeading("heading-two"),
         icon: (
-          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1">
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
             <Heading2 className="stroke-darkergray" />
           </div>
         ),
@@ -147,7 +147,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         description: "Small Section heading",
         action: () => addHeading("heading-three"),
         icon: (
-          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1">
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
             <Heading3 className="stroke-darkergray" />
           </div>
         ),
@@ -302,7 +302,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
                   className={`mb-1 flex w-full items-center gap-2 rounded-md border-2 border-gray-100 p-2 shadow-sm transition duration-300 dark:border-gray-700
                     ${
                       focusedIndex === index
-                        ? "border-gray-200 bg-gray-200 dark:bg-accent"
+                        ? "border-gray-200 bg-gray-200 dark:border-muted-foreground dark:bg-accent"
                         : ""
                     }
                   `}

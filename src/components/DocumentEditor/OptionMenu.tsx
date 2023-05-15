@@ -2,12 +2,13 @@ import { motion } from "framer-motion";
 import { useTheme } from "styled-components";
 import { forwardRef, useRef, useContext, useEffect } from "react";
 import Image from "next/image";
-import { MoreHorizontal, Trash2 } from "lucide-react";
+import { MoreHorizontal, Trash2, Copy } from "lucide-react";
 import { BsFillCaretDownFill } from "react-icons/bs";
 import Dropdown, { DropdownContext, DropdownProvider } from "../Dropdown";
 import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor } from "slate-react";
-import { Transforms } from "slate";
+import { Editor, Path, Transforms } from "slate";
+import { genNodeId } from "@/hoc/withID";
 
 interface OptionMenuProps {
   element: any;
@@ -19,7 +20,24 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
     const { editor } = useContext(EditorContext);
     const { activeDropdown, toggleDropdown } = useContext(DropdownContext);
 
-    const deleteBlock = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const optionMenuElements = [
+      {
+        name: "Duplicate",
+        action: duplicateBlock,
+        icon: (
+          <Copy className="mr-4 w-5  stroke-darkergray dark:stroke-foreground" />
+        ),
+      },
+      "separator",
+      {
+        name: "Delete",
+        action: deleteBlock,
+        icon: (
+          <Trash2 className="mr-4 w-5  stroke-darkergray dark:stroke-foreground" />
+        ),
+      },
+    ];
+    function deleteBlock(event: React.MouseEvent<HTMLButtonElement>) {
       //   onClick();
       event.preventDefault();
       event.stopPropagation();
@@ -30,7 +48,25 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
       Transforms.removeNodes(editor, {
         at: ReactEditor.findPath(editor, element),
       });
-    };
+    }
+
+    function duplicateBlock(event: React.MouseEvent<HTMLButtonElement>) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      // Get the path to the current block
+      const path = ReactEditor.findPath(editor, element);
+
+      // Get the current block
+      const [node] = Editor.node(editor, path);
+
+      // Duplicate the current block
+      const newNode = { id: genNodeId(), ...node };
+
+      // Insert the new block immediately after the current block
+      Transforms.insertNodes(editor, newNode, { at: Path.next(path) });
+      toggleDropdown("");
+    }
 
     return (
       <>
@@ -51,18 +87,29 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
               </div>
             }
           >
-            <div className="p-1 " role="none">
-              <button
-                onClick={deleteBlock}
-                className="  flex  w-full items-center rounded-md px-4 py-2 text-left text-sm text-gray-700  hover:bg-gray-100 hover:text-gray-900 dark:text-foreground dark:hover:bg-accent"
-                role="menuitem"
-                tabIndex={-1}
-                id="menu-item-3"
-              >
-                <Trash2 className="mr-4 w-5  stroke-darkergray dark:stroke-foreground" />
-                Delete
-              </button>
-            </div>
+            {optionMenuElements.map((item, index) => {
+              if (item === "separator") {
+                // This is a separator. Render it as such.
+                return (
+                  <div className="h-[1px] w-full bg-gray-200 dark:bg-gray-700"></div>
+                );
+              }
+              return (
+                <div className="p-1 " role="none">
+                  <button
+                    onClick={item.action}
+                    className="  flex  w-full items-center rounded-md px-4 py-1 text-left text-sm text-gray-700  transition duration-200 hover:bg-gray-200 hover:text-gray-900 dark:text-foreground dark:hover:bg-accent"
+                    role="menuitem"
+                    tabIndex={-1}
+                    id="menu-item-3"
+                  >
+                    <span>{item.icon}</span>
+
+                    <span>{item.name}</span>
+                  </button>
+                </div>
+              );
+            })}
           </Dropdown>
         </div>
       </>

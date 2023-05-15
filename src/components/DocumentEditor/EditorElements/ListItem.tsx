@@ -113,15 +113,16 @@ export const ListItem = withListNumbering((props) => {
           selectedElementID === element.id ? " bg-[#E0EDFB]" : "bg-transparent"
         }
         transition duration-1000 ease-in-out
-        ${isNumberedList && "ml-1 list-none"}
+        ${isNumberedList && "list-none"}
         `}
         {...attributes}
         data-id={element.id}
         data-path={JSON.stringify(path)}
         data-placeholder={placeholderText}
+        data-list-type={listType}
       >
         {isNumberedList && (
-          <span contentEditable={false} className="mr-[2px]">
+          <span contentEditable={false} className="mr-[5px]">
             {listNumber}.{" "}
           </span>
         )}

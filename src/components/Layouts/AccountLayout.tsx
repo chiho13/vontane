@@ -45,7 +45,7 @@ const ToggleButtonWrapper = styled.div`
   top: 0;
   padding-top: 15px;
   left: 0;
-  z-index: 100;
+  z-index: 1000;
   display: block;
   height: 45px;
   width: 45px;
@@ -72,7 +72,7 @@ width: 240px;
 transform: ${(props) =>
   props.isLocked && props.isOpen ? "translateX(0)" : "translateX(-240px)"};
 padding: 0;
-z-index: 10;
+z-index: 100;
  
 border-left: none;
 border-right-width: 1px;
@@ -345,7 +345,7 @@ const Layout: React.FC<LayoutProps> = ({
             onMouseEnter={handleMouseEnter}
           >
             <ToggleButton
-              className="group text-darkergray hover:bg-gray-200 hover:dark:bg-accent"
+              className="z-100 group text-darkergray  hover:bg-gray-200 hover:dark:bg-accent"
               role="button"
               href="#"
               onClick={toggleSidebarLock}

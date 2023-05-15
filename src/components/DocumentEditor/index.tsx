@@ -971,6 +971,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const debouncedSetIsTyping = debounce(setIsTyping, 1000);
   const MemoizedElementSelector = React.memo(ElementSelector);
 
+  const elementRefs = new WeakMap();
+
   const renderElement = useCallback(
     (
       props: JSX.IntrinsicAttributes & {
@@ -992,6 +994,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         parentElement.type === "column-cell" ||
         parentElement.type === "bulleted-list" ||
         parentElement.type === "numbered-list";
+
       const addButton =
         (isRoot && element.type !== "column" && element.type !== "title") ||
         isInsideColumnCell ? (
@@ -1012,12 +1015,15 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             </button>
           </div>
         ) : null;
+      if (!elementRefs.has(element)) {
+        elementRefs.set(element, React.createRef());
+      }
+      const optionMenuRef = elementRefs.get(element);
 
       const optionMenu =
-        (isRoot && (element.type === "slide" || element.type === "equation")) ||
-        isInsideColumnCell ? (
+        (isRoot && element.type !== "mcq") || isInsideColumnCell ? (
           <div className="absolute   top-[50%]  right-2 -translate-y-1/2 transform items-center">
-            <OptionMenu element={element} />
+            <OptionMenu element={element} ref={optionMenuRef} />
           </div>
         ) : null;
 
@@ -1029,6 +1035,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         <SortableElement
           {...props}
           addButton={addButton}
+          optionMenu={optionMenu}
           renderElement={(props: any) => <MemoizedElementSelector {...props} />}
         />
       ) : (
@@ -1605,12 +1612,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       <div className="flex w-full justify-end lg:w-[780px]">
         {/* <MainToolbar path={activePath} /> */}
         <button
-          className="group z-10 hidden h-[36px] rounded border border-gray-300 bg-white p-1 transition duration-300 hover:border-brand dark:border-gray-700 dark:bg-muted dark:hover:border-foreground xl:block"
+          className="group z-0 hidden h-[36px] rounded border border-gray-300 bg-white p-1 transition duration-300 hover:border-brand dark:border-gray-700 dark:bg-muted dark:hover:border-foreground xl:block"
           onClick={() => {
             setShowRightSidebar((prev) => !prev);
           }}
         >
-          <Sidebar className="rotate-180 transform text-darkergray transition duration-300 group-hover:text-brand dark:text-muted-foreground dark:group-hover:text-foreground" />
+          <Sidebar className=" rotate-180 transform text-darkergray transition duration-300 group-hover:text-brand dark:text-muted-foreground dark:group-hover:text-foreground" />
         </button>
       </div>
       <div className="flex">

@@ -8,7 +8,8 @@
   background: transparent;
 }
 
-.addButton {
+.addButton,
+.optionMenu {
   opacity: 0;
 }
 
@@ -28,6 +29,10 @@
   opacity: 1;
 }
 .sortableElement:hover .addButton {
+  opacity: 1;
+}
+
+.sortableElement:hover .optionMenu {
   opacity: 1;
 }
 

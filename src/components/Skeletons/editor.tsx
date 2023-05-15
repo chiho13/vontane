@@ -1,20 +1,34 @@
+import { Sidebar } from "lucide-react";
+import { useLocalStorage } from "usehooks-ts";
+
 export const EditorSkeleton = () => {
   const showRightSidebar = JSON.parse(
     localStorage.getItem("showRightSidebar") || "true"
   );
 
+  const [rightSideBarWidth, setRightSideBarWidth] = useLocalStorage(
+    "sidebarWidth",
+    370
+  );
   return (
     <div
-      className="max-[1400px] relative mx-auto mt-10 px-4"
+      className="max-[1400px] relative mx-auto mt-[20px] px-4"
       style={{
-        width: `${1170}px`,
+        right: !showRightSidebar ? -rightSideBarWidth / 2 : 0,
+        width: `${rightSideBarWidth + 800}px`,
+
         transition: "right 0.3s ease-in-out",
       }}
     >
+      <div className="flex w-full justify-end lg:w-[800px]">
+        <button className="group z-10 hidden h-[36px] rounded border border-gray-300 bg-white p-1 transition duration-300 hover:border-brand dark:border-gray-700 dark:bg-muted dark:hover:border-foreground xl:block">
+          <Sidebar className="rotate-180 transform text-darkergray transition duration-300 group-hover:text-brand dark:text-muted-foreground dark:group-hover:text-foreground" />
+        </button>
+      </div>
       <div className="flex justify-center">
         <div className="block">
           <div
-            className="relative z-0  mt-4 block w-full rounded-md  border border-gray-300 bg-white  px-2 dark:border-gray-700  dark:bg-muted/50 lg:w-[800px] lg:px-0"
+            className="relative z-0  mt-3 block w-full rounded-md  border border-gray-300 bg-white  px-2 dark:border-gray-700  dark:bg-muted/70 lg:w-[800px] lg:px-0"
             style={{
               height: "calc(100vh - 120px)",
             }}
@@ -41,7 +55,7 @@ export const EditorSkeleton = () => {
               </div>
             </div>
             <div
-              className="m-w-full mt-4 hidden grow rounded-md border border-gray-300 bg-white  dark:border-gray-700  dark:bg-muted/50  xl:block"
+              className="m-w-full mt-3 hidden grow rounded-md border border-gray-300 bg-white  dark:border-gray-700  dark:bg-muted/70  xl:block"
               style={{
                 height: "calc(100vh - 120px)",
                 minWidth: "270px",

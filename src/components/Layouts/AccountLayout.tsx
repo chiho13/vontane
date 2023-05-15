@@ -291,9 +291,9 @@ const Layout: React.FC<LayoutProps> = ({
           <TooltipTrigger>
             <AnimatedIcon show={showChevronRight}>
               {showChevronRight && desktopbreakpoint ? (
-                <ChevronsRight className="dark:group-hover:text-foreground" />
+                <ChevronsRight className=" text-gray-400 dark:group-hover:text-foreground" />
               ) : (
-                <Menu />
+                <Menu className="text-gray-400 dark:text-muted-foreground" />
               )}
             </AnimatedIcon>
           </TooltipTrigger>
@@ -313,7 +313,7 @@ const Layout: React.FC<LayoutProps> = ({
       <TooltipProvider delayDuration={0}>
         <Tooltip>
           <TooltipTrigger>
-            <ChevronsLeft className="dark:text-muted-foreground dark:group-hover:text-foreground" />
+            <ChevronsLeft className="text-gray-400 dark:text-muted-foreground dark:group-hover:text-foreground" />
           </TooltipTrigger>
           <TooltipContent className="dark:bg-white dark:text-muted">
             <p className="text-[12px]">Close Sidebar</p>

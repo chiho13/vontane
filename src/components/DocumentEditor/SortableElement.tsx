@@ -65,7 +65,10 @@ export function SortableElement({
               className={`${classes.handle} hover:bg-gray-200 dark:hover:bg-accent`}
               contentEditable={false}
             >
-              <GripVertical className="stroke-darkgray" width={20} />
+              <GripVertical
+                className="stroke-darkgray dark:stroke-muted-foreground"
+                width={20}
+              />
             </button>
           </div>
         )}

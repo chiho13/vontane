@@ -999,7 +999,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               }}
               ref={toggleRef}
             >
-              <Plus className="stroke-darkgray" />
+              <Plus className="stroke-darkgray dark:stroke-muted-foreground" />
             </button>
           </div>
         ) : null;

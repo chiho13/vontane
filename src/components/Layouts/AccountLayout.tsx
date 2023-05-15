@@ -75,7 +75,10 @@ padding: 0;
 z-index: 10;
  
 border-left: none;
-border-right-width: ${(props) => props.isLocked && props.isOpen && "1px"};
+border-right-width: 1px;
+border-top-width: ${(props) => !props.isLocked && props.isOpen && "1px"};
+border-bottom-width: ${(props) => !props.isLocked && props.isOpen && "1px"};
+
 border-top-right-radius:  ${(props) =>
   !props.isLocked && props.isOpen && "4px"};
 border-bottom-right-radius:  ${(props) =>

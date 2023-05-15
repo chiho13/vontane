@@ -4,6 +4,9 @@ const config = {
   darkMode: ["class"],
   theme: {
     extend: {
+      screens: {
+        xl: "1200px",
+      },
       colors: {
         brand: "#0E78EF",
         white: "#FFFFFF",

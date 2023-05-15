@@ -1612,7 +1612,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         </button>
       </div>
       <div className="flex">
-        <div className="block">
+        <div className="mx-auto block">
           <div
             className="relative  z-0  mt-3 w-[90vw] rounded-md  border border-gray-300 bg-white px-2 dark:border-gray-700 dark:bg-muted/70 dark:text-accent-foreground lg:w-[800px] lg:px-0"
             style={{

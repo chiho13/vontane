@@ -39,8 +39,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         <meta name="description" content="Vontane upgrade to pro" />
       </Head>
       <Header />
-      <div className="container mx-auto mt-10 grid flex-1 gap-12 lg:max-w-[1200px] lg:grid-cols-[200px_1fr]">
-        <aside className="hidden w-[200px] flex-col lg:flex">
+      <div className="container mx-auto mt-10 grid flex-1 gap-[50px] lg:w-[90%] lg:grid-cols-[200px_1fr] xl:w-full xl:max-w-[1200px]">
+        <aside className="ml-3 hidden w-[200px] flex-col lg:flex">
           {/* <div>something</div> */}
           <DashboardNav items={items} />
         </aside>

@@ -1592,7 +1592,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               ? -rightSideBarWidth / 2
               : 0
             : 0,
-        width: `${rightSideBarWidth + 800}px`,
+        width: `${rightSideBarWidth + 780}px`,
         transition: "right 0.3s ease-in-out",
       }}
     >
@@ -1600,7 +1600,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         <TextSpeech />
       </div> */}
 
-      <div className="flex w-full justify-end lg:w-[800px]">
+      <div className="flex w-full justify-end lg:w-[780px]">
         {/* <MainToolbar path={activePath} /> */}
         <button
           className="group z-10 hidden h-[36px] rounded border border-gray-300 bg-white p-1 transition duration-300 hover:border-brand dark:border-gray-700 dark:bg-muted dark:hover:border-foreground xl:block"
@@ -1612,9 +1612,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         </button>
       </div>
       <div className="flex">
-        <div className="mx-auto block">
+        <div className="block">
           <div
-            className="relative  z-0  mt-3 w-[90vw] rounded-md  border border-gray-300 bg-white px-2 dark:border-gray-700 dark:bg-muted/70 dark:text-accent-foreground lg:w-[800px] lg:px-0"
+            className="relative  z-0  mt-3 w-[90vw] rounded-md  border border-gray-300 bg-white px-2 dark:border-gray-700 dark:bg-muted/70 dark:text-accent-foreground lg:w-[780px] lg:px-0"
             style={{
               height: "calc(100vh - 120px)",
             }}

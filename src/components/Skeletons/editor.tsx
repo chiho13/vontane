@@ -15,12 +15,12 @@ export const EditorSkeleton = () => {
       className="max-[1400px] relative mx-auto mt-[20px] px-4"
       style={{
         right: !showRightSidebar ? -rightSideBarWidth / 2 : 0,
-        width: `${rightSideBarWidth + 800}px`,
+        width: `${rightSideBarWidth + 780}px`,
 
         transition: "right 0.3s ease-in-out",
       }}
     >
-      <div className="flex w-full justify-end lg:w-[800px]">
+      <div className="flex w-full justify-end lg:w-[780px]">
         <button className="group z-10 hidden h-[36px] rounded border border-gray-300 bg-white p-1 transition duration-300 hover:border-brand dark:border-gray-700 dark:bg-muted dark:hover:border-foreground xl:block">
           <Sidebar className="rotate-180 transform text-darkergray transition duration-300 group-hover:text-brand dark:text-muted-foreground dark:group-hover:text-foreground" />
         </button>
@@ -28,7 +28,7 @@ export const EditorSkeleton = () => {
       <div className="flex justify-center">
         <div className="block">
           <div
-            className="relative z-0  mt-3 block w-full rounded-md  border border-gray-300 bg-white  px-2 dark:border-gray-700  dark:bg-muted/70 lg:w-[800px] lg:px-0"
+            className="relative z-0  mt-3 block w-full rounded-md  border border-gray-300 bg-white  px-2 dark:border-gray-700  dark:bg-muted/70 lg:w-[780px] lg:px-0"
             style={{
               height: "calc(100vh - 120px)",
             }}

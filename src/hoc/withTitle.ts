@@ -31,42 +31,87 @@ export const withTitle = (editor) => {
       return;
     }
 
+    if (path.length === 0) {
+      if (editor.children.length <= 1 && Editor.string(editor, [0, 0]) === "") {
+        const title = {
+          type: "title",
+          children: [{ text: "" }],
+        };
+        Transforms.insertNodes(editor, title, {
+          at: path.concat(0),
+          select: true,
+        });
+      }
+
+      if (editor.children.length < 2) {
+        const paragraph = {
+          type: "paragraph",
+          children: [{ text: "" }],
+        };
+        Transforms.insertNodes(editor, paragraph, { at: path.concat(1) });
+      }
+
+      for (const [child, childPath] of Node.children(editor, path)) {
+        let type: string;
+        const slateIndex = childPath[0];
+        const enforceType = (type) => {
+          if (Element.isElement(child) && child.type !== type) {
+            const newProperties: Partial<Element> = { type };
+            Transforms.setNodes<Element>(editor, newProperties, {
+              at: childPath,
+            });
+          }
+        };
+
+        switch (slateIndex) {
+          case 0:
+            type = "title";
+            enforceType(type);
+            break;
+          case 1:
+            type = "paragraph";
+            enforceType(type);
+          default:
+            break;
+        }
+      }
+    }
+
     // Fall back to the original `normalizeNode`
     normalizeNode(entry);
   };
 
-  editor.deleteBackward = (unit) => {
-    const { selection } = editor;
+  // editor.deleteBackward = (unit) => {
+  //   const { selection } = editor;
 
-    if (
-      selection &&
-      Path.equals(selection.anchor.path, [1, 0]) &&
-      selection.anchor.offset === 0
-    ) {
-      const titleNode = Node.get(editor, [0]);
-      const firstParagraph = Node.get(editor, [1]);
+  //   if (
+  //     selection &&
+  //     Path.equals(selection.anchor.path, [1, 0]) &&
+  //     selection.anchor.offset === 0
+  //   ) {
+  //     const titleNode = Node.get(editor, [0]);
+  //     const firstParagraph = Node.get(editor, [1]);
 
-      // Move the content from the second node (first paragraph) into the first node (title)
-      Transforms.moveNodes(editor, {
-        at: [1, 0],
-        to: [0, titleNode.children.length],
-      });
+  //     // Move the content from the second node (first paragraph) into the first node (title)
+  //     Transforms.moveNodes(editor, {
+  //       at: [1, 0],
+  //       to: [0, titleNode.children.length],
+  //     });
 
-      // Remove the empty second node (first paragraph)
-      Transforms.removeNodes(editor, { at: [1] });
+  //     // Remove the empty second node (first paragraph)
+  //     Transforms.removeNodes(editor, { at: [1] });
 
-      // Set the type of the first node to 'title'
-      Transforms.setNodes(editor, { type: "title" }, { at: [0] });
+  //     // Set the type of the first node to 'title'
+  //     Transforms.setNodes(editor, { type: "title" }, { at: [0] });
 
-      // Place the cursor at the end of the title
-      const titleTextLength = Node.string(titleNode).length;
-      Transforms.select(editor, { path: [0, 0], offset: titleTextLength });
-      return;
-    }
+  //     // Place the cursor at the end of the title
+  //     const titleTextLength = Node.string(titleNode).length;
+  //     Transforms.select(editor, { path: [0, 0], offset: titleTextLength });
+  //     return;
+  //   }
 
-    originalDeleteBackward(unit);
-    // Fall back to the original `deleteBackward`
-  };
+  //   originalDeleteBackward(unit);
+  // };
 
   return editor;
 };

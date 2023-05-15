@@ -30,7 +30,7 @@ export function Header() {
       <div className="mx-auto max-w-[1200px] ">
         <div className="flex h-16 items-center justify-between md:h-20">
           {/* Site branding */}
-          <div className="mr-4 flex items-center">
+          <div className="mr-4 flex items-center xl:-translate-x-[10px]">
             {/* <div className="z-10 flex h-20 items-center">
               <button
                 className="flex rounded-md bg-gray-200 px-4 py-2 transition duration-200 hover:bg-gray-300"

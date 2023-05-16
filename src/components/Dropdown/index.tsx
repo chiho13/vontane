@@ -56,6 +56,7 @@ interface DropdownProps {
   dropdownButtonClassName?: string;
   dropdownMenuClassName?: string;
   dropdownMenuNonPortalOverride?: string;
+  clickOutside?: boolean;
   minHeight?: number;
   usePortal?: boolean;
   callback?: (event) => void;
@@ -171,6 +172,7 @@ function Dropdown(
     dropdownMenuNonPortalOverride,
     minHeight = 0,
     usePortal = false,
+    clickOutside = true,
     callback,
   }: DropdownProps,
   ref: ForwardedRef<DropdownRef>
@@ -269,10 +271,6 @@ function Dropdown(
     } else {
       toggleDropdown(dropdownId);
     }
-
-    if (callback) {
-      callback(activeDropdown === dropdownId);
-    }
   };
 
   useEffect(() => {
@@ -343,7 +341,7 @@ function Dropdown(
     dropdownMenuClassName || "fixed left-0 dark:bg-muted top-12 mt-2 w-full";
   return (
     <>
-      {desktopbreakpoint && (
+      {desktopbreakpoint && clickOutside && (
         <AnimatePresence>
           {activeDropdown === dropdownId && (
             <Portal>
@@ -364,7 +362,7 @@ function Dropdown(
           aria-expanded={isOpen}
           aria-haspopup="true"
           id="dropdown"
-          onMouseDown={handleDropdownClick}
+          onClick={handleDropdownClick}
           ref={toggleRef}
         >
           {image}

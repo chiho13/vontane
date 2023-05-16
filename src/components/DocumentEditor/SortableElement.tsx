@@ -90,9 +90,8 @@ export function SortableElement({
             {renderElement({ attributes, children, element })}
           </div>
         </div>
-        {/* <div className={classNames(classes.optionMenu)}> */}
+
         {optionMenu}
-        {/* </div> */}
       </div>
     </div>
   );

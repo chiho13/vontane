@@ -1634,7 +1634,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           )}
         </button>
       </div>
-      <div className="flex">
+      <div className="flex justify-center">
         <div className="block">
           <div
             className="relative  z-0  mt-3 w-[90vw] rounded-md  border border-gray-300 bg-white px-2 dark:border-gray-700 dark:bg-muted dark:text-foreground lg:w-[780px] lg:px-0"
@@ -1675,76 +1675,76 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                               }
                             }}
                           >
-                            <Droppable>
-                              <Editable
-                                className=" relative"
-                                style={{
-                                  height: "calc(100vh - 170px)",
-                                }}
-                                decorate={decorate}
-                                renderElement={renderElement}
-                                renderLeaf={Leaf}
-                                onMouseUp={(event) => {
-                                  handleEditorMouseUp(event, editor);
-                                  handleSelectedText(event, editor);
-                                }}
-                                spellCheck={false}
-                                onKeyDown={handleKeyDown}
-                                onKeyUp={(event) => {
-                                  handleSelectedText(event, editor);
-                                  debouncedSetIsTyping("");
+                            {/* <Droppable> */}
+                            <Editable
+                              className=" relative"
+                              style={{
+                                height: "calc(100vh - 170px)",
+                              }}
+                              decorate={decorate}
+                              renderElement={renderElement}
+                              renderLeaf={Leaf}
+                              onMouseUp={(event) => {
+                                handleEditorMouseUp(event, editor);
+                                handleSelectedText(event, editor);
+                              }}
+                              spellCheck={false}
+                              onKeyDown={handleKeyDown}
+                              onKeyUp={(event) => {
+                                handleSelectedText(event, editor);
+                                debouncedSetIsTyping("");
 
+                                const { selection } = editor;
+                                if (!selection) return;
+                                const _currentNodePath =
+                                  selection.anchor.path.slice(0, -1);
+                                setusingCommandLine(false);
+                                const currentNode = Node.get(
+                                  editor,
+                                  _currentNodePath
+                                );
+
+                                if (event.key === "Backspace") {
                                   const { selection } = editor;
-                                  if (!selection) return;
-                                  const _currentNodePath =
-                                    selection.anchor.path.slice(0, -1);
-                                  setusingCommandLine(false);
-                                  const currentNode = Node.get(
-                                    editor,
-                                    _currentNodePath
-                                  );
 
-                                  if (event.key === "Backspace") {
-                                    const { selection } = editor;
+                                  if (
+                                    selection &&
+                                    Range.isCollapsed(selection)
+                                  ) {
+                                    const _currentNodePath =
+                                      selection.anchor.path.slice(0, -1);
+                                    const _stringcurrentNode = Editor.node(
+                                      editor,
+                                      _currentNodePath
+                                    );
+                                    const currentText = Node.string(
+                                      _stringcurrentNode[0]
+                                    );
+                                    // Check if currentNode is an equation
 
-                                    if (
-                                      selection &&
-                                      Range.isCollapsed(selection)
-                                    ) {
-                                      const _currentNodePath =
-                                        selection.anchor.path.slice(0, -1);
-                                      const _stringcurrentNode = Editor.node(
-                                        editor,
-                                        _currentNodePath
-                                      );
-                                      const currentText = Node.string(
-                                        _stringcurrentNode[0]
-                                      );
-                                      // Check if currentNode is an equation
-
-                                      if (currentText.endsWith("/")) {
-                                        // setShowDropdown(false);
-                                        setSearchMinidropdownText("");
+                                    if (currentText.endsWith("/")) {
+                                      // setShowDropdown(false);
+                                      setSearchMinidropdownText("");
+                                    } else {
+                                      const slashIndex =
+                                        currentText.lastIndexOf("/");
+                                      if (slashIndex !== -1) {
+                                        // Extract the text after the last "/" in the currentText
+                                        const searchText = currentText.slice(
+                                          slashIndex + 1
+                                        );
+                                        setSearchMinidropdownText(searchText);
                                       } else {
-                                        const slashIndex =
-                                          currentText.lastIndexOf("/");
-                                        if (slashIndex !== -1) {
-                                          // Extract the text after the last "/" in the currentText
-                                          const searchText = currentText.slice(
-                                            slashIndex + 1
-                                          );
-                                          setSearchMinidropdownText(searchText);
-                                        } else {
-                                          setSearchMinidropdownText("");
-                                          setusingCommandLine(false);
-                                          setShowDropdown(false); // Close the mini-dropdown if there's no "/"
-                                        }
+                                        setSearchMinidropdownText("");
+                                        setusingCommandLine(false);
+                                        setShowDropdown(false); // Close the mini-dropdown if there's no "/"
                                       }
                                     }
                                   }
-                                }}
-                              />
-                            </Droppable>
+                                }
+                              }}
+                            />
+                            {/* </Droppable> */}
                           </Slate>
                           <AnimatePresence>
                             {showMiniToolbar && (

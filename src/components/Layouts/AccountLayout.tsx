@@ -372,7 +372,7 @@ const Layout: React.FC<LayoutProps> = ({
                       <ChevronsUpDown className="w-4 text-darkgray dark:text-muted-foreground" />
                     }
                     dropdownMenuNonPortalOverride={
-                      "lg:absolute left-5 dark:bg-muted"
+                      "lg:absolute left-5 dark:bg-background"
                     }
                   >
                     <div className="p-1" role="none">

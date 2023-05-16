@@ -266,6 +266,7 @@ function Dropdown(
     event.stopPropagation();
     // updateButtonPosition();
 
+    console.log("dropdown click");
     if (activeDropdown === dropdownId) {
       toggleDropdown(null);
     } else {
@@ -346,10 +347,7 @@ function Dropdown(
           {activeDropdown === dropdownId && (
             <Portal>
               <motion.div {...clickoutside_props}>
-                <div
-                  className="closeOutside z-1  fixed top-0 left-0 h-full w-screen  opacity-50"
-                  // onClick={handleClose}
-                ></div>
+                <div className="closeOutside z-1  fixed top-0 left-0 h-full w-screen  opacity-50"></div>
               </motion.div>
             </Portal>
           )}
@@ -362,7 +360,7 @@ function Dropdown(
           aria-expanded={isOpen}
           aria-haspopup="true"
           id="dropdown"
-          onClick={handleDropdownClick}
+          onMouseDown={handleDropdownClick}
           ref={toggleRef}
         >
           {image}

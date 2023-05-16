@@ -11,7 +11,12 @@ import { Editor, Path, Transforms } from "slate";
 import { genNodeId } from "@/hoc/withID";
 import { nanoid } from "nanoid";
 import { useArrowNavigation } from "@/hooks/useArrowNavigation";
-
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 interface OptionMenuProps {
   element: any;
 }
@@ -77,23 +82,12 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
       toggleDropdown("");
     }
 
-    function handleDropdown(event) {
-      event.preventDefault();
-      event.stopPropagation();
-      if (activeDropdown === element.id) {
-        toggleDropdown(null);
-      } else {
-        toggleDropdown(element.id);
-      }
-    }
-
     return (
       <>
         <div
           className={`option-menu-container  relative -right-[5px] opacity-0 group-hover:opacity-100 ${
             activeDropdown === element.id && "opacity-100"
           }`}
-          onMouseDown={handleDropdown}
         >
           <Dropdown
             dropdownId={element.id}

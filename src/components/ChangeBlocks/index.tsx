@@ -8,7 +8,10 @@ import { genNodeId } from "@/hoc/withID";
 import Dropdown, { DropdownProvider } from "../Dropdown";
 import { useArrowNavigation } from "@/hooks/useArrowNavigation";
 import { FaCaretDown } from "react-icons/fa";
-import { toggleBlock } from "../DocumentEditor/helpers/toggleBlock";
+import {
+  toggleBlock,
+  isBlockActive,
+} from "../DocumentEditor/helpers/toggleBlock";
 import {
   Editor,
   Transforms,
@@ -31,6 +34,7 @@ export const ChangeBlocks = ({ openLink }) => {
   const changeBlockElements = [
     {
       name: "Text",
+      format: "paragraph",
       action: () => toggleBlock(editor, "paragraph"),
       icon: (
         <Type
@@ -42,6 +46,7 @@ export const ChangeBlocks = ({ openLink }) => {
     },
     {
       name: "Heading 1",
+      format: "heading-one",
       action: () => toggleBlock(editor, "heading-one"),
       icon: (
         <Heading1
@@ -53,6 +58,7 @@ export const ChangeBlocks = ({ openLink }) => {
     },
     {
       name: "Heading 2",
+      format: "heading-two",
       action: () => toggleBlock(editor, "heading-two"),
       icon: (
         <Heading2
@@ -64,6 +70,7 @@ export const ChangeBlocks = ({ openLink }) => {
     },
     {
       name: "Heading 3",
+      format: "heading-three",
       action: () => toggleBlock(editor, "heading-three"),
       icon: (
         <Heading3
@@ -75,6 +82,19 @@ export const ChangeBlocks = ({ openLink }) => {
     },
   ];
   const [selectedBlock, setSelectedBlock] = useState(0);
+
+  useEffect(() => {
+    if (editor && editor.selection) {
+      // Iterate over the changeBlockElements
+      for (let i = 0; i < changeBlockElements.length; i++) {
+        // Check if the block of the current element type is active
+        if (isBlockActive(editor, changeBlockElements[i].format, "type")) {
+          setSelectedBlock(i); // Set the selected block if it's active
+          break; // Break the loop as we've found the active block
+        }
+      }
+    }
+  }, [editor?.selection]);
 
   const TextBlockIcon = (
     <div className="flex items-center ">
@@ -153,6 +173,9 @@ export const ChangeBlocks = ({ openLink }) => {
                       onClick={() => {
                         element.action();
                         setSelectedBlock(index);
+                        if (changeTextBlock.current) {
+                          changeTextBlock.current.handleClose();
+                        }
                       }}
                     >
                       {element.icon}

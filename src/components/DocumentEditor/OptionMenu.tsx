@@ -129,7 +129,7 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
                   <div className="p-1 " role="none">
                     <button
                       onClick={item.action}
-                      className={`  flex  w-full items-center rounded-md px-4 py-1 text-left text-sm text-gray-700 transition duration-200 hover:bg-gray-200 hover:text-gray-900 focus:outline-none dark:text-foreground dark:hover:bg-muted    ${
+                      className={`  flex  w-full items-center rounded-md px-4 py-1 text-left text-sm text-gray-700 transition duration-200 hover:bg-gray-200 hover:text-gray-900 focus:outline-none dark:text-foreground   ${
                         focusedIndex === index
                           ? "bg-gray-200 dark:bg-muted"
                           : ""

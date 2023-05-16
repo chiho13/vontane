@@ -88,9 +88,10 @@ export const ChangeBlocks = ({ openLink }) => {
   );
 
   const { focusedIndex, setFocusedIndex, handleArrowNavigation } =
-    useArrowNavigation(changeBlockElements, -1, () => {
+    useArrowNavigation(changeBlockElements, -1, (index) => {
       if (changeTextBlock.current) {
         changeTextBlock.current.handleClose();
+        setSelectedBlock(index);
       }
     });
 

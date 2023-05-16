@@ -129,7 +129,7 @@ declare module "slate" {
 
 const EditableStyle = styled.div`
   margin-top: 5px;
-  padding-right: 10px;
+  padding-right: 5px;
   .editable-scrollbar::-webkit-scrollbar {
     width: 6px;
     border-radius: 3px;
@@ -1605,7 +1605,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               ? -rightSideBarWidth / 2
               : 0
             : 0,
-        width: `${rightSideBarWidth + 780}px`,
+        width: `${rightSideBarWidth + 820}px`,
         transition: "right 0.3s ease-in-out",
       }}
     >
@@ -1884,13 +1884,16 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               transition: "opacity 0.3s ease-in-out",
               pointerEvents: showRightSidebar ? "auto" : "none",
             }}
-            className="flex h-[680px] items-center"
+            className="flex items-center"
           >
             <DraggableCore onDrag={handleDrag} onStop={handleDragStop}>
               <div
-                className={`hidden w-[22px] opacity-0 ${
+                className={` hidden w-[22px] opacity-0 ${
                   isDraggingRightSideBar && "opacity-100"
-                } transition duration-300 hover:opacity-100 lg:block`}
+                } items-center transition duration-300 hover:opacity-100 lg:flex`}
+                style={{
+                  height: "calc(100vh - 120px)",
+                }}
               >
                 <div className="mx-auto mt-4 block h-[200px] w-[8px]  cursor-col-resize rounded bg-[#b4b4b4] dark:bg-muted-foreground"></div>
               </div>

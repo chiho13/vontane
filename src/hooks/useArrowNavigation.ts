@@ -13,26 +13,41 @@ export function useArrowNavigation(
   const handleArrowNavigation = (
     event: React.KeyboardEvent<HTMLInputElement>
   ) => {
-    if (event.key === "ArrowDown") {
+    if (
+      event.key === "ArrowDown" ||
+      event.key === "ArrowUp" ||
+      event.key === "Tab"
+    ) {
       event.preventDefault();
-      setFocusedIndex((prevIndex) => (prevIndex + 1) % elements.length);
-    } else if (event.key === "ArrowUp") {
-      event.preventDefault();
-      setFocusedIndex((prevIndex) =>
-        prevIndex - 1 < 0 ? elements.length - 1 : prevIndex - 1
-      );
-    } else if (event.key === "Tab") {
-      event.preventDefault();
-      if (event.shiftKey) {
-        setFocusedIndex((prevIndex) =>
-          prevIndex - 1 < 0 ? elements.length - 1 : prevIndex - 1
-        );
+
+      // Calculate new index based on key pressed
+      let newIndex;
+      if (
+        event.key === "ArrowDown" ||
+        (!event.shiftKey && event.key === "Tab")
+      ) {
+        newIndex = (focusedIndex + 1) % elements.length;
       } else {
-        setFocusedIndex((prevIndex) => (prevIndex + 1) % elements.length);
+        newIndex =
+          focusedIndex - 1 < 0 ? elements.length - 1 : focusedIndex - 1;
       }
+
+      // Skip over separators
+      while (elements[newIndex] === "separator") {
+        if (
+          event.key === "ArrowDown" ||
+          (!event.shiftKey && event.key === "Tab")
+        ) {
+          newIndex = (newIndex + 1) % elements.length;
+        } else {
+          newIndex = newIndex - 1 < 0 ? elements.length - 1 : newIndex - 1;
+        }
+      }
+
+      setFocusedIndex(newIndex);
     } else if (event.key === "Enter") {
       event.preventDefault();
-      if (elements[focusedIndex]) {
+      if (elements[focusedIndex] && elements[focusedIndex] !== "separator") {
         elements[focusedIndex].action();
       }
     } else if (event.key === "Escape") {

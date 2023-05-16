@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useTheme } from "styled-components";
-import { forwardRef, useRef, useContext, useEffect } from "react";
+import { forwardRef, useRef, useContext, useEffect, useState } from "react";
 import Image from "next/image";
 import { MoreHorizontal, Trash2, Copy } from "lucide-react";
 import { BsFillCaretDownFill } from "react-icons/bs";
@@ -10,6 +10,7 @@ import { ReactEditor } from "slate-react";
 import { Editor, Path, Transforms } from "slate";
 import { genNodeId } from "@/hoc/withID";
 import { nanoid } from "nanoid";
+import { useArrowNavigation } from "@/hooks/useArrowNavigation";
 
 interface OptionMenuProps {
   element: any;
@@ -38,10 +39,20 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
         ),
       },
     ];
+    const [isKeyboardNav, setIsKeyboardNav] = useState(false);
+
+    const actionableOptionMenuElements = optionMenuElements.filter(
+      (item) => item !== "separator"
+    );
+
+    const { focusedIndex, setFocusedIndex, handleArrowNavigation } =
+      useArrowNavigation(optionMenuElements, -1, () => {
+        toggleDropdown(null);
+      });
+
     function deleteBlock(event: React.MouseEvent<HTMLButtonElement>) {
       //   onClick();
-      event.preventDefault();
-      event.stopPropagation();
+
       console.log("delete block");
       ReactEditor.focus(editor);
 
@@ -52,9 +63,6 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
     }
 
     function duplicateBlock(event: React.MouseEvent<HTMLButtonElement>) {
-      event.preventDefault();
-      event.stopPropagation();
-
       // Get the path to the current block
       const path = ReactEditor.findPath(editor, element);
 
@@ -99,29 +107,49 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
               </div>
             }
           >
-            {optionMenuElements.map((item, index) => {
-              if (item === "separator") {
-                // This is a separator. Render it as such.
+            <div
+              tabIndex={-1}
+              onMouseLeave={() => {
+                setIsKeyboardNav(false);
+                setFocusedIndex(-1);
+              }}
+              onKeyDown={(e) => {
+                setIsKeyboardNav(true);
+                handleArrowNavigation(e);
+              }}
+            >
+              {optionMenuElements.map((item, index) => {
+                if (item === "separator") {
+                  // This is a separator. Render it as such.
+                  return (
+                    <div className="h-[1px] w-full bg-gray-200 dark:bg-gray-700"></div>
+                  );
+                }
                 return (
-                  <div className="h-[1px] w-full bg-gray-200 dark:bg-gray-700"></div>
-                );
-              }
-              return (
-                <div className="p-1 " role="none">
-                  <button
-                    onClick={item.action}
-                    className="  flex  w-full items-center rounded-md px-4 py-1 text-left text-sm text-gray-700  transition duration-200 hover:bg-gray-200 hover:text-gray-900 dark:text-foreground dark:hover:bg-muted"
-                    role="menuitem"
-                    tabIndex={-1}
-                    id="menu-item-3"
-                  >
-                    <span>{item.icon}</span>
+                  <div className="p-1 " role="none">
+                    <button
+                      onClick={item.action}
+                      className={`  flex  w-full items-center rounded-md px-4 py-1 text-left text-sm text-gray-700 transition duration-200 hover:bg-gray-200 hover:text-gray-900 focus:outline-none dark:text-foreground dark:hover:bg-muted    ${
+                        focusedIndex === index
+                          ? "bg-gray-200 dark:bg-muted"
+                          : ""
+                      }`}
+                      role="menuitem"
+                      tabIndex={-1}
+                      id="menu-item-3"
+                      onMouseOver={() => {
+                        if (isKeyboardNav) return;
+                        setFocusedIndex(index);
+                      }}
+                    >
+                      <span>{item.icon}</span>
 
-                    <span>{item.name}</span>
-                  </button>
-                </div>
-              );
-            })}
+                      <span>{item.name}</span>
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
           </Dropdown>
         </div>
       </>

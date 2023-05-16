@@ -9,6 +9,7 @@ import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor } from "slate-react";
 import { Editor, Path, Transforms } from "slate";
 import { genNodeId } from "@/hoc/withID";
+import { nanoid } from "nanoid";
 
 interface OptionMenuProps {
   element: any;
@@ -61,11 +62,21 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
       const [node] = Editor.node(editor, path);
 
       // Duplicate the current block
-      const newNode = { id: genNodeId(), ...node };
+      const newNode = { ...node, id: genNodeId() };
 
       // Insert the new block immediately after the current block
       Transforms.insertNodes(editor, newNode, { at: Path.next(path) });
       toggleDropdown("");
+    }
+
+    function handleDropdown(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (activeDropdown === element.id) {
+        toggleDropdown(null);
+      } else {
+        toggleDropdown(element.id);
+      }
     }
 
     return (
@@ -74,13 +85,14 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
           className={`option-menu-container opacity-0 group-hover:opacity-100 ${
             activeDropdown === element.id && "opacity-100"
           }`}
+          onMouseDown={handleDropdown}
         >
           <Dropdown
             dropdownId={element.id}
             ref={ref}
             usePortal={true}
             dropdownButtonClassName=" p-0 border-transparent relative outline-none border-0 shadow-none bg-transparent w-full h-[26px] justify-start transition-colors duration-300 focus:ring-2 focus:ring-black focus:ring-opacity-30 dark:border dark:border-gray-700"
-            dropdownMenuClassName=" top-0 w-[200px] border-0"
+            dropdownMenuClassName=" top-0 w-[200px] border-0 dark:bg-secondary"
             icon={
               <div className="flex h-[22px] w-[22px] items-center  justify-center rounded-md bg-gray-200  p-0 hover:bg-gray-300 dark:bg-muted dark:hover:bg-accent">
                 <BsFillCaretDownFill className="option-menu w-[18px]  w-[18px] stroke-darkergray dark:stroke-muted-foreground" />
@@ -98,7 +110,7 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
                 <div className="p-1 " role="none">
                   <button
                     onClick={item.action}
-                    className="  flex  w-full items-center rounded-md px-4 py-1 text-left text-sm text-gray-700  transition duration-200 hover:bg-gray-200 hover:text-gray-900 dark:text-foreground dark:hover:bg-accent"
+                    className="  flex  w-full items-center rounded-md px-4 py-1 text-left text-sm text-gray-700  transition duration-200 hover:bg-gray-200 hover:text-gray-900 dark:text-foreground dark:hover:bg-muted"
                     role="menuitem"
                     tabIndex={-1}
                     id="menu-item-3"

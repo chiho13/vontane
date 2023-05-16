@@ -1067,6 +1067,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const handleDragEnd = useCallback(
     function (event: { active: any; over: any }) {
       const { active, over } = event;
+
+      if (!active || !over) {
+        console.log("Active or over are not defined");
+        return;
+      }
+
       if (active.id === over.id) {
         console.log("canceled");
 

@@ -154,10 +154,6 @@ const StyledMiniToolbar = styled(motion.div)`
   position: absolute;
   z-index: 20;
   display: block;
-  border-radius: 6px;
-  border: 1px solid #eeeeee;
-  box-shadow: 0 10px 20px rgba(50, 50, 50, 0.19),
-    0 6px 6px rgba(50, 50, 50, 0.23);
 `;
 
 import { EditBlockPopup } from "../EditEquationBlock";
@@ -1747,7 +1743,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                           <AnimatePresence>
                             {showMiniToolbar && (
                               <StyledMiniToolbar
-                                className=" bg-white dark:border-gray-700 dark:bg-secondary"
+                                className=" rounded-lg border bg-white shadow-md shadow-gray-900 dark:border-gray-700 dark:bg-secondary dark:shadow-background"
                                 ref={toolbarRef}
                                 {...up_animation_props}
                                 exit={{ opacity: 0 }}

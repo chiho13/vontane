@@ -49,10 +49,11 @@ export function useArrowNavigation(
       event.preventDefault();
       if (elements[focusedIndex] && elements[focusedIndex] !== "separator") {
         elements[focusedIndex].action();
+        closeDropdown(focusedIndex);
       }
     } else if (event.key === "Escape") {
       event.preventDefault();
-      closeDropdown();
+      closeDropdown(focusedIndex);
     }
   };
 

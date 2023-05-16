@@ -24,6 +24,10 @@ import {
 import { EditorContext } from "@/contexts/EditorContext";
 import { Slate, Editable, withReact, ReactEditor } from "slate-react";
 import { Plus, Sidebar } from "lucide-react";
+import {
+  VscLayoutSidebarRightOff,
+  VscLayoutSidebarRight,
+} from "react-icons/vsc";
 import "katex/dist/katex.min.css";
 import "katex/dist/contrib/mhchem.min.js";
 import { AnimatePresence, motion } from "framer-motion";
@@ -139,6 +143,10 @@ const EditableStyle = styled.div`
   .editable-scrollbar::-webkit-scrollbar-thumb {
     background: #dddddd;
     border-radius: 3px;
+
+    .dark & {
+      background: hsl(212 17% 30%);
+    }
   }
 `;
 
@@ -1612,12 +1620,16 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       <div className="flex w-full justify-end lg:w-[780px]">
         {/* <MainToolbar path={activePath} /> */}
         <button
-          className="group z-0 hidden h-[36px] rounded border border-gray-300 bg-white p-1 transition duration-300 hover:border-brand dark:border-gray-700 dark:bg-muted dark:hover:border-foreground xl:block"
+          className="group z-0 hidden  rounded  border-gray-300 p-1 transition duration-300 hover:border-brand dark:border-gray-700 dark:hover:border-foreground dark:hover:bg-muted xl:block"
           onClick={() => {
             setShowRightSidebar((prev) => !prev);
           }}
         >
-          <Sidebar className=" rotate-180 transform text-darkergray transition duration-300 group-hover:text-brand dark:text-muted-foreground dark:group-hover:text-foreground" />
+          {!showRightSidebar ? (
+            <VscLayoutSidebarRightOff className="  h-[20px] w-[20px] text-darkergray transition duration-300 group-hover:text-brand dark:text-muted-foreground dark:group-hover:text-foreground" />
+          ) : (
+            <VscLayoutSidebarRight className="  h-[20px] w-[20px] text-darkergray transition duration-300 group-hover:text-brand dark:text-muted-foreground dark:group-hover:text-foreground" />
+          )}
         </button>
       </div>
       <div className="flex">

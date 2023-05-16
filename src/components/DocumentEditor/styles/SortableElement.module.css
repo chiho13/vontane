@@ -21,7 +21,7 @@
   display: flex;
   gap: 15px;
   position: relative;
-  align-items: center;
+  align-items: start;
   outline: none;
   cursor: text;
   width: 100%;

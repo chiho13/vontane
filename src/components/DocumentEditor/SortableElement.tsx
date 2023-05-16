@@ -90,8 +90,7 @@ export function SortableElement({
             {renderElement({ attributes, children, element })}
           </div>
         </div>
-
-        {optionMenu}
+        <div className="flex w-[30px] ">{optionMenu}</div>
       </div>
     </div>
   );

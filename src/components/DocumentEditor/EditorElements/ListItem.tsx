@@ -86,8 +86,6 @@ export const ListItem = withListNumbering((props) => {
       const isEmpty =
         element.children.length === 1 && element.children[0].text === "";
 
-      console.log(isEmpty);
-
       setIsVisible(isFirstElement && hasSingleElement && isEmpty);
     }
   }, [editor, path, children, focused]);

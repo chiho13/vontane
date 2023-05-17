@@ -37,6 +37,31 @@ export const withNormalizePasting = (editor) => {
         }
       });
 
+      // Create Slate nodes for each list tag
+      const listElements = parsedHtml.querySelectorAll("ul, ol");
+      listElements.forEach((listElement) => {
+        const listType =
+          listElement.nodeName === "UL" ? "bulleted-list" : "numbered-list";
+        const listItemElements = listElement.querySelectorAll("li");
+
+        listItemElements.forEach((listItemElement) => {
+          let children = Array.from(listItemElement.childNodes).map((node) => {
+            if (node.nodeName === "#text") {
+              return { text: node.textContent };
+            } else if (node.nodeName === "B") {
+              return { text: node.textContent, bold: true };
+            } else {
+              return null;
+            }
+          });
+
+          children = children.filter((child) => child !== null);
+          if (children.length > 0) {
+            nodesToInsert.push({ id: genNodeId(), type: listType, children });
+          }
+        });
+      });
+
       // Insert the new nodes
       if (nodesToInsert.length > 0) {
         Transforms.insertFragment(editor, nodesToInsert);

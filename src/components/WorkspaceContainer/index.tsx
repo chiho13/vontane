@@ -71,7 +71,6 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = ({
         console.log(slateValue);
         const parsedSlateValue = JSON.parse(slateValue);
         setInitialSlateValue(parsedSlateValue);
-
         setFetchWorkspaceIsLoading(false);
       }
     }
@@ -119,6 +118,7 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = ({
               workspaceId={workspaceId}
               handleTextChange={debounce(handleTextChange, 500)}
               initialSlateValue={initialSlateValue}
+              setFetchWorkspaceIsLoading={setFetchWorkspaceIsLoading}
             />
           </TextSpeechProvider>
         </EditorProvider>

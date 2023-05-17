@@ -1,36 +1,54 @@
 import { Sidebar } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  VscLayoutSidebarRight,
+  VscLayoutSidebarRightOff,
+} from "react-icons/vsc";
+import { Portal } from "react-portal";
 import { useLocalStorage } from "usehooks-ts";
+import { breakpoints } from "@/utils/breakpoints";
 
 export const EditorSkeleton = () => {
-  const showRightSidebar = JSON.parse(
-    localStorage.getItem("showRightSidebar") || "true"
+  const [showRightSidebar, setShowRightSidebar] = useState(
+    JSON.parse(localStorage.getItem("showRightSidebar") || "true")
   );
 
-  const [rightSideBarWidth, setRightSideBarWidth] = useLocalStorage(
-    "sidebarWidth",
-    370
-  );
+  const rightSideBarWidth = 0;
+
+  useEffect(() => {
+    const sidebar = JSON.parse(
+      localStorage.getItem("showRightSidebar") || "true"
+    );
+
+    setShowRightSidebar(sidebar);
+  }, []);
   return (
-    <div
-      className="max-[1400px] relative mx-auto mt-[20px] px-4"
-      style={{
-        right: !showRightSidebar ? -rightSideBarWidth / 2 : 0,
-        width: `${rightSideBarWidth + 780}px`,
-
-        transition: "right 0.3s ease-in-out",
-      }}
-    >
-      <div className="flex w-full justify-end lg:w-[780px]">
-        <button className="group z-10 hidden h-[36px] rounded border border-gray-300 bg-white p-1 transition duration-300 hover:border-brand dark:border-gray-700 dark:bg-muted dark:hover:border-foreground xl:block">
-          <Sidebar className="rotate-180 transform text-darkergray transition duration-300 group-hover:text-brand dark:text-muted-foreground dark:group-hover:text-foreground" />
+    <div className="max-[1400px] relative mx-auto mt-[40px] px-4" style={{}}>
+      <Portal>
+        <button className="group fixed top-[30px] right-[30px] z-0 hidden rounded  border-gray-300 p-1 transition duration-300 hover:border-brand dark:border-gray-700 dark:hover:border-foreground dark:hover:bg-muted xl:block">
+          {!showRightSidebar ? (
+            <VscLayoutSidebarRightOff className="  h-[20px] w-[20px] text-darkergray transition duration-300 group-hover:text-brand dark:text-muted-foreground dark:group-hover:text-foreground" />
+          ) : (
+            <VscLayoutSidebarRight className="  h-[20px] w-[20px] text-darkergray transition duration-300 group-hover:text-brand dark:text-muted-foreground dark:group-hover:text-foreground" />
+          )}
         </button>
-      </div>
+      </Portal>
+
       <div className="flex justify-center">
         <div className="block">
           <div
-            className="relative z-0  mt-3 block w-full rounded-md  border border-gray-300 bg-white  px-2 dark:border-gray-700  dark:bg-muted/70 lg:w-[780px] lg:px-0"
+            className="relative z-0  mt-3 block w-[90vw] rounded-md  border border-gray-300 bg-white  px-2 dark:border-gray-700  dark:bg-muted/70 lg:max-w-[800px] lg:px-0 xl:w-[780px]"
             style={{
               height: "calc(100vh - 120px)",
+              right: !showRightSidebar ? -rightSideBarWidth / 2 : 0,
+              // width: "1190px",
+              width:
+                window.innerWidth > breakpoints.lg
+                  ? showRightSidebar
+                    ? "50vw"
+                    : "100vw"
+                  : "95vw",
+              transition: "right 0.3s ease-in-out",
             }}
           >
             <div className="mt-3 p-4 ">
@@ -55,11 +73,10 @@ export const EditorSkeleton = () => {
               </div>
             </div>
             <div
-              className="m-w-full mt-3 hidden grow rounded-md border border-gray-300 bg-white  dark:border-gray-700  dark:bg-muted  xl:block"
+              className="mt-3 hidden grow rounded-md border border-gray-300 bg-white dark:border-gray-700  dark:bg-muted/70  lg:block  lg:w-[400px]"
               style={{
                 height: "calc(100vh - 120px)",
-                minWidth: "270px",
-                flexBasis: "370px",
+                minWidth: "340px",
                 opacity: 1,
                 transition:
                   "width 0.3s ease-in-out, opacity 0.4s ease-in-out, transform 0.3s ease-in-out",

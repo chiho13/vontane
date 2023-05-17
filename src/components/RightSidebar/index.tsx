@@ -16,7 +16,8 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
       showRightSidebar ? "0px" : `${rightSideBarWidth}px`
     })`,
     height: "calc(100vh - 120px)",
-    minWidth: "350px",
+    minWidth: "340px",
+    maxWidth: "570px",
     flexBasis: `${rightSideBarWidth}px`,
     opacity: showRightSidebar ? "1" : "0",
     pointerEvents: showRightSidebar ? "auto" : "none",
@@ -26,7 +27,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
   return (
     <div
-      className="m-w-full bg-w mt-3 hidden grow rounded-md border border-gray-300 bg-white px-2 dark:border-gray-700 dark:bg-muted dark:text-lightgray xl:block"
+      className="m-w-full bg-w mt-3 hidden grow rounded-md border border-gray-300 bg-white px-2 dark:border-gray-700 dark:bg-muted dark:text-lightgray lg:block"
       style={rightSidebarStyle}
     >
       <div className="p-4">

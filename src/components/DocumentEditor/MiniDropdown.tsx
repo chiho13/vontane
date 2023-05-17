@@ -279,6 +279,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={(e) => {
               closeOnEmptyInput(e);
+              setIsKeyboardNav(true);
               handleArrowNavigation(e);
             }}
             placeholder="Search"

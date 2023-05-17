@@ -1416,106 +1416,110 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     return [];
   };
 
-  const handleSelectedText = useCallback(
-    (
-      event:
-        | React.KeyboardEvent<HTMLDivElement>
-        | React.MouseEvent<HTMLDivElement, MouseEvent>,
-      editor: BaseEditor & ReactEditor
-    ) => {
-      event.stopPropagation();
+  const handleSelectedText = debounce(
+    useCallback(
+      (
+        event:
+          | React.KeyboardEvent<HTMLDivElement>
+          | React.MouseEvent<HTMLDivElement, MouseEvent>,
+        editor: BaseEditor & ReactEditor
+      ) => {
+        event.stopPropagation();
 
-      const { selection } = editor;
-      if (selection) {
-        const _currentNodePath = selection.anchor.path.slice(0, -1);
-        console.log(_currentNodePath);
-        setActivePath(JSON.stringify(_currentNodePath));
-      }
-      if (selection && !Range.isCollapsed(selection)) {
-        const domSelection = window.getSelection();
-        if (domSelection && domSelection.rangeCount > 0) {
-          const range = domSelection.getRangeAt(0);
-          const startContainer = range.startContainer;
-          const endContainer = range.endContainer;
-          const endOffset = range.endOffset;
-
-          if (
-            startContainer.nodeType === startContainer.TEXT_NODE &&
-            endContainer.nodeType === endContainer.TEXT_NODE
-          ) {
-            const startPath = Editor.path(editor, selection, { edge: "start" });
-            const [startNode] = Editor.parent(editor, startPath);
+        const { selection } = editor;
+        if (selection) {
+          const _currentNodePath = selection.anchor.path.slice(0, -1);
+          console.log(_currentNodePath);
+          setActivePath(JSON.stringify(_currentNodePath));
+        }
+        if (selection && !Range.isCollapsed(selection)) {
+          const domSelection = window.getSelection();
+          if (domSelection && domSelection.rangeCount > 0) {
+            const range = domSelection.getRangeAt(0);
+            const startContainer = range.startContainer;
+            const endContainer = range.endContainer;
+            const endOffset = range.endOffset;
 
             if (
-              startNode.type === "paragraph" ||
-              startNode.type === "link" ||
-              startNode.type === "bulleted-list" ||
-              startNode.type === "numbered-list" ||
-              startNode.type === "heading-one" ||
-              startNode.type === "heading-two" ||
-              startNode.type === "heading-three"
+              startContainer.nodeType === startContainer.TEXT_NODE &&
+              endContainer.nodeType === endContainer.TEXT_NODE
             ) {
-              const startRange = document.createRange();
-              startRange.setStart(startContainer, range.startOffset);
-              startRange.setEnd(startContainer, range.startOffset);
-              const startRect = startRange.getBoundingClientRect();
-
-              const endRange = document.createRange();
-              endRange.setStart(endContainer, endOffset);
-              endRange.setEnd(endContainer, endOffset);
-              const endRect = endRange.getBoundingClientRect();
-
-              const selectionRect = range.getBoundingClientRect();
-
-              // Get the text editor's dimensions
-              const textEditorRect =
-                textEditorRef.current.getBoundingClientRect();
-              const textEditorWidth = textEditorRect.width;
-              const textEditorLeft = textEditorRect.left;
-
-              // Get all rectangles that make up the selection
-              const rects = range.getClientRects();
-              const firstRect = rects[0];
-
-              // Calculate mini toolbar position
-              const toolbarWidth = 400; // Update this value according to your toolbar width
-              let initialX = firstRect.left - textEditorLeft;
-
-              // if (window.innerWidth > 1200) {
-              //   initialX += selectionRect.width / 2 - toolbarWidth / 2;
-              // }
-
-              const x = Math.max(
-                Math.min(initialX, textEditorWidth - toolbarWidth - 20),
-                0
-              );
-
-              setMiniToolbarPosition({
-                x: x,
-                y:
-                  firstRect.top -
-                  window.scrollY -
-                  textEditorRect.top -
-                  60 +
-                  textEditorRef.current.scrollTop,
+              const startPath = Editor.path(editor, selection, {
+                edge: "start",
               });
-              setShowMiniToolbar(true);
+              const [startNode] = Editor.parent(editor, startPath);
 
-              const selectedText = Editor.string(editor, selection);
-              const extractedText = textRegex(selectedText);
-              console.log(extractedText);
-              setTextSpeech(null);
-              setSelectedTextSpeech([extractedText]);
+              if (
+                startNode.type === "paragraph" ||
+                startNode.type === "link" ||
+                startNode.type === "bulleted-list" ||
+                startNode.type === "numbered-list" ||
+                startNode.type === "heading-one" ||
+                startNode.type === "heading-two" ||
+                startNode.type === "heading-three"
+              ) {
+                const startRange = document.createRange();
+                startRange.setStart(startContainer, range.startOffset);
+                startRange.setEnd(startContainer, range.startOffset);
+                const startRect = startRange.getBoundingClientRect();
+
+                const endRange = document.createRange();
+                endRange.setStart(endContainer, endOffset);
+                endRange.setEnd(endContainer, endOffset);
+                const endRect = endRange.getBoundingClientRect();
+
+                const selectionRect = range.getBoundingClientRect();
+
+                // Get the text editor's dimensions
+                const textEditorRect =
+                  textEditorRef.current.getBoundingClientRect();
+                const textEditorWidth = textEditorRect.width;
+                const textEditorLeft = textEditorRect.left;
+
+                // Get all rectangles that make up the selection
+                const rects = range.getClientRects();
+                const firstRect = rects[0];
+
+                // Calculate mini toolbar position
+                const toolbarWidth = 400; // Update this value according to your toolbar width
+                let initialX = firstRect.left - textEditorLeft;
+
+                // if (window.innerWidth > 1200) {
+                //   initialX += selectionRect.width / 2 - toolbarWidth / 2;
+                // }
+
+                const x = Math.max(
+                  Math.min(initialX, textEditorWidth - toolbarWidth - 20),
+                  0
+                );
+
+                setMiniToolbarPosition({
+                  x: x,
+                  y:
+                    firstRect.top -
+                    window.scrollY -
+                    textEditorRect.top -
+                    60 +
+                    textEditorRef.current.scrollTop,
+                });
+                setShowMiniToolbar(true);
+
+                const selectedText = Editor.string(editor, selection);
+                const extractedText = textRegex(selectedText);
+                console.log(extractedText);
+                setTextSpeech(null);
+                setSelectedTextSpeech([extractedText]);
+              }
             }
           }
+        } else {
+          setShowMiniToolbar(false);
+          setOpenLink(false);
         }
-      } else {
-        setSelectedTextSpeech(null);
-        setShowMiniToolbar(false);
-        setOpenLink(false);
-      }
-    },
-    [dynamicToolbarWidth]
+      },
+      [dynamicToolbarWidth]
+    ),
+    300
   );
 
   useEffect(() => {

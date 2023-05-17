@@ -1429,7 +1429,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         const { selection } = editor;
         if (selection) {
           const _currentNodePath = selection.anchor.path.slice(0, -1);
-          console.log(_currentNodePath);
           setActivePath(JSON.stringify(_currentNodePath));
         }
         if (selection && !Range.isCollapsed(selection)) {
@@ -1753,7 +1752,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                           <AnimatePresence>
                             {showMiniToolbar && (
                               <StyledMiniToolbar
-                                className=" rounded-lg border bg-white shadow-md shadow-gray-900 dark:border-gray-700 dark:bg-secondary dark:shadow-background"
+                                className=" rounded-lg border bg-white shadow-md shadow-gray-900 dark:border-gray-500 dark:bg-secondary dark:shadow-background"
                                 ref={toolbarRef}
                                 {...up_animation_props}
                                 exit={{ opacity: 0 }}

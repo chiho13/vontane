@@ -156,7 +156,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     <div
       className="relative flex h-[36px] items-center focus:ring-2 focus:ring-black"
       style={{
-        minWidth: 350,
+        minWidth: 330,
         transition: "all 0.2s ease-in-out",
       }}
       tabIndex={-1}
@@ -281,7 +281,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
       )}
 
       {openLink && (
-        <div className=" absolute left-0  flex w-full items-center bg-white p-1 dark:border-gray-700 dark:bg-secondary">
+        <div className=" absolute left-0 flex  w-full items-center p-1 dark:border-gray-700">
           <form onSubmit={handleSubmit} className="flex w-full">
             <input
               ref={urlInputRef}

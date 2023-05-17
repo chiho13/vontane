@@ -54,7 +54,7 @@ export const MCQElement: React.FC<MCQElementProps> = withQuestionNumbering(
     return (
       <div
         {...attributes}
-        className={`mcq-element relative  mr-4 rounded-md border border-gray-300 bg-gray-100 p-4 dark:border-gray-700 dark:bg-background
+        className={`mcq-element relative rounded-md border border-gray-300 bg-gray-100 p-4 dark:border-gray-700 dark:bg-background
 
         `}
         data-id={element.id}

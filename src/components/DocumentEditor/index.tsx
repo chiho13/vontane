@@ -1926,7 +1926,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               <div
                 className={` pointer-events-none w-[22px] opacity-0 ${
                   isDraggingRightSideBar && "opacity-100"
-                } flex items-center transition duration-300 hover:opacity-100 xl:pointer-events-auto  xl:opacity-100`}
+                } flex items-center opacity-0 transition duration-300 xl:pointer-events-auto xl:hover:opacity-100 `}
                 style={{
                   height: "calc(100vh - 120px)",
                 }}

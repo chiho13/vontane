@@ -94,6 +94,7 @@ interface DocumentEditorProps {
   workspaceId: string;
   handleTextChange?: (value: any) => void;
   initialSlateValue?: any;
+  setFetchWorkspaceIsLoading: (value: any) => void;
 }
 
 type CustomElement = {
@@ -167,6 +168,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   workspaceId,
   handleTextChange,
   initialSlateValue,
+  setFetchWorkspaceIsLoading,
 }) => {
   const theme = useTheme();
   const router = useRouter();
@@ -254,6 +256,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   useEffect(() => {
     setValue(initialSlateValue);
+    setFetchWorkspaceIsLoading(false);
     // setGhostValue(initialSlateValue);
     setCurrentSlateKey(generateKey());
     const extractedText = extractTextValues(initialSlateValue);
@@ -1587,11 +1590,13 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   const [rightSideBarWidth, setRightSideBarWidth] = useLocalStorage(
     "sidebarWidth",
-    370
+    340
   );
 
-  const minSidebarWidth = 370;
-  const maxSidebarWidth = 500;
+  const rightSideBarRef = useRef(null);
+
+  const minSidebarWidth = 340;
+  const maxSidebarWidth = 570;
   const { sidebarWidth, handleDrag, isDraggingRightSideBar, handleDragStop } =
     useResizeSidebar(rightSideBarWidth, minSidebarWidth, maxSidebarWidth);
 
@@ -1601,31 +1606,32 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   useEffect(() => {
     localStorage.setItem("sidebarWidth", sidebarWidth);
-    setRightSideBarWidth(sidebarWidth);
-  }, [sidebarWidth]);
+    if (windowSize.width > breakpoints.xl) {
+      setRightSideBarWidth(sidebarWidth);
+    } else {
+      setRightSideBarWidth(windowSize.width - 800);
+    }
+  }, [sidebarWidth, windowSize]);
 
   return (
     <div
-      className="max-[1400px] relative mx-auto mt-[20px] px-4"
+      className="relative mx-auto mt-[40px] lg:max-w-[1000px] xl:max-w-[1400px]"
       style={{
-        right:
+        // maxWidth: windowSize.width > breakpoints.xl ? "1400px" : "95vw",
+        width:
           windowSize.width > breakpoints.xl
-            ? !showRightSidebar
-              ? -rightSideBarWidth / 2
-              : 0
-            : 0,
-        width: `${rightSideBarWidth + 820}px`,
-        transition: "right 0.3s ease-in-out",
+            ? `${rightSideBarWidth + 800}px`
+            : "95vw",
       }}
     >
       {/* <div className="mx-auto mt-4 justify-start">
         <TextSpeech />
       </div> */}
-
-      <div className="flex w-full justify-end lg:w-[780px]">
+      <Portal>
+        {/* <div className=" fixed flex w-full justify-end lg:w-[1000px] xl:w-[1300px]"> */}
         {/* <MainToolbar path={activePath} /> */}
         <button
-          className="group z-0 hidden  rounded  border-gray-300 p-1 transition duration-300 hover:border-brand dark:border-gray-700 dark:hover:border-foreground dark:hover:bg-muted xl:block"
+          className="group fixed right-[30px] top-[30px] z-0 hidden rounded  border-gray-300 p-1 transition duration-300 hover:border-brand dark:border-gray-700 dark:hover:border-foreground dark:hover:bg-muted lg:block"
           onClick={() => {
             setShowRightSidebar((prev) => !prev);
           }}
@@ -1636,13 +1642,35 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             <VscLayoutSidebarRight className="  h-[20px] w-[20px] text-darkergray transition duration-300 group-hover:text-brand dark:text-muted-foreground dark:group-hover:text-foreground" />
           )}
         </button>
-      </div>
-      <div className="flex justify-center">
-        <div className="block">
+        {/* </div> */}
+      </Portal>
+      <div className="flex  lg:justify-center xl:px-4">
+        <div className="mx-auto block">
           <div
-            className="relative  z-0  mt-3 w-[90vw] rounded-md  border border-gray-300 bg-white px-2 dark:border-gray-700 dark:bg-muted dark:text-foreground lg:w-[780px] lg:px-0"
+            className="relative  z-0  mt-3 rounded-md  border border-gray-300  bg-white px-2 dark:border-gray-700 dark:bg-muted dark:text-foreground lg:min-w-[600px] lg:px-0 xl:min-w-[800px]"
             style={{
+              right:
+                windowSize.width > breakpoints.lg
+                  ? !showRightSidebar
+                    ? -(rightSideBarWidth / 2)
+                    : 0
+                  : 0,
+              maxWidth: "800px",
+              width:
+                windowSize.width > breakpoints.lg
+                  ? showRightSidebar
+                    ? "50vw"
+                    : "100vw"
+                  : "95vw",
               height: "calc(100vh - 120px)",
+              // width:
+              //   windowSize.width > breakpoints.xl
+              //     ? `${1150 - rightSideBarWidth - 30}px`
+              //     : windowSize.width > breakpoints.lg
+              //     ? `${950 - rightSideBarWidth - 30}px`
+              //     : "95vw",
+              transition: "right 0.3s ease-in-out, width 0.3s ease-in-out",
+              // maxWidth: windowSize.width > breakpoints.lg ? "780px" : "90vw",
             }}
           >
             <div className="block  lg:w-full">
@@ -1890,16 +1918,15 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           <div
             style={{
               opacity: showRightSidebar ? "1" : "0",
-              transition: "opacity 0.3s ease-in-out",
               pointerEvents: showRightSidebar ? "auto" : "none",
             }}
             className="flex items-center"
           >
             <DraggableCore onDrag={handleDrag} onStop={handleDragStop}>
               <div
-                className={` hidden w-[22px] opacity-0 ${
+                className={` pointer-events-none w-[22px] opacity-0 ${
                   isDraggingRightSideBar && "opacity-100"
-                } items-center transition duration-300 hover:opacity-100 lg:flex`}
+                } flex items-center transition duration-300 hover:opacity-100 xl:pointer-events-auto  xl:opacity-100`}
                 style={{
                   height: "calc(100vh - 120px)",
                 }}

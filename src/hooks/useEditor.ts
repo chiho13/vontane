@@ -16,6 +16,25 @@ const withNormalizePasting = (editor) => {
 
   editor.insertData = (data) => {
     const text = data.getData("text/plain");
+    const html = data.getData("text/html");
+
+    if (html) {
+      const parser = new DOMParser();
+      const parsedHtml = parser.parseFromString(html, "text/html");
+      const boldElements = parsedHtml.querySelectorAll("b");
+
+      // Create Slate nodes for each bold tag
+      const nodesToInsert = Array.from(boldElements).map((boldElement) => ({
+        type: "paragraph",
+        children: [{ text: boldElement.textContent, bold: true }],
+      }));
+
+      // Insert the new nodes
+      if (nodesToInsert.length > 0) {
+        Transforms.insertFragment(editor, nodesToInsert);
+        return;
+      }
+    }
 
     if (text) {
       const lines = text.split(/\r\n|\r|\n/);

@@ -19,7 +19,7 @@ const TitleStyle = styled.div`
     top: 0;
   }
 
-  text-indent: 70px;
+  margin-left: 70px;
   margin-bottom: 12px;
 `;
 

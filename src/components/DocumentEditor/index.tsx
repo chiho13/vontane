@@ -1025,7 +1025,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       const optionMenuRef = elementRefs.get(element);
 
       const optionMenu =
-        (isRoot && element.type !== "mcq") || isInsideColumnCell ? (
+        isRoot || isInsideColumnCell ? (
           <div className="absolute   top-0 right-[10px]  items-center">
             <OptionMenu element={element} ref={optionMenuRef} />
           </div>

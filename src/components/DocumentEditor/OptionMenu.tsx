@@ -88,6 +88,11 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
           className={`option-menu-container  relative -right-[5px] opacity-0 group-hover:opacity-100 ${
             activeDropdown === element.id && "opacity-100"
           }`}
+          onMouseDown={(e) => {
+            // prevent toolbar from taking focus away from editor
+
+            e.preventDefault();
+          }}
         >
           <Dropdown
             dropdownId={element.id}

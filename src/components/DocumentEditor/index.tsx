@@ -323,7 +323,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       let showDropdownAbove = false;
 
       if (spaceBelowTarget < dropdownHeight) {
-        topOffset = -(dropdownHeight - targetRect.height + (isEmpty ? 5 : -25));
+        topOffset = -(dropdownHeight - targetRect.height + (isEmpty ? 2 : -25));
         showDropdownAbove = true;
       }
       setSearchBarPosition(spaceBelowTarget < dropdownHeight);

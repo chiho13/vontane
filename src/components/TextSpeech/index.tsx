@@ -47,14 +47,6 @@ export const TextSpeech: React.FC<TextSpeechProps> = ({
   // const [audioIsLoading, setAudioIsLoading] = useState<boolean>(false);
   const [transcriptionId, setTranscriptionId] = useState<string>("");
 
-  const [ttsAudioFile, setTtsAudioFile] = useState<File>();
-  const { editor } = useContext(EditorContext);
-
-  // const url =
-  //   "https://res.cloudinary.com/monkeyking/video/upload/v1682090997/synthesised-audio_12_qvb3p4.wav";
-  // const fileName = "anny.wav";
-  // const file = useDownloadFile(url, fileName);
-
   const { textSpeech, selectedTextSpeech, audioIsLoading, setAudioIsLoading } =
     useTextSpeech();
 
@@ -133,15 +125,15 @@ export const TextSpeech: React.FC<TextSpeechProps> = ({
 
   return (
     <>
-      <div className="relative flex items-center lg:max-w-[980px]">
-        <label className="text-bold mb-2 flex justify-end text-sm text-gray-400">
+      <div className="relative mt-4 flex items-center lg:max-w-[980px]">
+        {/* <label className="text-bold mb-2 flex justify-end text-sm text-gray-400">
           {!isSelected
             ? "Convert workspace to audio"
             : "Convert selected text to audio"}
-        </label>
+        </label> */}
       </div>
       <div className="relative flex items-center lg:max-w-[980px]">
-        <div className="mr-4">
+        <div className="mr-2">
           <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
         </div>
         <GenerateButton

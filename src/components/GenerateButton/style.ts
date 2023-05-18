@@ -14,12 +14,9 @@ export const GenerateButtonStyle: StyledComponent<
 
   font-weight: bold;
   padding: 10px 10px;
-  width: 44px;
-  height: 44px;
-  border-radius: 0.25rem;
-  opacity: ${({ isDisabled }) => (isDisabled ? "0.5" : "1")};
+  width: 42px;
+  height: 40px;
   cursor: ${({ isDisabled }) => (isDisabled ? "not-allowed" : "pointer")};
-  transition: border 0.3s ease-in-out, opacity 0.3s ease, color 0.3s ease;
 
   &:hover {
     background-color: #fefefe;

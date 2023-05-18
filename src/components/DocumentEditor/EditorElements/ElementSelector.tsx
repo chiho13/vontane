@@ -43,7 +43,7 @@ export function ElementSelector(props) {
       return (
         <a
           {...props.attributes}
-          className="inline text-blue-500 underline"
+          className="inline text-brand underline dark:text-muted-foreground"
           href={props.element.url}
         >
           {children}

@@ -1,88 +1,135 @@
 import { createEditor, Editor, Path, Range, Transforms } from "slate";
 import { genNodeId } from "./withID";
+import { jsx } from "slate-hyperscript";
+
+const transformListItems = (listItems, listType) => {
+  return listItems.map((li) => {
+    const children = Array.from(li.childNodes)
+      .map((node) => {
+        if (node.nodeName === "#text") {
+          return { text: node.textContent.trim() };
+        } else if (node.nodeName === "A") {
+          return {
+            id: genNodeId(),
+            type: "link",
+            text: node.textContent.trim(),
+            url: node.getAttribute("href"),
+          };
+        }
+        return null;
+      })
+      .filter(Boolean);
+
+    return { id: genNodeId(), type: listType, children: children };
+  });
+};
+
+const ELEMENT_TAGS = {
+  A: (el) => ({ type: "link", url: el.getAttribute("href") }),
+  BLOCKQUOTE: () => ({ type: "quote" }),
+  H1: () => ({ type: "heading-one" }),
+  H2: () => ({ type: "heading-two" }),
+  H3: () => ({ type: "heading-three" }),
+  IMG: (el) => ({ type: "image", url: el.getAttribute("src") }),
+  //   LI: () => ({ type: "list-item" }),
+
+  P: () => ({ id: genNodeId(), type: "paragraph" }),
+  PRE: () => ({ type: "code" }),
+
+  OL: (el) => {
+    const listItems = Array.from(el.children);
+    return transformListItems(listItems, "numbered-list");
+  },
+
+  UL: (el) => {
+    const listItems = Array.from(el.children);
+    return transformListItems(listItems, "bulleted-list");
+  },
+};
+
+// COMPAT: `B` is omitted here because Google Docs uses `<b>` in weird ways.
+const TEXT_TAGS = {
+  CODE: () => ({ code: true }),
+  DEL: () => ({ strikethrough: true }),
+  EM: () => ({ italic: true }),
+  I: () => ({ italic: true }),
+  S: () => ({ strikethrough: true }),
+  B: () => ({ bold: true }),
+  STRONG: () => ({ bold: true }),
+  //   U: () => ({ underline: true }),
+};
+
+export const deserialize = (el) => {
+  if (el.nodeType === 3) {
+    return el.textContent;
+  } else if (el.nodeType !== 1) {
+    return null;
+  } else if (el.nodeName === "BR") {
+    return "\n";
+  }
+
+  const { nodeName } = el;
+  let parent = el;
+
+  if (
+    nodeName === "PRE" &&
+    el.childNodes[0] &&
+    el.childNodes[0].nodeName === "CODE"
+  ) {
+    parent = el.childNodes[0];
+  }
+  let children = [];
+
+  if (nodeName !== "UL" && nodeName !== "OL" && nodeName !== "LI") {
+    children = Array.from(parent.childNodes).map(deserialize).flat();
+  }
+
+  if (children.length === 0) {
+    children = [{ text: "" }];
+  }
+
+  if (el.nodeName === "BODY") {
+    return jsx("fragment", {}, children);
+  }
+
+  if (ELEMENT_TAGS[nodeName]) {
+    const attrs = ELEMENT_TAGS[nodeName](el);
+    if (Array.isArray(attrs)) {
+      return attrs;
+    }
+
+    return jsx("element", attrs, children);
+  }
+
+  if (TEXT_TAGS[nodeName]) {
+    const attrs = TEXT_TAGS[nodeName](el);
+    return children.map((child) => jsx("text", attrs, child));
+  }
+
+  return children;
+};
 
 export const withNormalizePasting = (editor) => {
-  const { insertData } = editor;
+  const { insertData, isInline, isVoid } = editor;
+
+  editor.isInline = (element) => {
+    return element.type === "link" ? true : isInline(element);
+  };
+
+  editor.isVoid = (element) => {
+    return element.type === "image" ? true : isVoid(element);
+  };
 
   editor.insertData = (data) => {
-    const text = data.getData("text/plain");
     const html = data.getData("text/html");
 
     if (html) {
-      const parser = new DOMParser();
-      const parsedHtml = parser.parseFromString(html, "text/html");
       let nodesToInsert = [];
+      const parsed = new DOMParser().parseFromString(html, "text/html");
+      const fragment = deserialize(parsed.body);
 
-      // Create Slate nodes for each paragraph tag
-      const paragraphElements = parsedHtml.querySelectorAll("p");
-      paragraphElements.forEach((paragraphElement) => {
-        // For each paragraph, create a separate Slate node for each text node and bold node
-        let children = Array.from(paragraphElement.childNodes).map((node) => {
-          if (node.nodeName === "#text") {
-            // This is a normal text node
-            return { text: node.textContent };
-          } else if (node.nodeName === "B") {
-            // This is a bold text node
-            return { text: node.textContent, bold: true };
-          } else {
-            // Ignore other types of nodes
-            return null;
-          }
-        });
-
-        // Filter out null values and add the new paragraph to nodesToInsert
-        children = children.filter((child) => child !== null);
-        if (children.length > 0) {
-          nodesToInsert.push({ id: genNodeId(), type: "paragraph", children });
-        }
-      });
-
-      // Create Slate nodes for each list tag
-      const listElements = parsedHtml.querySelectorAll("ul, ol");
-      listElements.forEach((listElement) => {
-        const listType =
-          listElement.nodeName === "UL" ? "bulleted-list" : "numbered-list";
-        const listItemElements = listElement.querySelectorAll("li");
-
-        listItemElements.forEach((listItemElement) => {
-          let children = Array.from(listItemElement.childNodes).map((node) => {
-            if (node.nodeName === "#text") {
-              return { text: node.textContent };
-            } else if (node.nodeName === "B") {
-              return { text: node.textContent, bold: true };
-            } else {
-              return null;
-            }
-          });
-
-          children = children.filter((child) => child !== null);
-          if (children.length > 0) {
-            nodesToInsert.push({ id: genNodeId(), type: listType, children });
-          }
-        });
-      });
-
-      // Insert the new nodes
-      if (nodesToInsert.length > 0) {
-        Transforms.insertFragment(editor, nodesToInsert);
-        return;
-      }
-    }
-
-    if (text) {
-      const lines = text.split(/\r\n|\r|\n/);
-      const nodesToInsert = lines
-        .filter((line) => line.trim().length > 0)
-        .map((line) => ({
-          id: genNodeId(),
-          type: "paragraph",
-          children: [{ text: line }],
-        }));
-
-      if (nodesToInsert.length > 0) {
-        Transforms.insertFragment(editor, nodesToInsert);
-        return;
-      }
+      Transforms.insertFragment(editor, fragment);
+      return;
     }
 
     insertData(data);

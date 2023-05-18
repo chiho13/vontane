@@ -111,7 +111,7 @@ export const ListItem = withListNumbering((props) => {
           selectedElementID === element.id ? " bg-[#E0EDFB]" : "bg-transparent"
         }
         transition duration-1000 ease-in-out
-        ${isNumberedList && "list-none"}
+        ${isNumberedList && "ml-[21px] list-none"}
         `}
         {...attributes}
         data-id={element.id}
@@ -120,7 +120,10 @@ export const ListItem = withListNumbering((props) => {
         data-list-type={listType}
       >
         {isNumberedList && (
-          <span contentEditable={false} className="mr-[5px]">
+          <span
+            contentEditable={false}
+            className="absolute mr-[5px] -translate-x-[21px] "
+          >
             {listNumber}.{" "}
           </span>
         )}

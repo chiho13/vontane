@@ -20,13 +20,11 @@ export function EquationElement(props) {
       tabIndex={0}
       data-path={JSON.stringify(path)}
       data-id={element.id}
-      className={` equation-element relative mr-4  flex w-[95%]  items-center rounded-md p-2 hover:bg-gray-100 dark:bg-accent ${
-        element.latex?.trim() !== "" && "justify-center"
-      } 
+      className={` equation-element relative mr-4  flex w-[95%]  items-center rounded-md p-2 transition  hover:bg-gray-100 dark:hover:bg-background 
       ${
-        showEditBlockPopup && selectedElementID === element.id
-          ? " bg-[#E0EDFB]"
-          : "bg-gray-100"
+        showEditBlockPopup || selectedElementID === element.id
+          ? " bg-[#E0EDFB] dark:bg-background"
+          : "bg-transparent"
       }
       cursor-pointer`}
       contentEditable={false}

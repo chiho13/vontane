@@ -21,6 +21,16 @@ import { mq, breakpoints } from "@/utils/breakpoints";
 import { motion, AnimatePresence } from "framer-motion";
 
 import MobileFilterDropdown from "../MobileFilterDropdown";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/ui/dialog";
 
 import {
   fetchVoices,
@@ -31,6 +41,7 @@ import {
 } from "../../api/getVoicesApi";
 import { Voice } from "../../types/voice";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
+import { Button } from "../ui/button";
 
 interface FilterOption {
   key: string;
@@ -101,6 +112,7 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
   const [tempos, setTempos] = useState<string[]>([]);
   const [filters, setFilters] = useState<Filter[]>([]);
   const { showMiniToolbar } = useTextSpeech();
+  const [open, setOpen] = React.useState(false);
 
   const [isOpenMobileFilterDropdown, setIsOpenMobileFilterDropdown] =
     useState(false);
@@ -183,9 +195,10 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
     setSelectedVoiceId(voice);
     setSelectedItemText(name);
 
-    if (voicesDropdownRef.current) {
-      voicesDropdownRef.current.handleClose();
-    }
+    setOpen(false);
+    // if (voicesDropdownRef.current) {
+    //   voicesDropdownRef.current.handleClose();
+    // }
   }
 
   const playAudio = useCallback(
@@ -417,16 +430,41 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
   };
 
   return (
-    <VoiceDropdownStyle>
-      <DropdownProvider>
+    <>
+      {/* <DropdownProvider>
         <Dropdown
           dropdownId="voiceDropdown"
           selectedItemText={selectedItemText}
           ref={voicesDropdownRef}
           icon={<ChevronDown className="ml-4 w-4" />}
-          dropdownMenuNonPortalOverride={`right-0 dark:bg-muted mx-auto lg:absolute lg:w-[900px]`}
+          dropdownMenuNonPortalOverride={`left-0 dark:bg-muted mx-auto lg:absolute lg:w-[900px]`}
         >
-          <div>
+
+
+        </Dropdown>
+      </DropdownProvider> */}
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <Button variant="outline">
+            {selectedItemText} <ChevronDown className="ml-4 w-4" />
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="max-h-[80vh] p-0 sm:max-w-[900px]">
+          {/* <DialogHeader
+            <DialogTitle>Edit profile</DialogTitle>
+            <DialogDescription>
+              Make changes to your profile here. Click save when you're done.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4"></div>
+            <div className="grid grid-cols-4 items-center gap-4"></div>
+          </div>
+          <DialogFooter>
+            <Button type="submit">Save changes</Button>
+          </DialogFooter> */}
+
+          <VoiceDropdownStyle>
             {desktopbreakpoint && (
               <div>
                 {filters.length > 0 && (
@@ -526,9 +564,9 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
               />
             )}
 
-            <div className="dropdown_table_wrapper table-responsive ">
+            <div className=" dropdown_table_wrapper table-responsive  h-[70vh] overflow-auto">
               <table className="dropdown_table w-full table-auto ">
-                <thead className="voiceTitles w-full bg-white p-4 dark:bg-muted">
+                <thead className="voiceTitles sticky top-0 w-full bg-white p-4 dark:bg-background">
                   {desktopbreakpoint && (
                     <tr>
                       <th className="nameHeader text-left text-sm sm:text-base">
@@ -582,7 +620,7 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
                   )}
                 </thead>
 
-                <tbody className="w-full">
+                <tbody className="h-[500px] w-full">
                   {filteredVoices &&
                     filteredVoices.map((voice, index) => (
                       <VoiceRow
@@ -615,10 +653,10 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
                   </div>
                 )}
             </div>
-          </div>
-        </Dropdown>
-      </DropdownProvider>
-    </VoiceDropdownStyle>
+          </VoiceDropdownStyle>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
 

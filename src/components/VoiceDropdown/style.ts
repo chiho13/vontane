@@ -43,9 +43,7 @@ export const VoiceDropdownStyle = styled.div`
 
   .dropdown_table_wrapper {
     display: block;
-    height: 60vh;
     overflow-y: scroll;
-
     ${mq.lg`
       height: 500px;
       `}
@@ -60,11 +58,18 @@ export const VoiceDropdownStyle = styled.div`
   .dropdown_table_wrapper::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 5px;
+
+    .dark & {
+      background: hsl(216 28% 21%);
+    }
   }
 
   .dropdown_table_wrapper::-webkit-scrollbar-thumb {
     background: #aaaaaa;
     border-radius: 5px;
+    .dark & {
+      background: hsl(216 28% 12%);
+    }
   }
 
   .dropdown_table_wrapper::-webkit-scrollbar-thumb:hover {
@@ -143,18 +148,16 @@ export const VoiceDropdownStyle = styled.div`
     position: sticky;
     top: 0;
 
-    z-index: 100;
-
     tr:first-child th {
       padding: 0;
     }
 
     tr:first-child th:first-child {
-      border-top-left-radius: 4px;
+      border-top-left-radius: 8px;
     }
 
     tr:first-child th:last-child {
-      border-top-right-radius: 4px;
+      border-top-right-radius: 8px;
     }
 
     tr:last-child th {

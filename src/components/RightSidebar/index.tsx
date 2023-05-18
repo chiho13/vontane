@@ -1,6 +1,7 @@
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTheme } from "styled-components";
+import { TextSpeech } from "../TextSpeech";
 interface RightSideBarProps {
   showRightSidebar: boolean;
   rightSideBarWidth: number;
@@ -58,7 +59,9 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="account">tts</TabsContent>
+          <TabsContent value="account">
+            <TextSpeech />
+          </TabsContent>
           <TabsContent value="password">password</TabsContent>
           <TabsContent value="slide">password</TabsContent>
         </Tabs>

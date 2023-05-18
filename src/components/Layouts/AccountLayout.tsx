@@ -44,7 +44,7 @@ const ToggleButtonWrapper = styled.div`
   position: fixed;
   top: 0;
   padding-top: 15px;
-  left: 0;
+  left: 3px;
   z-index: 1000;
   display: block;
   height: 45px;

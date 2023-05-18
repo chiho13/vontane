@@ -259,8 +259,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     setFetchWorkspaceIsLoading(false);
     // setGhostValue(initialSlateValue);
     setCurrentSlateKey(generateKey());
-    const extractedText = extractTextValues(initialSlateValue);
-    setTextSpeech(extractedText);
+    // const extractedText = extractTextValues(initialSlateValue);
+    // setTextSpeech(extractedText);
     console.log(editor.children);
   }, [initialSlateValue, workspaceId]);
 
@@ -1061,12 +1061,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       );
 
       return (
-        <>
+        <div>
           {content}
           {/* <div className="invisible opacity-0 transition-all duration-300 group-hover:visible group-hover:opacity-100">
             {optionMenu}
           </div>  */}
-        </>
+        </div>
       );
     },
     []

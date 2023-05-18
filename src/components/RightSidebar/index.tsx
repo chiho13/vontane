@@ -2,6 +2,7 @@ import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTheme } from "styled-components";
 import { TextSpeech } from "../TextSpeech";
+import { useLocalStorage } from "usehooks-ts";
 interface RightSideBarProps {
   showRightSidebar: boolean;
   rightSideBarWidth: number;
@@ -26,6 +27,12 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
       "width 0.3s ease-in-out, opacity 0.4s ease-in-out, transform 0.3s ease-in-out",
   };
 
+  const [tab, setTab] = useLocalStorage("tab", "suggestions");
+
+  const handleTabChange = (newTab) => {
+    setTab(newTab); // This will also update value in localStorage
+  };
+
   return (
     <div
       className="m-w-full bg-w mt-3 hidden grow rounded-md border border-gray-300 bg-white px-2 dark:border-gray-700 dark:bg-muted dark:text-lightgray lg:block"
@@ -34,24 +41,25 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
       <div className="p-4">
         {/* <h2 className="mb-4 text-xl font-semibold">Right Sidebar</h2>
         <p>Hi kirby</p> */}
-        <Tabs defaultValue="account">
+        <Tabs defaultValue={tab} onValueChange={handleTabChange}>
           <TabsList
             className={`ring-gray ring-red grid h-10 w-full grid-cols-3  bg-lightgray dark:bg-accent`}
           >
             <TabsTrigger
-              value="account"
-              className={`data-[state=active]:bg-brand data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
-            >
-              Text-to-Wav
-            </TabsTrigger>
-            <TabsTrigger
-              value="password"
+              value="suggestions"
               className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
             >
               AI Assist
             </TabsTrigger>
             <TabsTrigger
-              value="slide"
+              value="files"
+              className={`data-[state=active]:bg-brand data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
+            >
+              Files
+            </TabsTrigger>
+
+            <TabsTrigger
+              value="preview"
               className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
               disabled={true}
             >
@@ -59,11 +67,11 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="account">
-            <TextSpeech />
+          <TabsContent value="suggestions">
+            {/* <TextSpeech /> */} Suggested content
           </TabsContent>
-          <TabsContent value="password">password</TabsContent>
-          <TabsContent value="slide">password</TabsContent>
+          <TabsContent value="password">My Files</TabsContent>
+          <TabsContent value="slide">Doc or Slide Preview</TabsContent>
         </Tabs>
       </div>
     </div>

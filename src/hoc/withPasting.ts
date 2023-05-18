@@ -15,10 +15,29 @@ const transformListItems = (listItems, listType) => {
             text: node.textContent.trim(),
             url: node.getAttribute("href"),
           };
+        } else if (node.nodeName === "P") {
+          return Array.from(node.childNodes)
+            .map((childNode) => {
+              if (childNode.nodeType === 3) {
+                return { text: childNode.textContent.trim() };
+              } else if (
+                childNode.nodeName === "B" ||
+                childNode.nodeName === "STRONG"
+              ) {
+                return { text: childNode.textContent.trim(), bold: true };
+              }
+              return null;
+            })
+            .filter(Boolean);
         }
         return null;
       })
+      .flat() // flatten the array in case of nested elements
       .filter(Boolean);
+
+    if (!children.length) {
+      children.push({ text: "" }); // ensure there is always a text node
+    }
 
     return { id: genNodeId(), type: listType, children: children };
   });
@@ -35,6 +54,7 @@ const ELEMENT_TAGS = {
 
   P: () => ({ id: genNodeId(), type: "paragraph" }),
   PRE: () => ({ type: "code" }),
+  // add this to ELEMENT_TAGS
 
   OL: (el) => {
     const listItems = Array.from(el.children);
@@ -80,7 +100,7 @@ export const deserialize = (el) => {
   }
   let children = [];
 
-  if (nodeName !== "UL" && nodeName !== "OL" && nodeName !== "LI") {
+  if (nodeName !== "UL" && nodeName !== "OL") {
     children = Array.from(parent.childNodes).map(deserialize).flat();
   }
 

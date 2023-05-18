@@ -1620,7 +1620,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     if (windowSize.width > breakpoints.xl) {
       setRightSideBarWidth(sidebarWidth);
     } else {
-      setRightSideBarWidth(windowSize.width - 800);
+      setRightSideBarWidth(370);
     }
   }, [sidebarWidth, windowSize]);
 

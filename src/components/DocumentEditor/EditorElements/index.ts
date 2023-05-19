@@ -13,3 +13,4 @@ export * from "./TitleElement";
 export * from "./AudioElement";
 export * from "./SlideBreak";
 export * from "./HeadingElement";
+export * from "./ImageElement";

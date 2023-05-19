@@ -21,7 +21,7 @@ export function ImageElement(props) {
       tabIndex={0}
       data-path={JSON.stringify(path)}
       data-id={element.id}
-      className={`hover:bg-gray-muted relative  mr-4 flex  w-[95%] cursor-pointer items-center rounded-md p-2 transition dark:bg-background 
+      className={`hover:bg-gray-muted relative  flex cursor-pointer items-center rounded-md p-2 transition dark:bg-background 
       dark:hover:bg-background/70`}
       contentEditable={false}
     >

@@ -14,6 +14,7 @@ import {
   QuestionItem,
   TitleElement,
   AudioElement,
+  ImageElement,
   SlideBreak,
   ListItem,
 } from "./index";
@@ -29,6 +30,8 @@ export function ElementSelector(props) {
       return <SlideBreak {...props} />;
     case "audio":
       return <AudioElement {...props} />;
+    case "image":
+      return <ImageElement {...props} />;
     case "heading-one":
       return <HeadingElement {...props} tag="h1" />;
     case "heading-two":

@@ -19,6 +19,7 @@ import { addSlideBreak } from "./helpers/addSlideBreak";
 import { genNodeId } from "@/hoc/withID";
 import { useArrowNavigation } from "@/hooks/useArrowNavigation";
 import { toggleBlock } from "./helpers/toggleBlock";
+import { addImageBlock } from "./helpers/addImageBlock";
 
 interface MiniDropdownProps {
   isOpen: boolean;
@@ -61,6 +62,20 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
           <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
             <TextIcon />
           </div>
+        ),
+      },
+      {
+        name: "Image",
+        description: "Embed with a link",
+        action: addImageHandler,
+        icon: (
+          <Image
+            src="/images/sunandmountain.png"
+            alt="add  image"
+            width={44}
+            height={44}
+            className="rounded-md border  border-gray-300 dark:border-secondary"
+          />
         ),
       },
       {
@@ -222,6 +237,17 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
           Editor.start(editor, Path.next(JSON.parse(activePath)))
         );
       }
+    }
+
+    function addImageHandler() {
+      console.log("add image");
+      addImageBlock(editor, JSON.parse(activePath));
+      setShowDropdown(false);
+      Transforms.select(
+        editor,
+        Editor.start(editor, Path.next(JSON.parse(activePath)))
+      );
+      ReactEditor.focus(editor);
     }
 
     function addSlideBreakHandler() {

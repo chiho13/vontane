@@ -21,6 +21,7 @@ import {
   Point,
 } from "slate";
 
+import { isEqual } from "lodash";
 import { EditorContext } from "@/contexts/EditorContext";
 import { Slate, Editable, withReact, ReactEditor } from "slate-react";
 import { Plus, Sidebar } from "lucide-react";
@@ -1707,13 +1708,14 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                             editor={editor}
                             value={slatevalue}
                             onChange={(newValue) => {
-                              setValue(newValue);
+                              if (!isEqual(slatevalue, newValue)) {
+                                // Compare the current and new values
+                                setValue(newValue);
 
-                              console.log(JSON.stringify(newValue));
-                              // const extractedText = extractTextValues(newValue);
-                              // setTextSpeech(extractedText);
-                              if (handleTextChange) {
-                                handleTextChange(newValue);
+                                console.log(JSON.stringify(newValue));
+                                if (handleTextChange) {
+                                  handleTextChange(newValue);
+                                }
                               }
                             }}
                           >
@@ -1956,4 +1958,4 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   );
 };
 
-export default DocumentEditor;
+export default React.memo(DocumentEditor);

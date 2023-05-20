@@ -69,13 +69,11 @@ export const ImageElement = (props) => {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
+    const newElement = { ...element, url: values.url };
+    Transforms.setNodes(editor, newElement, { at: path });
   }
 
-  const setDropdownOpen = (event) => {
-    console.log(event);
-  };
-
-  return (
+  return element.url?.trim() === "" ? (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger className="w-full">
         <div
@@ -86,16 +84,14 @@ export const ImageElement = (props) => {
       dark:hover:bg-background/70`}
           contentEditable={false}
         >
-          {element.url?.trim() === "" && (
-            <div className="flex items-center">
-              <ImageIcon
-                width={46}
-                height={46}
-                className="rounded-md opacity-30 dark:bg-transparent"
-              />
-              <span className="ml-4 opacity-30">Add an Image</span>
-            </div>
-          )}
+          <div className="flex items-center">
+            <ImageIcon
+              width={46}
+              height={46}
+              className="rounded-md opacity-30 dark:bg-transparent"
+            />
+            <span className="ml-4 opacity-30">Add an Image</span>
+          </div>
 
           {children}
         </div>
@@ -135,5 +131,10 @@ export const ImageElement = (props) => {
         </Form>
       </DropdownMenuContent>
     </DropdownMenu>
+  ) : (
+    <div tabIndex={-1}>
+      <img src={element.url} />
+      {children}
+    </div>
   );
 };

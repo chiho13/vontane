@@ -1,7 +1,7 @@
 import { useContext, useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import { EditorContext } from "@/contexts/EditorContext";
-import { ReactEditor } from "slate-react";
+import { ReactEditor, useFocused, useSelected } from "slate-react";
 import { Editor } from "slate";
 import { OptionMenu } from "../OptionMenu";
 import { Image as ImageIcon } from "lucide-react";
@@ -32,6 +32,9 @@ export const ImageElement = (props) => {
     useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);
   const [open, setOpen] = useState(false);
+
+  const focus = useFocused();
+  const selected = useSelected();
   const formSchema = z.object({
     url: z
       .string()
@@ -62,89 +65,75 @@ export const ImageElement = (props) => {
     resolver: zodResolver(formSchema),
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
   }
 
-  function handleEmbedURLinkDropdown() {}
+  // useEffect(() => {
+  //   if (element.url?.trim() === "") {
+  //     setOpen(true);
+  //   }
+  // }, [element]);
 
   return (
-    <div
-      tabIndex={0}
-      data-path={JSON.stringify(path)}
-      data-id={element.id}
-      className={`hover:bg-gray-muted relative flex  cursor-pointer items-center rounded-md border bg-gray-100 p-2 transition dark:border-gray-700 dark:bg-background
-dark:hover:bg-background/70`}
-    >
-      {element.url?.trim() === "" && (
-        <div className="flex items-center">
-          <ImageIcon
-            width={46}
-            height={46}
-            className="rounded-md dark:bg-transparent dark:text-muted-foreground"
-          />
-          {/* <span className="ml-4 opacity-30">Add an Image</span> */}
-        </div>
-      )}
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex  w-full items-center gap-3 p-2 "
+    <DropdownMenu open={open} onOpenChange={setOpen}>
+      <DropdownMenuTrigger className="w-full">
+        <div
+          tabIndex={-1}
+          data-path={JSON.stringify(path)}
+          data-id={element.id}
+          className={`hover:bg-gray-muted relative flex  cursor-pointer items-center rounded-md bg-gray-100 p-2 transition dark:bg-background 
+      dark:hover:bg-background/70`}
+          contentEditable={false}
         >
-          <FormField
-            control={form.control}
-            name="url"
-            render={() => (
-              <FormItem className="grow">
-                {/* <FormLabel>Embed link</FormLabel> */}
-                <FormControl>
-                  <Input
-                    placeholder="Paste the image link"
-                    {...form.register("url")}
-                  />
-                </FormControl>
-                {/* <FormDescription>
+          {element.url?.trim() === "" && (
+            <div className="flex items-center">
+              <ImageIcon
+                width={46}
+                height={46}
+                className="rounded-md opacity-30 dark:bg-transparent"
+              />
+              <span className="ml-4 opacity-30">Add an Image</span>
+            </div>
+          )}
+
+          {children}
+        </div>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent className="dark:border-gray-700 dark:bg-secondary dark:text-foreground lg:w-[400px] xl:w-[500px]">
+        {/* Enter link
+         */}
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-2 p-1 pb-2"
+          >
+            <FormField
+              control={form.control}
+              name="url"
+              render={() => (
+                <FormItem>
+                  {/* <FormLabel>Embed link</FormLabel> */}
+                  <FormControl>
+                    <Input
+                      placeholder="Paste the image link"
+                      {...form.register("url")}
+                    />
+                  </FormControl>
+                  {/* <FormDescription>
                 This is your public display name.
               </FormDescription> */}
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button type="submit">Embed Image</Button>
-          {/* <div className="flex w-full items-center justify-center"></div> */}
-        </form>
-      </Form>
-    </div>
-    // <DropdownMenu open={open} onOpenChange={setOpen}>
-    //   <DropdownMenuTrigger className="w-full">
-    //     <div
-    //       tabIndex={0}
-    //       data-path={JSON.stringify(path)}
-    //       data-id={element.id}
-    //       className={`hover:bg-gray-muted relative flex  cursor-pointer items-center rounded-md bg-gray-100 p-2 transition dark:bg-background
-    //   dark:hover:bg-background/70`}
-    //       contentEditable={false}
-    //     >
-    //       {element.url?.trim() === "" && (
-    //         <div className="flex items-center">
-    //           <ImageIcon
-    //             width={46}
-    //             height={46}
-    //             className="rounded-md opacity-30 dark:bg-transparent"
-    //           />
-    //           <span className="ml-4 opacity-30">Add an Image</span>
-    //         </div>
-    //       )}
-
-    //       {children}
-    //     </div>
-    //   </DropdownMenuTrigger>
-
-    //   <DropdownMenuContent className="dark:border-gray-700 dark:bg-secondary dark:text-foreground lg:w-[400px] xl:w-[500px]">
-    //     {/* Enter link
-    //      */}
-
-    //   </DropdownMenuContent>
-    // </DropdownMenu>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="flex w-full items-center justify-center">
+              <Button type="submit">Embed Image</Button>
+            </div>
+          </form>
+        </Form>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };

@@ -1,8 +1,8 @@
-import { useContext, useState, useEffect, useMemo } from "react";
+import { useContext, useState, useEffect, useMemo, useCallback } from "react";
 import Image from "next/image";
 import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor, useFocused, useSelected } from "slate-react";
-import { Editor } from "slate";
+import { Editor, Transforms } from "slate";
 import { OptionMenu } from "../OptionMenu";
 import { Image as ImageIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -32,7 +32,9 @@ export const ImageElement = (props) => {
     useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);
   const [open, setOpen] = useState(false);
+  // const activePath = JSON.stringify(path);
 
+  const [activePath, setActivePath] = useState(null);
   const focus = useFocused();
   const selected = useSelected();
   const formSchema = z.object({
@@ -69,11 +71,9 @@ export const ImageElement = (props) => {
     console.log(values);
   }
 
-  // useEffect(() => {
-  //   if (element.url?.trim() === "") {
-  //     setOpen(true);
-  //   }
-  // }, [element]);
+  const setDropdownOpen = (event) => {
+    console.log(event);
+  };
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>

@@ -22,8 +22,10 @@ export const addImageBlock = (editor, path) => {
     Transforms.insertNodes(editor, imageNode, { at: path });
 
     newPath = path;
+    return newPath;
   } else {
     Transforms.insertNodes(editor, imageNode, { at: Path.next(path) });
     newPath = Path.next(path);
+    return newPath;
   }
 };

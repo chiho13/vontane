@@ -37,14 +37,15 @@ export const ImageElement = React.memo((props) => {
     setActivePath,
   } = useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);
+  const focus = useFocused();
+  const selected = useSelected();
   const [open, setOpen] = useState(
-    element.url?.trim() === "" && activePath == JSON.stringify(path)
+    element.url?.trim() === "" && activePath == JSON.stringify(path) && selected
   );
   // const activePath = JSON.stringify(path);
 
   console.log(activePath);
-  const focus = useFocused();
-  const selected = useSelected();
+
   const formSchema = z.object({
     url: z
       .string()

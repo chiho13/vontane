@@ -245,6 +245,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
       setShowDropdown(false);
       Transforms.select(editor, Editor.start(editor, Path.next(addedPath)));
       ReactEditor.focus(editor);
+
       setActivePath(JSON.stringify(addedPath));
     }
 

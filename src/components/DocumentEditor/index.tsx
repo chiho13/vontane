@@ -1605,11 +1605,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     340
   );
 
-  const rightSideBarRef = useRef(null);
-
   const minSidebarWidth = 340;
   const maxSidebarWidth = 570;
-  const { sidebarWidth, handleDrag, isDraggingRightSideBar, handleDragStop } =
+  const { elementWidth, handleDrag, isDraggingRightSideBar, handleDragStop } =
     useResizeSidebar(rightSideBarWidth, minSidebarWidth, maxSidebarWidth);
 
   useEffect(() => {
@@ -1617,13 +1615,13 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   }, [showRightSidebar]);
 
   useEffect(() => {
-    localStorage.setItem("sidebarWidth", sidebarWidth);
+    localStorage.setItem("sidebarWidth", elementWidth);
     if (windowSize.width > breakpoints.xl) {
-      setRightSideBarWidth(sidebarWidth);
+      setRightSideBarWidth(elementWidth);
     } else {
       setRightSideBarWidth(370);
     }
-  }, [sidebarWidth, windowSize]);
+  }, [elementWidth, windowSize]);
 
   return (
     <div

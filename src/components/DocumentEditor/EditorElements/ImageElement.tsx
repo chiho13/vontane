@@ -1,4 +1,11 @@
-import { useContext, useState, useEffect, useMemo, useCallback } from "react";
+import {
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+  useRef,
+} from "react";
 import Image from "next/image";
 import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor, useFocused, useSelected } from "slate-react";
@@ -26,6 +33,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import React from "react";
+import { DraggableCore } from "react-draggable";
+import useResizeElement from "@/hooks/useResizeSidebar";
+import { Portal } from "react-portal";
 
 export const ImageElement = React.memo((props) => {
   const { attributes, children, element } = props;
@@ -45,6 +55,56 @@ export const ImageElement = React.memo((props) => {
   // const activePath = JSON.stringify(path);
 
   console.log(activePath);
+
+  const ref = useRef(null);
+  const [isResizing, setIsResizing] = useState(false);
+  const [imageWidth, setWidth] = useState(element.width); // default width
+
+  const handleMouseDown = useCallback((e) => {
+    setIsResizing(true);
+  }, []);
+
+  const handleMouseUp = useCallback(
+    (e) => {
+      setIsResizing(false);
+      const newElement = { ...element, width: imageWidth };
+
+      Transforms.setNodes(editor, newElement, { at: path });
+    },
+    [imageWidth]
+  );
+
+  const handleMouseMove = useCallback(
+    (e) => {
+      if (isResizing) {
+        // Update the width here
+        const newWidth = e.clientX - ref.current.getBoundingClientRect().left;
+        if (newWidth < 150) {
+          // If it is, set the width to the minimum width
+          setWidth(150);
+        } else {
+          // Otherwise, use the new width
+          setWidth(newWidth);
+        }
+      }
+    },
+    [isResizing]
+  );
+
+  useEffect(() => {
+    if (isResizing) {
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseup", handleMouseUp);
+    } else {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    }
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isResizing, handleMouseMove, handleMouseUp]);
 
   const formSchema = z.object({
     url: z
@@ -81,14 +141,6 @@ export const ImageElement = React.memo((props) => {
     const newElement = { ...element, url: values.url };
     Transforms.setNodes(editor, newElement, { at: path });
   }
-
-  // useEffect(() => {
-  //   if (open) {
-  //     setActivePath(JSON.stringify(path));
-  //   } else {
-  //     setActivePath("");
-  //   }
-  // }, [open]);
 
   return (
     <div data-id={element.id} data-path={JSON.stringify(path)}>
@@ -134,9 +186,6 @@ export const ImageElement = React.memo((props) => {
                           {...form.register("url")}
                         />
                       </FormControl>
-                      {/* <FormDescription>
-                This is your public display name.
-              </FormDescription> */}
                       <FormMessage />
                     </FormItem>
                   )}
@@ -149,8 +198,15 @@ export const ImageElement = React.memo((props) => {
           </DropdownMenuContent>
         </DropdownMenu>
       ) : (
-        <div tabIndex={-1}>
-          <img src={element.url} />
+        <div tabIndex={-1} className="group flex" contentEditable={false}>
+          <img src={element.url} width={imageWidth} height="auto" ref={ref} />
+          <div className="flex items-center" onMouseDown={handleMouseDown}>
+            <div
+              className={`  flex h-full  w-[18px] items-center transition duration-300 xl:pointer-events-auto xl:group-hover:opacity-100 `}
+            >
+              <div className="mx-auto block h-[80px] w-[5px]  cursor-col-resize rounded bg-[#b4b4b4] dark:bg-muted-foreground"></div>
+            </div>
+          </div>
           {children}
         </div>
       )}

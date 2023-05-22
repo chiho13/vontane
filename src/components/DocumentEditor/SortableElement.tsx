@@ -48,7 +48,8 @@ export function SortableElement({
         className={classNames(
           classes.sortableElement,
           isDragging && classes.active,
-          "group"
+          "group",
+          element.type === "heading-one" && "items-center"
         )}
         ref={setNodeRef}
         {...sortableAttributes}
@@ -58,17 +59,17 @@ export function SortableElement({
         }}
       >
         {readOnly ? null : (
-          <div className="flex w-[52px] translate-x-[1px] justify-end">
+          <div className="flex h-[24px] w-[46px] justify-end">
             <div className={classNames(classes.addButton)}>{addButton}</div>
             <button
               ref={setActivatorNodeRef}
               {...listeners}
-              className={`${classes.handle} hover:bg-gray-200 dark:hover:bg-accent`}
+              className={`${classes.handle} flex items-center hover:bg-gray-200 dark:hover:bg-accent`}
               contentEditable={false}
             >
               <GripVertical
                 className="stroke-darkgray dark:stroke-muted-foreground"
-                width={20}
+                width={22}
               />
             </button>
           </div>

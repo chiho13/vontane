@@ -1018,11 +1018,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         (isRoot && element.type !== "column" && element.type !== "title") ||
         isInsideColumnCell ? (
           <div
-            className="z-1000 group absolute top-1/2 left-[0px] -mt-5 flex h-10 w-10  cursor-pointer items-center justify-center"
+            className="z-1000 left-0flex group  cursor-pointer items-center justify-center"
             contentEditable={false}
           >
             <button
-              className="addButton rounded-md  ease-in-out hover:bg-gray-200 dark:hover:bg-accent"
+              className="addButton flex h-[24px] w-[24px] items-center justify-center rounded-md ease-in-out hover:bg-gray-200 dark:hover:bg-accent"
               onClick={(event) => {
                 event.preventDefault();
                 event.stopPropagation();
@@ -1030,7 +1030,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               }}
               ref={toggleRef}
             >
-              <Plus className="stroke-darkgray dark:stroke-muted-foreground" />
+              <Plus
+                className="stroke-darkgray dark:stroke-muted-foreground"
+                width={24}
+              />
             </button>
           </div>
         ) : null;
@@ -1628,19 +1631,13 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     <div
       className="relative mx-auto mt-[40px] lg:max-w-[1000px] xl:max-w-[1400px]"
       style={{
-        // maxWidth: windowSize.width > breakpoints.xl ? "1400px" : "95vw",
         width:
           windowSize.width > breakpoints.xl
             ? `${rightSideBarWidth + 800}px`
             : "95vw",
       }}
     >
-      {/* <div className="mx-auto mt-4 justify-start">
-        <TextSpeech />
-      </div> */}
       <Portal>
-        {/* <div className=" fixed flex w-full justify-end lg:w-[1000px] xl:w-[1300px]"> */}
-        {/* <MainToolbar path={activePath} /> */}
         <button
           className="group fixed right-[30px] top-[30px] z-0 hidden rounded  border-gray-300 p-1 transition duration-300 hover:border-brand dark:border-gray-700 dark:hover:border-foreground dark:hover:bg-muted lg:block"
           onClick={() => {
@@ -1653,7 +1650,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             <VscLayoutSidebarRight className="  h-[20px] w-[20px] text-darkergray transition duration-300 group-hover:text-brand dark:text-muted-foreground dark:group-hover:text-foreground" />
           )}
         </button>
-        {/* </div> */}
       </Portal>
       <div className="flex  lg:justify-center xl:px-4">
         <div className="mx-auto block">

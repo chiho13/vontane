@@ -199,12 +199,20 @@ export const ImageElement = React.memo((props) => {
         </DropdownMenu>
       ) : (
         <div tabIndex={-1} className="group flex" contentEditable={false}>
-          <img src={element.url} width={imageWidth} height="auto" ref={ref} />
-          <div className="flex items-center" onMouseDown={handleMouseDown}>
+          <div className="relative">
+            <img src={element.url} width={imageWidth} ref={ref} />
             <div
-              className={`  flex h-full  w-[18px] items-center transition duration-300 xl:pointer-events-auto xl:group-hover:opacity-100 `}
+              className="absolute top-0 right-0 flex  h-full items-center"
+              onMouseDown={handleMouseDown}
             >
-              <div className="mx-auto block h-[80px] w-[5px]  cursor-col-resize rounded bg-[#b4b4b4] dark:bg-muted-foreground"></div>
+              <div
+                className={`  flex h-full  w-[18px] items-center transition duration-300 xl:pointer-events-auto xl:group-hover:opacity-100 `}
+              >
+                <div className="mx-auto block h-[80px] w-[5px]  cursor-col-resize rounded bg-[#b4b4b4] dark:bg-muted-foreground"></div>
+              </div>
+            </div>
+            <div className="absolute top-0 right-2 ">
+              <OptionMenu element={element} />
             </div>
           </div>
           {children}

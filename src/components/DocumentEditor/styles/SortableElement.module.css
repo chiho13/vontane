@@ -19,9 +19,8 @@
 
 .sortableElement {
   display: flex;
-  gap: 6px;
+  gap: 4px;
   position: relative;
-  align-items: start;
   outline: none;
   cursor: text;
   width: 100%;

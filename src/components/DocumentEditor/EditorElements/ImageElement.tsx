@@ -79,9 +79,9 @@ export const ImageElement = React.memo((props) => {
       if (isResizing) {
         // Update the width here
         const newWidth = e.clientX - ref.current.getBoundingClientRect().left;
-        if (newWidth < 150) {
+        if (newWidth < 200) {
           // If it is, set the width to the minimum width
-          setWidth(150);
+          setWidth(200);
         } else {
           // Otherwise, use the new width
           setWidth(newWidth);

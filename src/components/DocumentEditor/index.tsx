@@ -1445,6 +1445,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         const { selection } = editor;
         if (selection) {
           const _currentNodePath = selection.anchor.path.slice(0, -1);
+          // console.log(_currentNodePath);
           setActivePath(JSON.stringify(_currentNodePath));
         }
         if (selection && !Range.isCollapsed(selection)) {

@@ -1039,12 +1039,13 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       }
       const optionMenuRef = elementRefs.get(element);
 
-      const optionMenu =
-        isRoot || isInsideColumnCell ? (
+      const optionMenu = isRoot ? (
+        <div className="flex w-[30px] ">
           <div className="absolute   top-0 right-[10px]  items-center">
             <OptionMenu element={element} ref={optionMenuRef} />
           </div>
-        ) : null;
+        </div>
+      ) : null;
 
       const shouldWrapWithSortableElement =
         (isRoot && element.type !== "column" && element.type !== "title") ||

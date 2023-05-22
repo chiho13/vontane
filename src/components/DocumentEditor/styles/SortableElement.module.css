@@ -1,5 +1,5 @@
 .handle {
-  width: 20px;
+  width: 18px;
   user-select: none;
   border-radius: 4px;
   cursor: grab;
@@ -19,7 +19,7 @@
 
 .sortableElement {
   display: flex;
-  gap: 15px;
+  gap: 6px;
   position: relative;
   align-items: start;
   outline: none;

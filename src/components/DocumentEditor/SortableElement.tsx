@@ -58,7 +58,7 @@ export function SortableElement({
         }}
       >
         {readOnly ? null : (
-          <div className="flex w-[58px] translate-x-[2px] justify-end">
+          <div className="flex w-[52px] translate-x-[1px] justify-end">
             <div className={classNames(classes.addButton)}>{addButton}</div>
             <button
               ref={setActivatorNodeRef}
@@ -90,7 +90,7 @@ export function SortableElement({
             {renderElement({ attributes, children, element })}
           </div>
         </div>
-        <div className="flex w-[30px] ">{optionMenu}</div>
+        {element.type !== "image" && optionMenu}
       </div>
     </div>
   );

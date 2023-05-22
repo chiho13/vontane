@@ -11,12 +11,15 @@ import { withTitle, withCustomDelete } from "@/hoc/withTitle";
 import { genNodeId } from "@/hoc/withID";
 import isUrl from "is-url";
 import { withNormalizePasting } from "@/hoc/withPasting";
+import { withImages } from "@/hoc/withImages";
 
 export function useEditor() {
   const editor = useMemo(
     () =>
-      withNormalizePasting(
-        withCustomDelete(withTitle(withHistory(withReact(createEditor()))))
+      withImages(
+        withNormalizePasting(
+          withCustomDelete(withTitle(withHistory(withReact(createEditor()))))
+        )
       ),
     []
   );

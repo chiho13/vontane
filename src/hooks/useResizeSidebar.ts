@@ -1,12 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { DraggableCore } from "react-draggable";
 
-const useResizeSidebar = (initialWidth, minSidebarWidth, maxSidebarWidth) => {
-  const [sidebarWidth, setSidebarWidth] = useState(initialWidth);
+const useResizeElement = (initialWidth, minSidebarWidth, maxSidebarWidth) => {
+  const [elementWidth, setSidebarWidth] = useState(initialWidth);
   const [isDraggingRightSideBar, setIsDragging] = useState(false);
   const handleDrag = useCallback(
     (e, ui) => {
-      const newSidebarWidth = sidebarWidth - ui.deltaX;
+      const newSidebarWidth = elementWidth - ui.deltaX;
       if (
         newSidebarWidth >= minSidebarWidth &&
         newSidebarWidth <= maxSidebarWidth
@@ -15,14 +14,14 @@ const useResizeSidebar = (initialWidth, minSidebarWidth, maxSidebarWidth) => {
         setIsDragging(true);
       }
     },
-    [sidebarWidth, minSidebarWidth, maxSidebarWidth]
+    [elementWidth, minSidebarWidth, maxSidebarWidth]
   );
 
   const handleDragStop = useCallback(() => {
     setIsDragging(false);
   }, []);
 
-  return { sidebarWidth, handleDrag, handleDragStop, isDraggingRightSideBar };
+  return { elementWidth, handleDrag, handleDragStop, isDraggingRightSideBar };
 };
 
-export default useResizeSidebar;
+export default useResizeElement;

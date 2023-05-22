@@ -8,6 +8,7 @@ export const addImageBlock = (editor, path) => {
     id: genNodeId(),
     url: "",
     type: "image",
+    width: "100%",
     children: [{ text: "" }],
   };
 

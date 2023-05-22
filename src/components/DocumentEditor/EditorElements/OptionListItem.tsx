@@ -4,6 +4,7 @@ import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor, useFocused } from "slate-react";
 import { Check } from "lucide-react";
 import styled from "styled-components";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const StyledOptionListItem = styled.li`
   position: relative;
@@ -23,90 +24,87 @@ const StyledOptionListItem = styled.li`
 `;
 
 // Custom List Item component
-export const OptionListItem = ({ attributes, children, element }) => {
-  const { editor } = useContext(EditorContext);
-  const [checked, setChecked] = useState(element.correctAnswer || false);
-  const focused = useFocused();
+export const OptionListItem = React.memo(
+  ({ attributes, children, element }) => {
+    const { editor } = useContext(EditorContext);
+    const [checked, setChecked] = useState(element.correctAnswer || false);
+    const focused = useFocused();
 
-  const isEmpty =
-    element.children.length === 1 && element.children[0].text === "";
+    // const path = ReactEditor.findPath(editor, element);
+    // console.log(path);
+    const isEmpty =
+      element.children.length === 1 && element.children[0].text === "";
 
-  const shouldShowPlaceholder = isEmpty;
+    const shouldShowPlaceholder = isEmpty;
 
-  useEffect(() => {
-    // Update the local checked state whenever element.correctAnswer changes
-    setChecked(element.correctAnswer || false);
-  }, [element.correctAnswer]);
+    useEffect(() => {
+      // Update the local checked state whenever element.correctAnswer changes
+      setChecked(element.correctAnswer || false);
+    }, [element.correctAnswer]);
 
-  const handleChange = (e) => {
-    const path = ReactEditor.findPath(editor, element);
-    const isSelected = e.target.checked;
+    const handleChange = () => {
+      const path = ReactEditor.findPath(editor, element);
 
-    if (!isSelected && element.correctAnswer) {
-      // Prevent unchecking the currently selected option
-      return;
-    }
+      if (checked) {
+        return;
+      }
+      if (checked) {
+        // If the option is currently checked, uncheck all options
+        const parentPath = Path.parent(path);
+        const [parentNode] = Editor.node(editor, parentPath);
 
-    // Unset correctAnswer for all other siblings if the current option is being set to true
-    if (isSelected) {
-      const parentPath = Path.parent(path);
-      const [parentNode] = Editor.node(editor, parentPath);
+        parentNode.children.forEach((child, index) => {
+          if (child.correctAnswer) {
+            Transforms.setNodes(
+              editor,
+              { correctAnswer: false },
+              { at: [...parentPath, index] }
+            );
+          }
+        });
+      } else {
+        // If the option is currently unchecked, check it and uncheck all other options
+        const parentPath = Path.parent(path);
+        const [parentNode] = Editor.node(editor, parentPath);
 
-      parentNode.children.forEach((child, index) => {
-        if (child.correctAnswer) {
+        parentNode.children.forEach((child, index) => {
+          const isCorrectAnswer = Path.equals(path, [...parentPath, index]);
+
           Transforms.setNodes(
             editor,
-            { correctAnswer: false },
+            { correctAnswer: isCorrectAnswer },
             { at: [...parentPath, index] }
           );
-        }
-      });
-    }
+        });
+      }
+    };
 
-    // Set correctAnswer for the current option
-    Transforms.setNodes(editor, { correctAnswer: isSelected }, { at: path });
-  };
-
-  return (
-    <StyledOptionListItem
-      {...attributes}
-      className={`rounded border-2 bg-white dark:border-gray-700 dark:bg-muted ${
-        checked ? "border-blue-500" : "border-gray-200"
-      }`}
-    >
-      <span
-        data-placeholder={
-          shouldShowPlaceholder
-            ? element.correctAnswer
-              ? "Edit correct answer"
-              : "Enter Option"
-            : ""
-        }
+    return (
+      <StyledOptionListItem
+        {...attributes}
+        className={` rounded border-2 bg-white dark:border-gray-700 dark:bg-muted ${
+          checked ? "border-blue-500 dark:border-brand" : "border-gray-200"
+        }`}
       >
-        {children}
-      </span>
-      <div className="absolute -top-[2px] right-2 flex h-full items-center">
-        <input
-          type="checkbox"
-          id={element.id}
-          className="h-[24px] w-[24px] cursor-pointer opacity-0"
-          checked={checked}
-          onChange={handleChange}
-        />
-      </div>
-      {checked ? (
-        <div className="pointer-events-none absolute right-2  top-0 flex h-full  items-center items-center ">
-          <div className="h-[24px] w-[24px] border-2 border-blue-500">
-            <Check className="absolute right-0 h-[24px] w-[24px] -translate-y-[1px] text-blue-500" />
-          </div>
+        <span
+          data-placeholder={
+            shouldShowPlaceholder
+              ? element.correctAnswer
+                ? "Edit correct answer"
+                : "Enter Option"
+              : ""
+          }
+        >
+          {children}
+        </span>
+        <div className=" absolute top-0 right-2 flex h-full items-center">
+          <Checkbox
+            className="h-[24px] w-[24px]"
+            checked={checked}
+            onCheckedChange={handleChange}
+          />
         </div>
-      ) : (
-        <div className="pointer-events-none absolute  right-2 top-0 flex h-full items-center">
-          <div className="h-[24px] w-[24px] border-2 border-gray-300">
-            <Check className="hidden h-[24px] w-[24px] text-blue-500" />
-          </div>
-        </div>
-      )}
-    </StyledOptionListItem>
-  );
-};
+      </StyledOptionListItem>
+    );
+  }
+);

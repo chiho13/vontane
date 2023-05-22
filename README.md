@@ -37,8 +37,8 @@ currently under development (April)
 - [x] connect database
 - [x] audio player block
 - [x] stripe subscription
-- [x] slide integration (wip)
-- [] image block
+- [x] slide integration
+- [] image block (wip)
 - [] audio trimmer
 - [] musicXML
 - [] map block

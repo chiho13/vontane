@@ -19,7 +19,7 @@ const TitleStyle = styled.div`
     top: 0;
   }
 
-  margin-left: 70px;
+  margin-left: 48px;
   margin-bottom: 12px;
 `;
 

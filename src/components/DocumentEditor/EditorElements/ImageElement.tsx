@@ -202,13 +202,13 @@ export const ImageElement = React.memo((props) => {
           <div className="relative">
             <img src={element.url} width={imageWidth} ref={ref} />
             <div
-              className="absolute top-0 right-0 flex  h-full items-center"
+              className="absolute top-0 -right-[4px] flex  h-full items-center"
               onMouseDown={handleMouseDown}
             >
               <div
-                className={`  flex h-full  w-[18px] items-center transition duration-300 xl:pointer-events-auto xl:group-hover:opacity-100 `}
+                className={`  flex h-full  w-[18px] items-center opacity-0 transition duration-300 lg:group-hover:opacity-100 xl:pointer-events-auto `}
               >
-                <div className="mx-auto block h-[80px] w-[5px]  cursor-col-resize rounded bg-[#b4b4b4] dark:bg-muted-foreground"></div>
+                <div className="mx-auto block h-[60px] w-[6px]  cursor-col-resize rounded-lg bg-[#b4b4b4] dark:border dark:border-foreground dark:bg-background"></div>
               </div>
             </div>
             <div className="absolute top-0 right-2 ">

@@ -1017,10 +1017,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       const addButton =
         (isRoot && element.type !== "column" && element.type !== "title") ||
         isInsideColumnCell ? (
-          <div
-            className="z-1000 left-0flex group  cursor-pointer items-center justify-center"
-            contentEditable={false}
-          >
+          <div className="z-1000 group" contentEditable={false}>
             <button
               className="addButton flex h-[24px] w-[24px] items-center justify-center rounded-md ease-in-out hover:bg-gray-200 dark:hover:bg-accent"
               onClick={(event) => {

@@ -130,11 +130,7 @@ export const ListItem = withListNumbering((props) => {
         transition duration-1000 ease-in-out
         ${isNumberedList && "ml-[21px] list-none"}
         ${isCheckedList && "ml-[21px] list-none"}
-        ${
-          isCheckedList && isChecked
-            ? "text-muted-foreground line-through"
-            : "text-foreground no-underline"
-        }
+        ${isCheckedList && isChecked && "text-muted-foreground line-through"}
         `}
         {...attributes}
         data-id={element.id}

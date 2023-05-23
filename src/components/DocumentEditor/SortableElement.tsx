@@ -49,7 +49,10 @@ export function SortableElement({
           classes.sortableElement,
           isDragging && classes.active,
           "group",
-          element.type === "heading-one" && "items-center"
+          (element.type === "heading-one" ||
+            element.type === "heading-two" ||
+            element.type === "heading-three") &&
+            "items-center"
         )}
         ref={setNodeRef}
         {...sortableAttributes}

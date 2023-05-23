@@ -279,81 +279,89 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
     }, [focusedIndex, isKeyboardNav]);
 
     return (
-      <div className="relative">
-        {!searchBarPosition && (
-          <input
-            ref={searchInputRef}
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            onKeyDown={(e) => {
-              closeOnEmptyInput(e);
-              setIsKeyboardNav(true);
-              handleArrowNavigation(e);
-            }}
-            placeholder="Search"
-            className="absolute -top-[50px] mb-2 w-full rounded-md border border-gray-500 bg-white px-2 py-1 outline-none focus:border-blue-500 dark:bg-muted dark:focus:border-foreground"
-          />
-        )}
-
-        {searchBarPosition && (
-          <input
-            ref={searchInputRef}
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            onKeyDown={(e) => {
-              closeOnEmptyInput(e);
-              setIsKeyboardNav(true);
-              handleArrowNavigation(e);
-            }}
-            placeholder="Search"
-            className="absolute -bottom-[50px] mt-2 w-full rounded-md border border-gray-500 bg-white px-2 py-1 outline-none focus:border-blue-500 dark:bg-muted dark:focus:border-foreground"
-          />
-        )}
+      <>
         <div
-          ref={ref}
-          className="dropdown-menu h-[320px] overflow-y-auto rounded-md border border-gray-200 bg-white p-2 shadow-md dark:border-gray-700 dark:bg-secondary"
-          onMouseLeave={() => {
-            setIsKeyboardNav(false);
-            setFocusedIndex(-1);
+          className="closeOutside z-1  fixed top-0 left-0 h-full w-screen  opacity-50"
+          onClick={() => {
+            setShowDropdown(false);
           }}
-        >
-          <ul>
-            {filteredList.map((item, index) => (
-              <li ref={addToRefs}>
-                <motion.button
-                  key={index}
-                  whileTap={{ scale: 0.97 }}
-                  className={`mb-1 flex w-full items-center gap-2 rounded-md border-2 border-gray-100 p-2 shadow-sm transition duration-300 dark:border-gray-700
+        ></div>
+        <div className="relative">
+          {!searchBarPosition && (
+            <input
+              ref={searchInputRef}
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={(e) => {
+                closeOnEmptyInput(e);
+                setIsKeyboardNav(true);
+                handleArrowNavigation(e);
+              }}
+              placeholder="Search"
+              className="absolute -top-[50px] mb-2 w-full rounded-md border border-gray-500 bg-white px-2 py-1 outline-none focus:border-blue-500 dark:bg-muted dark:focus:border-foreground"
+            />
+          )}
+
+          {searchBarPosition && (
+            <input
+              ref={searchInputRef}
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={(e) => {
+                closeOnEmptyInput(e);
+                setIsKeyboardNav(true);
+                handleArrowNavigation(e);
+              }}
+              placeholder="Search"
+              className="absolute -bottom-[50px] mt-2 w-full rounded-md border border-gray-500 bg-white px-2 py-1 outline-none focus:border-blue-500 dark:bg-muted dark:focus:border-foreground"
+            />
+          )}
+          <div
+            ref={ref}
+            className="dropdown-menu h-[320px] overflow-y-auto rounded-md border border-gray-200 bg-white p-2 shadow-md dark:border-gray-700 dark:bg-secondary"
+            onMouseLeave={() => {
+              setIsKeyboardNav(false);
+              setFocusedIndex(-1);
+            }}
+          >
+            <ul>
+              {filteredList.map((item, index) => (
+                <li ref={addToRefs}>
+                  <motion.button
+                    key={index}
+                    whileTap={{ scale: 0.97 }}
+                    className={`mb-1 flex w-full items-center gap-2 rounded-md border-2 border-gray-100 p-2 shadow-sm transition duration-300 dark:border-gray-700
                     ${
                       focusedIndex === index
                         ? "border-gray-200 bg-gray-200 dark:border-muted-foreground dark:bg-muted"
                         : ""
                     }
                   `}
-                  onMouseOver={() => {
-                    if (isKeyboardNav) return;
-                    setFocusedIndex(index);
-                  }}
-                  onClick={item.action}
-                >
-                  {item.icon || item.image}
-                  <div className="ml-2 flex-1 text-left ">
-                    <span className=" text-sm text-black dark:text-foreground">
-                      {item.name}
-                    </span>
+                    onMouseOver={() => {
+                      if (isKeyboardNav) return;
+                      setFocusedIndex(index);
+                    }}
+                    onClick={item.action}
+                  >
+                    {item.icon || item.image}
+                    <div className="ml-2 flex-1 text-left ">
+                      <span className=" text-sm text-black dark:text-foreground">
+                        {item.name}
+                      </span>
 
-                    <div className="mt-1 overflow-hidden text-ellipsis whitespace-nowrap text-xs text-gray-500">
-                      {item.description}
+                      <div className="mt-1 overflow-hidden text-ellipsis whitespace-nowrap text-xs text-gray-500">
+                        {item.description}
+                      </div>
                     </div>
-                  </div>
-                </motion.button>
-              </li>
-            ))}
-          </ul>
+                  </motion.button>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 );

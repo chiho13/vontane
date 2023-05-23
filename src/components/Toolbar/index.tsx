@@ -3,7 +3,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { FaBold } from "react-icons/fa";
 import { FiItalic, FiUnderline } from "react-icons/fi";
 import { ImStrikethrough, ImLink } from "react-icons/im";
-import { List, ListOrdered } from "lucide-react";
+import { List, ListOrdered, ListChecks } from "lucide-react";
 import { genNodeId } from "@/hoc/withID";
 import { ChangeBlocks } from "../ChangeBlocks";
 import {
@@ -48,7 +48,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 
   const urlInputRef = useRef(null);
 
-  const LIST_TYPES = ["numbered-list", "bulleted-list"];
+  const LIST_TYPES = ["numbered-list", "bulleted-list", "checked-list"];
 
   const getActiveLinkUrl = (editor) => {
     let linkUrl = "";
@@ -271,6 +271,23 @@ export const Toolbar: React.FC<ToolbarProps> = ({
                 height={20}
                 className={`h-[18px] w-[18px] ${
                   isBlockActive(editor, "numbered-list", "type")
+                    ? "text-brand"
+                    : "text-darkblue dark:text-foreground"
+                }`}
+              />
+            </button>
+            <button
+              className="ml-1  mr-1 flex   items-center justify-center rounded-lg  p-[4px] transition duration-300 hover:bg-gray-200 hover:dark:bg-muted"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                toggleBlock(editor, "checked-list");
+              }}
+            >
+              <ListChecks
+                width={20}
+                height={20}
+                className={`h-[18px] w-[18px] ${
+                  isBlockActive(editor, "checked-list", "type")
                     ? "text-brand"
                     : "text-darkblue dark:text-foreground"
                 }`}

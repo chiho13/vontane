@@ -311,6 +311,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         currentNode.children[0].text === "" &&
         currentNode.type !== "equation" &&
         currentNode.type !== "mcq" &&
+        currentNode.type !== "image" &&
         currentNode.type !== "slide";
       console.log(currentNode.type);
       console.log(targetRect.height);
@@ -470,7 +471,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         if (selection) {
           console.log(parentNode.type);
 
-          if (["numbered-list", "bulleted-list"].includes(parentNode.type)) {
+          if (
+            ["numbered-list", "bulleted-list", "checked-list"].includes(
+              parentNode.type
+            )
+          ) {
             const newPath = Path.next(parentPath);
 
             if (Node.string(parentNode) === "") {
@@ -650,7 +655,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
           console.log(currentNode.type);
 
-          if (["numbered-list", "bulleted-list"].includes(currentNode.type)) {
+          if (
+            ["numbered-list", "bulleted-list", "checked-list"].includes(
+              currentNode.type
+            )
+          ) {
             let newProperties = {
               type: "paragraph",
             };
@@ -1470,6 +1479,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 startNode.type === "link" ||
                 startNode.type === "bulleted-list" ||
                 startNode.type === "numbered-list" ||
+                startNode.type === "checked-list" ||
                 startNode.type === "heading-one" ||
                 startNode.type === "heading-two" ||
                 startNode.type === "heading-three"

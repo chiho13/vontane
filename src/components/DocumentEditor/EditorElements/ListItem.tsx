@@ -5,7 +5,7 @@ import { Editor, Path, Node, Transforms } from "slate";
 import styled from "styled-components";
 import { hasSlideElement } from "@/utils/helpers";
 import { RxDotFilled } from "react-icons/rx";
-
+import { Checkbox } from "@/components/ui/checkbox";
 const ListItemStyle = styled.div`
   position: relative;
   li[data-placeholder]::after {
@@ -17,8 +17,7 @@ const ListItemStyle = styled.div`
     top: 0;
     left: 21px;
   }
-
-  // margin-left: 20px;
+  margin-left: 5px;
 `;
 
 const findAllNumberedLists = (nodes) => {
@@ -79,6 +78,8 @@ export const ListItem = withListNumbering((props) => {
   const selected = useSelected();
   const listItemRef = useRef(null);
 
+  const [isChecked, setChecked] = useState(element.checked || false);
+
   useEffect(() => {
     if (editor && path) {
       const isFirstElement = Path.equals(path, [0]);
@@ -97,11 +98,27 @@ export const ListItem = withListNumbering((props) => {
   }, [focused, selected]);
 
   const isNumberedList = listType === "numbered";
+  const isCheckedList = listType === "checkbox";
+  const isBulletList = listType === "bullet";
 
   let placeholderText = "";
   if (element.children[0].text === "") {
-    placeholderText = selected ? "Press '/' for commands" : "List";
+    placeholderText = selected
+      ? "Press '/' for commands"
+      : isCheckedList
+      ? "To-do"
+      : "List";
   }
+
+  const handleCheck = (checked) => {
+    setChecked(checked);
+
+    Transforms.setNodes(
+      editor,
+      { checked }, // New properties
+      { at: path } // Location
+    );
+  };
 
   return (
     <ListItemStyle>
@@ -112,6 +129,8 @@ export const ListItem = withListNumbering((props) => {
         }
         transition duration-1000 ease-in-out
         ${isNumberedList && "ml-[21px] list-none"}
+        ${isCheckedList && "ml-[21px] list-none"}
+        ${isChecked && "text-muted-foreground line-through"}
         `}
         {...attributes}
         data-id={element.id}
@@ -126,6 +145,14 @@ export const ListItem = withListNumbering((props) => {
           >
             {listNumber}.{" "}
           </span>
+        )}
+
+        {isCheckedList && (
+          <Checkbox
+            checked={isChecked}
+            onCheckedChange={handleCheck}
+            className="absolute -translate-x-[24px] translate-y-[4px]"
+          />
         )}
         {children}
       </li>

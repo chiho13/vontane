@@ -186,6 +186,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const [slatevalue, setValue] = useState(initialSlateValue);
   const [ghostslatevalue, setGhostValue] = useState(initialSlateValue);
 
+  const debouncedSetSlateValue = debounce((value) => {
+    setValue(value);
+  }, 300);
   const [currentSlateKey, setCurrentSlateKey] = useState(workspaceId);
   const [activeId, setActiveId] = useState(null);
 
@@ -1713,7 +1716,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                             onChange={(newValue) => {
                               if (!isEqual(slatevalue, newValue)) {
                                 // Compare the current and new values
-                                setValue(newValue);
+                                debouncedSetSlateValue(newValue);
 
                                 console.log(JSON.stringify(newValue));
                                 if (handleTextChange) {
@@ -1961,4 +1964,4 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   );
 };
 
-export default React.memo(DocumentEditor);
+export default DocumentEditor;

@@ -122,6 +122,7 @@ export const ImageElement = React.memo((props) => {
             "bmp",
             "tiff",
             "svg",
+            "webp",
           ];
           const extension = url.split(".").pop();
           return imageExtensions.includes(extension);

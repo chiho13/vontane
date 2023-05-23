@@ -199,7 +199,14 @@ export const ImageElement = React.memo((props) => {
           </DropdownMenuContent>
         </DropdownMenu>
       ) : (
-        <div tabIndex={-1} className="group flex" contentEditable={false}>
+        <div
+          tabIndex={-1}
+          className="group flex"
+          contentEditable={false}
+          style={{
+            width: "calc(100% - 30px)",
+          }}
+        >
           <div className="relative">
             <img src={element.url} width={imageWidth} ref={ref} />
             <div

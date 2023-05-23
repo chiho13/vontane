@@ -438,10 +438,13 @@ const Layout: React.FC<LayoutProps> = ({
 
                 <SidebarItem>
                   <button
-                    className="flex items-center hover:bg-gray-200 dark:hover:bg-accent"
+                    className="flex h-[36px] items-center hover:bg-gray-200 dark:hover:bg-accent"
                     onClick={createWorkspace}
                   >
-                    <Plus className="text-darkergray  dark:text-foreground " />{" "}
+                    <Plus
+                      className="text-darkergray  dark:text-foreground"
+                      width={22}
+                    />{" "}
                     <span className="ml-4 text-sm text-darkergray  dark:text-foreground">
                       Create Workspace
                     </span>

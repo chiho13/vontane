@@ -43,19 +43,13 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
         <p>Hi kirby</p> */}
         <Tabs defaultValue={tab} onValueChange={handleTabChange}>
           <TabsList
-            className={`ring-gray ring-red grid h-10 w-full grid-cols-3  bg-lightgray dark:bg-accent`}
+            className={`ring-gray ring-red grid h-10 w-full grid-cols-2  bg-lightgray dark:bg-accent`}
           >
             <TabsTrigger
               value="suggestions"
               className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
             >
               AI Assist
-            </TabsTrigger>
-            <TabsTrigger
-              value="files"
-              className={`data-[state=active]:bg-brand data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
-            >
-              Files
             </TabsTrigger>
 
             <TabsTrigger
@@ -71,7 +65,6 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
             {/* <TextSpeech /> */}
             Suggested content
           </TabsContent>
-          <TabsContent value="password">My Files</TabsContent>
           <TabsContent value="slide">Doc or Slide Preview</TabsContent>
         </Tabs>
       </div>

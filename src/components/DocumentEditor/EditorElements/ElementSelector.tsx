@@ -70,6 +70,9 @@ export function ElementSelector(props) {
 
     case "numbered-list":
       return <ListItem {...props} listType="numbered" />;
+    case "checked-list":
+      return <ListItem {...props} listType="checkbox" />;
+
     case "question-item":
       return <QuestionItem {...props} />;
     case "equation":

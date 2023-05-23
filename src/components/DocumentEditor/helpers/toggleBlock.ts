@@ -8,7 +8,7 @@ import {
 } from "slate";
 import { ReactEditor } from "slate-react";
 
-const LIST_TYPES = ["numbered-list", "bulleted-list"];
+const LIST_TYPES = ["numbered-list", "bulleted-list", "checked-list"];
 
 export const isBlockActive = (
   editor: BaseEditor & ReactEditor,
@@ -42,7 +42,7 @@ export const toggleBlock = (
   //   match: (n) =>
   //     !Editor.isEditor(n) &&
   //     SlateElement.isElement(n) &&
-  //     LIST_TYPES.includes(n.type),
+  //     n.type === "column-cell",
   //   split: true,
   // });
 

@@ -82,8 +82,8 @@ export const OptionListItem = React.memo(
     return (
       <StyledOptionListItem
         {...attributes}
-        className={` rounded border-2 bg-white dark:border-gray-700 dark:bg-muted ${
-          checked ? "border-blue-500 dark:border-brand" : "border-gray-200"
+        className={` rounded border-2 bg-white dark:border-gray-500 dark:bg-muted ${
+          checked ? "border-blue-500 dark:border-brand" : "border-gray-400"
         }`}
       >
         <span
@@ -99,7 +99,7 @@ export const OptionListItem = React.memo(
         </span>
         <div className=" absolute top-0 right-2 flex h-full items-center">
           <Checkbox
-            className="h-[24px] w-[24px]"
+            className="h-[24px] w-[24px] border-gray-400 dark:border-gray-500"
             checked={checked}
             onCheckedChange={handleChange}
           />

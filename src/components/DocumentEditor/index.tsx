@@ -1029,7 +1029,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             >
               <Plus
                 className="stroke-darkgray dark:stroke-muted-foreground"
-                width={24}
+                width={20}
               />
             </button>
           </div>

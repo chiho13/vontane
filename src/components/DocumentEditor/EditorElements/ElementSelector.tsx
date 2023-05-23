@@ -2,6 +2,7 @@ import { EditorContext } from "@/contexts/EditorContext";
 import React, { useContext } from "react";
 import { ReactEditor } from "slate-react";
 import {
+  LinkElement,
   HeadingElement,
   ParagraphElement,
   DefaultElement,
@@ -43,15 +44,7 @@ export function ElementSelector(props) {
     case "paragraph":
       return <ParagraphElement {...props} />;
     case "link":
-      return (
-        <a
-          {...props.attributes}
-          className="inline text-brand underline dark:text-muted-foreground"
-          href={props.element.url}
-        >
-          {children}
-        </a>
-      );
+      return <LinkElement {...props} />;
     // case "numbered-list":
     //   return (
     //     <ol

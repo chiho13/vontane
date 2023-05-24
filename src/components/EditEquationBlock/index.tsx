@@ -232,12 +232,12 @@ export const EditBlockPopup = React.forwardRef<
 
   return (
     <>
-      <div
+      {/* <div
         className="closeOutside z-1  fixed top-0 left-0 h-full w-screen  opacity-50"
         onClick={() => {
           setShowEditBlockPopup(false);
         }}
-      ></div>
+      ></div> */}
       <EditBlockPopupStyle
         ref={ref}
         className="block rounded-md border border-gray-200 bg-gray-100 p-2 shadow-md dark:border-gray-700 dark:bg-secondary"

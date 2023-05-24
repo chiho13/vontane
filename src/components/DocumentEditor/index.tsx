@@ -164,6 +164,7 @@ import useTextSpeechStatusPolling from "@/hooks/useTextSpeechAPI";
 import { addEditableEquationBlock } from "./helpers/addEquationBlock";
 import useResizeSidebar from "@/hooks/useResizeSidebar";
 import { debounce } from "lodash";
+import { DOMRange } from "slate-react/dist/utils/dom";
 
 export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   workspaceId,
@@ -977,7 +978,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         at: newPath,
         match: (n) => n.type === "equation",
       });
-
       if (insertedEquationNode) {
         const { id } = insertedEquationNode[0] as CustomElement;
         console.log(id);
@@ -990,9 +990,29 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           console.log(currentElement);
           if (currentElement) {
             const targetRect = currentElement.getBoundingClientRect();
+            const spaceBelowTarget = window.innerHeight - targetRect.top;
+
+            let topOffset;
+            let showDropdownAbove = false;
+            console.log(spaceBelowTarget);
+            const dropdownHeight = 280;
+            if (spaceBelowTarget < dropdownHeight) {
+              topOffset = -(dropdownHeight - targetRect.height) + 10;
+              showDropdownAbove = true;
+            }
+            setSearchBarPosition(spaceBelowTarget < dropdownHeight);
+
+            setDropdownEditBlockTop(
+              showDropdownAbove
+                ? targetRect.top + topOffset
+                : targetRect.bottom - 5
+            );
             setDropdownEditBlockLeft(targetRect.left);
-            setDropdownEditBlockTop(targetRect.bottom + 60);
+
             console.log(targetRect.left);
+
+            ReactEditor.focus(editor);
+            Transforms.select(editor, newPath);
           }
         }, 0);
       }
@@ -1728,6 +1748,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                           >
                             <Droppable>
                               <Editable
+                                scrollSelectionIntoView={(
+                                  editor: ReactEditor,
+                                  domRange: DOMRange
+                                ) => {}}
                                 className=" relative"
                                 style={{
                                   height: "calc(100vh - 170px)",

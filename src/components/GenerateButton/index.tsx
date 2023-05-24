@@ -18,7 +18,7 @@ function GenerateButton({
     <GenerateButtonStyle
       className="rounded-md border-2 bg-white  duration-200 disabled:opacity-50  dark:border-muted-foreground dark:bg-muted dark:text-foreground dark:hover:border-muted-foreground dark:hover:bg-muted-foreground dark:hover:text-background dark:disabled:border-gray-500 dark:disabled:bg-transparent  dark:disabled:text-gray-300 "
       isDisabled={isDisabled}
-      // onClick={onClick}
+      onClick={onClick}
       disabled={isDisabled || audioIsLoading}
     >
       {audioIsLoading ? (

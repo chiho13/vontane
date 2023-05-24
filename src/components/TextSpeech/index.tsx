@@ -12,6 +12,7 @@ import { Mirt } from "@/plugins/audioTrimmer";
 import { Transforms, Editor, Node } from "slate";
 import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor } from "slate-react";
+import AudioPLayer from "@/components/AudioPlayer";
 
 const useDownloadFile = (url, fileName) => {
   const [file, setFile] = useState(null);
@@ -50,18 +51,28 @@ export const TextSpeech: React.FC<TextSpeechProps> = ({
   const { textSpeech, selectedTextSpeech, audioIsLoading, setAudioIsLoading } =
     useTextSpeech();
 
+  const [audioURL, setAudioURL] = useState("");
+  const [fileName, setFileName] = useState("");
   const [inputText, setInputText] = useState<string[] | null>(textSpeech);
-  const {
-    data: texttospeechdata,
-    error: texttospeecherror,
-    isLoading: texttospeechloading,
-    refetch: texttospeechrefetch,
-  } = api.texttospeech.startConversion.useQuery(
-    { voice: selectedVoiceId, content: inputText },
-    {
-      enabled: false,
+
+  const startTTS = api.texttospeech.startConversion.useMutation();
+
+  const createTTSAudio = async () => {
+    try {
+      const response = await startTTS.mutateAsync({
+        voice_id: selectedVoiceId,
+        content: "Good Morning",
+      });
+      if (response) {
+        console.log(response);
+        setAudioIsLoading(false);
+        setAudioURL(response.url);
+        setFileName(response.fileName);
+      }
+    } catch (error) {
+      console.error("Error:", error);
     }
-  );
+  };
 
   useEffect(() => {
     if (selectedTextSpeech) {
@@ -86,36 +97,21 @@ export const TextSpeech: React.FC<TextSpeechProps> = ({
     }
   }, [selectedVoiceId, textSpeech]);
 
-  useEffect(() => {
-    if (audioIsLoading && !texttospeechloading) {
-      if (texttospeechdata) {
-        setTranscriptionId(texttospeechdata.transcriptionId);
-        console.log(texttospeechdata);
-      }
-
-      if (texttospeecherror) {
-        console.error(texttospeecherror);
-        // Handle the error as needed
-      }
-    }
-  }, [texttospeechdata, texttospeecherror, texttospeechloading]);
-
   async function generateAudio(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     event.stopPropagation();
     setAudioIsLoading(true);
-    setTranscriptionId("");
 
-    texttospeechrefetch();
+    createTTSAudio();
   }
 
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
 
   useEffect(() => {
     if (
-      selectedVoiceId &&
-      textSpeech &&
-      !(Array.isArray(textSpeech) && textSpeech.length === 0)
+      selectedVoiceId
+      // textSpeech &&
+      // !(Array.isArray(textSpeech) && textSpeech.length === 0)
     ) {
       setIsDisabled(false);
     } else {
@@ -125,13 +121,7 @@ export const TextSpeech: React.FC<TextSpeechProps> = ({
 
   return (
     <>
-      <div className="relative mt-4 flex items-center lg:max-w-[980px]">
-        {/* <label className="text-bold mb-2 flex justify-end text-sm text-gray-400">
-          {!isSelected
-            ? "Convert workspace to audio"
-            : "Convert selected text to audio"}
-        </label> */}
-      </div>
+      <div className="relative mt-4 flex items-center lg:max-w-[980px]"></div>
       <div className="relative flex items-center lg:max-w-[980px]">
         <div className="mr-2">
           <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
@@ -142,6 +132,7 @@ export const TextSpeech: React.FC<TextSpeechProps> = ({
           onClick={generateAudio}
         />
       </div>
+      {audioURL && <AudioPLayer audioURL={audioURL} fileName={fileName} />}
     </>
   );
 };

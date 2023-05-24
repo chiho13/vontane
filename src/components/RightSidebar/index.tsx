@@ -49,7 +49,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
               value="suggestions"
               className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
             >
-              AI Assist
+              Text to Audio
             </TabsTrigger>
 
             <TabsTrigger
@@ -62,8 +62,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
           </TabsList>
 
           <TabsContent value="suggestions">
-            {/* <TextSpeech /> */}
-            Suggested content
+            <TextSpeech />
           </TabsContent>
           <TabsContent value="slide">Doc or Slide Preview</TabsContent>
         </Tabs>

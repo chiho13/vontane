@@ -5,8 +5,7 @@ export async function uploadAudioToSupabase(
   prisma: PrismaClient,
   supabaseServerClient: SupabaseClient,
   audioUrl: string,
-  fileName: string,
-  workspaceId: string
+  fileName: string
 ): Promise<string> {
   try {
     const {

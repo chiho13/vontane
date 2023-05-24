@@ -2,21 +2,21 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 import { uploadAudioToSupabase } from "@/server/lib/uploadAudio";
+import { nanoid } from "nanoid";
 
-const secretkey = process.env.PLAYHT_SECRETKEY;
+const secretkey = process.env.ELEVENLABS_APIKEY;
 const userId = process.env.PLAYHT_USERID;
 
 export const texttospeechRouter = createTRPCRouter({
   getVoices: protectedProcedure.query(async () => {
-    const url = "https://play.ht/api/v1/getVoices?ultra=true";
+    const url = "https://api.elevenlabs.io/v1/voices";
 
     try {
       const response = await fetch(url, {
         method: "GET",
         headers: {
-          "Content-Type": "application/json",
-          Authorization: secretkey!,
-          "X-User-ID": userId!,
+          accept: "application/json",
+          "xi-api-key": secretkey,
         },
       });
 
@@ -33,27 +33,49 @@ export const texttospeechRouter = createTRPCRouter({
   startConversion: protectedProcedure
     .input(
       z.object({
-        voice: z.string(),
-        content: z.array(z.string()),
+        voice_id: z.string(),
+        content: z.string(),
       })
     )
-    .query(async ({ input }) => {
-      const url = "https://play.ht/api/v1/convert";
-      const { voice, content } = input;
+    .mutation(async ({ ctx, input }) => {
+      const url = `https://api.elevenlabs.io/v1/text-to-speech/${input.voice_id}`;
+      const { supabaseServerClient } = ctx;
+      const requestbody = {
+        text: input.content,
+        model_id: "eleven_monolingual_v1",
+        voice_settings: {
+          stability: 0,
+          similarity_boost: 0,
+        },
+      };
 
       try {
         const response = await fetch(url, {
           method: "POST",
           headers: {
+            accept: "audio/mpeg",
+            "xi-api-key": secretkey,
             "Content-Type": "application/json",
-            Authorization: secretkey!,
-            "X-User-ID": userId!,
           },
-          body: JSON.stringify({ voice, content }),
+          body: JSON.stringify(requestbody),
         });
 
-        const data = await response.json();
-        return data;
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const blob = await response.blob();
+        const audioUrl = URL.createObjectURL(blob);
+
+        const fileName = `${nanoid()}.mp3`;
+        // return audioUrl;
+        const uploadedUrl = await uploadAudioToSupabase(
+          ctx.prisma,
+          supabaseServerClient,
+          audioUrl,
+          fileName
+        );
+        return { url: uploadedUrl, fileName };
       } catch (error) {
         console.error(error);
         throw new TRPCError({
@@ -79,8 +101,7 @@ export const texttospeechRouter = createTRPCRouter({
           ctx.prisma,
           supabaseServerClient,
           audioURL,
-          fileName,
-          workspaceId
+          fileName
         );
         return { url: uploadedUrl, fileName };
 

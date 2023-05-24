@@ -43,32 +43,28 @@ export const VoiceDropdownStyle = styled.div`
 
   .dropdown_table_wrapper {
     display: block;
-    overflow-y: scroll;
+
     ${mq.lg`
       height: 500px;
       `}
   }
 
   .dropdown_table_wrapper::-webkit-scrollbar {
-    width: 10px;
+    width: 6px;
     height: 10px;
     border-radius: 5px;
   }
 
   .dropdown_table_wrapper::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: transparent;
     border-radius: 5px;
-
-    .dark & {
-      background: hsl(216 28% 21%);
-    }
   }
 
   .dropdown_table_wrapper::-webkit-scrollbar-thumb {
-    background: #aaaaaa;
+    background: #dddddd;
     border-radius: 5px;
     .dark & {
-      background: hsl(216 28% 12%);
+      background: hsl(216 28% 20%);
     }
   }
 

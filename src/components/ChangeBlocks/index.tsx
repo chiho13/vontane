@@ -156,6 +156,7 @@ export const ChangeBlocks = ({ openLink }) => {
                 {changeBlockElements.map((element, index) => {
                   return (
                     <button
+                      key={index}
                       onMouseOver={() => {
                         if (isKeyboardNav) return;
                         setFocusedIndex(index);

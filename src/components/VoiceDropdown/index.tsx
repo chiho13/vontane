@@ -170,13 +170,9 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
     }
   );
 
-  console.log(ElevenLabsVoiceList);
-
   const generatedVoices = ElevenLabsVoiceList?.voices
     .filter((el) => el.category === "generated")
     .sort((a, b) => a.labels.accent.localeCompare(b.labels.accent));
-
-  console.log(generatedVoices);
 
   const filteredVoices = useMemo(() => {
     if (filters.length === 0) {
@@ -212,7 +208,6 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
     () => filteredVoices?.length === 0 && filters.length > 0,
     [filteredVoices, filters]
   );
-  console.log(filteredVoices);
 
   const stopButtonRef = useRef<HTMLDivElement>(null);
   const desktopbreakpoint = window.screen.width > breakpoints.lg;

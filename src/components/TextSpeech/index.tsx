@@ -75,14 +75,9 @@ export const TextSpeech: React.FC<TextSpeechProps> = ({
   };
 
   useEffect(() => {
-    if (selectedTextSpeech) {
-      setInputText(selectedTextSpeech);
-      console.log(selectedTextSpeech);
-    } else if (textSpeech) {
-      setInputText(textSpeech);
-      console.log(textSpeech);
-    }
-  }, [selectedTextSpeech, textSpeech]);
+    setInputText(textSpeech);
+    console.log(textSpeech);
+  }, [textSpeech]);
 
   useEffect(() => {
     if (
@@ -102,7 +97,8 @@ export const TextSpeech: React.FC<TextSpeechProps> = ({
     event.stopPropagation();
     setAudioIsLoading(true);
 
-    createTTSAudio();
+    // createTTSAudio();
+    console.log(textSpeech);
   }
 
   const [isDisabled, setIsDisabled] = useState<boolean>(true);

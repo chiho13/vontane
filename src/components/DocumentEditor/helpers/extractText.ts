@@ -4,30 +4,43 @@ export function extractTextValues(data) {
   function traverse(item) {
     let accumulator = [];
 
-    if (item.type === "title") {
+    if (
+      item.type === "title" ||
+      item.type === "heading-one" ||
+      item.type === "heading-two" ||
+      item.type === "heading-three"
+    ) {
       accumulator.push(
         ...item.children.map((child) => {
           let text = child.text;
-
-          // Replace % with " percent"
-          text = textRegex(text);
 
           return `${text}.`;
         })
       );
     }
 
-    if (item.type === "paragraph") {
-      accumulator.push(
-        ...item.children.map((child) => {
-          let text = child.text || (child.blank ? "BLANK" : "");
+    if (
+      item.type === "paragraph" ||
+      item.type === "checked-list" ||
+      item.type === "numbered-list" ||
+      item.type === "bulleted-list"
+    ) {
+      let paragraphText = "";
+      item.children.forEach((child) => {
+        if (child.type === "link") {
+          paragraphText += child.children[0].text;
+        } else {
+          paragraphText += child.text || (child.blank ? "BLANK" : "");
+        }
+      });
 
-          // Replace % with " percent"
-          text = textRegex(text);
+      // Replace % with " percent"
+      paragraphText = textRegex(paragraphText);
 
-          return text;
-        })
-      );
+      if (paragraphText.trim() !== "") {
+        // Check if text is not empty
+        accumulator.push(paragraphText);
+      }
     }
 
     if (item.type === "equation" && item.altText) {
@@ -37,25 +50,18 @@ export function extractTextValues(data) {
     if (item.type === "mcq") {
       // questionCounter++;
       const question = item.children.find(
-        (child) => child.type === "list-item"
+        (child) => child.type === "question-item"
       );
 
+      let questionText = "";
       if (question) {
-        const questionText = question.children
-          .map((child) => {
-            if (child.blank) {
-              return " BLANK ";
-            }
-            return child.text;
-          })
+        questionText = question.children
+          .map((child) => (child.blank ? " BLANK " : child.text))
           .join("");
-
-        if (item.questionNumber) {
-          accumulator.push(`Question ${item.questionNumber}: ${questionText}`);
-        }
       }
 
       const options = item.children.find((child) => child.type === "ol");
+      let optionsText = "";
       if (options) {
         const pronunciationAlphabet = [
           "Aye",
@@ -92,15 +98,19 @@ export function extractTextValues(data) {
           const isLastOption = index === options.children.length - 1;
 
           if (isFirstOption) {
-            accumulator.push(
-              `Is it ${optionLetter}. ${option.children[0].text}.`
-            );
+            optionsText += ` Is it ${optionLetter}. ${option.children[0].text}.`;
           } else if (isLastOption) {
-            accumulator.push(`or ${optionLetter}. ${option.children[0].text}.`);
+            optionsText += ` or ${optionLetter}. ${option.children[0].text}.`;
           } else {
-            accumulator.push(`${optionLetter}. ${option.children[0].text}.`);
+            optionsText += ` ${optionLetter}. ${option.children[0].text}.`;
           }
         });
+      }
+
+      if (item.questionNumber) {
+        accumulator.push(
+          `Question ${item.questionNumber}: ${questionText}${optionsText}`
+        );
       }
     }
 

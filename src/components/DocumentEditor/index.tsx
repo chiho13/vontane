@@ -263,8 +263,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     setFetchWorkspaceIsLoading(false);
     // setGhostValue(initialSlateValue);
     setCurrentSlateKey(generateKey());
-    // const extractedText = extractTextValues(initialSlateValue);
-    // setTextSpeech(extractedText);
+    const extractedText = extractTextValues(initialSlateValue);
+    setTextSpeech(extractedText);
     console.log(editor.children);
   }, [initialSlateValue, workspaceId]);
 

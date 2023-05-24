@@ -1,9 +1,10 @@
 // SlideBreak.js
 import { EditorContext } from "@/contexts/EditorContext";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { ReactEditor } from "slate-react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useTheme } from "styled-components";
+import { Transforms } from "slate";
 
 const findSlideBreakElements = (nodes: any[]) => {
   let slideBreakElements: any[] = [];
@@ -36,27 +37,24 @@ const withSlideNumbering = (Component) => {
     const slideNumberTop = slideBreakIndex + 2;
     const slideNumberBottom = slideBreakIndex + 2;
 
-    return (
-      <Component
-        {...props}
-        slideNumbers={
-          isAdjacent
-            ? { slideNumberTop, slideNumberBottom: null }
-            : isLastSlide
-            ? { slideNumberTop, slideNumberBottom }
-            : { slideNumberTop, slideNumberBottom: null }
-        }
-      />
-    );
+    return <Component {...props} slideNumber={slideNumberTop} />;
   };
 };
 
 export const SlideBreak = withSlideNumbering(
-  ({ attributes, children, element, slideNumbers }) => {
+  ({ attributes, children, element, slideNumber }) => {
     const { editor } = useContext(EditorContext);
     const path = ReactEditor.findPath(editor, element);
 
     const theme = useTheme();
+
+    useEffect(() => {
+      Transforms.setNodes(
+        editor,
+        { slideNumber }, // New properties
+        { at: path } // Location
+      );
+    });
 
     return (
       <div
@@ -78,7 +76,7 @@ export const SlideBreak = withSlideNumbering(
               <div
                 className={`w-10 text-center text-base font-semibold text-brand dark:text-foreground`}
               >
-                {slideNumbers.slideNumberTop}
+                {slideNumber}
               </div>
             </div>
           </div>

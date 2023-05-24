@@ -32,9 +32,9 @@ const SampleAudioVoice: FunctionComponent<SampleAudioVoiceProps> = ({
       onKeyDown={handleKeyDown}
     >
       {isPlaying ? (
-        <StopCircle className="h-8 w-8 stroke-foreground" />
+        <StopCircle className="h-8 w-8 stroke-foreground hover:stroke-brand" />
       ) : (
-        <PlayCircle className="h-8 w-8 stroke-foreground" />
+        <PlayCircle className="h-8 w-8 stroke-foreground hover:stroke-brand" />
       )}
     </SampleAudioVoiceStyle>
   );

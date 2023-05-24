@@ -3,6 +3,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { FaBold } from "react-icons/fa";
 import { FiItalic, FiUnderline } from "react-icons/fi";
 import { ImStrikethrough, ImLink } from "react-icons/im";
+import { MdChecklist } from "react-icons/md";
 import { List, ListOrdered, ListChecks } from "lucide-react";
 import { genNodeId } from "@/hoc/withID";
 import { ChangeBlocks } from "../ChangeBlocks";
@@ -283,7 +284,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
                 toggleBlock(editor, "checked-list");
               }}
             >
-              <ListChecks
+              <MdChecklist
                 width={20}
                 height={20}
                 className={`h-[18px] w-[18px] ${

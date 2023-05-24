@@ -18,8 +18,6 @@ export const FilterDropdownStyle: StyledComponent<"div", any> = styled.div`
   }
 
   .filter_optionItems {
-    text-transform: capitalize;
-
     img {
       margin-right: 10px;
     }

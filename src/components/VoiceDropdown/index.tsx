@@ -32,13 +32,6 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 
-import {
-  fetchVoices,
-  getAccents,
-  getAges,
-  getVoiceStyles,
-  getTempos,
-} from "../../api/getVoicesApi";
 import { Voice } from "../../types/voice";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { Button } from "../ui/button";
@@ -106,8 +99,7 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
     useState<string>("Choose a voice");
 
   const [voices, setVoices] = useState<Voice[]>([]);
-  const [accents, setAccents] = useState<Filter[]>([]);
-  const [ages, setAges] = useState<Filter[]>([]);
+
   const [voiceStyles, setVoiceStyles] = useState<Filter[]>([]);
   const [tempos, setTempos] = useState<string[]>([]);
   const [filters, setFilters] = useState<Filter[]>([]);
@@ -128,6 +120,32 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
     },
   ];
 
+  const accents = [
+    {
+      key: "accent",
+      value: "british",
+    },
+    {
+      key: "accent",
+      value: "american",
+    },
+    {
+      key: "accent",
+      value: "australian",
+    },
+  ];
+  const ages = [
+    { key: "age", value: "young" },
+    {
+      key: "age",
+      value: "middle_aged",
+    },
+    {
+      key: "age",
+      value: "old",
+    },
+  ];
+
   const [selectedFilterOption, setSelectedFilterOption] =
     useState<FilterOption>({ key: "", value: "" });
 
@@ -144,15 +162,32 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
 
   const [isOpen, setActiveFilter] = useState<string>("");
 
-  const filteredVoices = useMemo<Voice[]>(() => {
+  const { data: ElevenLabsVoiceList } = api.texttospeech.getVoices.useQuery(
+    undefined,
+    {
+      cacheTime: 24 * 60 * 60 * 1000, // Cache data for 24 hours
+      staleTime: 24 * 60 * 60 * 1000, // Data is considered fresh for 24 hours
+    }
+  );
+
+  console.log(ElevenLabsVoiceList);
+
+  const generatedVoices = ElevenLabsVoiceList?.voices
+    .filter((el) => el.category === "generated")
+    .sort((a, b) => a.labels.accent.localeCompare(b.labels.accent));
+
+  console.log(generatedVoices);
+
+  const filteredVoices = useMemo(() => {
     if (filters.length === 0) {
-      return voices;
+      return generatedVoices;
     }
 
-    let filtered = voices.filter((voice) => {
+    let filtered = generatedVoices?.filter((voice) => {
       return filters.every((filter) => {
+        console.log(voice.labels[filter.key]);
         // Element implicitly has an 'any' type because expression of type 'string' can't be used to index type 'Voice'.
-        return voice[filter.key] === filter.value.toLowerCase();
+        return voice.labels[filter.key] === filter.value.toLowerCase();
       });
     });
 
@@ -163,7 +198,7 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
     ) {
       filtered = filtered.filter((voice) => {
         return (
-          voice[selectedFilterOption.key] ===
+          voice.labels[selectedFilterOption.key] ===
           selectedFilterOption.value.toLowerCase()
           // Element implicitly has an 'any' type because expression of type 'string' can't be used to index type 'Voice'.
         );
@@ -171,25 +206,16 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
     }
 
     return filtered;
-  }, [voices, filters, selectedFilterOption]);
+  }, [generatedVoices, filters, selectedFilterOption]);
+
+  const isFiltering = useMemo(
+    () => filteredVoices?.length === 0 && filters.length > 0,
+    [filteredVoices, filters]
+  );
+  console.log(filteredVoices);
 
   const stopButtonRef = useRef<HTMLDivElement>(null);
   const desktopbreakpoint = window.screen.width > breakpoints.lg;
-
-  const queryResult = api.texttospeech.getVoices.useQuery(undefined, {
-    cacheTime: 24 * 60 * 60 * 1000, // Cache data for 24 hours
-    staleTime: 24 * 60 * 60 * 1000, // Data is considered fresh for 24 hours
-  });
-
-  useEffect(() => {
-    if (queryResult.data) {
-      const fetchedVoices = queryResult.data.voices || [];
-      setVoices(fetchedVoices);
-      setAccents(getAccents(fetchedVoices));
-      setAges(getAges(fetchedVoices));
-      setVoiceStyles(getVoiceStyles(fetchedVoices));
-    }
-  }, [queryResult?.data]);
 
   function handleVoiceSelection(voice: string, name: string): void {
     setSelectedVoiceId(voice);
@@ -218,9 +244,9 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
       }
       let newAudioElement = null;
       if (filters.length > 0) {
-        newAudioElement = new Audio(filteredVoices[index].sample);
+        newAudioElement = new Audio(filteredVoices[index].preview_url);
       } else {
-        newAudioElement = new Audio(voices[index].sample);
+        newAudioElement = new Audio(generatedVoices[index].preview_url);
       }
 
       newAudioElement.play();
@@ -329,11 +355,6 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
     setActiveFilter("");
   }
 
-  const isFiltering = useMemo(
-    () => filteredVoices.length === 0 && filters.length > 0,
-    [filteredVoices, filters]
-  );
-
   function clearFilters(): void {
     // setIsFiltering(false);
     setFilters([]);
@@ -359,7 +380,12 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
   }
 
   interface VoiceRowProps {
-    voice: Voice;
+    voice: {
+      voice_id: string;
+      name: string;
+      labels: { age: string; gender: string };
+      preview_url: {};
+    };
     index: number;
   }
 
@@ -370,11 +396,11 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
     return (
       <tr
         key={index}
-        onClick={(e) => handleVoiceSelection(voice.voiceId, voice.name)}
+        onClick={(e) => handleVoiceSelection(voice.voice_id, voice.name)}
         className="cursor-pointer transition duration-200 hover:bg-gray-200 hover:dark:bg-accent"
         tabIndex={0}
         role="row"
-        aria-label={`Selected Voice: ${voice.name}, ${voice.accent} accent, ${voice.age} age, ${voice.style} style, ${voice.tempo} tempo`}
+        // aria-label={`Selected Voice: ${voice.name}, ${voice.accent} accent, ${voice.age} age, ${voice.style} style, ${voice.tempo} tempo`}
       >
         <td className="voiceSampleAndName flex items-center text-sm sm:text-base">
           <MemoizedSampleAudioVoice
@@ -390,26 +416,26 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
           />
           {voice.name}
         </td>
-        <td>{voice.gender}</td>
+        <td>{voice.labels.gender}</td>
         <td>
           <span className="flex items-center text-sm sm:text-base">
             <Image
-              src={flags[voice.accent]}
-              alt={voice.accent}
+              src={flags[voice.labels.accent]}
+              alt={voice.labels.accent}
               width={28}
               height={28}
               className="flag-icon"
             />
 
-            {desktopbreakpoint && voice.accent}
+            {voice.labels.accent}
           </span>
         </td>
-        {desktopbreakpoint && (
-          <>
-            <td className="text-sm sm:text-base">{voice.age}</td>
-            <td className="text-sm sm:text-base">{voice.style}</td>
-          </>
-        )}
+
+        <td className="text-sm sm:text-base">
+          {voice.labels.age === "middle_aged"
+            ? "middle-aged"
+            : voice.labels.age}
+        </td>
       </tr>
     );
   };
@@ -449,7 +475,7 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
             {selectedItemText} <ChevronDown className="ml-4 w-4" />
           </Button>
         </DialogTrigger>
-        <DialogContent className="max-h-[80vh] p-0 sm:max-w-[900px]">
+        <DialogContent className="max-h-[80vh] p-0 sm:max-w-[750px]">
           {/* <DialogHeader
             <DialogTitle>Edit profile</DialogTitle>
             <DialogDescription>
@@ -468,7 +494,7 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
             {desktopbreakpoint && (
               <div>
                 {filters.length > 0 && (
-                  <div className="filter_label inline-flex justify-center bg-white px-4 py-2 text-sm font-medium text-gray-700  dark:bg-muted ">
+                  <div className="filter_label inline-flex justify-center bg-white px-4 py-2 text-sm font-medium  text-gray-700 dark:bg-background ">
                     <div>
                       <span className="dark:text-muted-foreground">
                         Filters:
@@ -526,7 +552,7 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
               </div>
             )}
 
-            {!desktopbreakpoint && (
+            {/* {!desktopbreakpoint && (
               <div className="grid grid-cols-3 border-b border-gray-400">
                 <div className="flex justify-start p-3">
                   <button
@@ -537,7 +563,7 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
                     <Filter color="#007AFF" className="w-4" />
                   </button>
                 </div>
-
+         
                 <div className="text-bold flex items-center justify-center">
                   Choose a Voice
                 </div>
@@ -550,6 +576,7 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
                   </button>
                 </div>
               </div>
+              
             )}
             {!desktopbreakpoint && (
               <MobileFilterDropdown
@@ -562,7 +589,7 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
                 ages={ages}
                 voiceStyles={voiceStyles}
               />
-            )}
+            )} */}
 
             <div className=" dropdown_table_wrapper table-responsive  h-[70vh] overflow-auto">
               <table className="dropdown_table w-full table-auto ">
@@ -605,22 +632,11 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
                           isOpen={isOpen === "age"}
                         />
                       </th>
-                      <th className="text-left">
-                        <FilterDropdown
-                          id="style"
-                          options={voiceStyles}
-                          defaultTitle="Style"
-                          onChange={onFilterChange}
-                          ref={voiceStylesFilterRef}
-                          setActiveFilter={setActiveFilter}
-                          isOpen={isOpen === "style"}
-                        />
-                      </th>
                     </tr>
                   )}
                 </thead>
 
-                <tbody className="h-[500px] w-full">
+                <tbody className="w-full">
                   {filteredVoices &&
                     filteredVoices.map((voice, index) => (
                       <VoiceRow

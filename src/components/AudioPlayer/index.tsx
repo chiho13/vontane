@@ -15,10 +15,9 @@ import { IoIosPlay, IoIosPause } from "react-icons/io";
 interface Props {
   audioURL: string | null;
   fileName: string;
-  element: any;
 }
 
-function AudioPlayer({ audioURL, fileName, element }: Props): JSX.Element {
+function AudioPlayer({ audioURL, fileName }: Props): JSX.Element {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [seekValue, setSeekValue] = useState<number>(0);
   const [seekMax, setSeekMax] = useState<number>(0);
@@ -212,9 +211,9 @@ function AudioPlayer({ audioURL, fileName, element }: Props): JSX.Element {
       <div className="ml-4">
         <DownloadButton audioURL={audioURL} fileName={fileName} />
       </div>
-      <div className="ml-4">
+      {/* <div className="ml-4">
         <OptionMenu element={element} />
-      </div>
+      </div> */}
     </AudioPlayerStyle>
   );
 }

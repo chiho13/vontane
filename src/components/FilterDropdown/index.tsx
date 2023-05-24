@@ -125,7 +125,9 @@ function Filter(
                             alt={option.value}
                           />
                         )}
-                        {option.value}
+                        {option.value === "middle_aged"
+                          ? "middle-aged"
+                          : option.value}
                       </span>
                     </a>
                   </li>

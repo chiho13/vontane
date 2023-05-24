@@ -933,7 +933,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     setactiveEditEquationPath((prevPath) =>
       prevPath === currentPathString ? null : currentPathString
     );
-    const spaceBelowTarget = window.innerHeight - targetRect.bottom;
+    const spaceBelowTarget = window.innerHeight - targetRect.top;
     const [currentNode] = Editor.node(editor, path);
 
     setCurrentLatex(currentNode.latex);
@@ -944,16 +944,17 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     setShowEditBlockPopup(true);
     let topOffset;
     let showDropdownAbove = false;
-    const dropdownHeight = 370;
+    console.log(spaceBelowTarget);
+    const dropdownHeight = 280;
     if (spaceBelowTarget < dropdownHeight) {
-      topOffset = -(dropdownHeight - targetRect.height - 10);
+      topOffset = -(dropdownHeight - targetRect.height) + 10;
       showDropdownAbove = true;
     }
     setSearchBarPosition(spaceBelowTarget < dropdownHeight);
 
     const equationHeight = _element.offsetHeight;
     setDropdownEditBlockTop(
-      showDropdownAbove ? targetRect.top + topOffset : targetRect.bottom + 10
+      showDropdownAbove ? targetRect.top + topOffset : targetRect.bottom - 5
     );
     setDropdownEditBlockLeft(targetRect.left);
   };

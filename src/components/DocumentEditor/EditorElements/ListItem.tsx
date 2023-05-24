@@ -127,7 +127,7 @@ export const ListItem = withListNumbering((props) => {
         className={` ${
           selectedElementID === element.id ? " bg-[#E0EDFB]" : "bg-transparent"
         }
-        transition duration-1000 ease-in-out
+        transition duration-200 ease-in-out
         ${isNumberedList && "ml-[21px] list-none"}
         ${isCheckedList && "ml-[21px] list-none"}
         ${isCheckedList && isChecked && "text-muted-foreground line-through"}

@@ -33,5 +33,5 @@ export const addEditableEquationBlock = (latex: string, editor, path: Path) => {
     newPath = Path.next(path);
   }
 
-  return newPath;
+  return { newPath, id: equationId };
 };

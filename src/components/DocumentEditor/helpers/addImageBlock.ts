@@ -4,8 +4,9 @@ import { ReactEditor } from "slate-react";
 import { genNodeId } from "@/hoc/withID";
 
 export const addImageBlock = (editor, path) => {
+  const id = genNodeId();
   const imageNode = {
-    id: genNodeId(),
+    id,
     url: "",
     type: "image",
     width: "100%",
@@ -23,10 +24,10 @@ export const addImageBlock = (editor, path) => {
     Transforms.insertNodes(editor, imageNode, { at: path });
 
     newPath = path;
-    return newPath;
   } else {
     Transforms.insertNodes(editor, imageNode, { at: Path.next(path) });
     newPath = Path.next(path);
-    return newPath;
   }
+
+  return { newPath, id };
 };

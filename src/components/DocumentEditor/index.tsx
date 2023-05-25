@@ -6,6 +6,7 @@ import React, {
   useRef,
   useContext,
   createContext,
+  useLayoutEffect,
 } from "react";
 import {
   createEditor,
@@ -20,6 +21,8 @@ import {
   Text,
   Point,
 } from "slate";
+
+import { ImageEmbedLink } from "@/components/DocumentEditor/EditorElements/ImageElement";
 
 import { isEqual } from "lodash";
 import { EditorContext } from "@/contexts/EditorContext";
@@ -165,6 +168,11 @@ import { addEditableEquationBlock } from "./helpers/addEquationBlock";
 import useResizeSidebar from "@/hooks/useResizeSidebar";
 import { debounce } from "lodash";
 import { DOMRange } from "slate-react/dist/utils/dom";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
 export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   workspaceId,
@@ -181,6 +189,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     setShowEditBlockPopup,
     activePath,
     setActivePath,
+    selectedElementID,
     setSelectedElementID,
   } = useContext(EditorContext);
 
@@ -798,77 +807,77 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         }
       }
 
-      if (
-        event.key === "_" &&
-        event.shiftKey &&
-        !event.ctrlKey &&
-        !event.altKey
-      ) {
-        const { selection } = editor;
-        if (selection && Range.isCollapsed(selection)) {
-          const [startTextNode, startPath] = Editor.node(
-            editor,
-            selection.anchor.path
-          );
+      // if (
+      //   event.key === "_" &&
+      //   event.shiftKey &&
+      //   !event.ctrlKey &&
+      //   !event.altKey
+      // ) {
+      //   const { selection } = editor;
+      //   if (selection && Range.isCollapsed(selection)) {
+      //     const [startTextNode, startPath] = Editor.node(
+      //       editor,
+      //       selection.anchor.path
+      //     );
 
-          if (startTextNode.text) {
-            const textBeforeCaret = startTextNode.text.slice(
-              0,
-              selection.anchor.offset
-            );
-            const underscoreMatches = textBeforeCaret.match(/_{2,}$/);
+      //     if (startTextNode.text) {
+      //       const textBeforeCaret = startTextNode.text.slice(
+      //         0,
+      //         selection.anchor.offset
+      //       );
+      //       const underscoreMatches = textBeforeCaret.match(/_{2,}$/);
 
-            if (underscoreMatches) {
-              event.preventDefault();
+      //       if (underscoreMatches) {
+      //         event.preventDefault();
 
-              const numberOfUnderscores = underscoreMatches[0].length;
-              const textBeforeUnderscores = startTextNode.text.slice(
-                0,
-                selection.anchor.offset - numberOfUnderscores
-              );
-              const textAfterCaret = startTextNode.text.slice(
-                selection.anchor.offset
-              );
+      //         const numberOfUnderscores = underscoreMatches[0].length;
+      //         const textBeforeUnderscores = startTextNode.text.slice(
+      //           0,
+      //           selection.anchor.offset - numberOfUnderscores
+      //         );
+      //         const textAfterCaret = startTextNode.text.slice(
+      //           selection.anchor.offset
+      //         );
 
-              const newChildren = [
-                { text: textBeforeUnderscores },
-                { text: " ", blank: true },
-                { text: " " },
-                { text: textAfterCaret },
-              ];
+      //         const newChildren = [
+      //           { text: textBeforeUnderscores },
+      //           { text: " ", blank: true },
+      //           { text: " " },
+      //           { text: textAfterCaret },
+      //         ];
 
-              const parentNodePath = startPath.slice(0, -1);
-              const [parentNode, _] = Editor.node(editor, parentNodePath);
+      //         const parentNodePath = startPath.slice(0, -1);
+      //         const [parentNode, _] = Editor.node(editor, parentNodePath);
 
-              const newNode = {
-                ...parentNode,
-                children: parentNode.children
-                  .slice(0, startPath[startPath.length - 1])
-                  .concat(newChildren)
-                  .concat(
-                    parentNode.children.slice(
-                      startPath[startPath.length - 1] + 1
-                    )
-                  ),
-              };
+      //         const newNode = {
+      //           ...parentNode,
+      //           children: parentNode.children
+      //             .slice(0, startPath[startPath.length - 1])
+      //             .concat(newChildren)
+      //             .concat(
+      //               parentNode.children.slice(
+      //                 startPath[startPath.length - 1] + 1
+      //               )
+      //             ),
+      //         };
 
-              const textNodePoint = {
-                path: startPath
-                  .slice(0, -1)
-                  .concat(startPath[startPath.length - 1] + 1),
-                offset: 0,
-              };
+      //         const textNodePoint = {
+      //           path: startPath
+      //             .slice(0, -1)
+      //             .concat(startPath[startPath.length - 1] + 1),
+      //           offset: 0,
+      //         };
 
-              Editor.withoutNormalizing(editor, () => {
-                Transforms.removeNodes(editor, { at: parentNodePath });
-                Transforms.insertNodes(editor, newNode, { at: parentNodePath });
-              });
+      //         Editor.withoutNormalizing(editor, () => {
+      //           Transforms.removeNodes(editor, { at: parentNodePath });
+      //           Transforms.insertNodes(editor, newNode, { at: parentNodePath });
+      //         });
 
-              Transforms.select(editor, textNodePoint);
-            }
-          }
-        }
-      }
+      //         Transforms.select(editor, textNodePoint);
+      //       }
+      //     }
+      //   }
+      // }
 
       if (event.ctrlKey || event.metaKey) {
         switch (event.key) {
@@ -931,9 +940,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
     console.log(targetRect.left);
     const currentPathString = JSON.stringify(path);
-    setactiveEditEquationPath((prevPath) =>
-      prevPath === currentPathString ? null : currentPathString
-    );
+    setActivePath(currentPathString);
     const spaceBelowTarget = window.innerHeight - targetRect.top;
     const [currentNode] = Editor.node(editor, path);
 
@@ -942,22 +949,25 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     console.log(currentNode.id);
 
     // setSelectedElementID();
-    setShowEditBlockPopup(true);
-    let topOffset;
-    let showDropdownAbove = false;
-    console.log(spaceBelowTarget);
-    const dropdownHeight = 280;
-    if (spaceBelowTarget < dropdownHeight) {
-      topOffset = -(dropdownHeight - targetRect.height) + 10;
-      showDropdownAbove = true;
-    }
-    setSearchBarPosition(spaceBelowTarget < dropdownHeight);
+    setShowEditBlockPopup({
+      open: true,
+      element: "equation",
+    });
+    // let topOffset;
+    // let showDropdownAbove = false;
+    // console.log(spaceBelowTarget);
+    // const dropdownHeight = 280;
+    // if (spaceBelowTarget < dropdownHeight) {
+    //   topOffset = -(dropdownHeight - targetRect.height) + 10;
+    //   showDropdownAbove = true;
+    // }
+    // setSearchBarPosition(spaceBelowTarget < dropdownHeight);
 
-    const equationHeight = _element.offsetHeight;
-    setDropdownEditBlockTop(
-      showDropdownAbove ? targetRect.top + topOffset : targetRect.bottom - 5
-    );
-    setDropdownEditBlockLeft(targetRect.left);
+    // const equationHeight = _element.offsetHeight;
+    // setDropdownEditBlockTop(
+    //   showDropdownAbove ? targetRect.top + topOffset : targetRect.bottom - 5
+    // );
+    // setDropdownEditBlockLeft(targetRect.left);
   };
 
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -972,53 +982,57 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   const handleAddEditableEquationBlock = useCallback(
     (latex: string, path: Path) => {
-      const newPath = addEditableEquationBlock(latex, editor, path);
+      const { newPath, id } = addEditableEquationBlock(latex, editor, path);
 
-      const [insertedEquationNode] = Editor.nodes(editor, {
-        at: newPath,
-        match: (n) => n.type === "equation",
+      setShowEditBlockPopup({
+        open: true,
+        element: "equation",
       });
-      if (insertedEquationNode) {
-        const { id } = insertedEquationNode[0] as CustomElement;
-        console.log(id);
-        setSelectedElementID(id);
-        setShowEditBlockPopup(true);
-        setactiveEditEquationPath(JSON.stringify(newPath));
-        setCurrentLatex("");
-        setTimeout(() => {
-          const currentElement = document.querySelector(`[data-id="${id}"]`);
-          console.log(currentElement);
-          if (currentElement) {
-            const targetRect = currentElement.getBoundingClientRect();
-            const spaceBelowTarget = window.innerHeight - targetRect.top;
+      setActivePath(JSON.stringify(newPath));
 
-            let topOffset;
-            let showDropdownAbove = false;
-            console.log(spaceBelowTarget);
-            const dropdownHeight = 280;
-            if (spaceBelowTarget < dropdownHeight) {
-              topOffset = -(dropdownHeight - targetRect.height) + 10;
-              showDropdownAbove = true;
-            }
-            setSearchBarPosition(spaceBelowTarget < dropdownHeight);
+      // const { id } = insertedEquationNode[0] as CustomElement;
+      // console.log(id);
+      setSelectedElementID(id);
 
-            setDropdownEditBlockTop(
-              showDropdownAbove
-                ? targetRect.top + topOffset
-                : targetRect.bottom - 5
-            );
-            setDropdownEditBlockLeft(targetRect.left);
-
-            console.log(targetRect.left);
-
-            ReactEditor.focus(editor);
-            Transforms.select(editor, newPath);
-          }
-        }, 0);
-      }
+      setCurrentLatex("");
     },
     []
   );
+
+  useLayoutEffect(() => {
+    if (showEditBlockPopup.open && activePath) {
+      const currentElement = document.querySelector(
+        `[data-id="${selectedElementID}"]`
+      );
+      console.log(currentElement);
+      if (currentElement) {
+        const targetRect = currentElement.getBoundingClientRect();
+        const spaceBelowTarget = window.innerHeight - targetRect.top;
+
+        let topOffset;
+        let showDropdownAbove = false;
+        console.log(spaceBelowTarget);
+        const dropdownHeight =
+          showEditBlockPopup.element === "equation" ? 280 : 180;
+        if (spaceBelowTarget < dropdownHeight) {
+          topOffset = -(dropdownHeight - targetRect.height) + 10;
+          showDropdownAbove = true;
+        }
+        setSearchBarPosition(spaceBelowTarget < dropdownHeight);
+
+        setDropdownEditBlockTop(
+          showDropdownAbove ? targetRect.top + topOffset : targetRect.bottom - 5
+        );
+        setDropdownEditBlockLeft(targetRect.left);
+
+        console.log(targetRect.left);
+
+        ReactEditor.focus(editor);
+        Transforms.select(editor, JSON.parse(activePath));
+      }
+    }
+  }, [showEditBlockPopup, selectedElementID]);
+
   const [isTyping, setIsTyping] = useState("");
   const debouncedSetIsTyping = debounce(setIsTyping, 1000);
   const MemoizedElementSelector = React.memo(ElementSelector);
@@ -1317,8 +1331,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     editBlockDropdownRef,
     () => {
       if (showEditBlockPopup) {
-        setShowEditBlockPopup(false);
-        setactiveEditEquationPath(null);
+        setShowEditBlockPopup({
+          open: false,
+          element: null,
+        });
+        setActivePath("");
       }
     },
     toggleEditBlockRef
@@ -1326,7 +1343,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   const closeEditableDropdown = () => {
     if (showEditBlockPopup) {
-      setShowEditBlockPopup(false);
+      setShowEditBlockPopup({
+        open: false,
+        element: null,
+      });
       setactiveEditEquationPath(null);
     }
   };
@@ -1904,7 +1924,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 )}
               </AnimatePresence>
               <AnimatePresence>
-                {showEditBlockPopup && activeEditEquationPath && (
+                {showEditBlockPopup.open && activePath && (
                   <>
                     <motion.div
                       {...y_animation_props}
@@ -1914,31 +1934,40 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                         left: `${dropdownEditBlockLeft}px`,
                       }}
                     >
-                      <EditBlockPopup
-                        ref={editBlockDropdownRef}
-                        onChange={(latex, altText) =>
-                          handleEditLatex(
-                            latex,
-                            altText,
-                            JSON.parse(activeEditEquationPath)
-                          )
-                        }
-                        latexValue={getCurrentLatex}
-                        onClick={closeEditableDropdown}
-                        insertText={(note) => {
-                          Transforms.insertNodes(
-                            editor,
-                            {
-                              id: genNodeId(),
-                              type: "paragraph",
-                              children: [{ text: note }],
-                            },
-                            {
-                              at: Path.next(JSON.parse(activeEditEquationPath)),
-                            }
-                          );
-                        }}
-                      />
+                      {showEditBlockPopup.element === "equation" ? (
+                        <EditBlockPopup
+                          ref={editBlockDropdownRef}
+                          onChange={(latex, altText) =>
+                            handleEditLatex(
+                              latex,
+                              altText,
+                              JSON.parse(activePath)
+                            )
+                          }
+                          latexValue={getCurrentLatex}
+                          onClick={closeEditableDropdown}
+                          insertText={(note) => {
+                            Transforms.insertNodes(
+                              editor,
+                              {
+                                id: genNodeId(),
+                                type: "paragraph",
+                                children: [{ text: note }],
+                              },
+                              {
+                                at: Path.next(JSON.parse(activePath)),
+                              }
+                            );
+                          }}
+                        />
+                      ) : (
+                        <div
+                          ref={editBlockDropdownRef}
+                          className="z-100 rounded-lg dark:border-gray-700 dark:bg-secondary dark:text-foreground lg:w-[400px] xl:w-[500px]"
+                        >
+                          <ImageEmbedLink />
+                        </div>
+                      )}
                     </motion.div>
                   </>
                 )}

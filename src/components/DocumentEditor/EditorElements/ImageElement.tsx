@@ -5,6 +5,7 @@ import {
   useMemo,
   useCallback,
   useRef,
+  useLayoutEffect,
 } from "react";
 import Image from "next/image";
 import { EditorContext } from "@/contexts/EditorContext";
@@ -17,6 +18,7 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
+import { Node } from "slate";
 import {
   Form,
   FormControl,
@@ -45,6 +47,8 @@ export const ImageElement = React.memo((props) => {
     selectedElementID,
     activePath,
     setActivePath,
+    setShowEditBlockPopup,
+    setSelectedElementID,
   } = useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);
   const focus = useFocused();
@@ -106,6 +110,69 @@ export const ImageElement = React.memo((props) => {
     };
   }, [isResizing, handleMouseMove, handleMouseUp]);
 
+  return (
+    <div data-id={element.id} data-path={JSON.stringify(path)}>
+      <div className="absolute top-0 right-2 z-10 ">
+        <OptionMenu element={element} />
+      </div>
+      {element.url?.trim() === "" ? (
+        <div
+          tabIndex={-1}
+          className={`hover:bg-gray-muted relative flex  cursor-pointer items-center rounded-md bg-gray-100 p-2 transition dark:bg-background 
+      dark:hover:bg-background/70`}
+          contentEditable={false}
+          onMouseDown={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setShowEditBlockPopup({
+              open: true,
+              element: "image",
+            });
+            setActivePath(JSON.stringify(path));
+            setSelectedElementID(element.id);
+          }}
+        >
+          <div className="flex items-center">
+            <ImageIcon
+              width={46}
+              height={46}
+              className="rounded-md opacity-30 dark:bg-transparent"
+            />
+            <span className="ml-4 opacity-30">Add an Image</span>
+          </div>
+
+          {children}
+        </div>
+      ) : (
+        <div
+          tabIndex={-1}
+          className="group flex"
+          contentEditable={false}
+          style={{
+            width: "calc(100% - 30px)",
+          }}
+        >
+          <div className="relative">
+            <img src={element.url} width={imageWidth} ref={ref} />
+            <div
+              className="absolute top-0 -right-[4px] flex  h-full items-center"
+              onMouseDown={handleMouseDown}
+            >
+              <div
+                className={`  flex h-full  w-[18px] items-center opacity-0 transition duration-300 lg:group-hover:opacity-100 xl:pointer-events-auto `}
+              >
+                <div className="mx-auto block h-[60px] w-[6px]  cursor-col-resize rounded-lg bg-[#b4b4b4] dark:border dark:border-foreground dark:bg-background"></div>
+              </div>
+            </div>
+          </div>
+          {children}
+        </div>
+      )}
+    </div>
+  );
+});
+
+export const ImageEmbedLink = () => {
   const formSchema = z.object({
     url: z
       .string()
@@ -133,99 +200,64 @@ export const ImageElement = React.memo((props) => {
       ),
   });
 
+  const {
+    editor,
+    activePath,
+    setActivePath,
+    showEditBlockPopup,
+    setShowEditBlockPopup,
+  } = useContext(EditorContext);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    const newElement = { ...element, url: values.url };
-    Transforms.setNodes(editor, newElement, { at: path });
+    const currentElement = Node.get(editor, JSON.parse(activePath));
+
+    const newElement = { ...currentElement, url: values.url };
+    Transforms.setNodes(editor, newElement, { at: JSON.parse(activePath) });
+
+    setShowEditBlockPopup({
+      open: false,
+      element: null,
+    });
+
+    setActivePath("");
   }
+  const inputRef = useRef();
 
+  useEffect(() => {
+    if (showEditBlockPopup.open) {
+      form.setFocus("url");
+    }
+  }, [showEditBlockPopup, form.setValue]);
   return (
-    <div data-id={element.id} data-path={JSON.stringify(path)}>
-      {element.url?.trim() === "" ? (
-        <DropdownMenu open={open} onOpenChange={setOpen}>
-          <DropdownMenuTrigger className="w-full">
-            <div
-              tabIndex={-1}
-              className={`hover:bg-gray-muted relative flex  cursor-pointer items-center rounded-md bg-gray-100 p-2 transition dark:bg-background 
-      dark:hover:bg-background/70`}
-              contentEditable={false}
-            >
-              <div className="flex items-center">
-                <ImageIcon
-                  width={46}
-                  height={46}
-                  className="rounded-md opacity-30 dark:bg-transparent"
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="z-100 space-y-2 p-1 pb-2"
+      >
+        <FormField
+          control={form.control}
+          name="url"
+          render={() => (
+            <FormItem>
+              {/* <FormLabel>Embed link</FormLabel> */}
+              <FormControl>
+                <Input
+                  placeholder="Paste the image link"
+                  {...form.register("url")}
                 />
-                <span className="ml-4 opacity-30">Add an Image</span>
-              </div>
-
-              {children}
-            </div>
-          </DropdownMenuTrigger>
-
-          <DropdownMenuContent className="dark:border-gray-700 dark:bg-secondary dark:text-foreground lg:w-[400px] xl:w-[500px]">
-            {/* Enter link
-             */}
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-2 p-1 pb-2"
-              >
-                <FormField
-                  control={form.control}
-                  name="url"
-                  render={() => (
-                    <FormItem>
-                      {/* <FormLabel>Embed link</FormLabel> */}
-                      <FormControl>
-                        <Input
-                          placeholder="Paste the image link"
-                          {...form.register("url")}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="flex w-full items-center justify-center">
-                  <Button type="submit">Embed Image</Button>
-                </div>
-              </form>
-            </Form>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ) : (
-        <div
-          tabIndex={-1}
-          className="group flex"
-          contentEditable={false}
-          style={{
-            width: "calc(100% - 30px)",
-          }}
-        >
-          <div className="relative">
-            <img src={element.url} width={imageWidth} ref={ref} />
-            <div
-              className="absolute top-0 -right-[4px] flex  h-full items-center"
-              onMouseDown={handleMouseDown}
-            >
-              <div
-                className={`  flex h-full  w-[18px] items-center opacity-0 transition duration-300 lg:group-hover:opacity-100 xl:pointer-events-auto `}
-              >
-                <div className="mx-auto block h-[60px] w-[6px]  cursor-col-resize rounded-lg bg-[#b4b4b4] dark:border dark:border-foreground dark:bg-background"></div>
-              </div>
-            </div>
-            <div className="absolute top-0 right-2 ">
-              <OptionMenu element={element} />
-            </div>
-          </div>
-          {children}
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="flex w-full items-center justify-center">
+          <Button type="submit">Embed Image</Button>
         </div>
-      )}
-    </div>
+      </form>
+    </Form>
   );
-});
+};

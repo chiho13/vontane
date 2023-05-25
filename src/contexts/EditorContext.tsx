@@ -15,8 +15,8 @@ import { useEditor } from "@/hooks/useEditor";
 // Create the EditorContext with the correct function signature
 const EditorContext = createContext<{
   editor: Editor;
-  showEditBlockPopup: Boolean;
-  setShowEditBlockPopup: Dispatch<SetStateAction<boolean>>;
+  showEditBlockPopup: any;
+  setShowEditBlockPopup: Dispatch<SetStateAction<any>>;
   selectedElementID: string;
   activePath: string;
   setActivePath: Dispatch<SetStateAction<string>>;
@@ -39,7 +39,10 @@ type EquationProviderProps = PropsWithChildren<{
 // Create an EquationProvider component that accepts a `children` prop and the `openEditBlockPopup` function
 const EditorProvider: React.FC<EquationProviderProps> = ({ children }) => {
   const editor = useEditor();
-  const [showEditBlockPopup, setShowEditBlockPopup] = useState(false);
+  const [showEditBlockPopup, setShowEditBlockPopup] = useState({
+    open: false,
+    element: null,
+  });
   const [selectedElementID, setSelectedElementID] = useState<string>("");
   const [activePath, setActivePath] = useState<string>("");
   return (

@@ -48,7 +48,12 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
     const [search, setSearch] = useState("");
     const searchInputRef = useRef(null);
 
-    const { editor, setActivePath } = useContext(EditorContext);
+    const {
+      editor,
+      setActivePath,
+      setShowEditBlockPopup,
+      setSelectedElementID,
+    } = useContext(EditorContext);
     const [currentNode] = Editor.node(editor, JSON.parse(activePath));
     const [isKeyboardNav, setIsKeyboardNav] = useState(false);
     const isEmpty =
@@ -241,11 +246,19 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
 
     function addImageHandler() {
       console.log("add image");
-      const addedPath = addImageBlock(editor, JSON.parse(activePath));
+      const { newPath: addedPath, id } = addImageBlock(
+        editor,
+        JSON.parse(activePath)
+      );
       setShowDropdown(false);
       Transforms.select(editor, Editor.start(editor, Path.next(addedPath)));
       ReactEditor.focus(editor);
 
+      setSelectedElementID(id);
+      setShowEditBlockPopup({
+        open: true,
+        element: "image",
+      });
       setActivePath(JSON.stringify(addedPath));
     }
 

@@ -43,14 +43,6 @@ export const ImageElement = React.memo((props) => {
     setSelectedElementID,
   } = useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);
-  const focus = useFocused();
-  const selected = useSelected();
-  const [open, setOpen] = useState(
-    element.url?.trim() === "" && activePath == JSON.stringify(path) && selected
-  );
-  // const activePath = JSON.stringify(path);
-
-  console.log(activePath);
 
   const ref = useRef(null);
   const [isResizing, setIsResizing] = useState(false);
@@ -149,7 +141,7 @@ export const ImageElement = React.memo((props) => {
           <div className="relative bg-gray-200 dark:bg-background">
             <img src={element.url} width={imageWidth} ref={ref} />
             <div
-              className="absolute top-0 -right-[1px] flex  h-full items-center"
+              className="absolute top-0 -right-[3px] flex  h-full items-center"
               onMouseDown={handleMouseDown}
             >
               <div

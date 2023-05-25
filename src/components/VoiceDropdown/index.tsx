@@ -170,9 +170,9 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
     }
   );
 
-  const generatedVoices = ElevenLabsVoiceList?.voices
-    .filter((el) => el.category === "generated")
-    .sort((a, b) => a.labels.accent.localeCompare(b.labels.accent));
+  const generatedVoices = ElevenLabsVoiceList?.voices.filter(
+    (el) => el.category === "generated"
+  );
 
   const filteredVoices = useMemo(() => {
     if (filters.length === 0) {

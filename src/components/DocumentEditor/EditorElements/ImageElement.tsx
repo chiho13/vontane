@@ -28,16 +28,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/Form";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import React from "react";
-import { DraggableCore } from "react-draggable";
-import useResizeElement from "@/hooks/useResizeSidebar";
-import { Portal } from "react-portal";
 
 export const ImageElement = React.memo((props) => {
   const { attributes, children, element } = props;
@@ -112,57 +104,62 @@ export const ImageElement = React.memo((props) => {
 
   return (
     <div data-id={element.id} data-path={JSON.stringify(path)}>
-      <div className="absolute top-0 right-2 z-10 ">
-        <OptionMenu element={element} />
-      </div>
       {element.url?.trim() === "" ? (
-        <div
-          tabIndex={-1}
-          className={`hover:bg-gray-muted relative flex  cursor-pointer items-center rounded-md bg-gray-100 p-2 transition dark:bg-background 
+        <>
+          <div
+            tabIndex={-1}
+            className={`hover:bg-gray-muted relative flex  cursor-pointer items-center rounded-md bg-gray-100 p-2 transition dark:bg-background 
       dark:hover:bg-background/70`}
-          contentEditable={false}
-          onMouseDown={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setShowEditBlockPopup({
-              open: true,
-              element: "image",
-            });
-            setActivePath(JSON.stringify(path));
-            setSelectedElementID(element.id);
-          }}
-        >
-          <div className="flex items-center">
-            <ImageIcon
-              width={46}
-              height={46}
-              className="rounded-md opacity-30 dark:bg-transparent"
-            />
-            <span className="ml-4 opacity-30">Add an Image</span>
-          </div>
+            contentEditable={false}
+            onMouseDown={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setShowEditBlockPopup({
+                open: true,
+                element: "image",
+              });
+              setActivePath(JSON.stringify(path));
+              setSelectedElementID(element.id);
+            }}
+          >
+            <div className="flex items-center">
+              <ImageIcon
+                width={46}
+                height={46}
+                className="rounded-md opacity-30 dark:bg-transparent"
+              />
+              <span className="ml-4 opacity-30">Add an Image</span>
+            </div>
 
-          {children}
-        </div>
+            {children}
+          </div>
+          <div className="absolute top-0 right-2 z-10 ">
+            <OptionMenu element={element} />
+          </div>
+        </>
       ) : (
         <div
           tabIndex={-1}
           className="group flex"
           contentEditable={false}
           style={{
-            width: "calc(100% - 30px)",
+            width: "calc(100% - 10px)",
           }}
         >
-          <div className="relative">
+          <div className="relative bg-gray-200 dark:bg-background">
             <img src={element.url} width={imageWidth} ref={ref} />
             <div
-              className="absolute top-0 -right-[4px] flex  h-full items-center"
+              className="absolute top-0 -right-[1px] flex  h-full items-center"
               onMouseDown={handleMouseDown}
             >
               <div
                 className={`  flex h-full  w-[18px] items-center opacity-0 transition duration-300 lg:group-hover:opacity-100 xl:pointer-events-auto `}
               >
-                <div className="mx-auto block h-[60px] w-[6px]  cursor-col-resize rounded-lg bg-[#b4b4b4] dark:border dark:border-foreground dark:bg-background"></div>
+                <div className="mx-auto block h-[60px] w-[6px]  cursor-col-resize rounded-lg border border-foreground bg-[#b4b4b4] dark:bg-background"></div>
               </div>
+            </div>
+            <div className="absolute top-0 right-2 z-10 ">
+              <OptionMenu element={element} />
             </div>
           </div>
           {children}
@@ -191,8 +188,19 @@ export const ImageEmbedLink = () => {
             "svg",
             "webp",
           ];
-          const extension = url.split(".").pop();
-          return imageExtensions.includes(extension);
+
+          // Use URL to parse the input
+          const urlObject = new URL(url);
+
+          // Extract the pathname and get the extension
+          const pathname = urlObject.pathname;
+          const extension = pathname.split(".").pop();
+
+          // Check if the URL is from Unsplash
+          const isUnsplashUrl = urlObject.hostname.includes("unsplash.com");
+
+          // Check if the extension is in the imageExtensions list or if the URL is from Unsplash
+          return imageExtensions.includes(extension) || isUnsplashUrl;
         },
         {
           message: "Please enter a valid image link",
@@ -215,7 +223,19 @@ export const ImageEmbedLink = () => {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const currentElement = Node.get(editor, JSON.parse(activePath));
 
-    const newElement = { ...currentElement, url: values.url };
+    let newUrl = values.url;
+    try {
+      // Attempt to fetch the image to see if it is valid.
+      const response = await fetch(values.url, { method: "HEAD" });
+      if (!response.ok) {
+        throw new Error("Invalid image URL");
+      }
+    } catch (error) {
+      // If fetching the image fails, use a fallback URL.
+      newUrl = "/images/imagenotfound.png";
+    }
+
+    const newElement = { ...currentElement, url: newUrl };
     Transforms.setNodes(editor, newElement, { at: JSON.parse(activePath) });
 
     setShowEditBlockPopup({
@@ -225,13 +245,11 @@ export const ImageEmbedLink = () => {
 
     setActivePath("");
   }
-  const inputRef = useRef();
 
   useEffect(() => {
-    if (showEditBlockPopup.open) {
-      form.setFocus("url");
-    }
-  }, [showEditBlockPopup, form.setValue]);
+    form.setFocus("url");
+  }, []);
+
   return (
     <Form {...form}>
       <form

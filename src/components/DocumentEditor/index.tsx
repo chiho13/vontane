@@ -23,7 +23,7 @@ import {
 } from "slate";
 
 import { ImageEmbedLink } from "@/components/DocumentEditor/EditorElements/ImageElement";
-
+import scrollIntoView from "scroll-into-view-if-needed";
 import { isEqual } from "lodash";
 import { EditorContext } from "@/contexts/EditorContext";
 import { Slate, Editable, withReact, ReactEditor } from "slate-react";
@@ -995,6 +995,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       setSelectedElementID(id);
 
       setCurrentLatex("");
+      ReactEditor.focus(editor);
+      Transforms.select(editor, JSON.parse(activePath));
     },
     []
   );
@@ -1026,9 +1028,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         setDropdownEditBlockLeft(targetRect.left);
 
         console.log(targetRect.left);
-
-        ReactEditor.focus(editor);
-        Transforms.select(editor, JSON.parse(activePath));
       }
     }
   }, [showEditBlockPopup, selectedElementID]);
@@ -1679,6 +1678,17 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     }
   }, [elementWidth, windowSize]);
 
+  function isElementInViewport(el) {
+    const rect = el.getBoundingClientRect();
+    return (
+      rect.top >= 0 &&
+      rect.left >= 0 &&
+      rect.bottom <=
+        (window.innerHeight || document.documentElement.clientHeight) &&
+      rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
+  }
+
   return (
     <div
       className="relative mx-auto mt-[40px] lg:max-w-[1000px] xl:max-w-[1400px]"
@@ -1768,10 +1778,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                           >
                             <Droppable>
                               <Editable
-                                scrollSelectionIntoView={(
-                                  editor: ReactEditor,
-                                  domRange: DOMRange
-                                ) => {}}
                                 className=" relative"
                                 style={{
                                   height: "calc(100vh - 170px)",

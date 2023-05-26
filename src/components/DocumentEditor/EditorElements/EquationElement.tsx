@@ -44,7 +44,7 @@ export function EquationElement(props) {
         </div>
       )}
 
-      <span style={{ display: "none" }}>{children}</span>
+      {children}
     </div>
   );
 }

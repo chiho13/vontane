@@ -46,6 +46,7 @@ export function useArrowNavigation(
 
       setFocusedIndex(newIndex);
     } else if (event.key === "Enter") {
+      event.stopPropagation();
       event.preventDefault();
       if (elements[focusedIndex] && elements[focusedIndex] !== "separator") {
         elements[focusedIndex].action();

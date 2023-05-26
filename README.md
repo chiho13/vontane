@@ -38,7 +38,8 @@ currently under development (April)
 - [x] audio player block
 - [x] stripe subscription
 - [x] slide integration
-- [] image block (wip)
+- [x] image block
+- [] text to speech element wrapper
 - [] audio trimmer
 - [] musicXML
 - [] map block

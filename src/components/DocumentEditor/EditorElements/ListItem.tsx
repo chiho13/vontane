@@ -5,6 +5,7 @@ import { Editor, Path, Node, Transforms } from "slate";
 import styled from "styled-components";
 import { hasSlideElement } from "@/utils/helpers";
 import { RxDotFilled } from "react-icons/rx";
+import { MdCircle } from "react-icons/md";
 import { Checkbox } from "@/components/ui/checkbox";
 const ListItemStyle = styled.div`
   position: relative;
@@ -17,7 +18,6 @@ const ListItemStyle = styled.div`
     top: 0;
     left: 21px;
   }
-  margin-left: 5px;
 `;
 
 const findAllNumberedLists = (nodes) => {
@@ -127,9 +127,8 @@ export const ListItem = withListNumbering((props) => {
         className={` ${
           selectedElementID === element.id ? " bg-[#E0EDFB]" : "bg-transparent"
         }
-        transition duration-200 ease-in-out
-        ${isNumberedList && "ml-[21px] list-none"}
-        ${isCheckedList && "ml-[21px] list-none"}
+         ml-[21px] list-none transition
+      duration-200 ease-in-out
         ${isCheckedList && isChecked && "text-muted-foreground line-through"}
         `}
         {...attributes}
@@ -151,8 +150,11 @@ export const ListItem = withListNumbering((props) => {
           <Checkbox
             checked={isChecked}
             onCheckedChange={handleCheck}
-            className="absolute -translate-x-[24px] translate-y-[4px]"
+            className="absolute  -translate-x-[24px] translate-y-[4px]"
           />
+        )}
+        {isBulletList && (
+          <MdCircle className="absolute w-[9px] -translate-x-[24px] translate-y-[4px]" />
         )}
         {children}
       </li>

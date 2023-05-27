@@ -15,3 +15,4 @@ export * from "./SlideBreak";
 export * from "./HeadingElement";
 export * from "./ImageElement";
 export * from "./LinkElement";
+export * from "./ElevenTTSWrapperElement";

@@ -113,6 +113,8 @@ export const ListItem = withListNumbering((props) => {
   const handleCheck = (checked) => {
     setChecked(checked);
 
+    ReactEditor.focus(editor);
+    Transforms.select(editor, Editor.end(editor, path));
     Transforms.setNodes(
       editor,
       { checked }, // New properties

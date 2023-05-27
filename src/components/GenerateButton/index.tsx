@@ -1,10 +1,11 @@
 import React from "react";
 import LoadingSpinner from "../../icons/LoadingSpinner";
 import { GenerateButtonStyle } from "./style";
-import { FileAudio } from "lucide-react";
+import { ImPlay3 } from "react-icons/im";
+import { Button } from "@/components/ui/button";
 
 interface GenerateButtonProps {
-  isDisabled: boolean;
+  isDisabled?: boolean;
   audioIsLoading: boolean;
   onClick: () => void;
 }
@@ -16,7 +17,7 @@ function GenerateButton({
 }: GenerateButtonProps) {
   return (
     <GenerateButtonStyle
-      className="rounded-md border-2 bg-white  duration-200 disabled:opacity-50  dark:border-muted-foreground dark:bg-muted dark:text-foreground dark:hover:border-muted-foreground dark:hover:bg-muted-foreground dark:hover:text-background dark:disabled:border-gray-500 dark:disabled:bg-transparent  dark:disabled:text-gray-300 "
+      className="items-center justify-center rounded-md border-2 border-foreground  p-0 text-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted  "
       isDisabled={isDisabled}
       onClick={onClick}
       disabled={isDisabled || audioIsLoading}
@@ -27,7 +28,7 @@ function GenerateButton({
           {/* <div className="ml-2">Generating...</div> */}
         </>
       ) : (
-        <FileAudio />
+        <ImPlay3 width={40} />
       )}
     </GenerateButtonStyle>
   );

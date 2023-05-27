@@ -8,10 +8,10 @@
   background: transparent;
 }
 
-.addButton,
+/* .addButton,
 .optionMenu {
   opacity: 0;
-}
+} */
 
 .optionMenu {
   position: relative;
@@ -28,12 +28,12 @@
   margin-bottom: 10px;
 }
 
-.sortableElement:hover .handle {
+/* .sortableElement:hover .handle {
   opacity: 1;
 }
 .sortableElement:hover .addButton {
   opacity: 1;
-}
+} */
 
 .sortableElement:hover .optionMenu {
   opacity: 1;

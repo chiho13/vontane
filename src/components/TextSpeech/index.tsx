@@ -35,16 +35,13 @@ const useDownloadFile = (url, fileName) => {
   return file;
 };
 
-interface TextSpeechProps {
-  isSelected?: boolean;
-}
-
-export const TextSpeech: React.FC<TextSpeechProps> = ({
-  isSelected = false,
+export const TextSpeech = ({
+  selectedVoiceId,
+  setSelectedVoiceId,
+  element,
 }) => {
   const router = useRouter();
   const workspaceId = router.query.workspaceId;
-  const [selectedVoiceId, setSelectedVoiceId] = useState<string>("");
   // const [audioIsLoading, setAudioIsLoading] = useState<boolean>(false);
   const [transcriptionId, setTranscriptionId] = useState<string>("");
 
@@ -105,9 +102,9 @@ export const TextSpeech: React.FC<TextSpeechProps> = ({
 
   useEffect(() => {
     if (
-      selectedVoiceId
+      selectedVoiceId &&
       // textSpeech &&
-      // !(Array.isArray(textSpeech) && textSpeech.length === 0)
+      !(Array.isArray(textSpeech) && textSpeech.length === 0)
     ) {
       setIsDisabled(false);
     } else {
@@ -120,12 +117,16 @@ export const TextSpeech: React.FC<TextSpeechProps> = ({
       <div className="relative mt-4 flex items-center lg:max-w-[980px]"></div>
       <div className="relative flex items-center lg:max-w-[980px]">
         <div className="mr-2">
-          <VoiceDropdown setSelectedVoiceId={setSelectedVoiceId} />
+          <VoiceDropdown
+            setSelectedVoiceId={setSelectedVoiceId}
+            selectedVoiceId={selectedVoiceId}
+            element={element}
+          />
         </div>
+
         <GenerateButton
-          isDisabled={isDisabled}
           audioIsLoading={audioIsLoading}
-          onClick={generateAudio}
+          onClick={isDisabled ? undefined : generateAudio}
         />
       </div>
       {audioURL && <AudioPLayer audioURL={audioURL} fileName={fileName} />}

@@ -7,6 +7,7 @@ import {
   BaseEditor,
 } from "slate";
 import { ReactEditor } from "slate-react";
+import { genNodeId } from "@/hoc/withID";
 
 const LIST_TYPES = ["numbered-list", "bulleted-list", "checked-list"];
 
@@ -97,4 +98,51 @@ export const toggleFormat = (
     { [format]: isActive ? null : true },
     { match: (n) => Text.isText(n), split: true }
   );
+};
+
+export const wrapWithTTS = (editor: BaseEditor & ReactEditor) => {
+  const { selection } = editor;
+  if (!selection) return;
+
+  const [startPoint, endPoint] = Range.edges(selection);
+  const startBlock = Editor.above(editor, {
+    match: (n) => Editor.isBlock(editor, n),
+    at: startPoint.path,
+  })!;
+  const endBlock = Editor.above(editor, {
+    match: (n) => Editor.isBlock(editor, n),
+    at: endPoint.path,
+  })!;
+
+  if (!startBlock || !endBlock) return;
+
+  const blockPathStart = startBlock[1];
+  const blockPathEnd = endBlock[1];
+
+  // create a range from start block to end block
+  const range = Editor.range(editor, blockPathStart, blockPathEnd);
+
+  // wrap all nodes in the created range
+  Transforms.wrapNodes(
+    editor,
+    {
+      id: genNodeId(),
+      type: "tts",
+      voice_id: "022dAxTS7hgOwOZorFb9",
+      name: "Arthur",
+      children: [],
+    },
+    { at: range }
+  );
+};
+
+export const isParentTTS = (editor) => {
+  const { selection } = editor;
+  if (!selection) return false;
+
+  const parent = Editor.above(editor, {
+    match: (n) => n.type === "tts",
+  });
+
+  return !!parent;
 };

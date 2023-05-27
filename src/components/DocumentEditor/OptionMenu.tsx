@@ -85,7 +85,7 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
     return (
       <>
         <div
-          className={`option-menu-container  relative -right-[5px] opacity-0 group-hover:opacity-100 ${
+          className={`option-menu-container  relative -right-[5px] ${
             activeDropdown === element.id && "opacity-100"
           }`}
           onMouseDown={(e) => {

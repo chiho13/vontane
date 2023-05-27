@@ -52,7 +52,7 @@ import { Toolbar } from "@/components/Toolbar";
 import { up_animation_props } from "@/config/framer";
 
 import { slightbouncey } from "@/config/framer";
-import { toggleBlock, toggleFormat } from "./helpers/toggleBlock";
+import { toggleBlock, toggleFormat, isParentTTS } from "./helpers/toggleBlock";
 
 import {
   DndContext,
@@ -108,6 +108,8 @@ type CustomElement = {
   altText?: string;
   correctAnswer?: false;
   questionNumber?: number;
+  voice_id: string;
+  name: string;
   latex?: string; // Add this line for the latex string
 };
 
@@ -134,9 +136,8 @@ declare module "slate" {
 
 const EditableStyle = styled.div`
   margin-top: 5px;
-  padding-right: 5px;
   .editable-scrollbar::-webkit-scrollbar {
-    width: 6px;
+    width: 5px;
     border-radius: 3px;
   }
 
@@ -273,8 +274,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     setFetchWorkspaceIsLoading(false);
     // setGhostValue(initialSlateValue);
     setCurrentSlateKey(generateKey());
-    const extractedText = extractTextValues(initialSlateValue);
-    setTextSpeech(extractedText);
     console.log(editor.children);
   }, [initialSlateValue, workspaceId]);
 
@@ -1056,14 +1055,16 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
       const [parentElement, parentPath] = Editor.parent(editor, elementPath);
       const isInsideColumnCell =
-        parentElement.type === "column-cell" ||
-        parentElement.type === "bulleted-list" ||
-        parentElement.type === "numbered-list";
+        parentElement.type === "column-cell" || parentElement.type === "tts";
 
       const addButton =
-        (isRoot && element.type !== "column" && element.type !== "title") ||
+        (isRoot &&
+          element.type !== "column" &&
+          element.type !== "tts" &&
+          element.type !== "image" &&
+          element.type !== "title") ||
         isInsideColumnCell ? (
-          <div className="z-1000 group" contentEditable={false}>
+          <div className="z-1000" contentEditable={false}>
             <button
               className="addButton flex h-[24px] w-[24px] items-center justify-center rounded-md ease-in-out hover:bg-gray-200 dark:hover:bg-accent"
               onClick={(event) => {
@@ -1085,16 +1086,20 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       }
       const optionMenuRef = elementRefs.get(element);
 
-      const optionMenu = isRoot ? (
-        <div className="flex w-[30px] ">
-          <div className="absolute   top-0 right-[10px]  items-center">
-            <OptionMenu element={element} ref={optionMenuRef} />
+      const optionMenu =
+        isRoot || parentElement.type === "tts" ? (
+          <div className="flex w-[30px] ">
+            <div className="absolute   top-0 right-[10px]  items-center">
+              <OptionMenu element={element} ref={optionMenuRef} />
+            </div>
           </div>
-        </div>
-      ) : null;
+        ) : null;
 
       const shouldWrapWithSortableElement =
-        (isRoot && element.type !== "column" && element.type !== "title") ||
+        (isRoot &&
+          element.type !== "column" &&
+          element.type !== "tts" &&
+          element.type !== "title") ||
         isInsideColumnCell;
 
       const content = shouldWrapWithSortableElement ? (
@@ -1108,14 +1113,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         <MemoizedElementSelector {...props} />
       );
 
-      return (
-        <>
-          {content}
-          {/* <div className="invisible opacity-0 transition-all duration-300 group-hover:visible group-hover:opacity-100">
-            {optionMenu}
-          </div>  */}
-        </>
-      );
+      return <>{content}</>;
     },
     []
   );
@@ -1463,8 +1461,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   }, [editor.selection]);
 
   const decorate = ([node, path]) => {
-    if (lastActiveSelection != null && openLink) {
-      console.log("decorate");
+    if (lastActiveSelection != null) {
       const intersection = Range.intersection(
         lastActiveSelection,
         Editor.range(editor, path)
@@ -1550,7 +1547,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 const firstRect = rects[0];
 
                 // Calculate mini toolbar position
-                const toolbarWidth = 400; // Update this value according to your toolbar width
+                const toolbarWidth = isParentTTS(editor) ? 350 : 460; // Update this value according to your toolbar width
                 let initialX = firstRect.left - textEditorLeft;
 
                 // if (window.innerWidth > 1200) {
@@ -1576,7 +1573,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 const selectedText = Editor.string(editor, selection);
                 const extractedText = textRegex(selectedText);
                 console.log(extractedText);
-                setTextSpeech(null);
                 setSelectedTextSpeech([extractedText]);
               }
             }
@@ -1678,17 +1674,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     }
   }, [elementWidth, windowSize]);
 
-  function isElementInViewport(el) {
-    const rect = el.getBoundingClientRect();
-    return (
-      rect.top >= 0 &&
-      rect.left >= 0 &&
-      rect.bottom <=
-        (window.innerHeight || document.documentElement.clientHeight) &&
-      rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-    );
-  }
-
   return (
     <div
       className="relative mx-auto mt-[40px] lg:max-w-[1000px] xl:max-w-[1400px]"
@@ -1758,7 +1743,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                         <div
                           ref={textEditorRef}
                           tabIndex={0}
-                          className="editable-scrollbar relative z-0 mx-auto block overflow-y-auto  overflow-x-hidden rounded-md pt-4 pr-1 pb-4 focus:outline-none  focus-visible:border-gray-300"
+                          className="editable-scrollbar relative z-0 mx-auto block overflow-y-auto  overflow-x-hidden rounded-md pt-4 pb-4 focus:outline-none  focus-visible:border-gray-300"
                         >
                           <Slate
                             key={currentSlateKey}
@@ -1769,6 +1754,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                                 // Compare the current and new values
                                 debouncedSetSlateValue(newValue);
 
+                                console.log("hello");
                                 console.log(JSON.stringify(newValue));
                                 if (handleTextChange) {
                                   handleTextChange(newValue);

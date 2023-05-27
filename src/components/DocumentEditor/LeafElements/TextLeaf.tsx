@@ -23,7 +23,7 @@ export const Leaf: React.FC<RenderLeafProps> = ({
 
   if (leaf.highlighted) {
     children = (
-      <span {...attributes} className="bg-blue-200 py-[3px] dark:bg-[#355374]">
+      <span {...attributes} className="bg-blue-200 py-[3px] dark:bg-[#365476]">
         {children}
       </span>
     );

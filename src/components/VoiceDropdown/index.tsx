@@ -6,6 +6,7 @@ import React, {
   useMemo,
   useCallback,
   useLayoutEffect,
+  useContext,
 } from "react";
 import SampleAudioVoice from "../SampleAudioVoice";
 import { VoiceDropdownStyle } from "./style";
@@ -35,6 +36,9 @@ import {
 import { Voice } from "../../types/voice";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { Button } from "../ui/button";
+import { ReactEditor } from "slate-react";
+import { EditorContext } from "@/contexts/EditorContext";
+import { Transforms } from "slate";
 
 interface FilterOption {
   key: string;
@@ -48,6 +52,8 @@ interface Filter {
 
 interface VoiceDropdownProps {
   setSelectedVoiceId: (voice: string) => void;
+  selectedVoiceId: string;
+  element: any;
 }
 
 const mobile_filter_animation_props = {
@@ -85,7 +91,11 @@ const mobile_filter_animation_props = {
   },
 };
 
-function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
+function VoiceDropdown({
+  setSelectedVoiceId,
+  selectedVoiceId,
+  element,
+}: VoiceDropdownProps) {
   const voicesDropdownRef = useRef(null);
   const [voiceDropdownIsOpen, setIsOpen] = useState(false);
 
@@ -95,11 +105,12 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
   const voiceStylesFilterRef = useRef<any>({});
   const tempoFilterRef = useRef<any>({});
 
-  const [selectedItemText, setSelectedItemText] =
-    useState<string>("Choose a voice");
-
+  const [selectedItemText, setSelectedItemText] = useState<string>(
+    element.name || ""
+  );
+  const { editor } = useContext(EditorContext);
   const [voices, setVoices] = useState<Voice[]>([]);
-
+  const path = ReactEditor.findPath(editor, element);
   const [voiceStyles, setVoiceStyles] = useState<Filter[]>([]);
   const [tempos, setTempos] = useState<string[]>([]);
   const [filters, setFilters] = useState<Filter[]>([]);
@@ -174,6 +185,24 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
     (el) => el.category === "generated"
   );
 
+  useEffect(() => {
+    console.log(selectedVoiceId);
+    if (selectedVoiceId) {
+      const getSelectedName = generatedVoices?.find(
+        (el) => el.voice_id === selectedVoiceId
+      );
+      if (getSelectedName) {
+        setSelectedItemText(getSelectedName.name);
+        Transforms.setNodes(
+          editor,
+          { voice_id: selectedVoiceId, name: getSelectedName.name }, // New properties
+          { at: path } // Location
+        );
+      }
+      console.log(getSelectedName);
+    }
+  }, [generatedVoices, selectedVoiceId]);
+
   const filteredVoices = useMemo(() => {
     if (filters.length === 0) {
       return generatedVoices;
@@ -214,7 +243,7 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
 
   function handleVoiceSelection(voice: string, name: string): void {
     setSelectedVoiceId(voice);
-    setSelectedItemText(name);
+    // setSelectedItemText(name);
 
     setOpen(false);
     // if (voicesDropdownRef.current) {
@@ -466,8 +495,11 @@ function VoiceDropdown({ setSelectedVoiceId }: VoiceDropdownProps) {
       </DropdownProvider> */}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button variant="outline">
-            {selectedItemText} <ChevronDown className="ml-4 w-4" />
+          <Button
+            variant="secondary"
+            className="h-[34px] min-w-[100px] px-2 hover:dark:bg-muted"
+          >
+            {selectedItemText} <ChevronDown className="ml-2 w-4" />
           </Button>
         </DialogTrigger>
         <DialogContent className="max-h-[80vh] p-0 sm:max-w-[750px]">

@@ -10,17 +10,10 @@ export const GenerateButtonStyle: StyledComponent<
   GenerateButtonStyleProps
 > = styled.button<GenerateButtonStyleProps>`
   display: flex;
-  align-items: center;
-
   font-weight: bold;
-  padding: 10px 10px;
-  width: 42px;
-  height: 40px;
+  width: 40px;
+  height: 34px;
   cursor: ${({ isDisabled }) => (isDisabled ? "not-allowed" : "pointer")};
-
-  &:hover {
-    background-color: #fefefe;
-  }
 
   &:disabled {
     opacity: 0.5;

@@ -42,6 +42,8 @@ export function SortableElement({
   } = useSortable({ id: element.id });
 
   const slideBreakListener = element.type === "slide" && listeners;
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
     <div>
       <div
@@ -60,14 +62,23 @@ export function SortableElement({
           transition,
           transform: isSorting ? undefined : CSS.Transform.toString(transform),
         }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
         {readOnly ? null : (
-          <div className="flex h-[24px] w-[46px] justify-end">
-            <div className={classNames(classes.addButton)}>{addButton}</div>
+          <div className="group flex h-[24px] w-[46px] justify-end ">
+            <div
+              className={classNames(
+                classes.addButton,
+                " opacity-0 group-hover:opacity-100"
+              )}
+            >
+              {addButton}
+            </div>
             <button
               ref={setActivatorNodeRef}
               {...listeners}
-              className={`${classes.handle} flex items-center hover:bg-gray-200 dark:hover:bg-accent`}
+              className={`${classes.handle} opactiy-0 flex items-center hover:bg-gray-200 group-hover:opacity-100 dark:hover:bg-accent `}
               contentEditable={false}
             >
               <GripVertical
@@ -94,7 +105,9 @@ export function SortableElement({
             {renderElement({ attributes, children, element })}
           </div>
         </div>
-        {element.type !== "image" && optionMenu}
+        {element.type !== "image" && element.type !== "tts" && (
+          <div className="opacity-0 group-hover:opacity-100">{optionMenu}</div>
+        )}
       </div>
     </div>
   );

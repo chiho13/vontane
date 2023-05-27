@@ -61,9 +61,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="suggestions">
-            <TextSpeech />
-          </TabsContent>
+          <TabsContent value="suggestions">{/* <TextSpeech /> */}</TabsContent>
           <TabsContent value="slide">Doc or Slide Preview</TabsContent>
         </Tabs>
       </div>

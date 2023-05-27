@@ -11,12 +11,6 @@ import { Editor, Path, Transforms } from "slate";
 import { genNodeId } from "@/hoc/withID";
 import { nanoid } from "nanoid";
 import { useArrowNavigation } from "@/hooks/useArrowNavigation";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 interface OptionMenuProps {
   element: any;
 }

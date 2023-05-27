@@ -48,6 +48,8 @@ export const OptionListItem = React.memo(
       if (checked) {
         return;
       }
+      ReactEditor.focus(editor);
+      Transforms.select(editor, Editor.end(editor, path));
       if (checked) {
         // If the option is currently checked, uncheck all options
         const parentPath = Path.parent(path);

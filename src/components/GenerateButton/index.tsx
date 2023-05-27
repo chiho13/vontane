@@ -17,7 +17,7 @@ function GenerateButton({
 }: GenerateButtonProps) {
   return (
     <GenerateButtonStyle
-      className="items-center justify-center rounded-md border-2 border-foreground  p-0 text-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted  "
+      className="items-center justify-center rounded-md border-2 border-foreground p-0  px-2 text-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted  "
       isDisabled={isDisabled}
       onClick={onClick}
       disabled={isDisabled || audioIsLoading}
@@ -28,7 +28,8 @@ function GenerateButton({
           {/* <div className="ml-2">Generating...</div> */}
         </>
       ) : (
-        <ImPlay3 width={40} />
+        // <ImPlay3 width={40} />
+        <span className="text-sm">Generate</span>
       )}
     </GenerateButtonStyle>
   );

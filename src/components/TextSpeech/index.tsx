@@ -11,8 +11,9 @@ import { useRouter } from "next/router";
 import { Mirt } from "@/plugins/audioTrimmer";
 import { Transforms, Editor, Node } from "slate";
 import { EditorContext } from "@/contexts/EditorContext";
-import { ReactEditor } from "slate-react";
+import { ReactEditor, useSelected } from "slate-react";
 import AudioPLayer from "@/components/AudioPlayer";
+import { extractTextValues } from "../DocumentEditor/helpers/extractText";
 
 const useDownloadFile = (url, fileName) => {
   const [file, setFile] = useState(null);
@@ -45,20 +46,24 @@ export const TextSpeech = ({
   // const [audioIsLoading, setAudioIsLoading] = useState<boolean>(false);
   const [transcriptionId, setTranscriptionId] = useState<string>("");
 
-  const { textSpeech, selectedTextSpeech, audioIsLoading, setAudioIsLoading } =
-    useTextSpeech();
+  // const { setTextSpeech, textSpeech, selectedTextSpeech } = useTextSpeech();
 
+  const [textSpeech, setTextSpeech] = useState(element.content || "");
+  const [audioIsLoading, setAudioIsLoading] = useState(false);
   const [audioURL, setAudioURL] = useState("");
   const [fileName, setFileName] = useState("");
-  const [inputText, setInputText] = useState<string[] | null>(textSpeech);
+  const [inputText, setInputText] = useState<string | null>(textSpeech);
 
   const startTTS = api.texttospeech.startConversion.useMutation();
+  const selected = useSelected();
+  const { editor } = useContext(EditorContext);
+  const path = ReactEditor.findPath(editor, element);
 
   const createTTSAudio = async () => {
     try {
       const response = await startTTS.mutateAsync({
         voice_id: selectedVoiceId,
-        content: "Good Morning",
+        content: inputText,
       });
       if (response) {
         console.log(response);
@@ -70,11 +75,6 @@ export const TextSpeech = ({
       console.error("Error:", error);
     }
   };
-
-  useEffect(() => {
-    setInputText(textSpeech);
-    console.log(textSpeech);
-  }, [textSpeech]);
 
   useEffect(() => {
     if (
@@ -93,7 +93,6 @@ export const TextSpeech = ({
     event.preventDefault();
     event.stopPropagation();
     setAudioIsLoading(true);
-
     // createTTSAudio();
     console.log(textSpeech);
   }

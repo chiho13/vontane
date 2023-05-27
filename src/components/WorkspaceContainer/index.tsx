@@ -112,15 +112,13 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = ({
     <NewColumnProvider>
       {!fetchWorkspaceIsLoading && initialSlateValue && workspaceId && (
         <EditorProvider key={workspaceId}>
-          <TextSpeechProvider key={workspaceId}>
-            <DocumentEditor
-              key={workspaceId}
-              workspaceId={workspaceId}
-              handleTextChange={debounce(handleTextChange, 500)}
-              initialSlateValue={initialSlateValue}
-              setFetchWorkspaceIsLoading={setFetchWorkspaceIsLoading}
-            />
-          </TextSpeechProvider>
+          <DocumentEditor
+            key={workspaceId}
+            workspaceId={workspaceId}
+            handleTextChange={debounce(handleTextChange, 500)}
+            initialSlateValue={initialSlateValue}
+            setFetchWorkspaceIsLoading={setFetchWorkspaceIsLoading}
+          />
         </EditorProvider>
       )}
     </NewColumnProvider>

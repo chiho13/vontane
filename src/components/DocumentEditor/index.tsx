@@ -135,7 +135,6 @@ declare module "slate" {
 }
 
 const EditableStyle = styled.div`
-  margin-top: 5px;
   .editable-scrollbar::-webkit-scrollbar {
     width: 5px;
     border-radius: 3px;

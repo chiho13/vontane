@@ -5,6 +5,11 @@ import { TextSpeech } from "@/components/TextSpeech";
 import { OptionMenu } from "../OptionMenu";
 import { extractTextValues } from "../helpers/extractText";
 import styled from "styled-components";
+import {
+  TextSpeechProvider,
+  useTextSpeech,
+} from "@/contexts/TextSpeechContext";
+import { Editor, Transforms } from "slate";
 
 const ElevenWrapperStyle = styled.div`
   &.border-corner {
@@ -44,16 +49,26 @@ export const ElevenTTSWrapper = (props) => {
   const [selectedVoiceId, setSelectedVoiceId] = useState<string>(
     element.voice_id
   );
+  const selected = useSelected();
+  const { setTextSpeech } = useTextSpeech();
 
-  //   const extractedText = extractTextValues(initialSlateValue);
-  //   setTextSpeech(extractedText);
+  useEffect(() => {
+    const extractedText = extractTextValues(element.children).join(" ");
+
+    setTextSpeech(extractedText);
+    Transforms.setNodes(
+      editor,
+      { content: extractedText }, // New properties
+      { at: path } // Location
+    );
+  }, [element.children]);
 
   return (
     <ElevenWrapperStyle
       {...attributes}
       data-id={element.id}
       data-path={JSON.stringify(path)}
-      className=" relative border-t-2 border-b-2 border-muted-foreground bg-slate-200 p-1 pb-3 pl-0 dark:border-muted-foreground dark:bg-background"
+      className=" relative mt-5  mb-5 border-t border-b border-muted-foreground bg-slate-200 p-1 pb-3 pl-0 dark:border-muted-foreground dark:bg-background"
     >
       <div className="ml-[49px] mb-5 mt-4" contentEditable={false}>
         <TextSpeech
@@ -63,7 +78,7 @@ export const ElevenTTSWrapper = (props) => {
         />
       </div>
       {children}
-      <div className="absolute top-[5px] right-[10px] z-10 ">
+      <div className="absolute top-[5px] right-[10px] z-10">
         <OptionMenu element={element} />
       </div>
     </ElevenWrapperStyle>

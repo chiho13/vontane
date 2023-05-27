@@ -1,4 +1,5 @@
 import { EditorContext } from "@/contexts/EditorContext";
+import { TextSpeechProvider } from "@/contexts/TextSpeechContext";
 import React, { useContext } from "react";
 import { ReactEditor } from "slate-react";
 import {
@@ -34,6 +35,7 @@ export function ElementSelector(props) {
       return <AudioElement {...props} />;
     case "tts":
       return <ElevenTTSWrapper {...props} />;
+
     case "image":
       return <ImageElement {...props} />;
     case "heading-one":

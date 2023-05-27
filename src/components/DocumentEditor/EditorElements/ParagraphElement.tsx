@@ -41,25 +41,6 @@ export function ParagraphElement(props) {
     }
   }, [editor, path, children, focused]);
 
-  const hasSlide = hasSlideElement(editor.children);
-  const [clickCount, setClickCount] = useState(0);
-
-  useEffect(() => {
-    if (clickCount === 3) {
-      // User has triple-clicked
-      // Select the entire text of this node
-      Transforms.select(editor, ReactEditor.findPath(editor, element));
-
-      // Reset click count
-      setClickCount(0);
-    } else if (clickCount > 0) {
-      // User has clicked one or two times
-      // Wait for 250ms to see if they click again
-      const timeoutId = setTimeout(() => setClickCount(0), 250);
-      return () => clearTimeout(timeoutId);
-    }
-  }, [clickCount]);
-
   useEffect(() => {
     if (!focused && !selected) {
       setSelectedElementID("");
@@ -86,7 +67,6 @@ export function ParagraphElement(props) {
         data-id={element.id}
         data-path={JSON.stringify(path)}
         data-placeholder={shouldShowPlaceholder ? "Press '/' for commands" : ""}
-        onMouseDown={() => setClickCount((count) => count + 1)}
       >
         {children}
       </p>

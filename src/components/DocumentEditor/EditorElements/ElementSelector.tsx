@@ -18,6 +18,7 @@ import {
   ImageElement,
   SlideBreak,
   ListItem,
+  ElevenTTSWrapper,
 } from "./index";
 
 export function ElementSelector(props) {
@@ -31,6 +32,8 @@ export function ElementSelector(props) {
       return <SlideBreak {...props} />;
     case "audio":
       return <AudioElement {...props} />;
+    case "tts":
+      return <ElevenTTSWrapper {...props} />;
     case "image":
       return <ImageElement {...props} />;
     case "heading-one":
@@ -45,26 +48,6 @@ export function ElementSelector(props) {
       return <ParagraphElement {...props} />;
     case "link":
       return <LinkElement {...props} />;
-    // case "numbered-list":
-    //   return (
-    //     <ol
-    //       data-path={JSON.stringify(path)}
-    //       className="list-decimal"
-    //       {...attributes}
-    //     >
-    //       {children}
-    //     </ol>
-    //   );
-    // case "bulleted-list":
-    //   return (
-    //     <ul
-    //       data-path={JSON.stringify(path)}
-    //       className="list-disc"
-    //       {...attributes}
-    //     >
-    //       {children}
-    //     </ul>
-    //   );
     case "bulleted-list":
       return <ListItem {...props} listType="bullet" />;
 

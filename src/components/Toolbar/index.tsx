@@ -261,7 +261,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               />
             </button>
             <button
-              className="ml-1  mr-1 flex   items-center justify-center rounded-lg  p-[4px] transition duration-300 hover:bg-gray-200 hover:dark:bg-muted"
+              className="ml-1  flex   items-center justify-center rounded-lg  p-[4px] transition duration-300 hover:bg-gray-200 hover:dark:bg-muted"
               onMouseDown={(e) => {
                 e.preventDefault();
                 toggleBlock(editor, "numbered-list");

@@ -7,7 +7,7 @@ const LoadingSpinnerSVG = styled.svg`
   height: 20px;
 `;
 
-function LoadingSpinner({ strokeColor = "stroke-gray-400" }) {
+function LoadingSpinner({ strokeColor = "stroke-gray-400 dark:stroke-white" }) {
   return (
     <LoadingSpinnerSVG viewBox="0 0 50 50" className="animate-rotate">
       <circle

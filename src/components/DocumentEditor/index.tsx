@@ -110,6 +110,9 @@ type CustomElement = {
   questionNumber?: number;
   voice_id: string;
   name: string;
+  content: string;
+  audio_url: string;
+  file_name: string;
   latex?: string; // Add this line for the latex string
 };
 
@@ -249,18 +252,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   const [usingCommandLine, setusingCommandLine] = useState(false);
 
-  const {
-    setTextSpeech,
-    setSelectedTextSpeech,
-    showMiniToolbar,
-    setShowMiniToolbar,
-    setAudioIsLoading,
-  } = useTextSpeech();
-
-  const [uploadedFileName] = useTextSpeechStatusPolling(
-    setAudioIsLoading,
-    workspaceId
-  );
+  const [showMiniToolbar, setShowMiniToolbar] = useState(false);
+  // const [uploadedFileName] = useTextSpeechStatusPolling(
+  //   setAudioIsLoading,
+  //   workspaceId
+  // );
 
   const generateKey = () => {
     const timestamp = new Date().getTime();
@@ -1460,6 +1456,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   }, [editor.selection]);
 
   const decorate = ([node, path]) => {
+    if (node.type === "title") return [];
     if (lastActiveSelection != null) {
       const intersection = Range.intersection(
         lastActiveSelection,
@@ -1549,10 +1546,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 const toolbarWidth = isParentTTS(editor) ? 350 : 460; // Update this value according to your toolbar width
                 let initialX = firstRect.left - textEditorLeft;
 
-                // if (window.innerWidth > 1200) {
-                //   initialX += selectionRect.width / 2 - toolbarWidth / 2;
-                // }
-
                 const x = Math.max(
                   Math.min(initialX, textEditorWidth - toolbarWidth - 20),
                   0
@@ -1571,8 +1564,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
                 const selectedText = Editor.string(editor, selection);
                 const extractedText = textRegex(selectedText);
-                console.log(extractedText);
-                setSelectedTextSpeech([extractedText]);
               }
             }
           }
@@ -1585,44 +1576,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     ),
     300
   );
-
-  useEffect(() => {
-    if (uploadedFileName) {
-      const newNode = {
-        id: genNodeId(),
-        type: "audio",
-        fileName: uploadedFileName,
-        children: [{ text: "" }],
-      };
-
-      const { selection } = editor;
-
-      if (selection) {
-        // Text is selected
-
-        // Get the end point of the selection
-        const selectionEndPoint = Editor.end(editor, selection);
-
-        // Insert the new node right after the selection
-        Transforms.insertNodes(editor, newNode, { at: selectionEndPoint });
-      } else {
-        // Text is not selected
-
-        // Get the number of top-level nodes in the editor
-        const topLevelNodesCount = editor.children.length;
-
-        // Calculate the path for the new node
-        const newPath = [topLevelNodesCount];
-
-        // Insert the new node at the newPath
-        Transforms.insertNodes(editor, newNode, { at: newPath });
-
-        // Focus the editor
-      }
-
-      // Update the last inserted file name
-    }
-  }, [uploadedFileName]);
 
   const [windowSize, setWindowSize] = useState({
     width: window.innerWidth,
@@ -1645,10 +1598,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     };
   }, []);
 
-  const [showRightSidebar, setShowRightSidebar] = useLocalStorage(
-    "showRightSidebar",
-    true
-  );
+  const { showRightSidebar, setShowRightSidebar } = useTextSpeech();
 
   const [rightSideBarWidth, setRightSideBarWidth] = useLocalStorage(
     "sidebarWidth",
@@ -1700,7 +1650,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       <div className="flex  lg:justify-center xl:px-4">
         <div className="mx-auto block">
           <div
-            className="relative  z-0  mt-3 rounded-md  border border-gray-300  bg-white px-2 dark:border-gray-700 dark:bg-muted dark:text-foreground lg:min-w-[600px] lg:px-0 xl:min-w-[800px]"
+            className="relative  z-0  mt-2 rounded-md  border border-gray-300  bg-white px-2 dark:border-gray-700 dark:bg-muted dark:text-foreground lg:min-w-[600px] lg:px-0 xl:min-w-[800px]"
             style={{
               right:
                 windowSize.width > breakpoints.lg
@@ -1716,14 +1666,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     : "100vw"
                   : "95vw",
               height: "calc(100vh - 120px)",
-              // width:
-              //   windowSize.width > breakpoints.xl
-              //     ? `${1150 - rightSideBarWidth - 30}px`
-              //     : windowSize.width > breakpoints.lg
-              //     ? `${950 - rightSideBarWidth - 30}px`
-              //     : "95vw",
               transition: "right 0.3s ease-in-out, width 0.3s ease-in-out",
-              // maxWidth: windowSize.width > breakpoints.lg ? "780px" : "90vw",
             }}
           >
             <div className="block  lg:w-full">

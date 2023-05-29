@@ -5,7 +5,8 @@ export async function uploadAudioToSupabase(
   prisma: PrismaClient,
   supabaseServerClient: SupabaseClient,
   audioUrl: string,
-  fileName: string
+  fileName: string,
+  workspaceId: string
 ): Promise<string> {
   try {
     const {
@@ -17,7 +18,7 @@ export async function uploadAudioToSupabase(
     }
 
     const userFolder = userId;
-    const filePath = `${userFolder}/${fileName}`;
+    const filePath = `${userFolder}/${workspaceId}/${fileName}`;
 
     // Check if the file already exists
     const { data: fileList, error: listError } =

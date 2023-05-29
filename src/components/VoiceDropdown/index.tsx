@@ -185,24 +185,6 @@ function VoiceDropdown({
     (el) => el.category === "generated"
   );
 
-  useEffect(() => {
-    console.log(selectedVoiceId);
-    if (selectedVoiceId) {
-      const getSelectedName = generatedVoices?.find(
-        (el) => el.voice_id === selectedVoiceId
-      );
-      if (getSelectedName) {
-        setSelectedItemText(getSelectedName.name);
-        Transforms.setNodes(
-          editor,
-          { voice_id: selectedVoiceId, name: getSelectedName.name }, // New properties
-          { at: path } // Location
-        );
-      }
-      console.log(getSelectedName);
-    }
-  }, [generatedVoices, selectedVoiceId]);
-
   const filteredVoices = useMemo(() => {
     if (filters.length === 0) {
       return generatedVoices;
@@ -243,7 +225,13 @@ function VoiceDropdown({
 
   function handleVoiceSelection(voice: string, name: string): void {
     setSelectedVoiceId(voice);
+    setSelectedItemText(name);
     // setSelectedItemText(name);
+    Transforms.setNodes(
+      editor,
+      { voice_id: voice, name }, // New properties
+      { at: path } // Location
+    );
 
     setOpen(false);
     // if (voicesDropdownRef.current) {

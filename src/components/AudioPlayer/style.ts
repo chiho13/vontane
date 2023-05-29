@@ -2,13 +2,11 @@ import styled, { StyledComponent } from "styled-components";
 
 export const AudioPlayerStyle: StyledComponent<"div", any> = styled.div`
   position: relative;
-  display: flex;
   align-items: center;
-  width: 98%;
-  padding-left: 20px;
-  padding-right: 20px;
-  padding-top: 15px;
-  padding-bottom: 15px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   border-radius: 8px;
   margin-top: 5px;
   margin-bottom: 5px;
@@ -36,7 +34,6 @@ export const AudioPlayerStyle: StyledComponent<"div", any> = styled.div`
   .audioPlayer_timeline {
     width: 100%;
     height: 6px;
-    background-color: #cccccc;
     position: relative;
     cursor: pointer;
     border-radius: 3px;
@@ -44,7 +41,6 @@ export const AudioPlayerStyle: StyledComponent<"div", any> = styled.div`
 
   .audioPlayer_timeline_track {
     height: 6px;
-    background-color: #777777;
     position: absolute;
     top: 0;
     left: 0;

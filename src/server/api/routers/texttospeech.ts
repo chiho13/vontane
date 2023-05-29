@@ -35,6 +35,7 @@ export const texttospeechRouter = createTRPCRouter({
       z.object({
         voice_id: z.string(),
         content: z.string(),
+        workspaceId: z.string(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -73,7 +74,8 @@ export const texttospeechRouter = createTRPCRouter({
           ctx.prisma,
           supabaseServerClient,
           audioUrl,
-          fileName
+          fileName,
+          input.workspaceId
         );
         return { url: uploadedUrl, fileName };
       } catch (error) {
@@ -101,19 +103,10 @@ export const texttospeechRouter = createTRPCRouter({
           ctx.prisma,
           supabaseServerClient,
           audioURL,
-          fileName
+          fileName,
+          workspaceId
         );
         return { url: uploadedUrl, fileName };
-
-        // const tts = await ctx.prisma.texttospeech.create({
-        //   data: {
-        //     file_name: fileName,
-        //     creator_id: ctx.user.id,
-        //     workspace_id: workspaceId,
-        //   },
-        // });
-
-        // return { tts };
       } catch (error) {
         console.error(error);
         throw new TRPCError({
@@ -122,49 +115,33 @@ export const texttospeechRouter = createTRPCRouter({
         });
       }
     }),
-  getTextToSpeechFileNames: protectedProcedure
+  deleteAudio: protectedProcedure
     .input(
       z.object({
+        audioURL: z.string(),
         workspaceId: z.string(),
       })
     )
-    .query(async ({ ctx, input }) => {
-      const { workspaceId } = input;
+    .mutation(async ({ ctx, input }) => {
+      const { supabaseServerClient } = ctx;
+      const { audioURL, workspaceId } = input;
 
       try {
-        const fileNames = await ctx.prisma.texttospeech.findMany({
-          where: {
-            workspace_id: workspaceId,
-            creator_id: ctx.user.id,
-          },
-          select: {
-            file_name: true,
-          },
-        });
-        const signedURLPromises = fileNames.map(async (record) => {
-          const expiresIn = 60 * 60 * 24 * 7;
-          const fullFilePath = `${ctx.user.id}/${record.file_name}`;
-          const { data: signedURL, error: signedURLError } =
-            await ctx.supabaseServerClient.storage
-              .from("tts-audio")
-              .createSignedUrl(fullFilePath, expiresIn);
+        // Check the workspaceId if needed and make sure the current user has access to delete the file.
 
-          if (signedURLError) {
-            console.error(
-              `Error creating signed URL: ${signedURLError.message}`
-            );
-            throw new TRPCError({
-              code: "INTERNAL_SERVER_ERROR",
-              message: "Failed to create signed URL",
-            });
-          }
+        // Split the audioURL into bucket and path
+        const urlParts = audioURL.split("/");
+        const path = urlParts.slice(3).join("/"); // assuming URL is in format "https://bucket.supabase.co/path/to/file"
 
-          return { signedURL: signedURL.signedUrl, fileName: record.file_name };
-        });
+        const { error } = await supabaseServerClient.storage
+          .from("bucket-name")
+          .remove([path]);
 
-        const signedURLs = await Promise.all(signedURLPromises);
+        if (error) {
+          throw error;
+        }
 
-        return signedURLs;
+        return { message: "Audio file deleted successfully." };
       } catch (error) {
         console.error(error);
         throw new TRPCError({
@@ -173,6 +150,58 @@ export const texttospeechRouter = createTRPCRouter({
         });
       }
     }),
+
+  // getTextToSpeechFileNames: protectedProcedure
+  //   .input(
+  //     z.object({
+  //       workspaceId: z.string(),
+  //     })
+  //   )
+  //   .query(async ({ ctx, input }) => {
+  //     const { workspaceId } = input;
+
+  //     try {
+  //       const fileNames = await ctx.prisma.texttospeech.findMany({
+  //         where: {
+  //           workspace_id: workspaceId,
+  //           creator_id: ctx.user.id,
+  //         },
+  //         select: {
+  //           file_name: true,
+  //         },
+  //       });
+  //       const signedURLPromises = fileNames.map(async (record) => {
+  //         const expiresIn = 60 * 60 * 24 * 7;
+  //         const fullFilePath = `${ctx.user.id}/${record.file_name}`;
+  //         const { data: signedURL, error: signedURLError } =
+  //           await ctx.supabaseServerClient.storage
+  //             .from("tts-audio")
+  //             .createSignedUrl(fullFilePath, expiresIn);
+
+  //         if (signedURLError) {
+  //           console.error(
+  //             `Error creating signed URL: ${signedURLError.message}`
+  //           );
+  //           throw new TRPCError({
+  //             code: "INTERNAL_SERVER_ERROR",
+  //             message: "Failed to create signed URL",
+  //           });
+  //         }
+
+  //         return { signedURL: signedURL.signedUrl, fileName: record.file_name };
+  //       });
+
+  //       const signedURLs = await Promise.all(signedURLPromises);
+
+  //       return signedURLs;
+  //     } catch (error) {
+  //       console.error(error);
+  //       throw new TRPCError({
+  //         code: "INTERNAL_SERVER_ERROR",
+  //         message: "Internal server error",
+  //       });
+  //     }
+  //   }),
   getTextToSpeechFileName: protectedProcedure
     .input(
       z.object({

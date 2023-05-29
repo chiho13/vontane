@@ -8,12 +8,14 @@ interface GenerateButtonProps {
   isDisabled?: boolean;
   audioIsLoading: boolean;
   onClick: () => void;
+  element: any;
 }
 
 function GenerateButton({
   isDisabled,
   audioIsLoading,
   onClick,
+  element,
 }: GenerateButtonProps) {
   return (
     <GenerateButtonStyle
@@ -29,7 +31,9 @@ function GenerateButton({
         </>
       ) : (
         // <ImPlay3 width={40} />
-        <span className="text-sm">Generate</span>
+        <span className="text-sm">
+          {element.audio_url ? "Re-Generate" : "Generate"}
+        </span>
       )}
     </GenerateButtonStyle>
   );

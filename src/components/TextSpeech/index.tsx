@@ -46,11 +46,12 @@ export const TextSpeech = ({
   // const [audioIsLoading, setAudioIsLoading] = useState<boolean>(false);
   const [transcriptionId, setTranscriptionId] = useState<string>("");
 
-  // const { setTextSpeech, textSpeech, selectedTextSpeech } = useTextSpeech();
+  const { audioData, setAudioData, setRightBarAudioIsLoading } =
+    useTextSpeech();
 
   const [textSpeech, setTextSpeech] = useState(element.content || "");
   const [audioIsLoading, setAudioIsLoading] = useState(false);
-  const [audioURL, setAudioURL] = useState("");
+  // const [audioURL, setAudioURL] = useState(element.audio_url || "");
   const [fileName, setFileName] = useState("");
   const [inputText, setInputText] = useState<string | null>(textSpeech);
 
@@ -59,17 +60,30 @@ export const TextSpeech = ({
   const { editor } = useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);
 
+  console.log(workspaceId);
   const createTTSAudio = async () => {
     try {
       const response = await startTTS.mutateAsync({
         voice_id: selectedVoiceId,
         content: inputText,
+        workspaceId,
       });
       if (response) {
         console.log(response);
         setAudioIsLoading(false);
-        setAudioURL(response.url);
-        setFileName(response.fileName);
+        setRightBarAudioIsLoading(false);
+        setAudioData({
+          audio_url: response.url,
+          file_name: response.fileName,
+          content: inputText,
+        });
+        // setFileName(response.fileName);
+
+        Transforms.setNodes(
+          editor,
+          { audio_url: response.url, file_name: response.fileName }, // New properties
+          { at: path } // Location
+        );
       }
     } catch (error) {
       console.error("Error:", error);
@@ -93,7 +107,9 @@ export const TextSpeech = ({
     event.preventDefault();
     event.stopPropagation();
     setAudioIsLoading(true);
-    // createTTSAudio();
+    setRightBarAudioIsLoading(true);
+    createTTSAudio();
+    // console.log("lol", path);
     console.log(textSpeech);
   }
 
@@ -123,12 +139,15 @@ export const TextSpeech = ({
           />
         </div>
 
-        <GenerateButton
-          audioIsLoading={audioIsLoading}
-          onClick={isDisabled ? undefined : generateAudio}
-        />
+        {selected && (
+          <GenerateButton
+            audioIsLoading={audioIsLoading}
+            onClick={isDisabled ? undefined : generateAudio}
+            element={element}
+          />
+        )}
       </div>
-      {audioURL && <AudioPLayer audioURL={audioURL} fileName={fileName} />}
+      {/* {audioURL && <AudioPLayer audioURL={audioURL} fileName={fileName} />} */}
     </>
   );
 };

@@ -9,33 +9,35 @@ import {
   Dispatch,
   useCallback,
 } from "react";
+import { useLocalStorage } from "usehooks-ts";
 
 // Define the shape of the context object
-interface TextSpeechContextType {
-  textSpeech: string | null;
-  setTextSpeech: (textSpeech: string | null) => void;
-  selectedTextSpeech: string[] | null;
-  setSelectedTextSpeech: (textSpeech: string[] | null) => void;
-  audioIsLoading: boolean;
-  setAudioIsLoading: (value: boolean) => void;
-  showMiniToolbar: boolean;
-  setShowMiniToolbar: (value: boolean) => void;
-  signedURL: string | null;
-  setSignedURL: (value: string | null) => void;
-}
 
+type AudioData = {
+  audio_url: string;
+  file_name: string;
+  content: string;
+};
+interface TextSpeechContextType {
+  audioData: AudioData;
+  setAudioData: (value: AudioData) => void;
+  showRightSidebar: boolean;
+  setShowRightSidebar: (value: boolean) => void;
+  rightBarAudioIsLoading: boolean;
+  setRightBarAudioIsLoading: (value: boolean) => void;
+}
 // Create the context with default values
 const TextSpeechContext = createContext<TextSpeechContextType>({
-  textSpeech: [""],
-  setTextSpeech: () => {},
-  selectedTextSpeech: [""],
-  setSelectedTextSpeech: () => {},
-  audioIsLoading: false,
-  setAudioIsLoading: () => {},
-  showMiniToolbar: false,
-  setShowMiniToolbar: () => {},
-  signedURL: null,
-  setSignedURL: () => {},
+  audioData: {
+    audio_url: "",
+    file_name: "",
+    content: "",
+  },
+  setAudioData: () => {},
+  showRightSidebar: false,
+  setShowRightSidebar: () => {},
+  rightBarAudioIsLoading: false,
+  setRightBarAudioIsLoading: () => {},
 });
 
 // Define the shape of the provider props
@@ -48,31 +50,28 @@ const useTextSpeech = () => {
   return useContext(TextSpeechContext);
 };
 
-const TextSpeechProvider = ({ children }: TextSpeechProviderProps) => {
-  const router = useRouter();
-  const workspaceId = router.query.workspaceId;
-  const [textSpeech, setTextSpeech] = useState<string | null>(null);
-  const [selectedTextSpeech, setSelectedTextSpeech] = useState<string[] | null>(
-    null
+const RightSideBarProvider = ({ children }: TextSpeechProviderProps) => {
+  const [audioData, setAudioData] = useState({
+    audio_url: "",
+    file_name: "",
+    content: "",
+  });
+  const [showRightSidebar, setShowRightSidebar] = useLocalStorage(
+    "showRightSidebar",
+    true
   );
-  const [audioIsLoading, setAudioIsLoading] = useState<boolean>(false);
-  // Replace `workspaceId` with the actual workspace ID.
-  const [showMiniToolbar, setShowMiniToolbar] = useState(false);
-  const [signedURL, setSignedURL] = useState<string | null>(null);
+  const [rightBarAudioIsLoading, setRightBarAudioIsLoading] =
+    useState<boolean>(false);
 
   return (
     <TextSpeechContext.Provider
       value={{
-        textSpeech,
-        setTextSpeech,
-        selectedTextSpeech,
-        setSelectedTextSpeech,
-        audioIsLoading,
-        setAudioIsLoading,
-        showMiniToolbar,
-        setShowMiniToolbar,
-        signedURL,
-        setSignedURL,
+        audioData,
+        setAudioData,
+        showRightSidebar,
+        setShowRightSidebar,
+        rightBarAudioIsLoading,
+        setRightBarAudioIsLoading,
       }}
     >
       {children}
@@ -80,4 +79,4 @@ const TextSpeechProvider = ({ children }: TextSpeechProviderProps) => {
   );
 };
 
-export { TextSpeechProvider, useTextSpeech };
+export { RightSideBarProvider, useTextSpeech };

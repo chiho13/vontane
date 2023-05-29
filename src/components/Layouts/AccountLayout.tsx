@@ -121,7 +121,6 @@ const SidebarItem = styled.li<{ activeWorkspace?: boolean }>`
     padding: 8px 24px;
     width: 100%;
     border-radius: 4px;
-    margin-top: 5px;
     transition: background-color 300ms ease, transform 300ms;
     overflow: hidden;
 

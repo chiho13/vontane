@@ -15,9 +15,10 @@ import { IoIosPlay, IoIosPause } from "react-icons/io";
 interface Props {
   audioURL: string | null;
   fileName: string;
+  content: string;
 }
 
-function AudioPlayer({ audioURL, fileName }: Props): JSX.Element {
+function AudioPlayer({ audioURL, fileName, content }: Props): JSX.Element {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [seekValue, setSeekValue] = useState<number>(0);
   const [seekMax, setSeekMax] = useState<number>(0);
@@ -143,77 +144,72 @@ function AudioPlayer({ audioURL, fileName }: Props): JSX.Element {
   };
 
   return (
-    <AudioPlayerStyle className="border border-gray-300 bg-white dark:border-gray-700 dark:bg-background">
-      <button
-        onClick={isPlaying ? handlePause : handlePlay}
-        className="play_pause_button relative flex h-[30px] w-[30px] items-center justify-center rounded-full bg-brand dark:bg-foreground "
-      >
-        {isPlaying ? (
-          <IoIosPause className="pause-icon h-6 w-6 text-white dark:text-brand" />
-        ) : (
-          <IoIosPlay className="play-icon relative left-[1px]  h-6 w-6 text-white dark:text-brand" />
-        )}
-      </button>
+    <AudioPlayerStyle className="relative block border border-gray-300 bg-white dark:border-gray-700 dark:bg-secondary">
+      <div className="flex items-center ">
+        <button
+          onClick={isPlaying ? handlePause : handlePlay}
+          className="play_pause_button group relative flex h-[24px] w-[24px] items-center justify-center rounded-full bg-brand transition duration-200 hover:bg-brand/90 dark:bg-foreground dark:hover:bg-brand"
+        >
+          {isPlaying ? (
+            <IoIosPause className="pause-icon h-5 w-5 text-white group-hover:text-gray-100 dark:text-brand  group-hover:dark:text-foreground" />
+          ) : (
+            <IoIosPlay className="play-icon relative left-[1px] h-5 w-5 text-white  group-hover:text-gray-100 dark:text-brand  group-hover:dark:text-foreground" />
+          )}
+        </button>
 
-      <div className="audioPlayer_current-time">
-        {formatTime(Math.floor(seekValue))}
-      </div>
-
-      <div
-        className="audioPlayer_timeline_container group "
-        onMouseDown={handleSeekStart}
-        onMouseUp={handleSeekEnd}
-        onMouseMove={handleSeekMove}
-        onMouseEnter={handleMouseOver}
-        onMouseLeave={handleMouseLeave}
-      >
-        <div className="audioPlayer_timeline">
-          <div
-            className="audioPlayer_timeline_track group-hover:bg-brand"
-            style={{
-              width: `${
-                seekValue === seekMax
-                  ? "100"
-                  : (Math.floor(seekValue) / seekMax) * 100
-              }%`,
-              borderTopRightRadius: `${seekValue === seekMax ? "3px" : "0"}`,
-              borderBottomRightRadius: `${seekValue === seekMax ? "3px" : "0"}`,
-            }}
-          ></div>
-          {/* {showNib && <div className="audioPlayer_nib"></div>} */}
-          {showNib && (
+        <div
+          className="audioPlayer_timeline_container group "
+          onMouseDown={handleSeekStart}
+          onMouseUp={handleSeekEnd}
+          onMouseMove={handleSeekMove}
+          onMouseEnter={handleMouseOver}
+          onMouseLeave={handleMouseLeave}
+        >
+          <div className="audioPlayer_timeline bg-gray-400 dark:bg-gray-700">
             <div
-              className="audioPlayer_nib"
+              className="audioPlayer_timeline_track  bg-gray-400 group-hover:bg-brand dark:bg-foreground"
               style={{
-                left: `${
+                width: `${
                   seekValue === seekMax
                     ? "100"
                     : (Math.floor(seekValue) / seekMax) * 100
                 }%`,
-                transform: "translateX(-6px)",
+                borderTopRightRadius: `${seekValue === seekMax ? "3px" : "0"}`,
+                borderBottomRightRadius: `${
+                  seekValue === seekMax ? "3px" : "0"
+                }`,
               }}
             ></div>
-          )}
+            {/* {showNib && <div className="audioPlayer_nib"></div>} */}
+            {showNib && (
+              <div
+                className="audioPlayer_nib"
+                style={{
+                  left: `${
+                    seekValue === seekMax
+                      ? "100"
+                      : (Math.floor(seekValue) / seekMax) * 100
+                  }%`,
+                  transform: "translateX(-6px)",
+                }}
+              ></div>
+            )}
+          </div>
         </div>
-      </div>
-      <div className="audioPlayer_max-time">
-        {formatTime(Math.floor(seekMax))}
-      </div>
-
-      {/* <button
-        onClick={() => {
-          generatedAudio?.pause();
-          generatedAudio.currentTime = 0;
-        }}
-      >
-        Stop
-      </button> */}
-      <div className="ml-4">
+        {isPlaying ? (
+          <div className="audioPlayer_current-time mr-1">
+            {formatTime(Math.floor(seekValue))}
+          </div>
+        ) : (
+          <div className="audioPlayer_max-time mr-1">
+            {formatTime(Math.floor(seekMax))}
+          </div>
+        )}
         <DownloadButton audioURL={audioURL} fileName={fileName} />
       </div>
-      {/* <div className="ml-4">
-        <OptionMenu element={element} />
-      </div> */}
+      <div className="mt-4 items-center overflow-hidden overflow-ellipsis whitespace-nowrap text-sm">
+        {content}
+      </div>
     </AudioPlayerStyle>
   );
 }

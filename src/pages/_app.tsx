@@ -7,7 +7,6 @@ import { UserContextProvider } from "@/contexts/UserContext";
 import { useState } from "react";
 import { WorkspaceTitleUpdateProvider } from "@/contexts/WorkspaceTitleContext";
 import "@/styles/globals.css";
-import { TextSpeechProvider } from "@/contexts/TextSpeechContext";
 import "@stripe/stripe-js";
 import { ThemeProvider } from "@/components/theme-provider";
 
@@ -19,9 +18,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
       <UserContextProvider>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <WorkspaceTitleUpdateProvider>
-            <TextSpeechProvider>
-              <Component {...pageProps} />
-            </TextSpeechProvider>
+            <Component {...pageProps} />
           </WorkspaceTitleUpdateProvider>
         </ThemeProvider>
       </UserContextProvider>

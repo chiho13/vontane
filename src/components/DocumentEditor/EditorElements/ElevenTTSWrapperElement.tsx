@@ -11,64 +11,97 @@ import {
 } from "@/contexts/TextSpeechContext";
 import { Editor, Transforms } from "slate";
 
-const ElevenWrapperStyle = styled.div`
-  &.border-corner {
-    position: relative;
-  }
+const findAllSimilarElements = (nodes) => {
+  let similarElements = [];
+  let currentGroupIndex = 0;
+  let previousNode = null;
 
-  &.border-corner::before,
-  &.border-corner::after {
-    content: "";
-    position: absolute;
-    border: solid 2px;
-  }
+  nodes.forEach((node, index) => {
+    if (previousNode && node.type !== previousNode.type) {
+      currentGroupIndex++; // Increment group index when a non-similar node is encountered
+    }
+    similarElements.push({
+      ...node,
+      groupIndex: currentGroupIndex,
+      isFirstInGroup: !previousNode || node.type !== previousNode.type,
+    });
+    previousNode = node;
+  });
 
-  &.border-corner::before {
-    border-top: none;
-    border-right: none;
-    width: 30px;
-    height: 30px;
-    bottom: -2px;
-    left: 20px;
-  }
+  return similarElements;
+};
 
-  &.border-corner::after {
-    border-bottom: none;
-    border-left: none;
-    width: 30px;
-    height: 30px;
-    top: 0px;
-    right: 0;
-  }
-`;
+const withConsecutiveGrouping = (Component) => {
+  return (props) => {
+    const { element } = props;
+    const { editor } = useContext(EditorContext);
 
-export const ElevenTTSWrapper = (props) => {
-  const { attributes, children, element } = props;
+    if (!editor) {
+      return <Component {...props} />;
+    }
+
+    // Find all elements within the editor
+    const similarElements = findAllSimilarElements(editor.children);
+
+    // Determine if element is the first in its group
+    const isFirstInGroup =
+      similarElements.find((el) => el.id === element.id)?.isFirstInGroup ||
+      false;
+
+    return <Component {...props} isFirstInGroup={isFirstInGroup} />;
+  };
+};
+
+export const ElevenTTSWrapper = withConsecutiveGrouping((props) => {
+  const { attributes, children, element, isFirstInGroup } = props;
   const { editor } = useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);
   const [selectedVoiceId, setSelectedVoiceId] = useState<string>(
     element.voice_id
   );
   const selected = useSelected();
-  const { setTextSpeech } = useTextSpeech();
+  const focused = useFocused();
+  const { audioData, setAudioData } = useTextSpeech();
 
   useEffect(() => {
     const extractedText = extractTextValues(element.children).join(" ");
 
-    setTextSpeech(extractedText);
+    // setTextSpeech(extractedText);
     Transforms.setNodes(
       editor,
       { content: extractedText }, // New properties
       { at: path } // Location
     );
-  }, [element.children]);
+    console.log(element.file_name);
+  }, []);
+
+  useEffect(() => {
+    if (
+      selected &&
+      focused &&
+      element.type == "tts" &&
+      element?.audio_url !== audioData?.audio_url
+    ) {
+      setAudioData({
+        audio_url: element.audio_url,
+        file_name: element.file_name,
+        content: element.content,
+      });
+    } else if (element.type !== "tts") {
+      setAudioData(null);
+    }
+  }, [selected, focused, audioData]);
 
   return (
-    <ElevenWrapperStyle
+    <div
       {...attributes}
       data-id={element.id}
       data-path={JSON.stringify(path)}
-      className=" relative mt-5  mb-5 border-t border-b border-muted-foreground bg-slate-200 p-1 pb-3 pl-0 dark:border-muted-foreground dark:bg-background"
+      className={` relative  ${
+        isFirstInGroup ? "border-t" : ""
+      } border-b border-muted-foreground bg-slate-200 p-1 pb-3 pl-0 dark:border-muted-foreground ${
+        selected ? "dark:bg-brand/30" : "dark:bg-background"
+      }`}
     >
       <div className="ml-[49px] mb-5 mt-4" contentEditable={false}>
         <TextSpeech
@@ -81,6 +114,6 @@ export const ElevenTTSWrapper = (props) => {
       <div className="absolute top-[5px] right-[10px] z-10">
         <OptionMenu element={element} />
       </div>
-    </ElevenWrapperStyle>
+    </div>
   );
-};
+});

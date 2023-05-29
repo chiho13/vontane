@@ -20,7 +20,7 @@ import { NewColumnProvider } from "@/contexts/NewColumnContext";
 import { useRouter } from "next/router";
 import { Mirt } from "@/plugins/audioTrimmer";
 import debounce from "lodash/debounce";
-import { TextSpeechProvider } from "@/contexts/TextSpeechContext";
+import { RightSideBarProvider } from "@/contexts/TextSpeechContext";
 import { EditorProvider } from "@/contexts/EditorContext";
 import { EditorSkeleton } from "../Skeletons/editor";
 
@@ -112,13 +112,15 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = ({
     <NewColumnProvider>
       {!fetchWorkspaceIsLoading && initialSlateValue && workspaceId && (
         <EditorProvider key={workspaceId}>
-          <DocumentEditor
-            key={workspaceId}
-            workspaceId={workspaceId}
-            handleTextChange={debounce(handleTextChange, 500)}
-            initialSlateValue={initialSlateValue}
-            setFetchWorkspaceIsLoading={setFetchWorkspaceIsLoading}
-          />
+          <RightSideBarProvider key={workspaceId}>
+            <DocumentEditor
+              key={workspaceId}
+              workspaceId={workspaceId}
+              handleTextChange={debounce(handleTextChange, 500)}
+              initialSlateValue={initialSlateValue}
+              setFetchWorkspaceIsLoading={setFetchWorkspaceIsLoading}
+            />
+          </RightSideBarProvider>
         </EditorProvider>
       )}
     </NewColumnProvider>

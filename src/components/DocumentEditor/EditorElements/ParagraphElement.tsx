@@ -4,6 +4,7 @@ import { ReactEditor, useFocused, useSelected } from "slate-react";
 import { Editor, Path, Node, Transforms, Range } from "slate";
 import styled from "styled-components";
 import { hasSlideElement } from "@/utils/helpers";
+import { useTextSpeech } from "@/contexts/TextSpeechContext";
 
 const ParagraphStyle = styled.div`
   p[data-placeholder]::after {
@@ -30,6 +31,7 @@ export function ParagraphElement(props) {
   const selected = useSelected();
   const paragraphRef = useRef(null);
 
+  const { audioData, setAudioData } = useTextSpeech();
   useEffect(() => {
     if (editor && path) {
       const isFirstElement = Path.equals(path, [0]);

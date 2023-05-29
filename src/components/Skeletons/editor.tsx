@@ -37,7 +37,7 @@ export const EditorSkeleton = () => {
       <div className="flex justify-center">
         <div className="block">
           <div
-            className="relative z-0  mt-3 block w-[90vw] rounded-md  border border-gray-300 bg-white  px-2 dark:border-gray-700  dark:bg-muted/70 lg:max-w-[800px] lg:px-0 xl:w-[780px]"
+            className="relative z-0  mt-2 block w-[90vw] rounded-md  border border-gray-300 bg-white  px-2 dark:border-gray-700  dark:bg-muted/70 lg:max-w-[800px] lg:px-0 xl:w-[780px]"
             style={{
               height: "calc(100vh - 120px)",
               right: !showRightSidebar ? -rightSideBarWidth / 2 : 0,
@@ -51,7 +51,7 @@ export const EditorSkeleton = () => {
               transition: "right 0.3s ease-in-out",
             }}
           >
-            <div className="mt-3 p-4 ">
+            <div className="mt-2 p-4 ">
               <div className="   ml-[60px] h-[40px] w-[50%] animate-pulse rounded-lg bg-gray-200 dark:bg-muted-foreground/50"></div>
               <div className="  ml-[60px] mt-6 h-[25px] w-[90%] animate-pulse rounded-md bg-gray-200 dark:bg-muted-foreground/50"></div>
               <div className="  ml-[60px] mt-2 h-[25px] w-[90%] animate-pulse rounded-md bg-gray-200 dark:bg-muted-foreground/50"></div>

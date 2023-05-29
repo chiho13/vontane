@@ -37,7 +37,15 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
           <Trash2 className="mr-4 w-5  stroke-darkergray dark:stroke-foreground" />
         ),
       },
-    ];
+    ].filter((item) => {
+      // If the element type is "tts", exclude the "Duplicate" option
+      if (element.type === "tts" && item.name === "Duplicate") {
+        return false;
+      }
+
+      // Otherwise, include the option
+      return true;
+    });
     const [isKeyboardNav, setIsKeyboardNav] = useState(false);
 
     const actionableOptionMenuElements = optionMenuElements.filter(

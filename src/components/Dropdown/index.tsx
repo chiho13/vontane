@@ -266,7 +266,6 @@ function Dropdown(
     event.stopPropagation();
     // updateButtonPosition();
 
-    console.log("dropdown click");
     if (activeDropdown === dropdownId) {
       toggleDropdown(null);
     } else {

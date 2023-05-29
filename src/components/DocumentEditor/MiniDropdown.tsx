@@ -18,9 +18,8 @@ import { SlideBreak } from "@/icons/SlideBreak";
 import { addSlideBreak } from "./helpers/addSlideBreak";
 import { genNodeId } from "@/hoc/withID";
 import { useArrowNavigation } from "@/hooks/useArrowNavigation";
-import { toggleBlock } from "./helpers/toggleBlock";
+import { toggleBlock, isParentTTS } from "./helpers/toggleBlock";
 import { addImageBlock } from "./helpers/addImageBlock";
-
 interface MiniDropdownProps {
   isOpen: boolean;
   addMCQBlock: () => void;
@@ -172,7 +171,12 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
           </div>
         ),
       },
-    ];
+    ].filter((el) => {
+      if (isParentTTS(editor)) {
+        return el.name !== "Slide Break";
+      }
+      return true;
+    });
 
     useEffect(() => {
       if (isOpen) {

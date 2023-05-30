@@ -303,6 +303,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       if (!currentElement) return;
       const targetRect = currentElement.getBoundingClientRect();
 
+      console.log(currentElement);
       const windowHeight = window.innerHeight;
       const dropdownHeight = 370;
       console.log(dropdownHeight);
@@ -425,9 +426,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         Range.isCollapsed(editor.selection) &&
         Point.equals(editor.selection.anchor, startOfNode);
       if (event.nativeEvent.key === "/" && isEmpty && cursorAtStartOfNode) {
+        event.preventDefault();
         openMiniDropdown(_currentNodePath);
         setusingCommandLine(true);
-        event.preventDefault();
       }
 
       if (/^[a-zA-Z0-9-_]$/.test(event.key)) {
@@ -1065,6 +1066,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 event.preventDefault();
                 event.stopPropagation();
                 openMiniDropdown(ReactEditor.findPath(editor, element));
+                ReactEditor.blur(editor);
               }}
               ref={toggleRef}
             >

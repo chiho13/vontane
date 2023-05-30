@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { forwardRef, useContext, useEffect, useState } from "react";
 import { api } from "@/utils/api";
 import VoiceDropdown from "@/components/VoiceDropdown";
 import GenerateButton from "@/components/GenerateButton";
@@ -128,7 +128,6 @@ export const TextSpeech = ({
       textSpeech &&
       !(Array.isArray(textSpeech) && textSpeech.length === 0)
     ) {
-      console.log(textSpeech);
       setIsDisabled(false);
     } else {
       setIsDisabled(true);
@@ -179,6 +178,16 @@ export const TextSpeech = ({
           />
         )}
       </div>
+      <div
+        className="grow"
+        onMouseDown={(e) => {
+          // Prevent default action
+          e.preventDefault();
+
+          ReactEditor.focus(editor);
+          Transforms.select(editor, Editor.start(editor, path));
+        }}
+      ></div>
       {selected && element.audio_url && (
         <button
           onClick={() => {

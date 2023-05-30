@@ -91,7 +91,6 @@ export const ElevenTTSWrapper = withConsecutiveGrouping((props) => {
       setAudioData(null);
     }
   }, [selected, focused, audioData]);
-
   return (
     <div
       {...attributes}

@@ -52,6 +52,8 @@ export const TextSpeech = ({
     rightBarAudioIsLoading,
     setRightBarAudioIsLoading,
     setShowRightSidebar,
+    generatedAudio,
+    isPlaying,
   } = useTextSpeech();
 
   const [textSpeech, setTextSpeech] = useState(element.content || "");
@@ -65,7 +67,6 @@ export const TextSpeech = ({
   const selected = useSelected();
   const { editor } = useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);
-
   console.log(workspaceId);
   const createTTSAudio = async () => {
     if (element.audio_url) {
@@ -160,8 +161,7 @@ export const TextSpeech = ({
   }, [selectedVoiceId, textSpeech]);
 
   return (
-    <>
-      <div className="relative mt-4 flex items-center lg:max-w-[980px]"></div>
+    <div className="flex w-[95%] justify-between">
       <div className="relative flex items-center lg:max-w-[980px]">
         <div className="mr-2">
           <VoiceDropdown
@@ -179,7 +179,22 @@ export const TextSpeech = ({
           />
         )}
       </div>
+      {selected && element.audio_url && (
+        <button
+          onClick={() => {
+            setShowRightSidebar(true);
+            if (!isPlaying) {
+              generatedAudio?.play();
+            } else {
+              generatedAudio?.pause();
+            }
+          }}
+          className=" ml-5 flex h-[34px] items-center justify-center rounded-md border-2 border-foreground p-0 px-2 text-sm  font-bold text-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted  "
+        >
+          {isPlaying ? "Pause" : "Play"}
+        </button>
+      )}
       {/* {audioURL && <AudioPLayer audioURL={audioURL} fileName={fileName} />} */}
-    </>
+    </div>
   );
 };

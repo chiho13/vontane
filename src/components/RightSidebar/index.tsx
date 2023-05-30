@@ -65,7 +65,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
               value="properties"
               className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
             >
-              Properties
+              Tools
             </TabsTrigger>
 
             <TabsTrigger

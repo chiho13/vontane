@@ -156,7 +156,7 @@ export const ListItem = withListNumbering((props) => {
           />
         )}
         {isBulletList && (
-          <MdCircle className="absolute w-[9px] -translate-x-[24px] translate-y-[4px]" />
+          <MdCircle className="absolute w-[8px] -translate-x-[24px] translate-y-[4px]" />
         )}
         {children}
       </li>

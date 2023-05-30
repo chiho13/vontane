@@ -100,27 +100,37 @@ export const toggleFormat = (
   );
 };
 
-export const wrapWithTTS = (editor: BaseEditor & ReactEditor) => {
-  const { selection } = editor;
-  if (!selection) return;
+export const wrapWithTTS = (
+  editor: BaseEditor & ReactEditor,
+  element?: any
+) => {
+  let range;
 
-  const [startPoint, endPoint] = Range.edges(selection);
-  const startBlock = Editor.above(editor, {
-    match: (n) => Editor.isBlock(editor, n),
-    at: startPoint.path,
-  })!;
-  const endBlock = Editor.above(editor, {
-    match: (n) => Editor.isBlock(editor, n),
-    at: endPoint.path,
-  })!;
+  if (element) {
+    const path = ReactEditor.findPath(editor, element);
+    range = Editor.range(editor, path);
+  } else {
+    const { selection } = editor;
+    if (!selection) return;
 
-  if (!startBlock || !endBlock) return;
+    const [startPoint, endPoint] = Range.edges(selection);
+    const startBlock = Editor.above(editor, {
+      match: (n) => Editor.isBlock(editor, n),
+      at: startPoint.path,
+    })!;
+    const endBlock = Editor.above(editor, {
+      match: (n) => Editor.isBlock(editor, n),
+      at: endPoint.path,
+    })!;
 
-  const blockPathStart = startBlock[1];
-  const blockPathEnd = endBlock[1];
+    if (!startBlock || !endBlock) return;
 
-  // create a range from start block to end block
-  const range = Editor.range(editor, blockPathStart, blockPathEnd);
+    const blockPathStart = startBlock[1];
+    const blockPathEnd = endBlock[1];
+
+    // create a range from start block to end block
+    range = Editor.range(editor, blockPathStart, blockPathEnd);
+  }
 
   // wrap all nodes in the created range
   Transforms.wrapNodes(

@@ -3,7 +3,7 @@ import { useTheme } from "styled-components";
 import { forwardRef, useRef, useContext, useEffect, useState } from "react";
 import Image from "next/image";
 import { MoreHorizontal, Trash2, Copy } from "lucide-react";
-import { BsFillCaretDownFill } from "react-icons/bs";
+import { BsFillCaretDownFill, BsSoundwave } from "react-icons/bs";
 import Dropdown, { DropdownContext, DropdownProvider } from "../Dropdown";
 import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor } from "slate-react";
@@ -11,6 +11,16 @@ import { Editor, Path, Transforms } from "slate";
 import { genNodeId } from "@/hoc/withID";
 import { nanoid } from "nanoid";
 import { useArrowNavigation } from "@/hooks/useArrowNavigation";
+import { wrapWithTTS } from "./helpers/toggleBlock";
+// import { isParentTTS, wrapWithTTS } from "./helpers/toggleBlock";
+
+const isParentTTS = (editor, node) => {
+  const path = ReactEditor.findPath(editor, node);
+  const parent = Editor.parent(editor, path);
+
+  return parent && parent[0].type === "tts";
+};
+
 interface OptionMenuProps {
   element: any;
 }
@@ -23,12 +33,20 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
 
     const optionMenuElements = [
       {
+        name: "Text to MP3",
+        action: () => wrapWithTTS(editor, element),
+        icon: (
+          <BsSoundwave className="mr-4 w-5  stroke-darkergray dark:stroke-foreground" />
+        ),
+      },
+      {
         name: "Duplicate",
         action: duplicateBlock,
         icon: (
           <Copy className="mr-4 w-5  stroke-darkergray dark:stroke-foreground" />
         ),
       },
+
       "separator",
       {
         name: "Delete",
@@ -38,14 +56,26 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
         ),
       },
     ].filter((item) => {
-      // If the element type is "tts", exclude the "Duplicate" option
+      // Exclude "Duplicate" option if element type is "tts"
       if (element.type === "tts" && item.name === "Duplicate") {
         return false;
+      }
+
+      if (item.name === "Text to MP3") {
+        if (
+          element.type === "tts" ||
+          element.type === "slide" ||
+          element.type === "image" ||
+          isParentTTS(editor, element)
+        ) {
+          return false;
+        }
       }
 
       // Otherwise, include the option
       return true;
     });
+
     const [isKeyboardNav, setIsKeyboardNav] = useState(false);
 
     const actionableOptionMenuElements = optionMenuElements.filter(

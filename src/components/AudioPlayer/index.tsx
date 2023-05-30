@@ -11,6 +11,7 @@ import React from "react";
 import { DownloadButton } from "../DownloadButton";
 import { OptionMenu } from "../DocumentEditor/OptionMenu";
 import { IoIosPlay, IoIosPause } from "react-icons/io";
+import { useTextSpeech } from "@/contexts/TextSpeechContext";
 
 interface Props {
   audioURL: string | null;
@@ -19,7 +20,6 @@ interface Props {
 }
 
 function AudioPlayer({ audioURL, fileName, content }: Props): JSX.Element {
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [seekValue, setSeekValue] = useState<number>(0);
   const [seekMax, setSeekMax] = useState<number>(0);
   const [isSeeking, setIsSeeking] = useState<boolean>(false);
@@ -28,9 +28,8 @@ function AudioPlayer({ audioURL, fileName, content }: Props): JSX.Element {
 
   const theme = useTheme();
 
-  const [generatedAudio, setGenerateAudio] = useState<HTMLAudioElement | null>(
-    null
-  );
+  const { generatedAudio, setGenerateAudio, setIsPlaying, isPlaying } =
+    useTextSpeech();
 
   useEffect(() => {
     if (audioURL) {
@@ -60,11 +59,19 @@ function AudioPlayer({ audioURL, fileName, content }: Props): JSX.Element {
         setIsPlaying(false);
       };
 
+      const handlePlay = () => {
+        setIsPlaying(true);
+      };
+
+      const handlePause = () => {
+        setIsPlaying(false);
+      };
+
       generatedAudio.addEventListener("timeupdate", handleTimeUpdate);
       generatedAudio.addEventListener("loadedmetadata", handleLoadedMetadata);
       generatedAudio.addEventListener("ended", handleEnded);
-      // generatedAudio.addEventListener("play", handlePlay);
-      // generatedAudio.addEventListener("pause", handlePause);
+      generatedAudio.addEventListener("play", handlePlay);
+      generatedAudio.addEventListener("pause", handlePause);
 
       return () => {
         generatedAudio.removeEventListener("timeupdate", handleTimeUpdate);

@@ -25,6 +25,10 @@ interface TextSpeechContextType {
   setShowRightSidebar: (value: boolean) => void;
   rightBarAudioIsLoading: boolean;
   setRightBarAudioIsLoading: (value: boolean) => void;
+  generatedAudio: HTMLAudioElement | null;
+  setGenerateAudio: (value: HTMLAudioElement) => void;
+  isPlaying: boolean;
+  setIsPlaying: (value: boolean) => void;
 }
 // Create the context with default values
 const TextSpeechContext = createContext<TextSpeechContextType>({
@@ -38,6 +42,10 @@ const TextSpeechContext = createContext<TextSpeechContextType>({
   setShowRightSidebar: () => {},
   rightBarAudioIsLoading: false,
   setRightBarAudioIsLoading: () => {},
+  generatedAudio: null,
+  setGenerateAudio: () => {},
+  isPlaying: false,
+  setIsPlaying: () => {},
 });
 
 // Define the shape of the provider props
@@ -62,6 +70,11 @@ const RightSideBarProvider = ({ children }: TextSpeechProviderProps) => {
   );
   const [rightBarAudioIsLoading, setRightBarAudioIsLoading] =
     useState<boolean>(false);
+  const [generatedAudio, setGenerateAudio] = useState<HTMLAudioElement | null>(
+    null
+  );
+
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
   return (
     <TextSpeechContext.Provider
@@ -72,6 +85,10 @@ const RightSideBarProvider = ({ children }: TextSpeechProviderProps) => {
         setShowRightSidebar,
         rightBarAudioIsLoading,
         setRightBarAudioIsLoading,
+        generatedAudio,
+        setGenerateAudio,
+        isPlaying,
+        setIsPlaying,
       }}
     >
       {children}

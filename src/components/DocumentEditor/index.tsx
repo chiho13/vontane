@@ -253,10 +253,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const [usingCommandLine, setusingCommandLine] = useState(false);
 
   const [showMiniToolbar, setShowMiniToolbar] = useState(false);
-  // const [uploadedFileName] = useTextSpeechStatusPolling(
-  //   setAudioIsLoading,
-  //   workspaceId
-  // );
 
   const generateKey = () => {
     const timestamp = new Date().getTime();
@@ -409,6 +405,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
       setIsTyping(true);
       const _currentNodePath = selection.anchor.path.slice(0, -1);
+
+      // setActivePath(JSON.stringify(selection.anchor.path));
       const startPosition = selection.anchor;
       const [currentNode, currentNodePath] = Editor.parent(
         editor,
@@ -801,77 +799,77 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         }
       }
 
-      if (
-        event.key === "_" &&
-        event.shiftKey &&
-        !event.ctrlKey &&
-        !event.altKey
-      ) {
-        const { selection } = editor;
-        if (selection && Range.isCollapsed(selection)) {
-          const [startTextNode, startPath] = Editor.node(
-            editor,
-            selection.anchor.path
-          );
+      // if (
+      //   event.key === "_" &&
+      //   event.shiftKey &&
+      //   !event.ctrlKey &&
+      //   !event.altKey
+      // ) {
+      //   const { selection } = editor;
+      //   if (selection && Range.isCollapsed(selection)) {
+      //     const [startTextNode, startPath] = Editor.node(
+      //       editor,
+      //       selection.anchor.path
+      //     );
 
-          if (startTextNode.text) {
-            const textBeforeCaret = startTextNode.text.slice(
-              0,
-              selection.anchor.offset
-            );
-            const underscoreMatches = textBeforeCaret.match(/_{2,}$/);
+      //     if (startTextNode.text) {
+      //       const textBeforeCaret = startTextNode.text.slice(
+      //         0,
+      //         selection.anchor.offset
+      //       );
+      //       const underscoreMatches = textBeforeCaret.match(/_{2,}$/);
 
-            if (underscoreMatches) {
-              event.preventDefault();
+      //       if (underscoreMatches) {
+      //         event.preventDefault();
 
-              const numberOfUnderscores = underscoreMatches[0].length;
-              const textBeforeUnderscores = startTextNode.text.slice(
-                0,
-                selection.anchor.offset - numberOfUnderscores
-              );
-              const textAfterCaret = startTextNode.text.slice(
-                selection.anchor.offset
-              );
+      //         const numberOfUnderscores = underscoreMatches[0].length;
+      //         const textBeforeUnderscores = startTextNode.text.slice(
+      //           0,
+      //           selection.anchor.offset - numberOfUnderscores
+      //         );
+      //         const textAfterCaret = startTextNode.text.slice(
+      //           selection.anchor.offset
+      //         );
 
-              const newChildren = [
-                { text: textBeforeUnderscores },
-                { text: " ", blank: true },
-                { text: " " },
-                { text: textAfterCaret },
-              ];
+      //         const newChildren = [
+      //           { text: textBeforeUnderscores },
+      //           { text: " ", blank: true },
+      //           { text: " " },
+      //           { text: textAfterCaret },
+      //         ];
 
-              const parentNodePath = startPath.slice(0, -1);
-              const [parentNode, _] = Editor.node(editor, parentNodePath);
+      //         const parentNodePath = startPath.slice(0, -1);
+      //         const [parentNode, _] = Editor.node(editor, parentNodePath);
 
-              const newNode = {
-                ...parentNode,
-                children: parentNode.children
-                  .slice(0, startPath[startPath.length - 1])
-                  .concat(newChildren)
-                  .concat(
-                    parentNode.children.slice(
-                      startPath[startPath.length - 1] + 1
-                    )
-                  ),
-              };
+      //         const newNode = {
+      //           ...parentNode,
+      //           children: parentNode.children
+      //             .slice(0, startPath[startPath.length - 1])
+      //             .concat(newChildren)
+      //             .concat(
+      //               parentNode.children.slice(
+      //                 startPath[startPath.length - 1] + 1
+      //               )
+      //             ),
+      //         };
 
-              const textNodePoint = {
-                path: startPath
-                  .slice(0, -1)
-                  .concat(startPath[startPath.length - 1] + 1),
-                offset: 0,
-              };
+      //         const textNodePoint = {
+      //           path: startPath
+      //             .slice(0, -1)
+      //             .concat(startPath[startPath.length - 1] + 1),
+      //           offset: 0,
+      //         };
 
-              Editor.withoutNormalizing(editor, () => {
-                Transforms.removeNodes(editor, { at: parentNodePath });
-                Transforms.insertNodes(editor, newNode, { at: parentNodePath });
-              });
+      //         Editor.withoutNormalizing(editor, () => {
+      //           Transforms.removeNodes(editor, { at: parentNodePath });
+      //           Transforms.insertNodes(editor, newNode, { at: parentNodePath });
+      //         });
 
-              Transforms.select(editor, textNodePoint);
-            }
-          }
-        }
-      }
+      //         Transforms.select(editor, textNodePoint);
+      //       }
+      //     }
+      //   }
+      // }
 
       if (event.ctrlKey || event.metaKey) {
         switch (event.key) {

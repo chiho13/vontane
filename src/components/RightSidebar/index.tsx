@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTheme } from "styled-components";
 import { TextSpeech } from "../TextSpeech";
@@ -20,13 +20,13 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
   const theme = useTheme();
   const { editor, activePath } = useContext(EditorContext);
 
-  let path = activePath ? JSON.parse(activePath) : [];
-  while (path && path.length > 1) {
-    path = Path.parent(path);
-  }
-
-  const rootNode = path.length ? Node.get(editor, path) : null;
-  console.log(rootNode);
+  const rootNode = useMemo(() => {
+    let path = activePath ? JSON.parse(activePath) : [];
+    while (path && path.length > 1) {
+      path = Path.parent(path);
+    }
+    return path.length ? Node.get(editor, path) : null;
+  }, [editor, activePath]);
 
   const rightSidebarStyle = {
     transform: `translateX(${

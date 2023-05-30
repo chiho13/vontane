@@ -42,12 +42,16 @@ export const TextSpeech = ({
   element,
 }) => {
   const router = useRouter();
-  const workspaceId = router.query.workspaceId;
+  const workspaceId = router.query.workspaceId as string;
   // const [audioIsLoading, setAudioIsLoading] = useState<boolean>(false);
   const [transcriptionId, setTranscriptionId] = useState<string>("");
 
-  const { audioData, setAudioData, setRightBarAudioIsLoading } =
-    useTextSpeech();
+  const {
+    audioData,
+    setAudioData,
+    rightBarAudioIsLoading,
+    setRightBarAudioIsLoading,
+  } = useTextSpeech();
 
   const [textSpeech, setTextSpeech] = useState(element.content || "");
   const [audioIsLoading, setAudioIsLoading] = useState(false);
@@ -56,12 +60,38 @@ export const TextSpeech = ({
   const [inputText, setInputText] = useState<string | null>(textSpeech);
 
   const startTTS = api.texttospeech.startConversion.useMutation();
+  const deleteTTS = api.texttospeech.deleteAudio.useMutation();
   const selected = useSelected();
   const { editor } = useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);
 
   console.log(workspaceId);
   const createTTSAudio = async () => {
+    if (element.audio_url) {
+      try {
+        const response = await deleteTTS.mutateAsync({
+          fileName: element.file_name,
+          workspaceId,
+        });
+        if (response) {
+          console.log(response);
+          setAudioData({
+            audio_url: "",
+            file_name: "",
+            content: "",
+          });
+          // setFileName(response.fileName);
+
+          Transforms.setNodes(
+            editor,
+            { audio_url: "", file_name: "" }, // New properties
+            { at: path } // Location
+          );
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
     try {
       const response = await startTTS.mutateAsync({
         voice_id: selectedVoiceId,
@@ -142,7 +172,7 @@ export const TextSpeech = ({
         {selected && (
           <GenerateButton
             audioIsLoading={audioIsLoading}
-            onClick={isDisabled ? undefined : generateAudio}
+            onClick={rightBarAudioIsLoading ? undefined : generateAudio}
             element={element}
           />
         )}

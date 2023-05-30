@@ -111,6 +111,7 @@ type CustomElement = {
   voice_id: string;
   name: string;
   content: string;
+  liveContent: string;
   audio_url: string;
   file_name: string;
   latex?: string; // Add this line for the latex string

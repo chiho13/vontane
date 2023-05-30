@@ -100,7 +100,7 @@ export const ElevenTTSWrapper = withConsecutiveGrouping((props) => {
       className={` relative  ${
         isFirstInGroup ? "border-t" : ""
       } border-b border-muted-foreground bg-slate-200 p-1 pb-3 pl-0 dark:border-muted-foreground ${
-        selected ? "dark:bg-brand/30" : "dark:bg-background"
+        selected ? "dark:bg-brand/20" : "dark:bg-background"
       }`}
     >
       <div className="ml-[49px] mb-5 mt-4" contentEditable={false}>

@@ -118,24 +118,27 @@ export const texttospeechRouter = createTRPCRouter({
   deleteAudio: protectedProcedure
     .input(
       z.object({
-        audioURL: z.string(),
+        fileName: z.string(),
         workspaceId: z.string(),
       })
     )
     .mutation(async ({ ctx, input }) => {
       const { supabaseServerClient } = ctx;
-      const { audioURL, workspaceId } = input;
+      const { fileName, workspaceId } = input;
 
+      const {
+        data: { user },
+      } = await supabaseServerClient.auth.getUser();
+      const userId = user?.id;
       try {
         // Check the workspaceId if needed and make sure the current user has access to delete the file.
 
         // Split the audioURL into bucket and path
-        const urlParts = audioURL.split("/");
-        const path = urlParts.slice(3).join("/"); // assuming URL is in format "https://bucket.supabase.co/path/to/file"
+        const filePath = `${userId}/${workspaceId}/${fileName}`;
 
         const { error } = await supabaseServerClient.storage
-          .from("bucket-name")
-          .remove([path]);
+          .from("tts-audio")
+          .remove([filePath]);
 
         if (error) {
           throw error;

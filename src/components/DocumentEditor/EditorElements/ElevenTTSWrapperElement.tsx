@@ -126,7 +126,7 @@ export const ElevenTTSWrapper = withConsecutiveGrouping((props) => {
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="start"
-              className="border-2 border-gray-300  bg-background dark:border-accent"
+              className="border-2 border-gray-300  bg-background dark:border-accent dark:bg-secondary"
             >
               <DropdownMenuItem
                 onClick={() => {
@@ -134,15 +134,17 @@ export const ElevenTTSWrapper = withConsecutiveGrouping((props) => {
                   Transforms.select(editor, Editor.start(editor, addedPath));
                   ReactEditor.focus(editor);
                 }}
+                className="dark:text-foreground hover:dark:bg-muted"
               >
                 <BsSoundwave className="mr-2 h-[22px] w-[22px]" />
-                <span className="text-foreground">New Text to MP3</span>
+                <span className="text-foreground">Text to MP3</span>
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={(e) => {
                   e.preventDefault();
                   insertNewParagraph(editor, Path.next(path));
                 }}
+                className="hover:dark:bg-muted"
               >
                 <div className="mr-2 block">
                   <TextIcon

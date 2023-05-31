@@ -1707,7 +1707,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                           >
                             <Droppable>
                               <Editable
-                                className=" relative cursor-text"
+                                className=" relative"
                                 style={{
                                   height: "calc(100vh - 170px)",
                                 }}

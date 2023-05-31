@@ -56,7 +56,7 @@ export function extractTextValues(data) {
       let questionText = "";
       if (question) {
         questionText = question.children
-          .map((child) => (child.blank ? " BLANK " : child.text))
+          .map((child) => child.text.replace(/_+/g, " BLANK "))
           .join("");
       }
 
@@ -64,15 +64,15 @@ export function extractTextValues(data) {
       let optionsText = "";
       if (options) {
         const pronunciationAlphabet = [
-          "Aye",
-          "Bee",
+          "A",
+          "B",
           "See",
-          "Dee",
-          "Ee",
+          "D",
+          "E",
           "Eff",
           "Gee",
           "Aitch",
-          "Eye",
+          "I",
           "Jay",
           "Kay",
           "El",
@@ -98,11 +98,11 @@ export function extractTextValues(data) {
           const isLastOption = index === options.children.length - 1;
 
           if (isFirstOption) {
-            optionsText += ` Is it ${optionLetter}. ${option.children[0].text}.`;
+            optionsText += `\noption ${optionLetter} - ${option.children[0].text} - \n`;
           } else if (isLastOption) {
-            optionsText += ` or ${optionLetter}. ${option.children[0].text}.`;
+            optionsText += `option ${optionLetter} - ${option.children[0].text} -  `;
           } else {
-            optionsText += ` ${optionLetter}. ${option.children[0].text}.`;
+            optionsText += `option ${optionLetter} - ${option.children[0].text} -  \n`;
           }
         });
       }

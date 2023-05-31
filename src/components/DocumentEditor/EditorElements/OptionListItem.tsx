@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Editor, Transforms, createEditor, Path } from "slate";
+import { Editor, Transforms, createEditor, Path, Node } from "slate";
 import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor, useFocused } from "slate-react";
 import { Check } from "lucide-react";
@@ -30,7 +30,7 @@ export const OptionListItem = React.memo(
     const [checked, setChecked] = useState(element.correctAnswer || false);
     const focused = useFocused();
 
-    // const path = ReactEditor.findPath(editor, element);
+    const path = ReactEditor.findPath(editor, element);
     // console.log(path);
     const isEmpty =
       element.children.length === 1 && element.children[0].text === "";

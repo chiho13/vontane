@@ -42,9 +42,6 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
   const { audioData, setAudioData, rightBarAudioIsLoading } = useTextSpeech();
 
-  useEffect(() => {
-    console.log(rootNode?.content);
-  }, [rootNode]);
   const rightSidebarStyle = {
     transform: `translateX(${
       showRightSidebar ? "0px" : `${rightSideBarWidth}px`

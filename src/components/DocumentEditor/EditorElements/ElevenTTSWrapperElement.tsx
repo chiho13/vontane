@@ -143,6 +143,11 @@ export const ElevenTTSWrapper = withConsecutiveGrouping((props) => {
                 onClick={(e) => {
                   e.preventDefault();
                   insertNewParagraph(editor, Path.next(path));
+                  Transforms.select(
+                    editor,
+                    Editor.start(editor, Path.next(path))
+                  );
+                  ReactEditor.focus(editor);
                 }}
                 className="hover:dark:bg-muted"
               >

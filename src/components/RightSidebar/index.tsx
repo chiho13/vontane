@@ -1,4 +1,11 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTheme } from "styled-components";
 import { TextSpeech } from "../TextSpeech";
@@ -8,6 +15,9 @@ import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { EditorContext } from "@/contexts/EditorContext";
 import { Editor, Node, Path } from "slate";
 import LoadingSpinner from "@/icons/LoadingSpinner";
+import { extractTextValues } from "../DocumentEditor/helpers/extractText";
+import { root } from "postcss";
+import { Info } from "lucide-react";
 interface RightSideBarProps {
   showRightSidebar: boolean;
   rightSideBarWidth: number;
@@ -19,7 +29,6 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 }) => {
   const theme = useTheme();
   const { editor, activePath } = useContext(EditorContext);
-
   const rootNode = useMemo(() => {
     let path = activePath ? JSON.parse(activePath) : [];
     while (path && path.length > 1) {
@@ -28,6 +37,33 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     return path.length ? Node.get(editor, path) : null;
   }, [editor, activePath]);
 
+  const extractedText = extractTextValues(rootNode?.children).join(" ");
+  console.log(extractedText);
+
+  const [rootContent, setRootContent] = useState(extractedText);
+  const [isLoading, setIsLoading] = useState(true);
+  const [contentChanged, setContentChanged] = useState(false);
+
+  const { audioData, setAudioData, rightBarAudioIsLoading } = useTextSpeech();
+  const prevAudioData = useRef(audioData);
+  useEffect(() => {
+    let path = activePath ? JSON.parse(activePath) : [];
+    while (path && path.length > 1) {
+      path = Path.parent(path);
+    }
+    const newRootNode = path.length ? Node.get(editor, path) : null;
+    if (newRootNode && prevAudioData.current !== audioData) {
+      setContentChanged(
+        (prevContentChanged) =>
+          prevContentChanged !== (newRootNode.content !== audioData.content)
+      );
+    }
+    prevAudioData.current = audioData;
+  }, [editor, activePath, audioData]);
+
+  useEffect(() => {
+    console.log(rootNode?.content);
+  }, [rootNode]);
   const rightSidebarStyle = {
     transform: `translateX(${
       showRightSidebar ? "0px" : `${rightSideBarWidth}px`
@@ -43,7 +79,6 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
   };
 
   const [tab, setTab] = useLocalStorage("tab", "properties");
-  const { audioData, setAudioData, rightBarAudioIsLoading } = useTextSpeech();
 
   const handleTabChange = (newTab) => {
     setTab(newTab); // This will also update value in localStorage
@@ -100,6 +135,15 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                   )}
                 </div>
               ))}
+
+            {contentChanged ? (
+              <div className="mt-3 flex items-center text-sm  text-amber-600 dark:text-amber-400">
+                <Info className="mr-2 " /> Content has changed. Re-generate
+                audio
+              </div>
+            ) : (
+              ""
+            )}
           </TabsContent>
           <TabsContent value="slide">Doc or Slide Preview</TabsContent>
         </Tabs>

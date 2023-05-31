@@ -1544,7 +1544,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 const firstRect = rects[0];
 
                 // Calculate mini toolbar position
-                const toolbarWidth = isParentTTS(editor) ? 350 : 460; // Update this value according to your toolbar width
+                const toolbarWidth = isParentTTS(editor) ? 370 : 460; // Update this value according to your toolbar width
                 let initialX = firstRect.left - textEditorLeft;
 
                 const x = Math.max(

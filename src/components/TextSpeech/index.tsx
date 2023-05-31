@@ -14,6 +14,7 @@ import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor, useSelected } from "slate-react";
 import AudioPLayer from "@/components/AudioPlayer";
 import { extractTextValues } from "../DocumentEditor/helpers/extractText";
+import { Info } from "lucide-react";
 
 const useDownloadFile = (url, fileName) => {
   const [file, setFile] = useState(null);
@@ -56,7 +57,7 @@ export const TextSpeech = ({
     isPlaying,
   } = useTextSpeech();
 
-  const [textSpeech, setTextSpeech] = useState(element.content || "");
+  const [textSpeech, setTextSpeech] = useState(audioData.content || "");
   const [audioIsLoading, setAudioIsLoading] = useState(false);
   // const [audioURL, setAudioURL] = useState(element.audio_url || "");
   const [fileName, setFileName] = useState("");
@@ -67,7 +68,7 @@ export const TextSpeech = ({
   const selected = useSelected();
   const { editor } = useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);
-  console.log(workspaceId);
+
   const createTTSAudio = async () => {
     if (element.audio_url) {
       try {
@@ -107,13 +108,17 @@ export const TextSpeech = ({
         setAudioData({
           audio_url: response.url,
           file_name: response.fileName,
-          content: inputText,
+          content: textSpeech,
         });
         // setFileName(response.fileName);
 
         Transforms.setNodes(
           editor,
-          { audio_url: response.url, file_name: response.fileName }, // New properties
+          {
+            audio_url: response.url,
+            file_name: response.fileName,
+            content: textSpeech,
+          }, // New properties
           { at: path } // Location
         );
       }
@@ -141,7 +146,7 @@ export const TextSpeech = ({
     setRightBarAudioIsLoading(true);
     setShowRightSidebar(true);
     createTTSAudio();
-    // console.log("lol", path);
+    console.log("lol", path);
     console.log(textSpeech);
   }
 
@@ -179,7 +184,7 @@ export const TextSpeech = ({
         )}
       </div>
       <div
-        className="grow"
+        className="flex grow items-center"
         onMouseDown={(e) => {
           // Prevent default action
           e.preventDefault();

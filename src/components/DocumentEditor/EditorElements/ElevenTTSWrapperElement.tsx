@@ -5,10 +5,7 @@ import { TextSpeech } from "@/components/TextSpeech";
 import { OptionMenu } from "../OptionMenu";
 import { extractTextValues } from "../helpers/extractText";
 import styled from "styled-components";
-import {
-  TextSpeechProvider,
-  useTextSpeech,
-} from "@/contexts/TextSpeechContext";
+import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { Editor, Transforms } from "slate";
 
 const findAllSimilarElements = (nodes) => {
@@ -65,32 +62,22 @@ export const ElevenTTSWrapper = withConsecutiveGrouping((props) => {
 
   useEffect(() => {
     const extractedText = extractTextValues(element.children).join(" ");
-
-    // setTextSpeech(extractedText);
-    Transforms.setNodes(
-      editor,
-      { content: extractedText }, // New properties
-      { at: path } // Location
-    );
-    console.log(element.file_name);
-  }, []);
-
-  useEffect(() => {
     if (
       selected &&
       focused &&
       element.type == "tts" &&
-      element?.audio_url !== audioData?.audio_url
+      (element?.audio_url !== audioData?.audio_url ||
+        audioData?.content !== extractedText)
     ) {
       setAudioData({
         audio_url: element.audio_url,
         file_name: element.file_name,
-        content: element.content,
+        content: extractedText,
       });
-    } else if (element.type !== "tts") {
+    } else if (element.type !== "tts" && audioData !== null) {
       setAudioData(null);
     }
-  }, [selected, focused, audioData]);
+  }, [selected, focused, element.children]);
   return (
     <div
       {...attributes}

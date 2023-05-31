@@ -52,7 +52,12 @@ import { Toolbar } from "@/components/Toolbar";
 import { up_animation_props } from "@/config/framer";
 
 import { slightbouncey } from "@/config/framer";
-import { toggleBlock, toggleFormat, isParentTTS } from "./helpers/toggleBlock";
+import {
+  toggleBlock,
+  toggleFormat,
+  isParentTTS,
+  insertNewParagraph,
+} from "./helpers/toggleBlock";
 
 import {
   DndContext,
@@ -321,7 +326,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       console.log(currentNode.type);
       console.log(targetRect.height);
       if (!isEmpty) {
-        insertNewParagraphEnter(Path.next(path));
+        insertNewParagraph(editor, Path.next(path));
         setActivePath(JSON.stringify(Path.next(path)));
       }
       console.log(isEmpty);
@@ -345,17 +350,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     },
     [dropdownPositions, isLocked, showDropdown, activePath]
   );
-
-  function insertNewParagraphEnter(newPath: Path) {
-    const newNode = {
-      id: genNodeId(),
-      type: "paragraph",
-      children: [{ text: "" }],
-    };
-
-    Transforms.insertNodes(editor, newNode, { at: newPath });
-    Transforms.select(editor, Editor.start(editor, newPath));
-  }
 
   function splitTitleNode(newPath: Path) {
     Transforms.splitNodes(editor);
@@ -518,7 +512,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           ) {
             const newPath = Path.next(parentPath);
             if (Editor.isEnd(editor, selection.anchor, _currentNodePath)) {
-              // insertNewParagraphEnter(newPath);
+              // insertNewParagraph(newPath);
               const newPath = Path.next(parentPath);
               Transforms.insertNodes(
                 editor,
@@ -621,7 +615,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
               if (Editor.isEnd(editor, selection.anchor, _currentNodePath)) {
                 const newPath = Path.next(parentPath);
-                insertNewParagraphEnter(newPath);
+                insertNewParagraph(editor, newPath);
               } else {
                 splitTitleNode(parentPath);
               }
@@ -1055,7 +1049,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       const addButton =
         (isRoot &&
           element.type !== "column" &&
-          element.type !== "tts" &&
           element.type !== "image" &&
           element.type !== "title") ||
         isInsideColumnCell ? (

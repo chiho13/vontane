@@ -7,8 +7,19 @@ import { extractTextValues } from "../helpers/extractText";
 import styled from "styled-components";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { Editor, Path, Transforms } from "slate";
-import { ChevronUp, ChevronDown } from "lucide-react";
+import { Plus } from "lucide-react";
 import { MoveBlock } from "@/components/MoveBlock";
+import { insertNewParagraph } from "../helpers/toggleBlock";
+import { TextIcon } from "@/icons/Text";
+import { BsSoundwave } from "react-icons/bs";
+import { addTTSBlock } from "../helpers/addTTSBlock";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 const findAllSimilarElements = (nodes) => {
   let similarElements = [];
   let currentGroupIndex = 0;
@@ -80,7 +91,6 @@ export const ElevenTTSWrapper = withConsecutiveGrouping((props) => {
     }
   }, [selected, focused, element.children]);
 
-  const selectedBlockIndex = path[0];
   return (
     <div
       {...attributes}
@@ -104,6 +114,47 @@ export const ElevenTTSWrapper = withConsecutiveGrouping((props) => {
         <OptionMenu element={element} />
       </div>
       {selected && <MoveBlock editor={editor} path={path} />}
+      {selected && (
+        <div className="absolute -bottom-[14px] z-10 flex w-full justify-center">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex  h-[28px] w-[28px] items-center justify-center rounded-md border-2 border-foreground p-1 text-xs text-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted">
+                <Plus width={20} />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="start"
+              className="border-2 border-gray-300  bg-background dark:border-accent"
+            >
+              <DropdownMenuItem
+                onClick={() => {
+                  const { newPath: addedPath, id } = addTTSBlock(editor, path);
+                  Transforms.select(editor, Editor.start(editor, addedPath));
+                  ReactEditor.focus(editor);
+                }}
+              >
+                <BsSoundwave className="mr-2 h-[22px] w-[22px]" />
+                <span className="text-foreground">New Text to MP3</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.preventDefault();
+                  insertNewParagraph(editor, Path.next(path));
+                }}
+              >
+                <div className="mr-2 block">
+                  <TextIcon
+                    strokeColor="stroke-darkgray dark:stroke-foreground"
+                    width={22}
+                    height={22}
+                  />
+                </div>
+                <span className="text-foreground"> Text Block</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      )}
     </div>
   );
 });

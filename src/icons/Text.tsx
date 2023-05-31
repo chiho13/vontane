@@ -1,15 +1,19 @@
-export const TextIcon = () => {
+export const TextIcon = ({
+  strokeColor = "stroke-darkergray",
+  width = 28,
+  height = 28,
+}) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="28"
-      height="28"
+      width={width}
+      height={height}
       viewBox="0 0 24 24"
       fill="none"
-      className="stroke-darkergray"
+      className={strokeColor}
       stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
       <polyline points="3,15 7,7 11,15"></polyline>
       <line x1="4" x2="10" y1="13" y2="13"></line>

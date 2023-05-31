@@ -5,6 +5,7 @@ import {
   Range,
   Element as SlateElement,
   BaseEditor,
+  Path,
 } from "slate";
 import { ReactEditor } from "slate-react";
 import { genNodeId } from "@/hoc/withID";
@@ -172,3 +173,14 @@ export const isParentTTS = (editor) => {
 
   return !!parent;
 };
+
+export function insertNewParagraph(editor: Editor, newPath: Path) {
+  const newNode = {
+    id: genNodeId(),
+    type: "paragraph",
+    children: [{ text: "" }],
+  };
+
+  Transforms.insertNodes(editor, newNode, { at: newPath });
+  Transforms.select(editor, Editor.start(editor, newPath));
+}

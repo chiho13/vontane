@@ -6,8 +6,9 @@ import { OptionMenu } from "../OptionMenu";
 import { extractTextValues } from "../helpers/extractText";
 import styled from "styled-components";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
-import { Editor, Transforms } from "slate";
-
+import { Editor, Path, Transforms } from "slate";
+import { ChevronUp, ChevronDown } from "lucide-react";
+import { MoveBlock } from "@/components/MoveBlock";
 const findAllSimilarElements = (nodes) => {
   let similarElements = [];
   let currentGroupIndex = 0;
@@ -78,6 +79,8 @@ export const ElevenTTSWrapper = withConsecutiveGrouping((props) => {
       setAudioData(null);
     }
   }, [selected, focused, element.children]);
+
+  const selectedBlockIndex = path[0];
   return (
     <div
       {...attributes}
@@ -100,6 +103,7 @@ export const ElevenTTSWrapper = withConsecutiveGrouping((props) => {
       <div className="absolute top-[5px] right-[10px] z-10">
         <OptionMenu element={element} />
       </div>
+      {selected && <MoveBlock editor={editor} path={path} />}
     </div>
   );
 });

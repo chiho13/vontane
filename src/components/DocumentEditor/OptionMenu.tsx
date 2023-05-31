@@ -134,7 +134,7 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
             dropdownMenuClassName=" top-0 w-[200px] border-0 dark:bg-secondary"
             icon={
               <div className="flex h-[22px] w-[22px] items-center  justify-center rounded-md bg-gray-200  p-0 hover:bg-gray-300 dark:bg-muted  dark:hover:bg-accent">
-                <BsFillCaretDownFill className="option-menu w-[18px]  w-[18px] text-darkergray dark:text-muted-foreground" />
+                <MoreHorizontal className="option-menu w-[18px]  w-[18px] text-darkergray dark:text-muted-foreground" />
               </div>
             }
           >

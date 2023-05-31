@@ -20,6 +20,9 @@ import { genNodeId } from "@/hoc/withID";
 import { useArrowNavigation } from "@/hooks/useArrowNavigation";
 import { toggleBlock, isParentTTS } from "./helpers/toggleBlock";
 import { addImageBlock } from "./helpers/addImageBlock";
+import { BsSoundwave } from "react-icons/bs";
+import { addTTSBlock } from "./helpers/addTTSBlock";
+
 interface MiniDropdownProps {
   isOpen: boolean;
   addMCQBlock: () => void;
@@ -65,6 +68,16 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         icon: (
           <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
             <TextIcon />
+          </div>
+        ),
+      },
+      {
+        name: "Text to MP3",
+        description: "AI Text to Audio",
+        action: addTTSHandler,
+        icon: (
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
+            <BsSoundwave className="h-[30px] w-[30px] text-darkergray dark:text-darkergray" />
           </div>
         ),
       },
@@ -173,7 +186,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
       },
     ].filter((el) => {
       if (isParentTTS(editor)) {
-        return el.name !== "Slide Break";
+        return el.name !== "Slide Break" && el.name !== "Text to MP3";
       }
       return true;
     });
@@ -264,6 +277,15 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         element: "image",
       });
       setActivePath(JSON.stringify(addedPath));
+    }
+
+    function addTTSHandler() {
+      const { newPath: addedPath, id } = addTTSBlock(
+        editor,
+        JSON.parse(activePath)
+      );
+      Transforms.select(editor, Editor.start(editor, addedPath));
+      ReactEditor.focus(editor);
     }
 
     function addSlideBreakHandler() {

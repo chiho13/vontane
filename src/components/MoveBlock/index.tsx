@@ -49,7 +49,7 @@ export const MoveBlock: React.FC<MoveBlockProps> = ({ editor, path }) => {
                 }}
               >
                 <ChevronUp
-                  className="stroke-darkgray dark:stroke-muted-foreground"
+                  className="stroke-muted-foreground dark:stroke-muted-foreground"
                   width={20}
                 />
               </button>
@@ -70,7 +70,7 @@ export const MoveBlock: React.FC<MoveBlockProps> = ({ editor, path }) => {
             <Tooltip>
               <TooltipTrigger>
                 <button
-                  className="addButton flex h-[22px] w-[22px] items-center justify-center rounded-md ease-in-out hover:bg-gray-200 dark:hover:bg-accent"
+                  className="addButton flex h-[22px] w-[22px] items-center justify-center rounded-md ease-in-out hover:bg-gray-300 dark:hover:bg-accent"
                   onClick={(event) => {
                     event.preventDefault();
                     event.stopPropagation();
@@ -78,7 +78,7 @@ export const MoveBlock: React.FC<MoveBlockProps> = ({ editor, path }) => {
                   }}
                 >
                   <ChevronDown
-                    className="stroke-darkgray dark:stroke-muted-foreground"
+                    className="stroke-muted-foreground  dark:stroke-muted-foreground"
                     width={20}
                   />
                 </button>

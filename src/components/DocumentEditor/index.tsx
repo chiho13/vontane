@@ -155,7 +155,7 @@ const EditableStyle = styled.div`
   }
 
   .editable-scrollbar::-webkit-scrollbar-thumb {
-    background: #dddddd;
+    background: #aaaaaa;
     border-radius: 3px;
 
     .dark & {
@@ -1054,7 +1054,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         isInsideColumnCell ? (
           <div className="z-1000" contentEditable={false}>
             <button
-              className="addButton flex h-[24px] w-[24px] items-center justify-center rounded-md ease-in-out hover:bg-gray-200 dark:hover:bg-accent"
+              className="addButton flex h-[24px] w-[24px] items-center justify-center rounded-md ease-in-out hover:bg-gray-300 dark:hover:bg-accent"
               onClick={(event) => {
                 event.preventDefault();
                 event.stopPropagation();
@@ -1064,7 +1064,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               ref={toggleRef}
             >
               <Plus
-                className="stroke-darkgray dark:stroke-muted-foreground"
+                className="stroke-muted-foreground dark:stroke-muted-foreground"
                 width={20}
               />
             </button>

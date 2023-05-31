@@ -40,26 +40,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
   const extractedText = extractTextValues(rootNode?.children).join(" ");
   console.log(extractedText);
 
-  const [rootContent, setRootContent] = useState(extractedText);
-  const [isLoading, setIsLoading] = useState(true);
-  const [contentChanged, setContentChanged] = useState(false);
-
   const { audioData, setAudioData, rightBarAudioIsLoading } = useTextSpeech();
-  const prevAudioData = useRef(audioData);
-  useEffect(() => {
-    let path = activePath ? JSON.parse(activePath) : [];
-    while (path && path.length > 1) {
-      path = Path.parent(path);
-    }
-    const newRootNode = path.length ? Node.get(editor, path) : null;
-    if (newRootNode && prevAudioData.current !== audioData) {
-      setContentChanged(
-        (prevContentChanged) =>
-          prevContentChanged !== (newRootNode.content !== audioData.content)
-      );
-    }
-    prevAudioData.current = audioData;
-  }, [editor, activePath, audioData]);
 
   useEffect(() => {
     console.log(rootNode?.content);
@@ -135,15 +116,6 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                   )}
                 </div>
               ))}
-
-            {contentChanged ? (
-              <div className="mt-3 flex items-center text-sm  text-amber-600 dark:text-amber-400">
-                <Info className="mr-2 " /> Content has changed. Re-generate
-                audio
-              </div>
-            ) : (
-              ""
-            )}
           </TabsContent>
           <TabsContent value="slide">Doc or Slide Preview</TabsContent>
         </Tabs>

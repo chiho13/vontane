@@ -78,11 +78,11 @@ export function SortableElement({
             <button
               ref={setActivatorNodeRef}
               {...listeners}
-              className={`${classes.handle} opactiy-0 flex items-center hover:bg-gray-200 group-hover:opacity-100 dark:hover:bg-accent `}
+              className={`${classes.handle} opactiy-0 flex items-center hover:bg-gray-300 group-hover:opacity-100 dark:hover:bg-accent `}
               contentEditable={false}
             >
               <GripVertical
-                className="stroke-darkgray dark:stroke-muted-foreground"
+                className="stroke-muted-foreground dark:stroke-muted-foreground"
                 width={22}
               />
             </button>

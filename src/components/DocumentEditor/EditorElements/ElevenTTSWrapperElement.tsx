@@ -98,8 +98,10 @@ export const ElevenTTSWrapper = withConsecutiveGrouping((props) => {
       data-path={JSON.stringify(path)}
       className={` relative  ${
         isFirstInGroup ? "border-t" : ""
-      } border-b border-muted-foreground bg-slate-200 p-1 pb-3 pl-0 dark:border-muted-foreground ${
-        selected ? "dark:bg-brand/20" : "dark:bg-background"
+      } border-b border-muted-foreground p-1 pb-3 pl-0 dark:border-muted-foreground ${
+        selected
+          ? " bg-brand/30 dark:bg-brand/20"
+          : "bg-slate-200 dark:bg-background"
       }`}
     >
       <div className="ml-[49px] mb-5 mt-4" contentEditable={false}>
@@ -118,7 +120,7 @@ export const ElevenTTSWrapper = withConsecutiveGrouping((props) => {
         <div className="absolute -bottom-[14px] z-10 flex w-full justify-center">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex  h-[28px] w-[28px] items-center justify-center rounded-md border-2 border-foreground p-1 text-xs text-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted">
+              <button className="flex  h-[28px] w-[28px] items-center justify-center rounded-md border-2 border-foreground bg-background p-1 text-xs text-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted">
                 <Plus width={20} />
               </button>
             </DropdownMenuTrigger>

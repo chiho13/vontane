@@ -203,7 +203,7 @@ export const TextSpeech = ({
               generatedAudio?.pause();
             }
           }}
-          className=" ml-5 flex h-[34px] items-center justify-center rounded-md border-2 border-foreground p-0 px-2 text-sm  font-bold text-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted  "
+          className=" ml-5 flex h-[34px] items-center justify-center rounded-md border-2 border-foreground bg-background p-0 px-2 text-sm  font-bold text-foreground hover:border-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:border-muted-foreground dark:bg-background dark:text-foreground dark:hover:bg-muted  "
         >
           {isPlaying ? "Pause" : "Play"}
         </button>

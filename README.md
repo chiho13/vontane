@@ -40,7 +40,7 @@ currently under development (April)
 - [x] slide integration
 - [x] image block
 - [x] text to speech element wrapper
-- [] preview content
+- [] preview content (WIP)
 - [] audio trimmer
 - [] musicXML
 - [] map block

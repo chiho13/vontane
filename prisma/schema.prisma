@@ -8,24 +8,24 @@ datasource db {
 }
 
 model user {
-  id          String        @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
-  email       String        
-  name        String?
-  avatar      String?
-  created_at  DateTime?     @default(now()) @db.Timestamptz(6)
-  stripe_id   String?      @unique
-  is_subscribed Boolean   @default(false)
-  stripeSubscriptionId   String?   @unique @map(name: "stripe_subscription_id")
-  stripePriceId          String?   @map(name: "stripe_price_id")
-  stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end")
-  workspaces  workspace[]
+  id                     String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email                  String
+  name                   String?
+  avatar                 String?
+  created_at             DateTime?   @default(now()) @db.Timestamptz(6)
+  stripe_id              String?     @unique
+  is_subscribed          Boolean     @default(false)
+  stripeCurrentPeriodEnd DateTime?   @map("stripe_current_period_end")
+  stripePriceId          String?     @map("stripe_price_id")
+  stripeSubscriptionId   String?     @unique @map("stripe_subscription_id")
+  workspaces             workspace[]
 }
 
 model workspace {
-  id          String      @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name        String?
   slate_value String?
-  created_at  DateTime    @default(dbgenerated("now()"))
-  author_id   String      @db.Uuid
-  author      user        @relation(fields: [author_id], references: [id])
+  created_at  DateTime @default(now())
+  author_id   String   @db.Uuid
+  author      user     @relation(fields: [author_id], references: [id])
 }

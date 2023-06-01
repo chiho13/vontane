@@ -9,6 +9,8 @@ export const profileRouter = createTRPCRouter({
   getProfile: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input, ctx }) => {
+      const { supabaseServerClient } = ctx;
+
       const profile = await ctx.prisma.user.findUnique({
         where: { id: input.id },
       });

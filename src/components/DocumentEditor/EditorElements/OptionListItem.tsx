@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 const StyledOptionListItem = styled.li`
   position: relative;
   padding: 8px;
+  padding-right: 40px;
   width: auto;
   display: list-item;
 
@@ -84,8 +85,10 @@ export const OptionListItem = React.memo(
     return (
       <StyledOptionListItem
         {...attributes}
-        className={` rounded border-2 bg-white dark:border-gray-500 dark:bg-muted ${
-          checked ? "border-blue-500 dark:border-brand" : "border-gray-400"
+        className={` rounded border-2 bg-white  dark:bg-muted ${
+          checked
+            ? "border-blue-500 dark:border-brand"
+            : "border-gray-400 dark:border-gray-500"
         }`}
       >
         <span

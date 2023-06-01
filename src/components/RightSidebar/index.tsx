@@ -18,6 +18,8 @@ import LoadingSpinner from "@/icons/LoadingSpinner";
 import { extractTextValues } from "../DocumentEditor/helpers/extractText";
 import { root } from "postcss";
 import { Info } from "lucide-react";
+import { api } from "@/utils/api";
+import { useRouter } from "next/router";
 interface RightSideBarProps {
   showRightSidebar: boolean;
   rightSideBarWidth: number;
@@ -28,6 +30,9 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
   rightSideBarWidth,
 }) => {
   const theme = useTheme();
+  const router = useRouter();
+  const workspaceId = router.query.workspaceId as string;
+
   const { editor, activePath } = useContext(EditorContext);
   const rootNode = useMemo(() => {
     let path = activePath ? JSON.parse(activePath) : [];
@@ -36,9 +41,6 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     }
     return path.length ? Node.get(editor, path) : null;
   }, [editor, activePath]);
-
-  const extractedText = extractTextValues(rootNode?.children).join(" ");
-  console.log(extractedText);
 
   const { audioData, setAudioData, rightBarAudioIsLoading } = useTextSpeech();
 
@@ -55,6 +57,34 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     transition:
       "width 0.3s ease-in-out, opacity 0.4s ease-in-out, transform 0.3s ease-in-out",
   };
+
+  const {
+    data: ttsaudiodata,
+    error: ttsaudiodataerror,
+    isLoading: ttsaudiodataloading,
+    refetch: ttsaudiodatarefetch,
+  } = api.texttospeech.getTextToSpeechFileName.useQuery(
+    { fileName: audioData.file_name, workspaceId },
+    {
+      enabled: false,
+      cacheTime: 5 * 60 * 1000, // Cache data for 5 minutes
+      staleTime: 5 * 60 * 1000, // Data is considered fresh for 5 minutes
+    }
+  );
+  useEffect(() => {
+    if (audioData.file_name) {
+      ttsaudiodatarefetch();
+    }
+  }, [audioData.file_name]);
+
+  useEffect(() => {
+    if (ttsaudiodata) {
+      setAudioData({
+        ...audioData,
+        audio_url: ttsaudiodata.signedURL,
+      });
+    }
+  }, [ttsaudiodata]);
 
   const [tab, setTab] = useLocalStorage("tab", "properties");
 

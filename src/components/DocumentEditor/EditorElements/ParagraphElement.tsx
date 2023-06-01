@@ -5,6 +5,7 @@ import { Editor, Path, Node, Transforms, Range } from "slate";
 import styled from "styled-components";
 import { hasSlideElement } from "@/utils/helpers";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
+import { isParentMCQ } from "../helpers/toggleBlock";
 
 const ParagraphStyle = styled.div`
   p[data-placeholder]::after {
@@ -13,7 +14,7 @@ const ParagraphStyle = styled.div`
     opacity: 0.333;
     user-select: none;
     position: absolute;
-    top: 0;
+    top: ${(props) => (props.isParentMCQ ? "40px" : 0)};
   }
 `;
 
@@ -32,6 +33,7 @@ export function ParagraphElement(props) {
   const paragraphRef = useRef(null);
 
   const { audioData, setAudioData } = useTextSpeech();
+
   useEffect(() => {
     if (editor && path) {
       const isFirstElement = Path.equals(path, [0]);
@@ -49,7 +51,7 @@ export function ParagraphElement(props) {
     }
   }, [focused, selected]);
 
-  const shouldShowPlaceholder =
+  let shouldShowPlaceholder =
     (isVisible && (!focused || (focused && editor.children.length === 1))) ||
     (focused &&
       selected &&
@@ -57,18 +59,25 @@ export function ParagraphElement(props) {
       editor.selection &&
       Range.isCollapsed(editor.selection));
 
+  let placeholder = "Press '/' for commands";
+
+  if (isParentMCQ(editor)) {
+    placeholder = "Enter Question";
+  }
+
   return (
-    <ParagraphStyle>
+    <ParagraphStyle isParentMCQ={isParentMCQ(editor)}>
       <p
         ref={paragraphRef}
         className={`paragraph-element  ${
           selectedElementID === element.id ? " bg-[#E0EDFB]" : ""
         }
+
         `}
         {...attributes}
         data-id={element.id}
         data-path={JSON.stringify(path)}
-        data-placeholder={shouldShowPlaceholder ? "Press '/' for commands" : ""}
+        data-placeholder={shouldShowPlaceholder ? placeholder : ""}
       >
         {children}
       </p>

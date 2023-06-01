@@ -39,7 +39,8 @@ currently under development (April)
 - [x] stripe subscription
 - [x] slide integration
 - [x] image block
-- [] text to speech element wrapper
+- [x] text to speech element wrapper
+- [] preview content
 - [] audio trimmer
 - [] musicXML
 - [] map block

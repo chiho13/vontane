@@ -174,6 +174,17 @@ export const isParentTTS = (editor) => {
   return !!parent;
 };
 
+export const isParentMCQ = (editor) => {
+  const { selection } = editor;
+  if (!selection) return false;
+
+  const parent = Editor.above(editor, {
+    match: (n) => n.type === "mcq",
+  });
+
+  return !!parent;
+};
+
 export function insertNewParagraph(editor: Editor, newPath: Path) {
   const newNode = {
     id: genNodeId(),

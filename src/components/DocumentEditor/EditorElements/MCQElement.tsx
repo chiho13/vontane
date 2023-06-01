@@ -63,7 +63,7 @@ export const MCQElement: React.FC<MCQElementProps> = withQuestionNumbering(
         {/* <div className="absolute  top-0 right-2">
           <OptionMenu element={element} />
         </div> */}
-        <div className="text-bold pointer-events-none" contentEditable={false}>
+        <div className="text-bold" contentEditable={false}>
           {questionNumber} )
         </div>
         {children}

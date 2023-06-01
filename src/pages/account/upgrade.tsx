@@ -185,7 +185,7 @@ const Upgrade: NextPage = () => {
           <div className="-mx-4 flex flex-wrap">
             <div className="w-full px-4">
               <div className="mx-auto mb-[20px] max-w-[510px] text-center lg:mb-5">
-                <h1 className="mb-4 text-3xl font-bold text-dark sm:text-4xl ">
+                <h1 className="mb-4 text-3xl font-bold text-dark dark:text-foreground sm:text-4xl ">
                   Upgrade
                 </h1>
               </div>
@@ -220,38 +220,46 @@ const Upgrade: NextPage = () => {
           </div>
           <div className="relatve -mx-4 mb-10 flex flex-wrap justify-center">
             <div className="w-full px-4 lg:w-[720px]">
-              <div className="relative z-10 grid gap-10 overflow-hidden rounded-xl border border-gray-200 bg-white py-10 px-8 shadow-md sm:p-12 lg:grid-cols-2 lg:py-10 lg:px-6 xl:p-10">
+              <div className="relative z-10 grid gap-10 overflow-hidden rounded-xl border border-gray-200 bg-white py-10 px-8 shadow-md dark:bg-secondary sm:p-12 lg:grid-cols-2 lg:py-10 lg:px-6 xl:p-10">
                 <div className="relative flex flex-col justify-between">
-                  <span className="text-[30 px] mb-4  block text-lg font-semibold text-[#0E78EF]">
+                  <span className="text-[30 px] mb-4  block text-lg font-semibold text-[#0E78EF] dark:text-foreground">
                     Pro Plan{" "}
                   </span>
 
                   <div className="mb-7">
-                    <p className="mt-3  flex items-center text-left text-base font-semibold leading-loose text-gray-500">
+                    <p className="mt-3  flex items-center text-left text-base font-semibold leading-loose text-gray-500 dark:text-gray-400">
                       <Check />
                       <span className="pl-2">
-                        <span className="text-[#0E78EF]">Unlimited</span> Docs
-                        and Slide Exports
+                        <span className="text-[#0E78EF] dark:text-foreground">
+                          Unlimited
+                        </span>{" "}
+                        Docs and Slide Exports
                       </span>
                     </p>
-                    <p className="mt-2  flex items-center text-left font-semibold leading-loose text-gray-500">
+                    <p className="mt-2  flex items-center text-left font-semibold leading-loose text-gray-500  dark:text-gray-400">
                       <Check />
                       <span className="pl-2">
-                        <span className="text-[#0E78EF]">Unlimited</span> Usage
-                        of AI
+                        <span className="text-[#0E78EF] dark:text-foreground">
+                          Unlimited
+                        </span>{" "}
+                        Usage of AI
                       </span>
                     </p>
-                    <p className="mt-3 flex items-center text-left font-semibold leading-loose text-gray-500">
+                    <p className="mt-3 flex items-center text-left   leading-loose text-gray-500 dark:text-gray-400">
                       <Check />
                       <span className="pl-2">
-                        <span className="text-[#0E78EF]">Unlimited</span>{" "}
+                        <span className="text-[#0E78EF] dark:text-foreground">
+                          Unlimited
+                        </span>{" "}
                         Workspaces
                       </span>
                     </p>
-                    <p className="mt-3  flex  items-center text-left font-semibold leading-loose text-gray-500">
+                    <p className="mt-3  flex  items-center text-left font-semibold leading-loose text-gray-500  dark:text-gray-400">
                       <Check />
                       <span className="pl-2">
-                        <span className="text-[#0E78EF]">Priority</span>{" "}
+                        <span className="text-[#0E78EF] dark:text-foreground">
+                          Priority
+                        </span>{" "}
                         customer support
                       </span>
                     </p>
@@ -259,7 +267,7 @@ const Upgrade: NextPage = () => {
                 </div>
                 <div className="relative">
                   <div className="relative h-[80px]">
-                    <h2 className=" relative mb-5 mt-10  text-[50px] font-bold text-gray-600">
+                    <h2 className=" relative mb-5 mt-10  text-[50px] font-bold text-gray-500  dark:text-foreground  ">
                       <AnimatePresence>
                         {toggle ? (
                           <motion.span
@@ -298,13 +306,13 @@ const Upgrade: NextPage = () => {
                   </p>
                   <button
                     onClick={() => createCheckoutSession(selectedPrice)}
-                    className="subscribe-btn flex h-[50px] w-full items-center justify-center rounded-md border p-4 text-center text-base font-semibold text-white transition hover:bg-opacity-10"
+                    className="subscribe-btn flex w-full items-center justify-center rounded-md border p-2 text-center text-base font-semibold text-white transition hover:bg-opacity-10"
                   >
                     <div className="flex items-center justify-center">
                       {loading ? (
                         <LoadingSpinner strokeColor="stroke-white" />
                       ) : (
-                        <span className="ml-2">Upgrade</span>
+                        <span className="ml-2 text-lg">Upgrade</span>
                       )}
                     </div>
                   </button>

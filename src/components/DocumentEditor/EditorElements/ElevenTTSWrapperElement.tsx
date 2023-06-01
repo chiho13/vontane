@@ -19,6 +19,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { api } from "@/utils/api";
+import { useRouter } from "next/router";
 
 const findAllSimilarElements = (nodes) => {
   let similarElements = [];
@@ -68,6 +70,8 @@ export const ElevenTTSWrapper = withConsecutiveGrouping((props) => {
   const [selectedVoiceId, setSelectedVoiceId] = useState<string>(
     element.voice_id
   );
+  const router = useRouter();
+  const workspaceId = router.query.workspaceId as string;
   const selected = useSelected();
   const focused = useFocused();
   const { audioData, setAudioData } = useTextSpeech();

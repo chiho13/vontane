@@ -4,6 +4,7 @@ import { ReactEditor, useFocused, useSelected } from "slate-react";
 import { Editor, Path, Node, Range } from "slate";
 import styled from "styled-components";
 import { hasSlideElement } from "@/utils/helpers";
+import { isParentMCQ } from "../helpers/toggleBlock";
 
 const HeadingElementStyle = styled.div`
   & h1,
@@ -15,7 +16,7 @@ const HeadingElementStyle = styled.div`
       opacity: 0.333;
       user-select: none;
       position: absolute;
-      top: 0;
+      top: ${(props) => (props.isParentMCQ ? "16px" : 0)};
     }
   }
 `;
@@ -65,7 +66,7 @@ export function HeadingElement(props) {
   const shouldShowPlaceholder = element.children[0].text === "";
 
   return (
-    <HeadingElementStyle data-type={tag}>
+    <HeadingElementStyle data-type={tag} isParentMCQ={isParentMCQ(editor)}>
       <HeadingTag
         ref={paragraphRef}
         className={`${

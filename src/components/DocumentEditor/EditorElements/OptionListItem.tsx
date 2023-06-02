@@ -41,12 +41,6 @@ const findAllNumberedLists = (nodes, inMcq = false, listIndex = 0) => {
         ...findAllNumberedLists(node.children, true, listIndex),
       ];
       listIndex++; // Increment the list index for each 'mcq' node we encounter
-    } else if (inMcq && node.type === "ol") {
-      // This 'ol' is inside an 'mcq' node. Let's get all 'option-list-item' children
-      numberedLists = [
-        ...numberedLists,
-        ...findAllNumberedLists(node.children, true, listIndex),
-      ];
     } else if (node.type === "option-list-item" && inMcq) {
       // This 'option-list-item' is inside an 'mcq' node and 'ol'. Add it to the list.
       numberedLists.push({ ...node, listIndex });
@@ -84,7 +78,8 @@ const withListNumbering = (Component) => {
       return num;
     }, 0);
 
-    return <Component {...props} listNumber={listNumber} />;
+    const alpha = String.fromCharCode(64 + listNumber);
+    return <Component {...props} listNumber={alpha} />;
   };
 };
 

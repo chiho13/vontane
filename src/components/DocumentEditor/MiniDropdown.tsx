@@ -113,16 +113,16 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
           </div>
         ),
       },
-      // {
-      //   name: "Add Quiz Block",
-      //   description: "Set a multiple choice question",
-      //   action: addMCQBlock,
-      //   icon: (
-      //     <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
-      //       <CheckCircle className="stroke-darkergray" />
-      //     </div>
-      //   ),
-      // },
+      {
+        name: "Add Quiz Block",
+        description: "Set a multiple choice question",
+        action: addMCQBlock,
+        icon: (
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
+            <CheckCircle className="stroke-darkergray" />
+          </div>
+        ),
+      },
       // {
       //   name: "English MCQ",
       //   description: "English multiple choice question",
@@ -203,9 +203,9 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         return false;
       }
 
-      // if (parent.type == "mcq" && el.name === "Add Quiz Block") {
-      //   return false;
-      // }
+      if (parent.type == "mcq" && el.name === "Add Quiz Block") {
+        return false;
+      }
 
       return true;
     });

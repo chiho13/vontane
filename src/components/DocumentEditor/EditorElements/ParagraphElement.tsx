@@ -14,7 +14,7 @@ const ParagraphStyle = styled.div`
     opacity: 0.333;
     user-select: none;
     position: absolute;
-    top: ${(props) => (props.isParentMCQ ? "40px" : 0)};
+    top: ${(props) => (props.isParentMCQ ? "16px" : 0)};
   }
 `;
 
@@ -60,6 +60,15 @@ export function ParagraphElement(props) {
       Range.isCollapsed(editor.selection));
 
   let placeholder = "Press '/' for commands";
+  const isFirstNode = path[path.length - 1] === 0;
+
+  // Check if the node is empty
+  const isEmpty =
+    element.children.length === 1 && element.children[0].text === "";
+
+  if (isParentMCQ(editor)) {
+    shouldShowPlaceholder = isFirstNode && isEmpty;
+  }
 
   return (
     <ParagraphStyle isParentMCQ={isParentMCQ(editor)}>

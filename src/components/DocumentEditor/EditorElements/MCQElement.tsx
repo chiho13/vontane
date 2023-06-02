@@ -54,7 +54,7 @@ export const MCQElement: React.FC<MCQElementProps> = withQuestionNumbering(
     return (
       <div
         {...attributes}
-        className={`mcq-element  relative mt-[2px] mb-[2px] rounded-md border border-gray-300 bg-gray-100 p-4 dark:border-gray-700 dark:bg-background
+        className={` relative mt-[2px] mb-[2px]  grid gap-3 rounded-md border border-gray-300 bg-gray-100 p-4  dark:border-gray-700 dark:bg-muted
 
         `}
         data-id={element.id}
@@ -63,9 +63,9 @@ export const MCQElement: React.FC<MCQElementProps> = withQuestionNumbering(
         {/* <div className="absolute  top-0 right-2">
           <OptionMenu element={element} />
         </div> */}
-        <div className="text-bold" contentEditable={false}>
+        {/* <div className="text-bold" contentEditable={false}>
           {questionNumber} )
-        </div>
+        </div> */}
         {children}
       </div>
     );

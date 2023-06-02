@@ -10,38 +10,23 @@ export const addMCQBlock = (editor, path) => {
     children: [
       {
         id: genNodeId(),
-        type: "question-item",
+        type: "option-list-item",
         children: [
           {
             text: "",
           },
         ],
+        correctAnswer: false,
       },
       {
         id: genNodeId(),
-        type: "ol",
+        type: "option-list-item",
         children: [
           {
-            id: genNodeId(),
-            type: "option-list-item",
-            children: [
-              {
-                text: "",
-              },
-            ],
-            correctAnswer: false,
-          },
-          {
-            id: genNodeId(),
-            type: "option-list-item",
-            children: [
-              {
-                text: "",
-              },
-            ],
-            correctAnswer: true,
+            text: "",
           },
         ],
+        correctAnswer: true,
       },
     ],
   };

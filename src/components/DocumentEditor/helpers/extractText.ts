@@ -49,68 +49,60 @@ export function extractTextValues(data) {
 
     if (item.type === "mcq") {
       // questionCounter++;
-      const question = item.children.find(
-        (child) => child.type === "question-item"
+
+      const pronunciationAlphabet = [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "Eff",
+        "Gee",
+        "Aitch",
+        "I",
+        "Jay",
+        "Kay",
+        "El",
+        "Em",
+        "En",
+        "Oh",
+        "Pee",
+        "Cue",
+        "Ar",
+        "Ess",
+        "Tee",
+        "You",
+        "Vee",
+        "Double-You",
+        "Ex",
+        "Why",
+        "Zee",
+      ];
+      // Filter to only get children of type 'option-list-item'
+      const options = item.children.filter(
+        (child) => child.type === "option-list-item"
       );
-
-      let questionText = "";
-      if (question) {
-        questionText = question.children
-          .map((child) => child.text.replace(/_+/g, " BLANK "))
-          .join("");
-      }
-
-      const options = item.children.find((child) => child.type === "ol");
       let optionsText = "";
-      if (options) {
-        const pronunciationAlphabet = [
-          "A",
-          "B",
-          "C",
-          "D",
-          "E",
-          "Eff",
-          "Gee",
-          "Aitch",
-          "I",
-          "Jay",
-          "Kay",
-          "El",
-          "Em",
-          "En",
-          "Oh",
-          "Pee",
-          "Cue",
-          "Ar",
-          "Ess",
-          "Tee",
-          "You",
-          "Vee",
-          "Double-You",
-          "Ex",
-          "Why",
-          "Zee",
-        ];
 
-        options.children.forEach((option, index) => {
-          const optionLetter = pronunciationAlphabet[index];
-          const isFirstOption = index === 0;
-          const isLastOption = index === options.children.length - 1;
+      options.forEach((option, index) => {
+        const optionLetter = pronunciationAlphabet[index];
+        const isFirstOption = index === 0;
+        const isLastOption = index === options.length - 1;
 
-          if (isFirstOption) {
-            optionsText += `\noption ${optionLetter}: ${option.children[0].text}.. \n`;
-          } else if (isLastOption) {
-            optionsText += `option ${optionLetter}:  ${option.children[0].text} `;
-          } else {
-            optionsText += `option ${optionLetter}: ${option.children[0].text}..  \n`;
-          }
-        });
-      }
+        const optionText = option.children[0].text;
 
-      if (item.questionNumber) {
-        accumulator.push(
-          `Question ${item.questionNumber}: ${questionText}${optionsText}`
-        );
+        if (isFirstOption) {
+          optionsText += `\noption ${optionLetter}: ${optionText}.. \n`;
+        } else if (isLastOption) {
+          optionsText += `option ${optionLetter}:  ${optionText} `;
+        } else {
+          optionsText += `option ${optionLetter}: ${optionText}..  \n`;
+        }
+      });
+
+      if (optionsText.trim() !== "") {
+        // Check if options text is not empty
+        accumulator.push(optionsText);
       }
     }
 

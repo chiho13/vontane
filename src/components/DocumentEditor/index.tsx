@@ -477,14 +477,14 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               "numbered-list",
               "bulleted-list",
               "checked-list",
-              "question-item",
+              "option-list-item",
             ].includes(parentNode.type)
           ) {
             const newPath = Path.next(parentPath);
 
             if (
               Node.string(parentNode) === "" &&
-              parentNode.type !== "question-item"
+              parentNode.type !== "option-list-item"
             ) {
               event.preventDefault();
               Transforms.setNodes(
@@ -628,18 +628,18 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             }
           }
 
-          if (parentNode.type === "option-list-item") {
-            const newPath = Path.next(parentPath);
-            const newNode = {
-              id: genNodeId(),
-              type: "option-list-item",
-              children: [{ text: "" }],
-              correctAnswer: false,
-            };
-            Transforms.insertNodes(editor, newNode, { at: newPath });
-            Transforms.select(editor, Editor.start(editor, newPath));
-            updatedNode = newNode;
-          }
+          // if (parentNode.type === "option-list-item") {
+          //   const newPath = Path.next(parentPath);
+          //   const newNode = {
+          //     id: genNodeId(),
+          //     type: "option-list-item",
+          //     children: [{ text: "" }],
+          //     correctAnswer: false,
+          //   };
+          //   Transforms.insertNodes(editor, newNode, { at: newPath });
+          //   Transforms.select(editor, Editor.start(editor, newPath));
+          //   updatedNode = newNode;
+          // }
         }
       }
 
@@ -779,27 +779,35 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
           if (
             (currentNode.type === "option-list-item" || updatedNode) &&
-            parentNode[0].type === "ol"
+            parentNode[0].type === "mcq"
           ) {
-            const mcqNode = Editor.parent(editor, parentNode[1]);
-            if (mcqNode[0].type === "mcq") {
-              const optionListItems = parentNode[0].children.filter(
-                (child) => child.type === "option-list-item"
-              );
+            const optionListItems = parentNode[0].children.filter(
+              (child) => child.type === "option-list-item"
+            );
 
-              if (optionListItems.length <= 2) {
-                const isEmpty =
-                  (currentNode.children.length === 1 &&
-                    currentNode.children[0].text === "") ||
-                  (updatedNode && updatedNode.children[0].text === "");
-                if (isEmpty) {
-                  event.preventDefault();
-                }
+            if (optionListItems.length <= 2) {
+              const isEmpty =
+                (currentNode.children.length === 1 &&
+                  currentNode.children[0].text === "") ||
+                (updatedNode && updatedNode.children[0].text === "");
+              if (isEmpty) {
+                event.preventDefault();
               }
             }
           }
 
           if (currentNode.type === "question-item") {
+            const isFirstQuestionItem =
+              parentNode[0].children[0] === currentNode;
+            if (
+              isFirstQuestionItem &&
+              Editor.isStart(editor, editor.selection.anchor, _currentNodePath)
+            ) {
+              event.preventDefault();
+            }
+          }
+
+          if (currentNode.type === "option-list-item") {
             const isFirstQuestionItem =
               parentNode[0].children[0] === currentNode;
             if (
@@ -1000,8 +1008,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       setSelectedElementID(id);
 
       setCurrentLatex("");
-      ReactEditor.focus(editor);
-      Transforms.select(editor, JSON.parse(activePath));
     },
     []
   );
@@ -1554,7 +1560,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 const firstRect = rects[0];
 
                 // Calculate mini toolbar position
-                const toolbarWidth = isParentTTS(editor) ? 370 : 460; // Update this value according to your toolbar width
+                const toolbarWidth = isParentTTS(editor) ? 370 : 480; // Update this value according to your toolbar width
                 let initialX = firstRect.left - textEditorLeft;
 
                 const x = Math.max(

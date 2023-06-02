@@ -61,10 +61,6 @@ export function ParagraphElement(props) {
 
   let placeholder = "Press '/' for commands";
 
-  if (isParentMCQ(editor)) {
-    placeholder = "Enter Question";
-  }
-
   return (
     <ParagraphStyle isParentMCQ={isParentMCQ(editor)}>
       <p

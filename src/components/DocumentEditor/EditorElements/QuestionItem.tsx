@@ -22,10 +22,15 @@ export function QuestionItem(props) {
   const selected = useSelected();
   const [isVisible, setIsVisible] = useState(false);
 
+  // Determine if this node is the first child of its parent
+  const isFirstNode = path[path.length - 1] === 0;
+
+  // Check if the node is empty
   const isEmpty =
     element.children.length === 1 && element.children[0].text === "";
 
-  const shouldShowPlaceholder = isEmpty;
+  // Show placeholder only when the node is the first child and it's empty
+  const shouldShowPlaceholder = isFirstNode && isEmpty;
 
   return (
     <ListItemStyle>

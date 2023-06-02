@@ -18,7 +18,7 @@ import { SlideBreak } from "@/icons/SlideBreak";
 import { addSlideBreak } from "./helpers/addSlideBreak";
 import { genNodeId } from "@/hoc/withID";
 import { useArrowNavigation } from "@/hooks/useArrowNavigation";
-import { toggleBlock, isParentTTS } from "./helpers/toggleBlock";
+import { toggleBlock, isParentTTS, isParentMCQ } from "./helpers/toggleBlock";
 import { addImageBlock } from "./helpers/addImageBlock";
 import { BsSoundwave } from "react-icons/bs";
 import { addTTSBlock } from "./helpers/addTTSBlock";
@@ -31,6 +31,14 @@ interface MiniDropdownProps {
   setShowDropdown: (value: boolean) => void;
   activePath: string;
   searchBarPosition: boolean;
+}
+
+function isCurrentNodeMCQ(editor) {
+  const { selection } = editor;
+  if (!selection) return false;
+
+  const [node] = Editor.node(editor, selection);
+  return node.type === "mcq";
 }
 
 export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
@@ -187,6 +195,10 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
     ].filter((el) => {
       if (isParentTTS(editor)) {
         return el.name !== "Slide Break" && el.name !== "Text to MP3";
+      }
+
+      if (isCurrentNodeMCQ(editor)) {
+        return el.name !== "Add Quiz Block";
       }
       return true;
     });

@@ -61,7 +61,6 @@ export const TextSpeech = ({
   const [audioIsLoading, setAudioIsLoading] = useState(false);
   // const [audioURL, setAudioURL] = useState(element.audio_url || "");
   const [fileName, setFileName] = useState("");
-  const [inputText, setInputText] = useState<string | null>(textSpeech);
 
   const startTTS = api.texttospeech.startConversion.useMutation();
   const deleteTTS = api.texttospeech.deleteAudio.useMutation();
@@ -98,7 +97,7 @@ export const TextSpeech = ({
     try {
       const response = await startTTS.mutateAsync({
         voice_id: selectedVoiceId,
-        content: inputText,
+        content: textSpeech,
         workspaceId,
       });
       if (response) {
@@ -124,6 +123,8 @@ export const TextSpeech = ({
       }
     } catch (error) {
       console.error("Error:", error);
+      setAudioIsLoading(false);
+      setRightBarAudioIsLoading(false);
     }
   };
 

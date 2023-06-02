@@ -109,23 +109,9 @@ export const wrapWithTTS = (
 
   if (element) {
     const path = ReactEditor.findPath(editor, element);
-    if (element.type === "mcq") {
-      // Wrap the "tts" element around the entire mcq element
-      Transforms.wrapNodes(
-        editor,
-        {
-          id: genNodeId(),
-          type: "tts",
-          voice_id: "022dAxTS7hgOZorFb9",
-          name: "Arthur",
-          children: [],
-        },
-        { at: path }
-      );
-    } else {
-      // Else, retain the original logic
-      range = Editor.range(editor, path);
-    }
+
+    // Else, retain the original logic
+    range = Editor.range(editor, path);
   } else {
     const { selection } = editor;
     if (!selection) return;
@@ -160,6 +146,21 @@ export const wrapWithTTS = (
       children: [],
     },
     { at: range }
+  );
+};
+
+export const wrapElementWithTTS = (editor: Editor, element: any) => {
+  const path = ReactEditor.findPath(editor, element);
+  Transforms.wrapNodes(
+    editor,
+    {
+      id: genNodeId(),
+      type: "tts",
+      voice_id: "022dAxTS7hgOZorFb9",
+      name: "Arthur",
+      children: [],
+    },
+    { at: path }
   );
 };
 

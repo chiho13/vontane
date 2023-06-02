@@ -473,13 +473,19 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           console.log(parentNode.type);
 
           if (
-            ["numbered-list", "bulleted-list", "checked-list"].includes(
-              parentNode.type
-            )
+            [
+              "numbered-list",
+              "bulleted-list",
+              "checked-list",
+              "question-item",
+            ].includes(parentNode.type)
           ) {
             const newPath = Path.next(parentPath);
 
-            if (Node.string(parentNode) === "") {
+            if (
+              Node.string(parentNode) === "" &&
+              parentNode.type !== "question-item"
+            ) {
               event.preventDefault();
               Transforms.setNodes(
                 editor,

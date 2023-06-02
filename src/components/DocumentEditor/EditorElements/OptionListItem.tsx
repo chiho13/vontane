@@ -5,6 +5,12 @@ import { ReactEditor, useFocused } from "slate-react";
 import { Check } from "lucide-react";
 import styled from "styled-components";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const StyledOptionListItem = styled.li`
   position: relative;
@@ -103,11 +109,24 @@ export const OptionListItem = React.memo(
           {children}
         </span>
         <div className=" absolute top-0 right-2 flex h-full items-center">
-          <Checkbox
-            className="h-[24px] w-[24px] border-gray-400 dark:border-gray-500"
-            checked={checked}
-            onCheckedChange={handleChange}
-          />
+          <TooltipProvider delayDuration={0}>
+            <Tooltip>
+              <TooltipTrigger>
+                <Checkbox
+                  className="h-[24px] w-[24px] translate-y-[2px] border-gray-400 dark:border-gray-500"
+                  checked={checked}
+                  onCheckedChange={handleChange}
+                />
+              </TooltipTrigger>
+              <TooltipContent
+                className="border-black  dark:bg-white dark:text-muted"
+                side="top"
+                sideOffset={10}
+              >
+                <p className="text-[12px]">Set as Correct Answer</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </StyledOptionListItem>
     );

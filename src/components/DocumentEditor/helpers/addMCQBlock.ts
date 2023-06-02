@@ -10,7 +10,7 @@ export const addMCQBlock = (editor, path) => {
     children: [
       {
         id: genNodeId(),
-        type: "paragraph",
+        type: "question-item",
         children: [
           {
             text: "",

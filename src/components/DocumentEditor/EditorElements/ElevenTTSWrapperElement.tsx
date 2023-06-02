@@ -85,6 +85,7 @@ export const ElevenTTSWrapper = withConsecutiveGrouping((props) => {
       (element?.audio_url !== audioData?.audio_url ||
         audioData?.content !== extractedText)
     ) {
+      console.log(extractedText);
       setAudioData({
         audio_url: element.audio_url,
         file_name: element.file_name,

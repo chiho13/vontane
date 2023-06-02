@@ -27,6 +27,7 @@ import {
 import { ReactEditor } from "slate-react";
 import { useTheme } from "styled-components";
 import { X } from "lucide-react";
+import React from "react";
 
 type ToolbarProps = {
   openLink: boolean;
@@ -159,6 +160,89 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 
   console.log(isParentTTS(editor));
 
+  const buttonsList = [
+    {
+      action: (e) => {
+        e.preventDefault();
+        toggleFormat(editor, "bold");
+      },
+      icon: <FaBold />,
+      isActive: isFormatActive(editor, "bold"),
+      additionalClass:
+        "rounded-lg p-[5px] ml-1 transition duration-300 hover:bg-gray-200 hover:dark:bg-muted",
+    },
+    {
+      action: (e) => {
+        e.preventDefault();
+        toggleFormat(editor, "italic");
+      },
+      icon: <FiItalic />,
+      isActive: isFormatActive(editor, "italic"),
+      additionalClass:
+        "rounded-lg p-[5px] transition duration-300 hover:bg-gray-200 hover:dark:bg-muted",
+    },
+    {
+      action: (e) => {
+        e.preventDefault();
+        toggleFormat(editor, "underline");
+      },
+      icon: <FiUnderline />,
+      isActive: isFormatActive(editor, "underline"),
+      additionalClass:
+        "rounded-lg p-[5px] transition duration-300 hover:bg-gray-200 hover:dark:bg-muted",
+    },
+    {
+      action: (e) => {
+        e.preventDefault();
+        toggleFormat(editor, "strikethrough");
+      },
+      icon: <ImStrikethrough />,
+      isActive: isFormatActive(editor, "strikethrough"),
+      additionalClass:
+        "rounded-lg p-[5px] transition duration-300 hover:bg-gray-200 hover:dark:bg-muted",
+    },
+    {
+      action: () => setOpenLink(true),
+      icon: <ImLink />,
+      isActive: hasURL,
+      additionalClass:
+        "rounded-lg p-[5px] mr-1 transition duration-300 hover:bg-gray-200 hover:dark:bg-muted",
+    },
+    {
+      separator: true,
+    },
+    {
+      action: (e) => {
+        e.preventDefault();
+        toggleBlock(editor, "bulleted-list");
+      },
+      icon: <List width={20} height={20} />,
+      isActive: isBlockActive(editor, "bulleted-list", "type"),
+      additionalClass:
+        "rounded-lg p-[4px] ml-1 transition duration-300 hover:bg-gray-200 hover:dark:bg-muted",
+    },
+    {
+      action: (e) => {
+        e.preventDefault();
+        toggleBlock(editor, "numbered-list");
+      },
+      icon: <ListOrdered width={20} height={20} />,
+      isActive: isBlockActive(editor, "numbered-list", "type"),
+      additionalClass:
+        "rounded-lg p-[4px] transition duration-300 hover:bg-gray-200 hover:dark:bg-muted",
+    },
+    {
+      action: (e) => {
+        e.preventDefault();
+        toggleBlock(editor, "checked-list");
+      },
+      icon: <MdChecklist width={20} height={20} />,
+      isActive: isBlockActive(editor, "checked-list", "type"),
+      additionalClass:
+        "rounded-lg p-[4px] mr-1 transition duration-300 hover:bg-gray-200 hover:dark:bg-muted",
+    },
+  ];
+
   return (
     <div
       className="relative flex h-[36px] items-center focus:ring-2 focus:ring-black"
@@ -188,138 +272,29 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           <div className="h-full w-[1px] bg-gray-200 dark:bg-gray-700"></div>
         </>
       )}
-      {!openLink && (
-        <>
-          <div className="flex  items-center p-1">
+      {!openLink &&
+        buttonsList.map((button, i) =>
+          button.separator ? (
+            <div
+              key={i}
+              className="h-full w-[1px] bg-gray-200 dark:bg-gray-700"
+            ></div>
+          ) : (
             <button
-              className="flex h-[28px] w-[28px]  items-center  rounded-lg p-[5px] transition duration-300 hover:bg-gray-200 hover:dark:bg-muted"
-              onMouseDown={(e) => {
-                e.preventDefault();
-                toggleFormat(editor, "bold");
-              }}
+              key={i}
+              className={`flex h-[28px] w-[28px] items-center ${button.additionalClass}`}
+              onMouseDown={button.action}
             >
-              <FaBold
-                className={`${
-                  isFormatActive(editor, "bold")
+              {React.cloneElement(button.icon, {
+                className: `${
+                  button.isActive
                     ? "text-brand"
                     : "text-darkblue dark:text-foreground"
-                }`}
-              />
+                }`,
+              })}
             </button>
-            <button
-              className="flex h-[28px] w-[28px] items-center  rounded-lg p-[5px] transition duration-300 hover:bg-gray-200 hover:dark:bg-muted"
-              onMouseDown={(e) => {
-                e.preventDefault();
-                toggleFormat(editor, "italic");
-              }}
-            >
-              <FiItalic
-                className={`${
-                  isFormatActive(editor, "italic")
-                    ? "text-brand"
-                    : "text-darkblue dark:text-foreground"
-                }`}
-              />
-            </button>
-            <button
-              className="flex  h-[28px] w-[28px] items-center  rounded-lg p-[5px] transition duration-300 hover:bg-gray-200 hover:dark:bg-muted"
-              onMouseDown={(e) => {
-                e.preventDefault();
-                toggleFormat(editor, "underline");
-              }}
-            >
-              <FiUnderline
-                className={`${
-                  isFormatActive(editor, "underline")
-                    ? "text-brand"
-                    : "text-darkblue dark:text-foreground"
-                }`}
-              />
-            </button>
-            <button
-              className="flex h-[28px] w-[28px] items-center rounded-lg p-[5px] transition duration-300 hover:bg-gray-200 hover:dark:bg-muted"
-              onMouseDown={(e) => {
-                e.preventDefault();
-                toggleFormat(editor, "strikethrough");
-              }}
-            >
-              <ImStrikethrough
-                className={`${
-                  isFormatActive(editor, "strikethrough")
-                    ? "text-brand"
-                    : "text-darkblue dark:text-foreground"
-                }`}
-              />
-            </button>
-            <button
-              className=" flex h-[28px] w-[28px] items-center   rounded-lg p-[5px] transition duration-300 hover:bg-gray-200 hover:dark:bg-muted"
-              onMouseDown={() => {
-                setOpenLink(true);
-              }}
-            >
-              <ImLink
-                className={`${
-                  hasURL ? "text-brand" : "text-darkblue dark:text-foreground"
-                }`}
-              />
-            </button>
-          </div>
-          <div className="h-full w-[1px] bg-gray-200 dark:bg-gray-700"></div>
-          <div className="flex  items-center p-1">
-            <button
-              className="flex  items-center justify-center  rounded-lg  p-[4px] transition duration-300 hover:bg-gray-200 hover:dark:bg-muted"
-              onMouseDown={(e) => {
-                e.preventDefault();
-                toggleBlock(editor, "bulleted-list");
-              }}
-            >
-              <List
-                width={20}
-                height={20}
-                className={`h-[18px] w-[18px] ${
-                  isBlockActive(editor, "bulleted-list", "type")
-                    ? "text-brand"
-                    : "text-darkblue dark:text-foreground"
-                }`}
-              />
-            </button>
-            <button
-              className=" flex  h-[28px] w-[28px]  items-center justify-center rounded-lg  p-[4px] transition duration-300 hover:bg-gray-200 hover:dark:bg-muted"
-              onMouseDown={(e) => {
-                e.preventDefault();
-                toggleBlock(editor, "numbered-list");
-              }}
-            >
-              <ListOrdered
-                width={20}
-                height={20}
-                className={`h-[18px] w-[18px] ${
-                  isBlockActive(editor, "numbered-list", "type")
-                    ? "text-brand"
-                    : "text-darkblue dark:text-foreground"
-                }`}
-              />
-            </button>
-            <button
-              className="flex  h-[28px] w-[28px]  items-center justify-center rounded-lg  p-[4px] transition duration-300 hover:bg-gray-200 hover:dark:bg-muted"
-              onMouseDown={(e) => {
-                e.preventDefault();
-                toggleBlock(editor, "checked-list");
-              }}
-            >
-              <MdChecklist
-                width={20}
-                height={20}
-                className={`h-[18px] w-[18px] ${
-                  isBlockActive(editor, "checked-list", "type")
-                    ? "text-brand"
-                    : "text-darkblue dark:text-foreground"
-                }`}
-              />
-            </button>
-          </div>
-        </>
-      )}
+          )
+        )}
 
       {openLink && (
         <div className=" absolute left-0 flex  w-full items-center p-1 dark:border-gray-700">

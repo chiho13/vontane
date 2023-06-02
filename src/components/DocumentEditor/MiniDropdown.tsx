@@ -113,16 +113,16 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
           </div>
         ),
       },
-      {
-        name: "Add Quiz Block",
-        description: "Set a multiple choice question",
-        action: addMCQBlock,
-        icon: (
-          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
-            <CheckCircle className="stroke-darkergray" />
-          </div>
-        ),
-      },
+      // {
+      //   name: "Add Quiz Block",
+      //   description: "Set a multiple choice question",
+      //   action: addMCQBlock,
+      //   icon: (
+      //     <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
+      //       <CheckCircle className="stroke-darkergray" />
+      //     </div>
+      //   ),
+      // },
       // {
       //   name: "English MCQ",
       //   description: "English multiple choice question",
@@ -193,13 +193,20 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         ),
       },
     ].filter((el) => {
-      if (isParentTTS(editor)) {
-        return el.name !== "Slide Break" && el.name !== "Text to MP3";
+      const isRoot = JSON.parse(activePath).length === 1;
+      const [parent, parentPath] = Editor.parent(
+        editor,
+        JSON.parse(activePath)
+      );
+
+      if (!isRoot && (el.name === "Slide Break" || el.name === "Text to MP3")) {
+        return false;
       }
 
-      if (isCurrentNodeMCQ(editor)) {
-        return el.name !== "Add Quiz Block";
-      }
+      // if (parent.type == "mcq" && el.name === "Add Quiz Block") {
+      //   return false;
+      // }
+
       return true;
     });
 

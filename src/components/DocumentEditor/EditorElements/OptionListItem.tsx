@@ -182,13 +182,16 @@ export const OptionListItem = withListNumbering(
                   onCheckedChange={handleChange}
                 />
               </TooltipTrigger>
-              <TooltipContent
-                className="border-black  dark:bg-white dark:text-muted"
-                side="top"
-                sideOffset={10}
-              >
-                <p className="text-[12px]">Set as Correct Answer</p>
-              </TooltipContent>
+
+              {!checked && (
+                <TooltipContent
+                  className="border-black  dark:bg-white dark:text-muted"
+                  side="top"
+                  sideOffset={10}
+                >
+                  <p className="text-[12px]">Set as Correct Answer</p>
+                </TooltipContent>
+              )}
             </Tooltip>
           </TooltipProvider>
         </div>

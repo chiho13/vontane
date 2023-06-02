@@ -41,7 +41,11 @@ export function QuestionItem(props) {
       >
         <p
           className="text-[18px]"
-          data-placeholder={shouldShowPlaceholder ? "Enter question" : ""}
+          data-placeholder={
+            shouldShowPlaceholder
+              ? "Enter question - Press '/' for commands"
+              : ""
+          }
         >
           {children}
         </p>

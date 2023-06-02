@@ -74,23 +74,6 @@ export const withTitle = (editor) => {
       }
     }
 
-    if (node.type === "mcq") {
-      for (const [child, childPath] of Node.children(editor, path)) {
-        const slateIndex = childPath[childPath.length - 1];
-        const enforceMCQ = (type) => {
-          if (Element.isElement(child) && child.type !== type) {
-            const newProperties: Partial<Element> = { type };
-            Transforms.setNodes(editor, newProperties, { at: childPath });
-          }
-        };
-
-        if (slateIndex === 0) {
-          // The first node in the 'mcq' should be a 'paragraph'
-          enforceMCQ("question-item");
-        }
-      }
-    }
-
     // Fall back to the original `normalizeNode`
     normalizeNode(entry);
   };

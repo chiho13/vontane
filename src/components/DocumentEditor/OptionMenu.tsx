@@ -97,6 +97,20 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
       Transforms.removeNodes(editor, {
         at: ReactEditor.findPath(editor, element),
       });
+
+      // if (isParentTTS(editor, element)) {
+      //   if (element.type === "mcq") {
+      //     Transforms.removeNodes(editor, {
+      //       at: ReactEditor.findPath(editor, element),
+      //     });
+
+      //     Transforms.setNodes(
+      //       editor,
+      //       { type: "paragraph" },
+      //       { at: ReactEditor.findPath(editor, element) }
+      //     );
+      //   }
+      // }
     }
 
     function duplicateBlock(event: React.MouseEvent<HTMLButtonElement>) {

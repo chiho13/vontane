@@ -16,8 +16,8 @@ const StyledOptionListItem = styled.li`
   position: relative;
   padding: 8px;
   padding-right: 40px;
+  padding-left: 30px;
   width: auto;
-  display: list-item;
 
   span[data-placeholder]::after {
     content: attr(data-placeholder);
@@ -26,13 +26,71 @@ const StyledOptionListItem = styled.li`
     user-select: none;
     position: absolute;
     top: 8px;
-    left: 28px;
+    left: 30px;
   }
 `;
 
+const findAllNumberedLists = (nodes, inMcq = false, listIndex = 0) => {
+  let numberedLists = [];
+
+  nodes.forEach((node) => {
+    if (node.type === "mcq") {
+      // We've found a 'mcq' node. Let's get all 'option-list-item' children
+      numberedLists = [
+        ...numberedLists,
+        ...findAllNumberedLists(node.children, true, listIndex),
+      ];
+      listIndex++; // Increment the list index for each 'mcq' node we encounter
+    } else if (inMcq && node.type === "ol") {
+      // This 'ol' is inside an 'mcq' node. Let's get all 'option-list-item' children
+      numberedLists = [
+        ...numberedLists,
+        ...findAllNumberedLists(node.children, true, listIndex),
+      ];
+    } else if (node.type === "option-list-item" && inMcq) {
+      // This 'option-list-item' is inside an 'mcq' node and 'ol'. Add it to the list.
+      numberedLists.push({ ...node, listIndex });
+    } else if (node.children) {
+      // This node is not an 'mcq' or 'option-list-item' or 'ol', but it has children. Recurse down.
+      numberedLists = [
+        ...numberedLists,
+        ...findAllNumberedLists(node.children, false, listIndex),
+      ];
+    }
+  });
+
+  return numberedLists;
+};
+
+const withListNumbering = (Component) => {
+  return (props) => {
+    const { element } = props;
+    const { editor } = useContext(EditorContext);
+
+    if (!editor) {
+      return <Component {...props} questionNumber={null} />;
+    }
+
+    // Find all numbered-list elements within the editor
+    const numberedLists = findAllNumberedLists(editor.children);
+
+    // Assign number to each numbered list based on its position in the array
+    const listNumber = numberedLists.reduce((num, list, index) => {
+      if (list.id === element.id) {
+        return numberedLists
+          .slice(0, index + 1)
+          .filter((el) => el.listIndex === list.listIndex).length;
+      }
+      return num;
+    }, 0);
+
+    return <Component {...props} listNumber={listNumber} />;
+  };
+};
+
 // Custom List Item component
-export const OptionListItem = React.memo(
-  ({ attributes, children, element }) => {
+export const OptionListItem = withListNumbering(
+  ({ attributes, children, element, listNumber }) => {
     const { editor } = useContext(EditorContext);
     const [checked, setChecked] = useState(element.correctAnswer || false);
     const focused = useFocused();
@@ -91,7 +149,7 @@ export const OptionListItem = React.memo(
     return (
       <StyledOptionListItem
         {...attributes}
-        className={` rounded border-2 bg-white  dark:bg-muted ${
+        className={` relative  list-none rounded border-2 bg-white  dark:bg-muted ${
           checked
             ? "border-blue-500 dark:border-brand"
             : "border-gray-400 dark:border-gray-500"
@@ -106,6 +164,12 @@ export const OptionListItem = React.memo(
               : ""
           }
         >
+          <span
+            contentEditable={false}
+            className="absolute mr-[5px] -translate-x-[20px] "
+          >
+            {listNumber}.{" "}
+          </span>
           {children}
         </span>
         <div className=" absolute top-0 right-2 flex h-full items-center">

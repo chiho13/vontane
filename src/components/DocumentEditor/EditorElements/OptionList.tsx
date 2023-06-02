@@ -8,10 +8,6 @@ const OptionListStyle = styled.ol`
   padding-left: 0;
   display: grid;
   grid-gap: 8px;
-
-  ${mq.lg`
-  grid-template-columns: 1fr 1fr;
-  `}
 `;
 
 const InstructionMessage = styled.p`
@@ -31,9 +27,6 @@ export const OptionList: React.FC<OptionListProps> = ({
 }) => {
   return (
     <div>
-      <InstructionMessage>
-        You can edit the correct solution below
-      </InstructionMessage>
       <OptionListStyle {...attributes} className="mt-4">
         {children}
       </OptionListStyle>

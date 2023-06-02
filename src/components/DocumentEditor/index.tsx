@@ -798,6 +798,17 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               }
             }
           }
+
+          if (currentNode.type === "question-item") {
+            const isFirstQuestionItem =
+              parentNode[0].children[0] === currentNode;
+            if (
+              isFirstQuestionItem &&
+              Editor.isStart(editor, editor.selection.anchor, _currentNodePath)
+            ) {
+              event.preventDefault();
+            }
+          }
         }
       }
 

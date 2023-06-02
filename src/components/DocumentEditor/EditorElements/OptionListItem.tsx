@@ -30,30 +30,30 @@ const StyledOptionListItem = styled.li`
   }
 `;
 
-const findAllNumberedLists = (nodes, inMcq = false, listIndex = 0) => {
-  let numberedLists = [];
+const findAllOptionListItems = (nodes, inMcq = false, listIndex = 0) => {
+  let optionListItems = [];
 
   nodes.forEach((node) => {
     if (node.type === "mcq") {
       // We've found a 'mcq' node. Let's get all 'option-list-item' children
-      numberedLists = [
-        ...numberedLists,
-        ...findAllNumberedLists(node.children, true, listIndex),
+      optionListItems = [
+        ...optionListItems,
+        ...findAllOptionListItems(node.children, true, listIndex),
       ];
       listIndex++; // Increment the list index for each 'mcq' node we encounter
     } else if (node.type === "option-list-item" && inMcq) {
-      // This 'option-list-item' is inside an 'mcq' node and 'ol'. Add it to the list.
-      numberedLists.push({ ...node, listIndex });
+      // This 'option-list-item' is inside an 'mcq' node. Add it to the list.
+      optionListItems.push({ ...node, listIndex });
     } else if (node.children) {
-      // This node is not an 'mcq' or 'option-list-item' or 'ol', but it has children. Recurse down.
-      numberedLists = [
-        ...numberedLists,
-        ...findAllNumberedLists(node.children, false, listIndex),
+      // This node is not an 'mcq' or 'option-list-item', but it has children. Recurse down.
+      optionListItems = [
+        ...optionListItems,
+        ...findAllOptionListItems(node.children, inMcq, listIndex),
       ];
     }
   });
 
-  return numberedLists;
+  return optionListItems;
 };
 
 const withListNumbering = (Component) => {
@@ -66,7 +66,7 @@ const withListNumbering = (Component) => {
     }
 
     // Find all numbered-list elements within the editor
-    const numberedLists = findAllNumberedLists(editor.children);
+    const numberedLists = findAllOptionListItems(editor.children);
 
     // Assign number to each numbered list based on its position in the array
     const listNumber = numberedLists.reduce((num, list, index) => {

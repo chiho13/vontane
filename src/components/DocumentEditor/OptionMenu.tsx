@@ -11,7 +11,7 @@ import { Editor, Path, Transforms } from "slate";
 import { genNodeId } from "@/hoc/withID";
 import { nanoid } from "nanoid";
 import { useArrowNavigation } from "@/hooks/useArrowNavigation";
-import { wrapWithTTS } from "./helpers/toggleBlock";
+import { wrapElementWithTTS } from "./helpers/toggleBlock";
 // import { isParentTTS, wrapWithTTS } from "./helpers/toggleBlock";
 
 const isParentTTS = (editor, node) => {
@@ -34,7 +34,7 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
     const optionMenuElements = [
       {
         name: "Text to MP3",
-        action: () => wrapWithTTS(editor, element),
+        action: () => wrapElementWithTTS(editor, element),
         icon: (
           <BsSoundwave className="mr-4 w-5  stroke-darkergray dark:stroke-foreground" />
         ),

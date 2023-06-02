@@ -66,7 +66,7 @@ export function extractTextValues(data) {
         const pronunciationAlphabet = [
           "A",
           "B",
-          "See",
+          "C",
           "D",
           "E",
           "Eff",
@@ -98,11 +98,11 @@ export function extractTextValues(data) {
           const isLastOption = index === options.children.length - 1;
 
           if (isFirstOption) {
-            optionsText += `\noption ${optionLetter} - ${option.children[0].text} - \n`;
+            optionsText += `\noption ${optionLetter}: ${option.children[0].text}.. \n`;
           } else if (isLastOption) {
-            optionsText += `option ${optionLetter} - ${option.children[0].text} -  `;
+            optionsText += `option ${optionLetter}:  ${option.children[0].text} `;
           } else {
-            optionsText += `option ${optionLetter} - ${option.children[0].text} -  \n`;
+            optionsText += `option ${optionLetter}: ${option.children[0].text}..  \n`;
           }
         });
       }

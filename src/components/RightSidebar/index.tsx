@@ -44,6 +44,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
   const { audioData, setAudioData, rightBarAudioIsLoading } = useTextSpeech();
 
+  const [audioURL, setAudioURL] = useState("");
   const rightSidebarStyle = {
     transform: `translateX(${
       showRightSidebar ? "0px" : `${rightSideBarWidth}px`
@@ -79,10 +80,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
   useEffect(() => {
     if (ttsaudiodata) {
-      setAudioData({
-        ...audioData,
-        audio_url: ttsaudiodata.signedURL,
-      });
+      setAudioURL(ttsaudiodata.signedURL);
     }
   }, [ttsaudiodata]);
 
@@ -122,11 +120,11 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
           <TabsContent value="properties">
             {rootNode?.type == "tts" &&
-              (audioData && audioData.audio_url ? (
+              (audioData && audioData.file_name ? (
                 <>
                   <h3 className="mt-4 mb-2 text-sm ">Text to MP3</h3>
                   <AudioPlayer
-                    audioURL={audioData.audio_url}
+                    audioURL={audioURL}
                     fileName={audioData.file_name}
                     content={audioData.content}
                   />

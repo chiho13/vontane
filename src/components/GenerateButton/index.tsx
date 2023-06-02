@@ -32,7 +32,7 @@ function GenerateButton({
       ) : (
         // <ImPlay3 width={40} />
         <span className="text-sm">
-          {element.audio_url ? "Re-Generate" : "Generate"}
+          {element.file_name ? "Re-Generate" : "Generate"}
         </span>
       )}
     </GenerateButtonStyle>

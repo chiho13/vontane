@@ -30,30 +30,50 @@ const StyledOptionListItem = styled.li`
   }
 `;
 
-const findAllOptionListItems = (nodes, inMcq = false, listIndex = 0) => {
-  let optionListItems = [];
+const findAllNumberedLists = (nodes) => {
+  let numberedLists = [];
+  let currentListIndex = 0;
 
   nodes.forEach((node) => {
-    if (node.type === "mcq") {
-      // We've found a 'mcq' node. Let's get all 'option-list-item' children
-      optionListItems = [
-        ...optionListItems,
-        ...findAllOptionListItems(node.children, true, listIndex),
-      ];
-      listIndex++; // Increment the list index for each 'mcq' node we encounter
-    } else if (node.type === "option-list-item" && inMcq) {
-      // This 'option-list-item' is inside an 'mcq' node. Add it to the list.
-      optionListItems.push({ ...node, listIndex });
-    } else if (node.children) {
-      // This node is not an 'mcq' or 'option-list-item', but it has children. Recurse down.
-      optionListItems = [
-        ...optionListItems,
-        ...findAllOptionListItems(node.children, inMcq, listIndex),
-      ];
+    if (node.type !== "option-list-item") {
+      currentListIndex++; // Increment list index when a non-numbered-list node is encountered
+    } else {
+      numberedLists.push({
+        ...node,
+        listIndex: currentListIndex,
+      });
     }
   });
 
-  return optionListItems;
+  return numberedLists;
+};
+
+const findParentMcq = (nodes, itemId) => {
+  let parentMcq = null;
+
+  // Define a recursive function to traverse the tree structure
+  const traverse = (nodes) => {
+    for (let i = 0; i < nodes.length; i++) {
+      const node = nodes[i];
+
+      if (
+        node.type === "mcq" &&
+        node.children.some((child) => child.id === itemId)
+      ) {
+        // This is the parent MCQ we are looking for
+        parentMcq = node;
+        break;
+      } else if (node.children) {
+        // Recurse down the tree
+        traverse(node.children);
+      }
+    }
+  };
+
+  // Start the traversal
+  traverse(nodes);
+
+  return parentMcq;
 };
 
 const withListNumbering = (Component) => {
@@ -62,16 +82,23 @@ const withListNumbering = (Component) => {
     const { editor } = useContext(EditorContext);
 
     if (!editor) {
-      return <Component {...props} questionNumber={null} />;
+      return <Component {...props} />;
     }
 
-    // Find all numbered-list elements within the editor
-    const numberedLists = findAllOptionListItems(editor.children);
+    // First, find the parent MCQ of the current option-list-item element
+    const parentMcq = findParentMcq(editor.children, element.id);
 
-    // Assign number to each numbered list based on its position in the array
-    const listNumber = numberedLists.reduce((num, list, index) => {
+    if (!parentMcq) {
+      return <Component {...props} />;
+    }
+
+    // Then, find all option-list-item elements within the parent MCQ
+    const optionListItems = findAllNumberedLists(parentMcq.children);
+
+    // Assign number to each option based on its position in the array
+    const listNumber = optionListItems.reduce((num, list, index) => {
       if (list.id === element.id) {
-        return numberedLists
+        return optionListItems
           .slice(0, index + 1)
           .filter((el) => el.listIndex === list.listIndex).length;
       }

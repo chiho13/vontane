@@ -9,6 +9,24 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 export const GPTRouter = createTRPCRouter({
+  createimage: protectedProcedure
+    .input(
+      z.object({
+        prompt: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { prompt } = input;
+
+      const response = await openai.createImage({
+        prompt: prompt,
+        n: 1,
+        size: "512x512",
+      });
+
+      return response.data;
+    }),
+
   getEquation: protectedProcedure
     .input(
       z.object({

@@ -19,6 +19,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { Node } from "slate";
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import {
   Form,
   FormControl,
@@ -30,6 +33,7 @@ import {
 } from "@/components/Form";
 
 import React from "react";
+import { useLocalStorage } from "usehooks-ts";
 
 export const ImageElement = React.memo((props) => {
   const { attributes, children, element } = props;
@@ -100,7 +104,7 @@ export const ImageElement = React.memo((props) => {
         <>
           <div
             tabIndex={-1}
-            className={`hover:bg-gray-muted relative flex  cursor-pointer items-center rounded-md bg-gray-100 p-2 transition dark:bg-background 
+            className={`hover:bg-gray-muted relative flex  cursor-pointer items-center rounded-md bg-gray-100 p-2 transition dark:bg-secondary hover:dark:bg-accent 
       dark:hover:bg-background/70`}
             contentEditable={false}
             onMouseDown={(e) => {
@@ -165,38 +169,36 @@ export const ImageEmbedLink = () => {
   const formSchema = z.object({
     url: z
       .string()
-      .url({
-        message: "Please enter a valid link",
-      })
+      .nonempty({ message: "Input cannot be blank" })
+      .url({ message: "Please enter a valid link" })
       .refine(
         (url) => {
-          const imageExtensions = [
-            "jpg",
-            "jpeg",
-            "png",
-            "gif",
-            "bmp",
-            "tiff",
-            "svg",
-            "webp",
-          ];
+          try {
+            const imageExtensions = [
+              "jpg",
+              "jpeg",
+              "png",
+              "gif",
+              "bmp",
+              "tiff",
+              "svg",
+              "webp",
+            ];
 
-          // Use URL to parse the input
-          const urlObject = new URL(url);
+            const urlObject = new URL(url);
+            const pathname = urlObject.pathname;
+            const extension = pathname.split(".").pop();
 
-          // Extract the pathname and get the extension
-          const pathname = urlObject.pathname;
-          const extension = pathname.split(".").pop();
+            const isUnsplashUrl = urlObject.hostname.includes("unsplash.com");
 
-          // Check if the URL is from Unsplash
-          const isUnsplashUrl = urlObject.hostname.includes("unsplash.com");
-
-          // Check if the extension is in the imageExtensions list or if the URL is from Unsplash
-          return imageExtensions.includes(extension) || isUnsplashUrl;
+            return imageExtensions.includes(extension) || isUnsplashUrl;
+          } catch (error) {
+            // If an error is thrown when constructing the URL,
+            // return false to indicate that the validation failed.
+            return false;
+          }
         },
-        {
-          message: "Please enter a valid image link",
-        }
+        { message: "Please enter a valid image link" }
       ),
   });
 
@@ -242,32 +244,60 @@ export const ImageEmbedLink = () => {
     form.setFocus("url");
   }, []);
 
+  const [tab, setTab] = useLocalStorage("imagetab", "link");
+
+  const handleTabChange = (newTab) => {
+    setTab(newTab); // This will also update value in localStorage
+  };
+
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="z-100 space-y-2 p-1 pb-2"
+    <Tabs defaultValue={tab} onValueChange={handleTabChange}>
+      <TabsList
+        className={`ring-gray ring-red grid h-10 w-full grid-cols-2 rounded-none  rounded-lg bg-lightgray dark:bg-background`}
       >
-        <FormField
-          control={form.control}
-          name="url"
-          render={() => (
-            <FormItem>
-              {/* <FormLabel>Embed link</FormLabel> */}
-              <FormControl>
-                <Input
-                  placeholder="Paste the image link"
-                  {...form.register("url")}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div className="flex w-full items-center justify-center">
-          <Button type="submit">Embed Image</Button>
-        </div>
-      </form>
-    </Form>
+        <TabsTrigger
+          value="link"
+          className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-accent dark:data-[state=active]:text-foreground `}
+        >
+          Link
+        </TabsTrigger>
+        <TabsTrigger
+          value="unsplash"
+          className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-accent dark:data-[state=active]:text-foreground `}
+        >
+          Unsplash
+        </TabsTrigger>
+      </TabsList>
+
+      <TabsContent value="link">
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="z-100 space-y-2 pb-2"
+          >
+            <FormField
+              control={form.control}
+              name="url"
+              render={() => (
+                <FormItem>
+                  {/* <FormLabel>Embed link</FormLabel> */}
+                  <FormControl>
+                    <Input
+                      placeholder="Paste the image link"
+                      {...form.register("url")}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="flex w-full items-center justify-center">
+              <Button type="submit">Embed Image</Button>
+            </div>
+          </form>
+        </Form>
+      </TabsContent>
+      <TabsContent value="unsplash"></TabsContent>
+    </Tabs>
   );
 };

@@ -114,7 +114,6 @@ function VoiceDropdown({
   const [voiceStyles, setVoiceStyles] = useState<Filter[]>([]);
   const [tempos, setTempos] = useState<string[]>([]);
   const [filters, setFilters] = useState<Filter[]>([]);
-  const { showMiniToolbar } = useTextSpeech();
   const [open, setOpen] = React.useState(false);
 
   const [isOpenMobileFilterDropdown, setIsOpenMobileFilterDropdown] =
@@ -418,10 +417,13 @@ function VoiceDropdown({
           <MemoizedSampleAudioVoice
             isPlaying={playingStates[index]}
             playAudio={(e) => {
+              e.preventDefault();
               e.stopPropagation();
+
               playAudio(index);
             }}
             stopAudio={(e) => {
+              e.preventDefault();
               e.stopPropagation();
               stopAudio(index);
             }}

@@ -1344,7 +1344,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           open: false,
           element: null,
         });
-        setActivePath("");
       }
     },
     toggleEditBlockRef
@@ -1875,8 +1874,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 )}
               </AnimatePresence>
               <AnimatePresence>
-                {showEditBlockPopup.open && activePath && (
+                {showEditBlockPopup.open && (
                   <>
+                    <div className="closeOutside z-1  fixed top-0 left-0 h-full w-screen  opacity-50"></div>
                     <motion.div
                       {...y_animation_props}
                       className="fixed  z-10 z-10 mx-auto mt-2 mt-2 w-[380px]"

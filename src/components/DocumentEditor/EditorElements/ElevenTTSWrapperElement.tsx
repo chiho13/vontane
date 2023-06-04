@@ -65,7 +65,7 @@ const withConsecutiveGrouping = (Component) => {
 
 export const ElevenTTSWrapper = withConsecutiveGrouping((props) => {
   const { attributes, children, element, isFirstInGroup } = props;
-  const { editor } = useContext(EditorContext);
+  const { editor, activePath } = useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);
   const [selectedVoiceId, setSelectedVoiceId] = useState<string>(
     element.voice_id
@@ -79,9 +79,8 @@ export const ElevenTTSWrapper = withConsecutiveGrouping((props) => {
   useEffect(() => {
     const extractedText = extractTextValues(element.children).join(" ");
     if (
-      selected &&
-      focused &&
-      element.type == "tts" &&
+      activePath &&
+      JSON.parse(activePath)[0] === path[0] &&
       (element?.audio_url !== audioData?.audio_url ||
         audioData?.content !== extractedText)
     ) {
@@ -94,7 +93,7 @@ export const ElevenTTSWrapper = withConsecutiveGrouping((props) => {
     } else if (element.type !== "tts" && audioData !== null) {
       setAudioData(null);
     }
-  }, [selected, focused, element.children]);
+  }, [activePath, element.children]);
 
   return (
     <div

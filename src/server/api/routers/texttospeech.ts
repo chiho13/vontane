@@ -218,6 +218,7 @@ export const texttospeechRouter = createTRPCRouter({
       try {
         const expiresIn = 60 * 60 * 24 * 7;
         const fullFilePath = `${ctx.user.id}/${workspaceId}/${fileName}`;
+        console.log(fullFilePath);
         const { data: signedURL, error: signedURLError } =
           await ctx.supabaseServerClient.storage
             .from("tts-audio")

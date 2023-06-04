@@ -34,6 +34,7 @@ import {
 
 import React from "react";
 import { useLocalStorage } from "usehooks-ts";
+import { api } from "@/utils/api";
 
 export const ImageElement = React.memo((props) => {
   const { attributes, children, element } = props;
@@ -210,9 +211,18 @@ export const ImageEmbedLink = () => {
     setShowEditBlockPopup,
   } = useContext(EditorContext);
 
+  const aiImageFormSchema = z.object({
+    prompt: z.string().min(4, "Please enter at least 4 characters."),
+  });
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
+
+  const aiImageForm = useForm<z.infer<typeof aiImageFormSchema>>({
+    resolver: zodResolver(aiImageFormSchema),
+  });
+
+  const [imagePrompt, setImagePrompt] = useState("");
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const currentElement = Node.get(editor, JSON.parse(activePath));
@@ -250,6 +260,21 @@ export const ImageEmbedLink = () => {
     setTab(newTab); // This will also update value in localStorage
   };
 
+  const genImage = api.gpt.createimage.useMutation();
+
+  async function createImage(values: z.infer<typeof aiImageFormSchema>) {
+    try {
+      const response = await genImage.mutateAsync({
+        prompt: values.prompt,
+      });
+      if (response && response.data) {
+        console.log(response.data);
+      }
+    } catch (error) {
+      console.error("Error creating image:", error);
+    }
+  }
+
   return (
     <Tabs defaultValue={tab} onValueChange={handleTabChange}>
       <TabsList
@@ -262,10 +287,10 @@ export const ImageEmbedLink = () => {
           Link
         </TabsTrigger>
         <TabsTrigger
-          value="unsplash"
+          value="aiimage"
           className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-accent dark:data-[state=active]:text-foreground `}
         >
-          Unsplash
+          AI Image
         </TabsTrigger>
       </TabsList>
 
@@ -285,6 +310,9 @@ export const ImageEmbedLink = () => {
                     <Input
                       placeholder="Paste the image link"
                       {...form.register("url")}
+                      value={imagePrompt}
+                      {...aiImageForm.register("prompt")}
+                      onChange={(e) => setImagePrompt(e.target.value)}
                     />
                   </FormControl>
                   <FormMessage />
@@ -297,7 +325,36 @@ export const ImageEmbedLink = () => {
           </form>
         </Form>
       </TabsContent>
-      <TabsContent value="unsplash"></TabsContent>
+      <TabsContent value="aiimage">
+        <Form {...aiImageForm}>
+          <form
+            onSubmit={aiImageForm.handleSubmit(createImage)}
+            className="z-100 space-y-2 pb-2"
+          >
+            <FormField
+              control={aiImageForm.control}
+              name="prompt"
+              render={() => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter image description"
+                      // adjust this according to your state management
+                      value={imagePrompt}
+                      {...aiImageForm.register("prompt")}
+                      onChange={(e) => setImagePrompt(e.target.value)}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="flex w-full items-center justify-center">
+              <Button type="submit">Generate AI Image</Button>
+            </div>
+          </form>
+        </Form>
+      </TabsContent>
     </Tabs>
   );
 };

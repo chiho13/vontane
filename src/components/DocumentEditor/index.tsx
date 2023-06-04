@@ -1914,7 +1914,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                       ) : (
                         <div
                           ref={editBlockDropdownRef}
-                          className="z-100 rounded-lg dark:border-gray-700 dark:bg-secondary dark:text-foreground lg:w-[400px] xl:w-[500px]"
+                          className="z-100 rounded-lg border p-1 dark:border-gray-700  dark:border-gray-700 dark:bg-muted dark:text-foreground lg:w-[400px] xl:w-[500px]"
                         >
                           <ImageEmbedLink />
                         </div>

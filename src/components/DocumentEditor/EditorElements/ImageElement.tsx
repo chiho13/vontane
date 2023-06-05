@@ -218,7 +218,7 @@ export const ImageEmbedLink = () => {
   } = useContext(EditorContext);
 
   const aiImageFormSchema = z.object({
-    prompt: z.string().min(4, "Please enter at least 4 characters."),
+    prompt: z.string().nonempty("Please enter a description"),
   });
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -259,9 +259,9 @@ export const ImageEmbedLink = () => {
     setActivePath("");
   }
 
-  useEffect(() => {
-    form.setFocus("url");
-  }, []);
+  // useEffect(() => {
+  //   form.setFocus("url");
+  // }, []);
 
   const [tab, setTab] = useLocalStorage("imagetab", "link");
 
@@ -375,6 +375,13 @@ export const ImageEmbedLink = () => {
               )}
             </Button>
           </form>
+
+          <div className="flex gap-2  overflow-auto">
+            {aiImageResults &&
+              aiImageResults.map((el, index) => {
+                return <img src={el.url} key={index} width={154} />;
+              })}
+          </div>
         </Form>
       </TabsContent>
     </Tabs>

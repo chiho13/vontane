@@ -222,13 +222,16 @@ export const ImageEmbedLink = () => {
   });
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    reValidateMode: "onChange",
   });
 
   const aiImageForm = useForm<z.infer<typeof aiImageFormSchema>>({
     resolver: zodResolver(aiImageFormSchema),
+    reValidateMode: "onChange",
   });
 
   const [imagePrompt, setImagePrompt] = useState("");
+  const [url, setURL] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
 
   const [aiImageResults, setAIImageResults] = useState<Array<{ url: any }>>([]);
@@ -282,6 +285,10 @@ export const ImageEmbedLink = () => {
         console.log(response.data);
         setAIImageResults(response.data.map((item) => ({ url: item.url })));
         setIsGenerating(false);
+
+        // Reset the form after successful submission
+        aiImageForm.reset();
+        setImagePrompt("");
       }
     } catch (error) {
       console.error("Error creating image:", error);
@@ -323,8 +330,6 @@ export const ImageEmbedLink = () => {
                     <Input
                       placeholder="Paste the image link"
                       {...form.register("url")}
-                      value={imagePrompt}
-                      onChange={(e) => setImagePrompt(e.target.value)}
                     />
                   </FormControl>
                   <FormMessage />
@@ -354,9 +359,7 @@ export const ImageEmbedLink = () => {
                     <Input
                       placeholder="Enter Image Description"
                       // adjust this according to your state management
-                      value={imagePrompt}
                       {...aiImageForm.register("prompt")}
-                      onChange={(e) => setImagePrompt(e.target.value)}
                     />
                   </FormControl>
                   <FormMessage />

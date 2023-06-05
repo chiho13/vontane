@@ -19,6 +19,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { Node } from "slate";
+import { Send } from "lucide-react";
+import LoadingSpinner from "@/icons/LoadingSpinner";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -49,9 +51,10 @@ export const ImageElement = React.memo((props) => {
   } = useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);
 
-  const ref = useRef(null);
   const [isResizing, setIsResizing] = useState(false);
   const [imageWidth, setWidth] = useState(element.width); // default width
+
+  const selected = useSelected();
 
   const handleMouseDown = useCallback((e) => {
     setIsResizing(true);
@@ -66,6 +69,8 @@ export const ImageElement = React.memo((props) => {
     },
     [imageWidth]
   );
+
+  useEffect(() => {}, [selected]);
 
   const handleMouseMove = useCallback(
     (e) => {
@@ -106,7 +111,8 @@ export const ImageElement = React.memo((props) => {
           <div
             tabIndex={-1}
             className={`hover:bg-gray-muted relative flex  cursor-pointer items-center rounded-md bg-gray-100 p-2 transition dark:bg-secondary hover:dark:bg-accent 
-      dark:hover:bg-background/70`}
+      dark:hover:bg-background/70
+      `}
             contentEditable={false}
             onMouseDown={(e) => {
               e.preventDefault();
@@ -223,6 +229,9 @@ export const ImageEmbedLink = () => {
   });
 
   const [imagePrompt, setImagePrompt] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const [aiImageResults, setAIImageResults] = useState<Array<{ url: any }>>([]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const currentElement = Node.get(editor, JSON.parse(activePath));
@@ -263,12 +272,16 @@ export const ImageEmbedLink = () => {
   const genImage = api.gpt.createimage.useMutation();
 
   async function createImage(values: z.infer<typeof aiImageFormSchema>) {
+    if (isGenerating) return;
+    setIsGenerating(true);
     try {
       const response = await genImage.mutateAsync({
         prompt: values.prompt,
       });
       if (response && response.data) {
         console.log(response.data);
+        setAIImageResults(response.data.map((item) => ({ url: item.url })));
+        setIsGenerating(false);
       }
     } catch (error) {
       console.error("Error creating image:", error);
@@ -278,13 +291,13 @@ export const ImageEmbedLink = () => {
   return (
     <Tabs defaultValue={tab} onValueChange={handleTabChange}>
       <TabsList
-        className={`ring-gray ring-red grid h-10 w-full grid-cols-2 rounded-none  rounded-lg bg-lightgray dark:bg-background`}
+        className={`ring-gray ring-red mb-3 grid h-10 w-full grid-cols-2 rounded-none rounded-lg bg-lightgray dark:bg-background`}
       >
         <TabsTrigger
           value="link"
           className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-accent dark:data-[state=active]:text-foreground `}
         >
-          Link
+          Embed Link
         </TabsTrigger>
         <TabsTrigger
           value="aiimage"
@@ -298,7 +311,7 @@ export const ImageEmbedLink = () => {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="z-100 space-y-2 pb-2"
+            className="z-100 space-y-3 pb-2"
           >
             <FormField
               control={form.control}
@@ -311,7 +324,6 @@ export const ImageEmbedLink = () => {
                       placeholder="Paste the image link"
                       {...form.register("url")}
                       value={imagePrompt}
-                      {...aiImageForm.register("prompt")}
                       onChange={(e) => setImagePrompt(e.target.value)}
                     />
                   </FormControl>
@@ -320,7 +332,9 @@ export const ImageEmbedLink = () => {
               )}
             />
             <div className="flex w-full items-center justify-center">
-              <Button type="submit">Embed Image</Button>
+              <Button className="h-[36px]" type="submit">
+                Embed Image
+              </Button>
             </div>
           </form>
         </Form>
@@ -329,16 +343,16 @@ export const ImageEmbedLink = () => {
         <Form {...aiImageForm}>
           <form
             onSubmit={aiImageForm.handleSubmit(createImage)}
-            className="z-100 space-y-2 pb-2"
+            className="z-100 relative  flex flex-row items-center space-x-4 pb-2 pr-1"
           >
             <FormField
               control={aiImageForm.control}
               name="prompt"
               render={() => (
-                <FormItem>
+                <FormItem className="flex-grow">
                   <FormControl>
                     <Input
-                      placeholder="Enter image description"
+                      placeholder="Enter Image Description"
                       // adjust this according to your state management
                       value={imagePrompt}
                       {...aiImageForm.register("prompt")}
@@ -349,9 +363,17 @@ export const ImageEmbedLink = () => {
                 </FormItem>
               )}
             />
-            <div className="flex w-full items-center justify-center">
-              <Button type="submit">Generate AI Image</Button>
-            </div>
+            <Button
+              variant={"outline"}
+              className="absolute top-1 right-[10px] h-[30px] w-[30px] border-0 p-1"
+              type="submit"
+            >
+              {isGenerating ? (
+                <LoadingSpinner strokeColor="stroke-gray-400 dark:stroke-muted-foreground" />
+              ) : (
+                <Send className="dark:stroke-muted-foreground" />
+              )}
+            </Button>
           </form>
         </Form>
       </TabsContent>

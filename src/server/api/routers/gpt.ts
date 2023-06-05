@@ -20,8 +20,8 @@ export const GPTRouter = createTRPCRouter({
 
       const response = await openai.createImage({
         prompt: prompt,
-        n: 1,
-        size: "512x512",
+        n: 3,
+        size: "1024x1024",
       });
 
       return response.data;

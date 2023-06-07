@@ -295,6 +295,8 @@ export const ImageEmbedLink = () => {
     }
   }
 
+  function handleImageSelect(url: string) {}
+
   return (
     <Tabs defaultValue={tab} onValueChange={handleTabChange}>
       <TabsList
@@ -348,7 +350,7 @@ export const ImageEmbedLink = () => {
         <Form {...aiImageForm}>
           <form
             onSubmit={aiImageForm.handleSubmit(createImage)}
-            className="z-100 relative  flex flex-row items-center space-x-4 pb-2 pr-1"
+            className="z-100 relative  flex flex-row items-center space-x-4 pb-2"
           >
             <FormField
               control={aiImageForm.control}
@@ -382,7 +384,15 @@ export const ImageEmbedLink = () => {
           <div className="flex gap-2  overflow-auto">
             {aiImageResults &&
               aiImageResults.map((el, index) => {
-                return <img src={el.url} key={index} width={154} />;
+                return (
+                  <button onClick={() => handleImageSelect(el.url)} key={index}>
+                    <img
+                      className=" hover:opacity-90"
+                      src={el.url}
+                      width={154}
+                    />
+                  </button>
+                );
               })}
           </div>
         </Form>

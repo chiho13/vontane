@@ -1026,7 +1026,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         let showDropdownAbove = false;
         console.log(spaceBelowTarget);
         const dropdownHeight =
-          showEditBlockPopup.element === "equation" ? 280 : 180;
+          showEditBlockPopup.element === "equation" ? 280 : 360;
         if (spaceBelowTarget < dropdownHeight) {
           topOffset = -(dropdownHeight - targetRect.height) + 10;
           showDropdownAbove = true;
@@ -1914,7 +1914,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                       ) : (
                         <div
                           ref={editBlockDropdownRef}
-                          className="z-100 rounded-lg border p-2 dark:border-gray-700  dark:border-gray-700 dark:bg-muted dark:text-foreground lg:w-[400px] xl:w-[500px]"
+                          className="z-100 h-[270px] rounded-lg border p-2 dark:border-gray-700 dark:border-gray-700  dark:bg-muted dark:text-foreground lg:w-[400px]  lg:w-[500px]"
                         >
                           <ImageEmbedLink />
                         </div>

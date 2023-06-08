@@ -37,6 +37,7 @@ import {
 import React from "react";
 import { useLocalStorage } from "usehooks-ts";
 import { api } from "@/utils/api";
+import { useRouter } from "next/router";
 
 export const ImageElement = React.memo((props) => {
   const { attributes, children, element } = props;
@@ -55,7 +56,7 @@ export const ImageElement = React.memo((props) => {
   const [imageWidth, setWidth] = useState(element.width); // default width
 
   const selected = useSelected();
-
+  const ref = useRef(null);
   const handleMouseDown = useCallback((e) => {
     setIsResizing(true);
   }, []);
@@ -173,6 +174,9 @@ export const ImageElement = React.memo((props) => {
 });
 
 export const ImageEmbedLink = () => {
+  const router = useRouter();
+  const workspaceId = router.query.workspaceId as string;
+
   const formSchema = z.object({
     url: z
       .string()
@@ -274,6 +278,8 @@ export const ImageEmbedLink = () => {
 
   const genImage = api.gpt.createimage.useMutation();
 
+  const selectImage = api.gpt.selectImage.useMutation();
+
   async function createImage(values: z.infer<typeof aiImageFormSchema>) {
     if (isGenerating) return;
     setIsGenerating(true);
@@ -295,7 +301,31 @@ export const ImageEmbedLink = () => {
     }
   }
 
-  function handleImageSelect(url: string) {}
+  async function handleImageSelect(imageURL: string) {
+    const currentElement = Node.get(editor, JSON.parse(activePath));
+    try {
+      const response = await selectImage.mutateAsync({
+        imageURL,
+        workspaceId,
+      });
+      if (response) {
+        console.log(response);
+
+        const newElement = { ...currentElement, url: response };
+        Transforms.setNodes(editor, newElement, { at: JSON.parse(activePath) });
+
+        setShowEditBlockPopup({
+          open: false,
+          element: null,
+        });
+
+        setActivePath("");
+        // Reset the form after successful submission
+      }
+    } catch (error) {
+      console.error("Error creating image:", error);
+    }
+  }
 
   return (
     <Tabs defaultValue={tab} onValueChange={handleTabChange}>

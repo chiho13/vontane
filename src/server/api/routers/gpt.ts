@@ -57,7 +57,7 @@ export const GPTRouter = createTRPCRouter({
         workspaceId: z.string(),
       })
     )
-    .mutation(async ({ input, ctx }) => {
+    .query(async ({ input, ctx }) => {
       const { fileName, workspaceId } = input;
       const { supabaseServerClient, prisma } = ctx;
 

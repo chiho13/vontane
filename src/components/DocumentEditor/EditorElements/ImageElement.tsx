@@ -53,15 +53,45 @@ export const ImageElement = React.memo((props) => {
     setSelectedElementID,
   } = useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);
+  const router = useRouter();
+  const workspaceId = router.query.workspaceId as string;
 
   const [isResizing, setIsResizing] = useState(false);
   const [imageWidth, setWidth] = useState(element.width); // default width
+  const [imageURL, setImageURL] = useState(element.url);
 
   const selected = useSelected();
   const ref = useRef(null);
   const handleMouseDown = useCallback((e) => {
     setIsResizing(true);
   }, []);
+
+  const {
+    data: imagedata,
+    error: imagedataerror,
+    isLoading: imagedataloading,
+    refetch: imagedatarefetch,
+  } = api.gpt.getAIImage.useQuery(
+    { fileName: element.file_name, workspaceId },
+    {
+      enabled: false,
+      cacheTime: 5 * 60 * 1000, // Cache data for 5 minutes
+      staleTime: 5 * 60 * 1000, // Data is considered fresh for 5 minutes
+    }
+  );
+  useEffect(() => {
+    if (element.file_name) {
+      imagedatarefetch();
+    }
+  }, [element.file_name]);
+
+  useEffect(() => {
+    if (imagedata) {
+      //   const audioElement = new Audio(ttsaudiodata.signedURL);
+      //   setGeneratedAudioElement(audioElement);
+      setImageURL(imagedata.signedURL);
+    }
+  }, [imagedata]);
 
   const handleMouseUp = useCallback(
     (e) => {
@@ -109,7 +139,7 @@ export const ImageElement = React.memo((props) => {
 
   return (
     <div data-id={element.id} data-path={JSON.stringify(path)}>
-      {element.url?.trim() === "" ? (
+      {imageURL?.trim() === "" ? (
         <>
           <div
             tabIndex={-1}
@@ -153,7 +183,7 @@ export const ImageElement = React.memo((props) => {
           }}
         >
           <div className="relative bg-gray-200 dark:bg-background">
-            <img src={element.url} width={imageWidth} ref={ref} />
+            <img src={imageURL} width={imageWidth} ref={ref} />
             <div
               className="absolute top-0 -right-[3px] flex  h-full items-center"
               onMouseDown={handleMouseDown}

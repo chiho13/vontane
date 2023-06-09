@@ -21,6 +21,8 @@ import { useForm } from "react-hook-form";
 import { Node } from "slate";
 import { Send } from "lucide-react";
 import LoadingSpinner from "@/icons/LoadingSpinner";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css"; // Optional CSS effect
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -283,6 +285,7 @@ export const ImageEmbedLink = () => {
   async function createImage(values: z.infer<typeof aiImageFormSchema>) {
     if (isGenerating) return;
     setIsGenerating(true);
+    setAIImageResults([]);
     try {
       const response = await genImage.mutateAsync({
         prompt: values.prompt,
@@ -311,7 +314,11 @@ export const ImageEmbedLink = () => {
       if (response) {
         console.log(response);
 
-        const newElement = { ...currentElement, url: response };
+        const newElement = {
+          ...currentElement,
+          file_name: response,
+          image_type: "ai",
+        };
         Transforms.setNodes(editor, newElement, { at: JSON.parse(activePath) });
 
         setShowEditBlockPopup({
@@ -412,18 +419,47 @@ export const ImageEmbedLink = () => {
           </form>
 
           <div className="flex gap-2  overflow-auto">
-            {aiImageResults &&
-              aiImageResults.map((el, index) => {
-                return (
-                  <button onClick={() => handleImageSelect(el.url)} key={index}>
-                    <img
-                      className=" hover:opacity-90"
-                      src={el.url}
-                      width={154}
+            {isGenerating && (
+              <div>
+                <div className="flex gap-2">
+                  <div className=" flex h-[154px] w-[154px] items-center justify-center bg-gray-200 dark:bg-accent">
+                    <LoadingSpinner
+                      strokeColor="stroke-gray-400 dark:stroke-muted-foreground"
+                      width={50}
+                      height={50}
                     />
-                  </button>
-                );
-              })}
+                  </div>
+                  <div className=" flex h-[154px] w-[154px] items-center justify-center bg-gray-200 dark:bg-accent">
+                    <LoadingSpinner
+                      strokeColor="stroke-gray-400 dark:stroke-muted-foreground"
+                      width={50}
+                      height={50}
+                    />
+                  </div>
+                  <div className=" flex h-[154px] w-[154px] items-center justify-center bg-gray-200 dark:bg-accent">
+                    <LoadingSpinner
+                      strokeColor="stroke-gray-400 dark:stroke-muted-foreground"
+                      width={50}
+                      height={50}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+            {aiImageResults &&
+              aiImageResults.map((el, index) => (
+                <button
+                  className="transition duration-200 hover:opacity-90"
+                  onClick={() => handleImageSelect(el.url)}
+                  key={index}
+                >
+                  <LazyLoadImage
+                    src={el.url}
+                    width={154}
+                    effect="blur" // Optional effect
+                  />
+                </button>
+              ))}
           </div>
         </Form>
       </TabsContent>

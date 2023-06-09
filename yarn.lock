@@ -1068,6 +1068,14 @@
   dependencies:
     "@types/react" "*"
 
+"@types/react-lazy-load-image-component@^1.5.3":
+  "integrity" "sha512-hTzsQQ64mmPR6W03DQr6zhzeBGn17ExnVd7sLHqTQZQVd9Oi0Dy7tfSPgK0+AZV5YNC+e8Jw7oq9kzYfDkCDCA=="
+  "resolved" "https://registry.npmjs.org/@types/react-lazy-load-image-component/-/react-lazy-load-image-component-1.5.3.tgz"
+  "version" "1.5.3"
+  dependencies:
+    "@types/react" "*"
+    "csstype" "^3.0.2"
+
 "@types/react-portal@^4.0.4":
   "integrity" "sha512-ecVWngYHeSymq5XdrQOXRpIb9ay5SM4Stm/ur6+wc0Z+r05gafZ5SuMRbXKYsj4exNJa+4CTKK6J7qcTKm9K5g=="
   "resolved" "https://registry.npmjs.org/@types/react-portal/-/react-portal-4.0.4.tgz"

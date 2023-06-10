@@ -298,10 +298,6 @@ export const ImageEmbedLink = () => {
     setActivePath("");
   }
 
-  // useEffect(() => {
-  //   form.setFocus("url");
-  // }, []);
-
   const [tab, setTab] = useLocalStorage("imagetab", "link");
 
   const handleTabChange = (newTab) => {

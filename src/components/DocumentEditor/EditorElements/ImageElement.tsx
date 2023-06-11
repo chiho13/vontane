@@ -21,6 +21,8 @@ import { useForm } from "react-hook-form";
 import { Node } from "slate";
 import { Send } from "lucide-react";
 import LoadingSpinner from "@/icons/LoadingSpinner";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css"; // Optional CSS effect
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -37,6 +39,7 @@ import {
 import React from "react";
 import { useLocalStorage } from "usehooks-ts";
 import { api } from "@/utils/api";
+import { useRouter } from "next/router";
 
 export const ImageElement = React.memo((props) => {
   const { attributes, children, element } = props;
@@ -50,15 +53,34 @@ export const ImageElement = React.memo((props) => {
     setSelectedElementID,
   } = useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);
+  const router = useRouter();
+  const workspaceId = router.query.workspaceId as string;
 
   const [isResizing, setIsResizing] = useState(false);
   const [imageWidth, setWidth] = useState(element.width); // default width
+  const [imageURL, setImageURL] = useState(element.url);
 
   const selected = useSelected();
-
+  const ref = useRef(null);
   const handleMouseDown = useCallback((e) => {
     setIsResizing(true);
   }, []);
+
+  api.gpt.getAIImage.useQuery(
+    { fileName: element.file_name, workspaceId },
+    {
+      enabled: !!element.file_name,
+      onSuccess: (data) => {
+        // setImageURL(data.signedURL);
+        // setLocalURL(data.signedURL);
+        const currentElement = Node.get(editor, path);
+        const newElement = { ...currentElement, url: data.signedURL };
+        Transforms.setNodes(editor, newElement, { at: path });
+      },
+      cacheTime: 5 * 60 * 1000, // Cache data for 5 minutes
+      staleTime: 5 * 60 * 1000, // Data is considered fresh for 5 minutes
+    }
+  );
 
   const handleMouseUp = useCallback(
     (e) => {
@@ -106,7 +128,7 @@ export const ImageElement = React.memo((props) => {
 
   return (
     <div data-id={element.id} data-path={JSON.stringify(path)}>
-      {element.url?.trim() === "" ? (
+      {imageURL?.trim() === "" ? (
         <>
           <div
             tabIndex={-1}
@@ -150,7 +172,7 @@ export const ImageElement = React.memo((props) => {
           }}
         >
           <div className="relative bg-gray-200 dark:bg-background">
-            <img src={element.url} width={imageWidth} ref={ref} />
+            <img src={imageURL} width={imageWidth} ref={ref} />
             <div
               className="absolute top-0 -right-[3px] flex  h-full items-center"
               onMouseDown={handleMouseDown}
@@ -173,6 +195,9 @@ export const ImageElement = React.memo((props) => {
 });
 
 export const ImageEmbedLink = () => {
+  const router = useRouter();
+  const workspaceId = router.query.workspaceId as string;
+
   const formSchema = z.object({
     url: z
       .string()
@@ -262,10 +287,6 @@ export const ImageEmbedLink = () => {
     setActivePath("");
   }
 
-  // useEffect(() => {
-  //   form.setFocus("url");
-  // }, []);
-
   const [tab, setTab] = useLocalStorage("imagetab", "link");
 
   const handleTabChange = (newTab) => {
@@ -274,9 +295,12 @@ export const ImageEmbedLink = () => {
 
   const genImage = api.gpt.createimage.useMutation();
 
+  const selectImage = api.gpt.selectImage.useMutation();
+
   async function createImage(values: z.infer<typeof aiImageFormSchema>) {
     if (isGenerating) return;
     setIsGenerating(true);
+    setAIImageResults([]);
     try {
       const response = await genImage.mutateAsync({
         prompt: values.prompt,
@@ -289,6 +313,36 @@ export const ImageEmbedLink = () => {
         // Reset the form after successful submission
         aiImageForm.reset();
         setImagePrompt("");
+      }
+    } catch (error) {
+      console.error("Error creating image:", error);
+    }
+  }
+
+  async function handleImageSelect(imageURL: string) {
+    const currentElement = Node.get(editor, JSON.parse(activePath));
+    try {
+      const response = await selectImage.mutateAsync({
+        imageURL,
+        workspaceId,
+      });
+      if (response) {
+        console.log(response);
+
+        const newElement = {
+          ...currentElement,
+          file_name: response,
+          image_type: "ai",
+        };
+        Transforms.setNodes(editor, newElement, { at: JSON.parse(activePath) });
+
+        setShowEditBlockPopup({
+          open: false,
+          element: null,
+        });
+
+        setActivePath("");
+        // Reset the form after successful submission
       }
     } catch (error) {
       console.error("Error creating image:", error);
@@ -348,7 +402,7 @@ export const ImageEmbedLink = () => {
         <Form {...aiImageForm}>
           <form
             onSubmit={aiImageForm.handleSubmit(createImage)}
-            className="z-100 relative  flex flex-row items-center space-x-4 pb-2 pr-1"
+            className="z-100 relative  flex flex-row items-center space-x-4 pb-2"
           >
             <FormField
               control={aiImageForm.control}
@@ -380,10 +434,47 @@ export const ImageEmbedLink = () => {
           </form>
 
           <div className="flex gap-2  overflow-auto">
+            {isGenerating && (
+              <div>
+                <div className="flex gap-2">
+                  <div className=" flex h-[154px] w-[154px] items-center justify-center bg-gray-200 dark:bg-accent">
+                    <LoadingSpinner
+                      strokeColor="stroke-gray-400 dark:stroke-muted-foreground"
+                      width={50}
+                      height={50}
+                    />
+                  </div>
+                  <div className=" flex h-[154px] w-[154px] items-center justify-center bg-gray-200 dark:bg-accent">
+                    <LoadingSpinner
+                      strokeColor="stroke-gray-400 dark:stroke-muted-foreground"
+                      width={50}
+                      height={50}
+                    />
+                  </div>
+                  <div className=" flex h-[154px] w-[154px] items-center justify-center bg-gray-200 dark:bg-accent">
+                    <LoadingSpinner
+                      strokeColor="stroke-gray-400 dark:stroke-muted-foreground"
+                      width={50}
+                      height={50}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
             {aiImageResults &&
-              aiImageResults.map((el, index) => {
-                return <img src={el.url} key={index} width={154} />;
-              })}
+              aiImageResults.map((el, index) => (
+                <button
+                  className="transition duration-200 hover:opacity-90"
+                  onClick={() => handleImageSelect(el.url)}
+                  key={index}
+                >
+                  <LazyLoadImage
+                    src={el.url}
+                    width={154}
+                    effect="blur" // Optional effect
+                  />
+                </button>
+              ))}
           </div>
         </Form>
       </TabsContent>

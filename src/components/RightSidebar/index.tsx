@@ -20,6 +20,8 @@ import { root } from "postcss";
 import { Info } from "lucide-react";
 import { api } from "@/utils/api";
 import { useRouter } from "next/router";
+import { LazyLoadComponent } from "react-lazy-load-image-component";
+
 interface RightSideBarProps {
   showRightSidebar: boolean;
   rightSideBarWidth: number;
@@ -123,6 +125,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
               (audioData && audioData.file_name ? (
                 <>
                   <h3 className="mt-4 mb-2 text-sm ">Text to MP3</h3>
+
                   <AudioPlayer
                     audioURL={audioURL}
                     fileName={audioData.file_name}

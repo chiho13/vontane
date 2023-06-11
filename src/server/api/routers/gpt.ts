@@ -2,6 +2,8 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 import { Configuration, OpenAIApi } from "openai";
+import { uploadImage } from "@/server/lib/uploadImage";
+import { nanoid } from "nanoid";
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
@@ -25,6 +27,65 @@ export const GPTRouter = createTRPCRouter({
       });
 
       return response.data;
+    }),
+  selectImage: protectedProcedure
+    .input(
+      z.object({
+        imageURL: z.string(),
+        workspaceId: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { imageURL, workspaceId } = input;
+      const { supabaseServerClient, prisma } = ctx;
+      const fileName = `${nanoid()}.png`;
+      // return audioUrl;
+      await uploadImage(
+        prisma,
+        supabaseServerClient,
+        imageURL,
+        fileName,
+        workspaceId
+      );
+
+      return fileName;
+    }),
+  getAIImage: protectedProcedure
+    .input(
+      z.object({
+        fileName: z.string(),
+        workspaceId: z.string(),
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      const { fileName, workspaceId } = input;
+      const { supabaseServerClient, prisma } = ctx;
+
+      try {
+        const expiresIn = 60 * 60 * 24 * 7;
+        const fullFilePath = `${ctx.user.id}/${workspaceId}/${fileName}`;
+        console.log(fullFilePath);
+        const { data: signedURL, error: signedURLError } =
+          await ctx.supabaseServerClient.storage
+            .from("dalle")
+            .createSignedUrl(fullFilePath, expiresIn);
+
+        if (signedURLError) {
+          console.error(`Error creating signed URL: ${signedURLError.message}`);
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to create signed URL",
+          });
+        }
+
+        return { signedURL: signedURL.signedUrl, fileName };
+      } catch (error) {
+        console.error(error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        });
+      }
     }),
 
   getEquation: protectedProcedure

@@ -3,13 +3,20 @@ import styled from "styled-components";
 
 const LoadingSpinnerSVG = styled.svg`
   z-index: 2;
-  width: 20px;
-  height: 20px;
 `;
 
-function LoadingSpinner({ strokeColor = "stroke-gray-400 dark:stroke-white" }) {
+function LoadingSpinner({
+  strokeColor = "stroke-gray-400 dark:stroke-white",
+  width = 20,
+  height = 20,
+}) {
   return (
-    <LoadingSpinnerSVG viewBox="0 0 50 50" className="animate-rotate">
+    <LoadingSpinnerSVG
+      viewBox="0 0 50 50"
+      className="animate-rotate"
+      width={width}
+      height={height}
+    >
       <circle
         className={`animate-dash ${strokeColor}`}
         cx="25"

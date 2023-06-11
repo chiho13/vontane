@@ -83,10 +83,6 @@ export const ImageElement = React.memo((props) => {
     }
   );
 
-  useEffect(() => {
-    setHasFetched(false);
-  }, [element.file_name]);
-
   const handleMouseUp = useCallback(
     (e) => {
       setIsResizing(false);

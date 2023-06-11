@@ -66,32 +66,21 @@ export const ImageElement = React.memo((props) => {
     setIsResizing(true);
   }, []);
 
-  const {
-    data: imagedata,
-    error: imagedataerror,
-    isLoading: imagedataloading,
-    refetch: imagedatarefetch,
-  } = api.gpt.getAIImage.useQuery(
+  api.gpt.getAIImage.useQuery(
     { fileName: element.file_name, workspaceId },
     {
-      enabled: false,
+      enabled: !!element.file_name,
+      onSuccess: (data) => {
+        // setImageURL(data.signedURL);
+        // setLocalURL(data.signedURL);
+        const currentElement = Node.get(editor, path);
+        const newElement = { ...currentElement, url: data.signedURL };
+        Transforms.setNodes(editor, newElement, { at: path });
+      },
       cacheTime: 5 * 60 * 1000, // Cache data for 5 minutes
       staleTime: 5 * 60 * 1000, // Data is considered fresh for 5 minutes
     }
   );
-  useEffect(() => {
-    if (element.file_name) {
-      imagedatarefetch();
-    }
-  }, [element.file_name]);
-
-  useEffect(() => {
-    if (imagedata) {
-      //   const audioElement = new Audio(ttsaudiodata.signedURL);
-      //   setGeneratedAudioElement(audioElement);
-      setImageURL(imagedata.signedURL);
-    }
-  }, [imagedata]);
 
   const handleMouseUp = useCallback(
     (e) => {

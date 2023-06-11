@@ -6,6 +6,8 @@
  */
 !process.env.SKIP_ENV_VALIDATION && (await import("./src/env.mjs"));
 
+import million from "million/compiler";
+
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: true,
@@ -25,4 +27,4 @@ const config = {
     defaultLocale: "en",
   },
 };
-export default config;
+export default million.next(config);

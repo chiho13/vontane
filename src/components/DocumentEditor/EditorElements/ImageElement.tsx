@@ -66,21 +66,26 @@ export const ImageElement = React.memo((props) => {
     setIsResizing(true);
   }, []);
 
+  const [hasFetched, setHasFetched] = useState(false);
+
   api.gpt.getAIImage.useQuery(
     { fileName: element.file_name, workspaceId },
     {
-      enabled: !!element.file_name,
+      enabled: !!element.file_name && !hasFetched,
       onSuccess: (data) => {
-        // setImageURL(data.signedURL);
-        // setLocalURL(data.signedURL);
         const currentElement = Node.get(editor, path);
         const newElement = { ...currentElement, url: data.signedURL };
         Transforms.setNodes(editor, newElement, { at: path });
+        setHasFetched(true); // set hasFetched to true after the first successful fetch
       },
-      cacheTime: 5 * 60 * 1000, // Cache data for 5 minutes
-      staleTime: 5 * 60 * 1000, // Data is considered fresh for 5 minutes
+      cacheTime: 5 * 60 * 1000,
+      staleTime: 5 * 60 * 1000,
     }
   );
+
+  useEffect(() => {
+    setHasFetched(false);
+  }, [element.file_name]);
 
   const handleMouseUp = useCallback(
     (e) => {
@@ -258,6 +263,7 @@ export const ImageEmbedLink = () => {
   const [imagePrompt, setImagePrompt] = useState("");
   const [url, setURL] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const [aiImageResults, setAIImageResults] = useState<Array<{ url: any }>>([]);
 
@@ -321,6 +327,7 @@ export const ImageEmbedLink = () => {
 
   async function handleImageSelect(imageURL: string) {
     const currentElement = Node.get(editor, JSON.parse(activePath));
+    setIsUploading(true);
     try {
       const response = await selectImage.mutateAsync({
         imageURL,
@@ -465,7 +472,10 @@ export const ImageEmbedLink = () => {
               aiImageResults.map((el, index) => (
                 <button
                   className="transition duration-200 hover:opacity-90"
-                  onClick={() => handleImageSelect(el.url)}
+                  onClick={() => {
+                    if (isUploading) return;
+                    handleImageSelect(el.url);
+                  }}
                   key={index}
                 >
                   <LazyLoadImage

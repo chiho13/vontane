@@ -104,8 +104,15 @@ export const ImageElement = React.memo((props) => {
   const handleMouseMove = useCallback(
     (e) => {
       if (isResizing) {
-        // Update the width here
-        const newWidth = e.clientX - ref.current.getBoundingClientRect().left;
+        let newWidth;
+        if (align === "end") {
+          // When the alignment is "end", calculate the new width based on the difference between
+          // the right edge of the image and the mouse position
+          newWidth = ref.current.getBoundingClientRect().right - e.clientX;
+        } else {
+          // Otherwise, calculate the new width as before
+          newWidth = e.clientX - ref.current.getBoundingClientRect().left;
+        }
 
         if (newWidth < 250) {
           // If it is, set the width to the minimum width
@@ -116,7 +123,7 @@ export const ImageElement = React.memo((props) => {
         }
       }
     },
-    [isResizing]
+    [isResizing, align] // Also add "align" to the dependency array
   );
 
   useEffect(() => {
@@ -182,7 +189,9 @@ export const ImageElement = React.memo((props) => {
           <div className="relative bg-gray-200 dark:bg-background">
             <img src={imageURL} width={imageWidth} ref={ref} />
             <div
-              className="absolute top-0 -right-[3px] flex  h-full items-center"
+              className={`absolute top-0 ${
+                align === "end" ? "-left-[3px]" : "-right-[3px]"
+              } flex h-full items-center`}
               onMouseDown={handleMouseDown}
             >
               <div

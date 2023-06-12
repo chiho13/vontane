@@ -14,6 +14,13 @@ import { useArrowNavigation } from "@/hooks/useArrowNavigation";
 import { wrapElementWithTTS } from "./helpers/toggleBlock";
 // import { isParentTTS, wrapWithTTS } from "./helpers/toggleBlock";
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
 const isParentTTS = (editor, node) => {
   const path = ReactEditor.findPath(editor, node);
   const parent = Editor.parent(editor, path);
@@ -97,20 +104,6 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
       Transforms.removeNodes(editor, {
         at: ReactEditor.findPath(editor, element),
       });
-
-      // if (isParentTTS(editor, element)) {
-      //   if (element.type === "mcq") {
-      //     Transforms.removeNodes(editor, {
-      //       at: ReactEditor.findPath(editor, element),
-      //     });
-
-      //     Transforms.setNodes(
-      //       editor,
-      //       { type: "paragraph" },
-      //       { at: ReactEditor.findPath(editor, element) }
-      //     );
-      //   }
-      // }
     }
 
     function duplicateBlock(event: React.MouseEvent<HTMLButtonElement>) {
@@ -131,7 +124,7 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
     return (
       <>
         <div
-          className={`option-menu-container  relative -right-[5px] ${
+          className={`option-menu-container  relative  ${
             activeDropdown === element.id && "opacity-100"
           }`}
           onMouseDown={(e) => {
@@ -145,10 +138,10 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
             ref={ref}
             usePortal={true}
             dropdownButtonClassName=" p-0 border-transparent relative outline-none border-0 shadow-none bg-transparent w-full h-[26px] justify-start transition-colors duration-300 focus:ring-2 focus:ring-black focus:ring-opacity-30"
-            dropdownMenuClassName=" top-0 w-[200px] border-0 dark:bg-secondary"
+            dropdownMenuClassName=" top-0 w-[200px] border-0 dark:bg-muted"
             icon={
               <div className="flex h-[22px] w-[22px] items-center  justify-center rounded-md bg-gray-200  p-0 hover:bg-gray-300 dark:bg-muted  dark:hover:bg-accent">
-                <MoreHorizontal className="option-menu w-[18px]  w-[18px] text-darkergray dark:text-muted-foreground" />
+                <MoreHorizontal className="option-menu w-[18px]  w-[18px] text-darkergray dark:text-foreground" />
               </div>
             }
           >
@@ -174,9 +167,9 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
                   <div className="p-1 " role="none">
                     <button
                       onClick={item.action}
-                      className={`  flex  w-full items-center rounded-md px-4 py-1 text-left text-sm text-gray-700 transition duration-200 hover:text-gray-900 focus:outline-none dark:text-foreground   ${
+                      className={`  flex  w-full items-center rounded-sm px-4 py-1 text-left text-sm text-gray-700 transition duration-200 hover:text-gray-900 focus:outline-none dark:text-foreground   ${
                         focusedIndex === index
-                          ? "bg-gray-200 dark:bg-muted"
+                          ? "bg-gray-200 dark:bg-accent"
                           : ""
                       }`}
                       role="menuitem"
@@ -205,7 +198,20 @@ export const OptionMenu = forwardRef<HTMLDivElement, OptionMenuProps>(
   ({ element }, ref) => {
     return (
       <DropdownProvider>
-        <OptionDropdown element={element} ref={ref} />
+        <TooltipProvider delayDuration={300}>
+          <Tooltip>
+            <TooltipTrigger>
+              <OptionDropdown element={element} ref={ref} />
+            </TooltipTrigger>
+            <TooltipContent
+              className="border-black  dark:bg-white dark:text-muted"
+              side="top"
+              sideOffset={10}
+            >
+              <p className="text-[12px]">More</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </DropdownProvider>
     );
   }

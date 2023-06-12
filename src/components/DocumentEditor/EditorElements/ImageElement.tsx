@@ -23,9 +23,11 @@ import { Send } from "lucide-react";
 import LoadingSpinner from "@/icons/LoadingSpinner";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css"; // Optional CSS effect
+import { DownloadButton } from "@/components/DownloadButton";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+import { BlockAlign } from "@/components/BlockAlign";
 import {
   Form,
   FormControl,
@@ -58,7 +60,11 @@ export const ImageElement = React.memo((props) => {
 
   const [isResizing, setIsResizing] = useState(false);
   const [imageWidth, setWidth] = useState(element.width); // default width
+  const [imageHeight, setHeight] = useState(element.width * 0.7); // default height
+
   const [imageURL, setImageURL] = useState(element.url);
+
+  const [align, setAlign] = useState(element.align || "start");
 
   const selected = useSelected();
   const ref = useRef(null);
@@ -71,7 +77,7 @@ export const ImageElement = React.memo((props) => {
   api.gpt.getAIImage.useQuery(
     { fileName: element.file_name, workspaceId },
     {
-      enabled: !!element.file_name && !hasFetched,
+      enabled: !element.file_name && !hasFetched,
       onSuccess: (data) => {
         const currentElement = Node.get(editor, path);
         const newElement = { ...currentElement, url: data.signedURL };
@@ -86,7 +92,7 @@ export const ImageElement = React.memo((props) => {
   const handleMouseUp = useCallback(
     (e) => {
       setIsResizing(false);
-      const newElement = { ...element, width: imageWidth };
+      const newElement = { ...element, width: imageWidth, height: imageHeight };
 
       Transforms.setNodes(editor, newElement, { at: path });
     },
@@ -100,6 +106,7 @@ export const ImageElement = React.memo((props) => {
       if (isResizing) {
         // Update the width here
         const newWidth = e.clientX - ref.current.getBoundingClientRect().left;
+
         if (newWidth < 250) {
           // If it is, set the width to the minimum width
           setWidth(250);
@@ -159,32 +166,44 @@ export const ImageElement = React.memo((props) => {
 
             {children}
           </div>
-          <div className="absolute top-0 right-2 z-10 ">
+          <div className="absolute  top-0 right-2 z-10 flex opacity-0 group-hover:opacity-100 ">
             <OptionMenu element={element} />
           </div>
         </>
       ) : (
         <div
           tabIndex={-1}
-          className="group flex"
+          className={`flex justify-${align}`}
           contentEditable={false}
           style={{
             width: "calc(100% - 10px)",
           }}
         >
           <div className="relative bg-gray-200 dark:bg-background">
-            <img src={imageURL} width={imageWidth} ref={ref} />
+            <img
+              src={imageURL}
+              width={imageWidth}
+              height={imageHeight}
+              ref={ref}
+            />
             <div
               className="absolute top-0 -right-[3px] flex  h-full items-center"
               onMouseDown={handleMouseDown}
             >
               <div
-                className={`  flex h-full  w-[18px] items-center opacity-0 transition duration-300 lg:group-hover:opacity-100 xl:pointer-events-auto `}
+                className={`  flex h-full  w-[18px] items-center opacity-0  lg:group-hover:opacity-100 xl:pointer-events-auto `}
               >
                 <div className="mx-auto block h-[60px] w-[6px]  cursor-col-resize rounded-lg border border-foreground bg-[#b4b4b4] dark:bg-background"></div>
               </div>
             </div>
-            <div className="absolute top-0 right-2 z-10 ">
+            <div className="absolute top-0 right-1 z-10 flex items-center gap-1  ">
+              <BlockAlign element={element} />
+              <DownloadButton
+                url={element.url}
+                fileName={element.file_name}
+                className=" h-[22px] w-[22px] rounded-md border-0 p-[4px] dark:bg-muted hover:dark:bg-muted/90 "
+                iconClassName="dark:stroke-foreground"
+              />
               <OptionMenu element={element} />
             </div>
           </div>

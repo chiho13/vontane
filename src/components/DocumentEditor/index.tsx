@@ -69,9 +69,7 @@ import {
 import { genNodeId } from "@/hoc/withID";
 
 import {
-  useSortable,
   SortableContext,
-  sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 

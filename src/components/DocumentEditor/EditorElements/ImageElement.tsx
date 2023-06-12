@@ -92,7 +92,7 @@ export const ImageElement = React.memo((props) => {
   const handleMouseUp = useCallback(
     (e) => {
       setIsResizing(false);
-      const newElement = { ...element, width: imageWidth, height: imageHeight };
+      const newElement = { ...element, width: imageWidth };
 
       Transforms.setNodes(editor, newElement, { at: path });
     },
@@ -180,12 +180,7 @@ export const ImageElement = React.memo((props) => {
           }}
         >
           <div className="relative bg-gray-200 dark:bg-background">
-            <img
-              src={imageURL}
-              width={imageWidth}
-              height={imageHeight}
-              ref={ref}
-            />
+            <img src={imageURL} width={imageWidth} ref={ref} />
             <div
               className="absolute top-0 -right-[3px] flex  h-full items-center"
               onMouseDown={handleMouseDown}

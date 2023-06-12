@@ -212,7 +212,7 @@ function AudioPlayer({ audioURL, fileName, content }: Props): JSX.Element {
             {formatTime(Math.floor(seekMax))}
           </div>
         )}
-        <DownloadButton audioURL={audioURL} fileName={fileName} />
+        <DownloadButton url={audioURL} fileName={fileName} />
       </div>
       <div className="mt-4 items-center overflow-hidden overflow-ellipsis whitespace-nowrap text-sm">
         {content}

@@ -77,7 +77,7 @@ export const ImageElement = React.memo((props) => {
   api.gpt.getAIImage.useQuery(
     { fileName: element.file_name, workspaceId },
     {
-      enabled: !element.file_name && !hasFetched,
+      enabled: !!element.file_name && !hasFetched,
       onSuccess: (data) => {
         const currentElement = Node.get(editor, path);
         const newElement = { ...currentElement, url: data.signedURL };
@@ -359,6 +359,7 @@ export const ImageEmbedLink = () => {
           ...currentElement,
           file_name: response,
           image_type: "ai",
+          align: "start",
         };
         Transforms.setNodes(editor, newElement, { at: JSON.parse(activePath) });
 

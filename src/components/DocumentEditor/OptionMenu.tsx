@@ -208,7 +208,7 @@ export const OptionMenu = forwardRef<HTMLDivElement, OptionMenuProps>(
               side="top"
               sideOffset={10}
             >
-              <p className="text-[12px]">More</p>
+              <p className="text-[12px]">Actions</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

@@ -60,9 +60,9 @@ export const ImageElement = React.memo((props) => {
 
   const [isResizing, setIsResizing] = useState(false);
   const [imageWidth, setWidth] = useState(element.width); // default width
-  const [imageHeight, setHeight] = useState(element.width * 0.7); // default height
+  const [imageHeight, setHeight] = useState(element.height); // default height
 
-  const [imageURL, setImageURL] = useState(element.url);
+  // const [imageURL, setImageURL] = useState(element.url);
 
   const [align, setAlign] = useState(element.align || "start");
 
@@ -73,22 +73,32 @@ export const ImageElement = React.memo((props) => {
   }, []);
 
   const [hasFetched, setHasFetched] = useState(false);
+  const [imageURL, setImageURL] = useLocalStorage(
+    element.file_name,
+    element.url
+  );
+
+  const [tempURL, setTempURL] = useState(element.tempURL);
 
   api.gpt.getAIImage.useQuery(
     { fileName: element.file_name, workspaceId },
     {
-      enabled: !!element.file_name && !hasFetched,
+      enabled: !!element.file_name && !hasFetched && !imageURL,
       onSuccess: (data) => {
         const currentElement = Node.get(editor, path);
-        const newElement = { ...currentElement, url: data.signedURL };
+        const newElement = {
+          ...currentElement,
+          url: data.signedURL,
+          tempURL: "",
+        };
         Transforms.setNodes(editor, newElement, { at: path });
+
         setHasFetched(true); // set hasFetched to true after the first successful fetch
       },
       cacheTime: 5 * 60 * 1000,
       staleTime: 5 * 60 * 1000,
     }
   );
-
   const handleMouseUp = useCallback(
     (e) => {
       setIsResizing(false);
@@ -126,6 +136,19 @@ export const ImageElement = React.memo((props) => {
     [isResizing, align] // Also add "align" to the dependency array
   );
 
+  // State for image loading status
+  const [loadingImage, setLoadingImage] = useState(true);
+
+  // Event handler for image load
+  const handleImageLoad = () => {
+    setLoadingImage(false);
+  };
+
+  // Apply the blur filter if the image is still loading
+  const imageStyle = loadingImage
+    ? { filter: "blur(10px)", transition: "filter 0.3s" }
+    : { transition: "filter 0.3s" };
+
   useEffect(() => {
     if (isResizing) {
       window.addEventListener("mousemove", handleMouseMove);
@@ -143,7 +166,7 @@ export const ImageElement = React.memo((props) => {
 
   return (
     <div data-id={element.id} data-path={JSON.stringify(path)}>
-      {imageURL?.trim() === "" ? (
+      {!imageURL ? (
         <>
           <div
             tabIndex={-1}
@@ -162,14 +185,21 @@ export const ImageElement = React.memo((props) => {
               setSelectedElementID(element.id);
             }}
           >
-            <div className="flex items-center">
-              <ImageIcon
-                width={46}
-                height={46}
-                className="rounded-md opacity-30 dark:bg-transparent"
-              />
-              <span className="ml-4 opacity-30">Add an Image</span>
-            </div>
+            {!tempURL ? (
+              <div className="flex items-center">
+                <ImageIcon
+                  width={46}
+                  height={46}
+                  className="rounded-md opacity-30 dark:bg-transparent"
+                />
+                <span className="ml-4 opacity-30">Add an Image</span>
+              </div>
+            ) : (
+              <div className="flex items-center">
+                <img src={tempURL} width={60} />
+                <span className="ml-4 opacity-30">Uploading...</span>
+              </div>
+            )}
 
             {children}
           </div>
@@ -187,7 +217,12 @@ export const ImageElement = React.memo((props) => {
           }}
         >
           <div className="relative bg-gray-200 dark:bg-background">
-            <img src={imageURL} width={imageWidth} ref={ref} />
+            <img
+              src={imageURL}
+              width={imageWidth}
+              height={imageHeight}
+              ref={ref}
+            />
             <div
               className={`absolute top-0 ${
                 align === "end" ? "-left-[3px]" : "-right-[3px]"
@@ -346,6 +381,17 @@ export const ImageEmbedLink = () => {
 
   async function handleImageSelect(imageURL: string) {
     const currentElement = Node.get(editor, JSON.parse(activePath));
+    const newElement = {
+      ...currentElement,
+      tempURL: imageURL, // immediately use the local URL
+      width: 256,
+      height: 256,
+    };
+    Transforms.setNodes(editor, newElement, { at: JSON.parse(activePath) });
+    setShowEditBlockPopup({
+      open: false,
+      element: null,
+    });
     setIsUploading(true);
     try {
       const response = await selectImage.mutateAsync({
@@ -355,17 +401,15 @@ export const ImageEmbedLink = () => {
       if (response) {
         console.log(response);
 
-        const newElement = {
+        const updatedElement = {
           ...currentElement,
           file_name: response,
           image_type: "ai",
           align: "start",
         };
-        Transforms.setNodes(editor, newElement, { at: JSON.parse(activePath) });
 
-        setShowEditBlockPopup({
-          open: false,
-          element: null,
+        Transforms.setNodes(editor, updatedElement, {
+          at: JSON.parse(activePath),
         });
 
         setActivePath("");

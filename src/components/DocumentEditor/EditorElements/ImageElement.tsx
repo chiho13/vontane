@@ -92,7 +92,7 @@ export const ImageElement = React.memo((props) => {
           tempURL: "",
         };
         Transforms.setNodes(editor, newElement, { at: path });
-
+        setImageURL(data.signedURL);
         setHasFetched(true); // set hasFetched to true after the first successful fetch
       },
       cacheTime: 5 * 60 * 1000,
@@ -196,7 +196,7 @@ export const ImageElement = React.memo((props) => {
               </div>
             ) : (
               <div className="flex items-center">
-                <img src={tempURL} width={60} />
+                <img src={tempURL} width={100} className="rounded-md" />
                 <span className="ml-4 opacity-30">Uploading...</span>
               </div>
             )}
@@ -293,6 +293,17 @@ export const ImageEmbedLink = () => {
       ),
   });
 
+  const uploadSchema = z.object({
+    file: z.any().refine((file) => file instanceof File, {
+      message: "Please select a file",
+    }),
+  });
+
+  const uploadForm = useForm<z.infer<typeof uploadSchema>>({
+    resolver: zodResolver(uploadSchema),
+    reValidateMode: "onChange",
+  });
+
   const {
     editor,
     activePath,
@@ -384,8 +395,7 @@ export const ImageEmbedLink = () => {
     const newElement = {
       ...currentElement,
       tempURL: imageURL, // immediately use the local URL
-      width: 256,
-      height: 256,
+      align: "start",
     };
     Transforms.setNodes(editor, newElement, { at: JSON.parse(activePath) });
     setShowEditBlockPopup({
@@ -403,7 +413,7 @@ export const ImageEmbedLink = () => {
 
         const updatedElement = {
           ...currentElement,
-          file_name: response,
+          file_name: response.fileName,
           image_type: "ai",
           align: "start",
         };
@@ -423,8 +433,15 @@ export const ImageEmbedLink = () => {
   return (
     <Tabs defaultValue={tab} onValueChange={handleTabChange}>
       <TabsList
-        className={`ring-gray ring-red mb-3 grid h-10 w-full grid-cols-2 rounded-none rounded-lg bg-lightgray dark:bg-background`}
+        className={`ring-gray ring-red mb-3 grid h-10 w-full grid-cols-3 rounded-none rounded-lg bg-lightgray dark:bg-background`}
       >
+        <TabsTrigger
+          value="upload"
+          className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-accent dark:data-[state=active]:text-foreground `}
+        >
+          Upload
+        </TabsTrigger>
+
         <TabsTrigger
           value="link"
           className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-accent dark:data-[state=active]:text-foreground `}
@@ -438,6 +455,41 @@ export const ImageEmbedLink = () => {
           AI Image
         </TabsTrigger>
       </TabsList>
+
+      <TabsContent value="upload">
+        <Form {...uploadForm}>
+          <form className="z-100 relative mx-auto w-[90%] items-center space-y-3 py-2">
+            <FormField
+              control={uploadForm.control}
+              name="upload"
+              render={() => (
+                <FormItem>
+                  {/* <FormLabel>Upload Image</FormLabel> */}
+                  <FormControl>
+                    <label className=" flex h-10 cursor-pointer justify-center rounded bg-primary py-2 px-4 text-center text-primary-foreground outline-0 transition duration-300 hover:bg-primary/90">
+                      Upload
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(event) => {
+                          const file = event.target.files[0];
+                          if (file) {
+                            const imageURL = URL.createObjectURL(file);
+                            handleImageSelect(imageURL);
+                            // Process the file here...
+                          }
+                        }}
+                      />
+                    </label>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </form>
+        </Form>
+      </TabsContent>
 
       <TabsContent value="link">
         <Form {...form}>

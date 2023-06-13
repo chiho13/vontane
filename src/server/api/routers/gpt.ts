@@ -40,7 +40,7 @@ export const GPTRouter = createTRPCRouter({
       const { supabaseServerClient, prisma } = ctx;
       const fileName = `${nanoid()}.png`;
       // return audioUrl;
-      await uploadImage(
+      const uploadedURL = await uploadImage(
         prisma,
         supabaseServerClient,
         imageURL,
@@ -48,7 +48,7 @@ export const GPTRouter = createTRPCRouter({
         workspaceId
       );
 
-      return fileName;
+      return { fileName, url: uploadedURL };
     }),
   getAIImage: protectedProcedure
     .input(

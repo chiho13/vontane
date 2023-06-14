@@ -28,6 +28,11 @@ import { DownloadButton } from "@/components/DownloadButton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { BlockAlign } from "@/components/BlockAlign";
+import { createClient } from "@supabase/supabase-js";
+import { useSession } from "@supabase/auth-helpers-react";
+
+import { env } from "@/env.mjs";
+
 import {
   Form,
   FormControl,
@@ -54,6 +59,7 @@ export const ImageElement = React.memo((props) => {
     setShowEditBlockPopup,
     setSelectedElementID,
   } = useContext(EditorContext);
+
   const path = ReactEditor.findPath(editor, element);
   const router = useRouter();
   const workspaceId = router.query.workspaceId as string;
@@ -216,12 +222,13 @@ export const ImageElement = React.memo((props) => {
             width: "calc(100% - 10px)",
           }}
         >
-          <div className="relative bg-gray-200 dark:bg-background">
+          <div className="relative rounded-md bg-gray-200 dark:bg-background">
             <img
               src={imageURL}
               width={imageWidth}
               height={imageHeight}
               ref={ref}
+              className="rounded-md"
             />
             <div
               className={`absolute top-0 ${
@@ -332,6 +339,11 @@ export const ImageEmbedLink = () => {
 
   const [aiImageResults, setAIImageResults] = useState<Array<{ url: any }>>([]);
 
+  const supabaseClient = createClient(
+    "https://nhntzctfhbydiddzcdqk.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5obnR6Y3RmaGJ5ZGlkZHpjZHFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE2Nzg3MTk2NjMsImV4cCI6MTk5NDI5NTY2M30.vSY659K3BlRLcfhL_FECCATkhfbx5dZTfmQ7lJtwKr0"
+  );
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const currentElement = Node.get(editor, JSON.parse(activePath));
 
@@ -367,6 +379,8 @@ export const ImageEmbedLink = () => {
   const genImage = api.gpt.createimage.useMutation();
 
   const selectImage = api.gpt.selectImage.useMutation();
+
+  const uploadImageFile = api.gpt.selectImageFromBase64.useMutation();
 
   async function createImage(values: z.infer<typeof aiImageFormSchema>) {
     if (isGenerating) return;
@@ -429,6 +443,67 @@ export const ImageEmbedLink = () => {
       console.error("Error creating image:", error);
     }
   }
+  const session = useSession();
+
+  async function uploadImageBlob(
+    fileName: string,
+    file: File,
+    userId: string
+  ): Promise<string> {
+    console.log(userId);
+    if (!userId) {
+      throw new Error("User is not authenticated.");
+    }
+
+    const filePath = `${userId}/${workspaceId}/${fileName}`;
+
+    const { error: uploadError } = await supabaseClient.storage
+      .from("dalle")
+      .upload(filePath, file);
+
+    if (uploadError) {
+      throw uploadError;
+    }
+
+    return fileName;
+  }
+
+  async function handleImageUpload(file: File, tempURL: string) {
+    const currentElement = Node.get(editor, JSON.parse(activePath));
+    const newElement = {
+      ...currentElement,
+      tempURL, // immediately use the local URL
+      align: "start",
+    };
+    Transforms.setNodes(editor, newElement, { at: JSON.parse(activePath) });
+    setShowEditBlockPopup({
+      open: false,
+      element: null,
+    });
+    setIsUploading(true);
+    try {
+      const response = await uploadImageBlob(file.name, file, session?.user.id);
+      if (response) {
+        console.log(response);
+
+        const updatedElement = {
+          ...currentElement,
+          file_name: response,
+          image_type: "ai",
+          align: "start",
+        };
+
+        Transforms.setNodes(editor, updatedElement, {
+          at: JSON.parse(activePath),
+        });
+
+        setActivePath("");
+        // Reset the form after successful submission
+      }
+    } catch (error) {
+      console.error("Error creating image:", error);
+    }
+  }
 
   return (
     <Tabs defaultValue={tab} onValueChange={handleTabChange}>
@@ -476,8 +551,8 @@ export const ImageEmbedLink = () => {
                           const file = event.target.files[0];
                           if (file) {
                             const imageURL = URL.createObjectURL(file);
-                            handleImageSelect(imageURL);
-                            // Process the file here...
+
+                            handleImageUpload(file, imageURL);
                           }
                         }}
                       />

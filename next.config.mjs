@@ -12,6 +12,9 @@ import million from "million/compiler";
 const config = {
   reactStrictMode: true,
   env: {
+    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    NEXT_PUBLIC_SUPABASE_PUBLIC_ANON:
+      process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_ANON,
     NEXT_PUBLIC_TTS_ENDPOINT: process.env.NEXT_PUBLIC_TTS_ENDPOINT,
     PLAYHT_SOCKET_URL: process.env.PLAYHT_SOCKET_URL,
   },

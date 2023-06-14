@@ -91,6 +91,7 @@ export const ImageElement = React.memo((props) => {
     setActivePath,
     setShowEditBlockPopup,
     setSelectedElementID,
+    tempBase64,
   } = useContext(EditorContext);
 
   const path = ReactEditor.findPath(editor, element);
@@ -101,7 +102,7 @@ export const ImageElement = React.memo((props) => {
   const [imageWidth, setWidth] = useState(element.width); // default width
   const [imageHeight, setHeight] = useState(element.height); // default height
 
-  // const [imageURL, setImageURL] = useState(element.url);
+  const [imageURL, setImageURL] = useState(element.url);
 
   const [align, setAlign] = useState(element.align || "start");
 
@@ -112,36 +113,30 @@ export const ImageElement = React.memo((props) => {
   }, []);
 
   const [hasFetched, setHasFetched] = useState(false);
-  const [imageURL, setImageURL] = useLocalStorage(
-    element.file_name,
-    element.url
-  );
+  // const [imageURL, setImageURL] = useLocalStorage(
+  //   element.file_name,
+  //   element.url
+  // );
 
   const [tempURL, setTempURL] = useState(element.tempURL);
 
   api.gpt.getAIImage.useQuery(
     { fileName: element.file_name, workspaceId },
     {
-      enabled: !!element.file_name && !hasFetched && !element.url,
+      enabled: !!element.file_name && !hasFetched && !tempBase64,
       onSuccess: async (data) => {
         const currentElement = Node.get(editor, path);
         const blob = await urlToBlob(data.signedURL);
         const base64Image = await blobToBase64(blob);
-
-        const newElement = {
-          ...currentElement,
-          url: base64Image,
-          tempURL: "",
-        };
-
-        Transforms.setNodes(editor, newElement, { at: path });
         setImageURL(base64Image);
+        console.log("get ai image");
         setHasFetched(true); // set hasFetched to true after the first successful fetch
       },
       cacheTime: 5 * 60 * 1000,
       staleTime: 5 * 60 * 1000,
     }
   );
+
   const handleMouseUp = useCallback(
     (e) => {
       setIsResizing(false);
@@ -240,7 +235,7 @@ export const ImageElement = React.memo((props) => {
             ) : (
               <div className="flex items-center">
                 <img src={tempURL} width={100} className="rounded-md" />
-                <span className="ml-4 opacity-30">Uploading...</span>
+                <span className="ml-4 opacity-80">Uploading...</span>
               </div>
             )}
 
@@ -354,6 +349,7 @@ export const ImageEmbedLink = () => {
     setActivePath,
     showEditBlockPopup,
     setShowEditBlockPopup,
+    setTempBase64,
   } = useContext(EditorContext);
 
   const aiImageFormSchema = z.object({
@@ -487,7 +483,7 @@ export const ImageEmbedLink = () => {
     fileName: string,
     file: File,
     userId: string
-  ): Promise<string> {
+  ): Promise<{ fileName: string; url: string }> {
     console.log(userId);
     if (!userId) {
       throw new Error("User is not authenticated.");
@@ -503,18 +499,30 @@ export const ImageEmbedLink = () => {
       throw uploadError;
     }
 
-    return fileName;
+    const expiresIn = 60 * 60 * 24 * 7; // 24 hours in seconds
+    const { data: signedURL, error: signedURLError } =
+      await supabaseClient.storage
+        .from("dalle")
+        .createSignedUrl(filePath, expiresIn);
+
+    if (signedURLError || !signedURL) {
+      throw new Error("Failed to generate signed URL for the image file.");
+    }
+
+    return { fileName, url: signedURL.signedUrl };
   }
 
   async function handleImageUpload(file: File, tempURL: string) {
     const currentElement = Node.get(editor, JSON.parse(activePath));
+    const randomFileName = generateRandomFilename(file);
     const blob = await urlToBlob(tempURL);
     const base64Image = await blobToBase64(blob);
     const newElement = {
-      ...currentElement,
-      url: base64Image, // immediately use the local URL
+      // file_name: randomFileName,
+      url: tempURL,
       align: "start",
     };
+
     Transforms.setNodes(editor, newElement, { at: JSON.parse(activePath) });
     setShowEditBlockPopup({
       open: false,
@@ -522,7 +530,6 @@ export const ImageEmbedLink = () => {
     });
     setIsUploading(true);
     try {
-      const randomFileName = generateRandomFilename(file);
       const response = await uploadImageBlob(
         randomFileName,
         file,
@@ -531,9 +538,11 @@ export const ImageEmbedLink = () => {
       if (response) {
         console.log(response);
 
+        const uploadedblob = (await urlToBlob(response.url)) as Blob;
+
+        const objectUrl = URL.createObjectURL(uploadedblob);
         const updatedElement = {
-          ...currentElement,
-          file_name: response,
+          file_name: response.fileName,
           image_type: "ai",
           align: "start",
         };
@@ -541,6 +550,8 @@ export const ImageEmbedLink = () => {
         Transforms.setNodes(editor, updatedElement, {
           at: JSON.parse(activePath),
         });
+
+        console.log("upload complete");
 
         setActivePath("");
         // Reset the form after successful submission

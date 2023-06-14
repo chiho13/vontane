@@ -2,13 +2,32 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 import { Configuration, OpenAIApi } from "openai";
-import { uploadImage } from "@/server/lib/uploadImage";
+import { uploadImage, uploadImageBlob } from "@/server/lib/uploadImage";
 import { nanoid } from "nanoid";
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
+
+const base64ToBlob = (base64) => {
+  // Convert base64 to raw binary data held in a string
+  const byteString = atob(base64.split(",")[1]);
+
+  // Separate out the mime component
+  const mimeString = base64.split(",")[0].split(":")[1].split(";")[0];
+
+  // Write the bytes of the string to an ArrayBuffer
+  const arrayBuffer = new ArrayBuffer(byteString.length);
+  const _ia = new Uint8Array(arrayBuffer);
+  for (let i = 0; i < byteString.length; i++) {
+    _ia[i] = byteString.charCodeAt(i);
+  }
+
+  const dataView = new DataView(arrayBuffer);
+  const blob = new Blob([dataView], { type: mimeString });
+  return blob;
+};
 
 export const GPTRouter = createTRPCRouter({
   createimage: protectedProcedure
@@ -50,6 +69,51 @@ export const GPTRouter = createTRPCRouter({
 
       return { fileName, url: uploadedURL };
     }),
+  selectImageFromBase64: protectedProcedure
+    .input(
+      z.object({
+        imageBase64: z.string(),
+        workspaceId: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { imageBase64, workspaceId } = input;
+      const { supabaseServerClient, prisma } = ctx;
+      // Extract MIME type from the base64 string
+
+      if (!imageBase64) {
+        throw new Error("Image data is missing.");
+      }
+
+      const mimeType = imageBase64.match(
+        /data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+).*,.*/
+      )[1];
+
+      // Convert MIME type to file extension
+      const extensions = {
+        "image/jpeg": "jpeg",
+        "image/png": "png",
+        "image/gif": "gif",
+        // Add more if needed
+      };
+      const extension = extensions[mimeType];
+
+      const fileName = `${nanoid()}.${extension}`;
+
+      // Convert base64 string to Blob
+      const imageBlob = base64ToBlob(imageBase64);
+
+      const uploadedURL = await uploadImageBlob(
+        prisma,
+        supabaseServerClient,
+        imageBlob,
+        fileName,
+        workspaceId
+      );
+
+      return { fileName, url: uploadedURL };
+    }),
+
   getAIImage: protectedProcedure
     .input(
       z.object({

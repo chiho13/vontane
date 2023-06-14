@@ -47,6 +47,39 @@ import React from "react";
 import { useLocalStorage } from "usehooks-ts";
 import { api } from "@/utils/api";
 import { useRouter } from "next/router";
+import { nanoid } from "nanoid";
+
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = () => {
+      resolve(reader.result);
+    };
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function urlToBlob(url) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    xhr.responseType = "blob";
+    xhr.onload = function () {
+      if (this.status === 200) {
+        resolve(this.response);
+      }
+    };
+    xhr.onerror = (err) => reject(err);
+    xhr.send();
+  });
+}
+
+function generateRandomFilename(file) {
+  const extension = file.name.split(".").pop();
+  const id = nanoid();
+  return `${id}.${extension}`;
+}
 
 export const ImageElement = React.memo((props) => {
   const { attributes, children, element } = props;
@@ -89,16 +122,20 @@ export const ImageElement = React.memo((props) => {
   api.gpt.getAIImage.useQuery(
     { fileName: element.file_name, workspaceId },
     {
-      enabled: !!element.file_name && !hasFetched && !imageURL,
-      onSuccess: (data) => {
+      enabled: !!element.file_name && !hasFetched && !element.url,
+      onSuccess: async (data) => {
         const currentElement = Node.get(editor, path);
+        const blob = await urlToBlob(data.signedURL);
+        const base64Image = await blobToBase64(blob);
+
         const newElement = {
           ...currentElement,
-          url: data.signedURL,
+          url: base64Image,
           tempURL: "",
         };
+
         Transforms.setNodes(editor, newElement, { at: path });
-        setImageURL(data.signedURL);
+        setImageURL(base64Image);
         setHasFetched(true); // set hasFetched to true after the first successful fetch
       },
       cacheTime: 5 * 60 * 1000,
@@ -406,9 +443,10 @@ export const ImageEmbedLink = () => {
 
   async function handleImageSelect(imageURL: string) {
     const currentElement = Node.get(editor, JSON.parse(activePath));
+
     const newElement = {
       ...currentElement,
-      tempURL: imageURL, // immediately use the local URL
+      url: imageURL, // use the base64 string as the temporary URL
       align: "start",
     };
     Transforms.setNodes(editor, newElement, { at: JSON.parse(activePath) });
@@ -470,9 +508,11 @@ export const ImageEmbedLink = () => {
 
   async function handleImageUpload(file: File, tempURL: string) {
     const currentElement = Node.get(editor, JSON.parse(activePath));
+    const blob = await urlToBlob(tempURL);
+    const base64Image = await blobToBase64(blob);
     const newElement = {
       ...currentElement,
-      tempURL, // immediately use the local URL
+      url: base64Image, // immediately use the local URL
       align: "start",
     };
     Transforms.setNodes(editor, newElement, { at: JSON.parse(activePath) });
@@ -482,7 +522,12 @@ export const ImageEmbedLink = () => {
     });
     setIsUploading(true);
     try {
-      const response = await uploadImageBlob(file.name, file, session?.user.id);
+      const randomFileName = generateRandomFilename(file);
+      const response = await uploadImageBlob(
+        randomFileName,
+        file,
+        session?.user.id
+      );
       if (response) {
         console.log(response);
 

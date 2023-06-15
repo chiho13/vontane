@@ -91,6 +91,7 @@ export const ImageElement = React.memo((props) => {
     setActivePath,
     setShowEditBlockPopup,
     setSelectedElementID,
+    setTempBase64,
     tempBase64,
   } = useContext(EditorContext);
 
@@ -103,7 +104,9 @@ export const ImageElement = React.memo((props) => {
   const [imageHeight, setHeight] = useState(element.height); // default height
 
   const [imageURL, setImageURL] = useState(element.url);
-
+  const [base64URL, setBase64URL] = useState(
+    JSON.stringify(path) === activePath ? tempBase64 : tempBase64 || element.url
+  );
   const [align, setAlign] = useState(element.align || "start");
 
   const selected = useSelected();
@@ -128,7 +131,7 @@ export const ImageElement = React.memo((props) => {
         const currentElement = Node.get(editor, path);
         const blob = await urlToBlob(data.signedURL);
         const base64Image = await blobToBase64(blob);
-        setImageURL(base64Image);
+
         console.log("get ai image");
         setHasFetched(true); // set hasFetched to true after the first successful fetch
       },
@@ -204,7 +207,7 @@ export const ImageElement = React.memo((props) => {
 
   return (
     <div data-id={element.id} data-path={JSON.stringify(path)}>
-      {!imageURL ? (
+      {!element.file_name ? (
         <>
           <div
             tabIndex={-1}
@@ -256,7 +259,7 @@ export const ImageElement = React.memo((props) => {
         >
           <div className="relative rounded-md bg-gray-200 dark:bg-background">
             <img
-              src={imageURL}
+              src={base64URL}
               width={imageWidth}
               height={imageHeight}
               ref={ref}
@@ -518,10 +521,11 @@ export const ImageEmbedLink = () => {
     const blob = await urlToBlob(tempURL);
     const base64Image = await blobToBase64(blob);
     const newElement = {
-      // file_name: randomFileName,
-      url: tempURL,
+      file_name: randomFileName,
       align: "start",
     };
+
+    setTempBase64(base64Image);
 
     Transforms.setNodes(editor, newElement, { at: JSON.parse(activePath) });
     setShowEditBlockPopup({
@@ -538,22 +542,21 @@ export const ImageEmbedLink = () => {
       if (response) {
         console.log(response);
 
-        const uploadedblob = (await urlToBlob(response.url)) as Blob;
+        const blob = await urlToBlob(tempURL);
+        const base64Image = await blobToBase64(blob);
 
-        const objectUrl = URL.createObjectURL(uploadedblob);
         const updatedElement = {
-          file_name: response.fileName,
+          url: response.url,
           image_type: "ai",
           align: "start",
         };
-
+        setTempBase64(base64Image);
         Transforms.setNodes(editor, updatedElement, {
           at: JSON.parse(activePath),
         });
 
         console.log("upload complete");
 
-        setActivePath("");
         // Reset the form after successful submission
       }
     } catch (error) {

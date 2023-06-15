@@ -50,7 +50,7 @@ export function DownloadButton({
             <Download
               strokeWidth={2}
               className={cn(
-                "h-4 w-4 stroke-darkgray dark:stroke-gray-600",
+                "h-4 w-4 stroke-muted-foreground dark:stroke-gray-600",
                 iconClassName
               )}
             />

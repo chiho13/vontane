@@ -105,7 +105,7 @@ export const ImageElement = React.memo((props) => {
 
   const [imageURL, setImageURL] = useState(element.url);
   const [base64URL, setBase64URL] = useState(
-    JSON.stringify(path) === activePath ? tempBase64 : tempBase64 || element.url
+    (element.uploading && tempBase64) || element.url
   );
   const [align, setAlign] = useState(element.align || "start");
 
@@ -123,15 +123,30 @@ export const ImageElement = React.memo((props) => {
 
   const [tempURL, setTempURL] = useState(element.tempURL);
 
+  // useEffect(() => {
+  //   if (JSON.stringify(path) !== activePath) {
+  //     async function fetchImage() {
+  //       const blob = await urlToBlob(element.url);
+  //       const base64Image = await blobToBase64(blob);
+  //       setBase64URL(base64Image);
+  //     }
+  //     fetchImage();
+  //   }
+  // }, [element.url, activePath]);
+
   api.gpt.getAIImage.useQuery(
     { fileName: element.file_name, workspaceId },
     {
-      enabled: !!element.file_name && !hasFetched && !tempBase64,
+      enabled:
+        !!element.file_name &&
+        !hasFetched &&
+        !tempBase64 &&
+        JSON.stringify(path) !== activePath,
       onSuccess: async (data) => {
         const currentElement = Node.get(editor, path);
         const blob = await urlToBlob(data.signedURL);
         const base64Image = await blobToBase64(blob);
-
+        setBase64URL(base64Image);
         console.log("get ai image");
         setHasFetched(true); // set hasFetched to true after the first successful fetch
       },
@@ -442,20 +457,25 @@ export const ImageEmbedLink = () => {
 
   async function handleImageSelect(imageURL: string) {
     const currentElement = Node.get(editor, JSON.parse(activePath));
-
+    const fileName = `${nanoid()}.png`;
+    const blob = await urlToBlob(imageURL);
+    const base64Image = await blobToBase64(blob);
     const newElement = {
-      ...currentElement,
-      url: imageURL, // use the base64 string as the temporary URL
+      file_name: fileName,
       align: "start",
     };
+    setTempBase64(base64Image);
+
     Transforms.setNodes(editor, newElement, { at: JSON.parse(activePath) });
     setShowEditBlockPopup({
       open: false,
       element: null,
     });
     setIsUploading(true);
+
     try {
       const response = await selectImage.mutateAsync({
+        fileName,
         imageURL,
         workspaceId,
       });
@@ -463,8 +483,7 @@ export const ImageEmbedLink = () => {
         console.log(response);
 
         const updatedElement = {
-          ...currentElement,
-          file_name: response.fileName,
+          url: response.url,
           image_type: "ai",
           align: "start",
         };
@@ -473,7 +492,6 @@ export const ImageEmbedLink = () => {
           at: JSON.parse(activePath),
         });
 
-        setActivePath("");
         // Reset the form after successful submission
       }
     } catch (error) {
@@ -523,6 +541,7 @@ export const ImageEmbedLink = () => {
     const newElement = {
       file_name: randomFileName,
       align: "start",
+      uploading: true,
     };
 
     setTempBase64(base64Image);
@@ -542,15 +561,11 @@ export const ImageEmbedLink = () => {
       if (response) {
         console.log(response);
 
-        const blob = await urlToBlob(tempURL);
-        const base64Image = await blobToBase64(blob);
-
         const updatedElement = {
           url: response.url,
           image_type: "ai",
           align: "start",
         };
-        setTempBase64(base64Image);
         Transforms.setNodes(editor, updatedElement, {
           at: JSON.parse(activePath),
         });

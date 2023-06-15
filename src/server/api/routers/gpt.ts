@@ -50,14 +50,14 @@ export const GPTRouter = createTRPCRouter({
   selectImage: protectedProcedure
     .input(
       z.object({
+        fileName: z.string(),
         imageURL: z.string(),
         workspaceId: z.string(),
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const { imageURL, workspaceId } = input;
+      const { fileName, imageURL, workspaceId } = input;
       const { supabaseServerClient, prisma } = ctx;
-      const fileName = `${nanoid()}.png`;
       // return audioUrl;
       const uploadedURL = await uploadImage(
         prisma,

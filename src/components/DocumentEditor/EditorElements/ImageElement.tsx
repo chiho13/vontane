@@ -12,7 +12,7 @@ import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor, useFocused, useSelected } from "slate-react";
 import { Editor, Transforms } from "slate";
 import { OptionMenu } from "../OptionMenu";
-import { Image as ImageIcon } from "lucide-react";
+import { Image as ImageIcon, FileCheck } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
@@ -30,6 +30,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BlockAlign } from "@/components/BlockAlign";
 import { createClient } from "@supabase/supabase-js";
 import { useSession } from "@supabase/auth-helpers-react";
+import { blobToBase64, urlToBlob } from "@/utils/helpers";
 
 import { env } from "@/env.mjs";
 
@@ -48,32 +49,6 @@ import { useLocalStorage } from "usehooks-ts";
 import { api } from "@/utils/api";
 import { useRouter } from "next/router";
 import { nanoid } from "nanoid";
-
-function blobToBase64(blob) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onerror = reject;
-    reader.onload = () => {
-      resolve(reader.result);
-    };
-    reader.readAsDataURL(blob);
-  });
-}
-
-async function urlToBlob(url) {
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open("GET", url, true);
-    xhr.responseType = "blob";
-    xhr.onload = function () {
-      if (this.status === 200) {
-        resolve(this.response);
-      }
-    };
-    xhr.onerror = (err) => reject(err);
-    xhr.send();
-  });
-}
 
 function generateRandomFilename(file) {
   const extension = file.name.split(".").pop();
@@ -105,7 +80,7 @@ export const ImageElement = React.memo((props) => {
 
   const [imageURL, setImageURL] = useState(element.url);
   const [base64URL, setBase64URL] = useState(
-    (element.uploading && tempBase64) || element.url
+    tempBase64[element.id] || element.url
   );
   const [align, setAlign] = useState(element.align || "start");
 
@@ -292,14 +267,31 @@ export const ImageElement = React.memo((props) => {
                 <div className="mx-auto block h-[60px] w-[6px]  cursor-col-resize rounded-lg border border-foreground bg-[#b4b4b4] dark:bg-background"></div>
               </div>
             </div>
+            {tempBase64[element.id] && (
+              <div className="absolute top-1 left-1 z-10 flex items-center gap-1  ">
+                {element.uploading ? (
+                  <div className="rounded-md bg-black bg-opacity-50 p-[4px]">
+                    <LoadingSpinner />
+                  </div>
+                ) : (
+                  <div className="rounded-md bg-black  bg-opacity-50 p-[4px]">
+                    <FileCheck className="text-gray-400 dark:text-white" />
+                  </div>
+                )}
+              </div>
+            )}
             <div className="absolute top-0 right-1 z-10 flex items-center gap-1  ">
-              <BlockAlign element={element} />
-              <DownloadButton
-                url={element.url}
-                fileName={element.file_name}
-                className=" h-[22px] w-[22px] rounded-md border-0 p-[4px] dark:bg-muted hover:dark:bg-muted/90 "
-                iconClassName="dark:stroke-foreground"
-              />
+              {!element.uploading && (
+                <>
+                  <BlockAlign element={element} />
+                  <DownloadButton
+                    url={element.url}
+                    fileName={element.file_name}
+                    className=" h-[22px] w-[22px] rounded-md border-0 p-[4px] dark:bg-muted hover:dark:bg-muted/90 "
+                    iconClassName="dark:stroke-foreground"
+                  />
+                </>
+              )}
               <OptionMenu element={element} />
             </div>
           </div>
@@ -458,13 +450,18 @@ export const ImageEmbedLink = () => {
   async function handleImageSelect(imageURL: string) {
     const currentElement = Node.get(editor, JSON.parse(activePath));
     const fileName = `${nanoid()}.png`;
-    const blob = await urlToBlob(imageURL);
-    const base64Image = await blobToBase64(blob);
+    // const blob = await urlToBlob(imageURL);
+    // const base64Image = await blobToBase64(blob);
+    const node = Node.get(editor, JSON.parse(activePath));
+    const id = node.id;
+
     const newElement = {
       file_name: fileName,
+
       align: "start",
+      uploading: true,
     };
-    setTempBase64(base64Image);
+    setTempBase64((prev) => ({ ...prev, [id]: imageURL }));
 
     Transforms.setNodes(editor, newElement, { at: JSON.parse(activePath) });
     setShowEditBlockPopup({
@@ -486,6 +483,7 @@ export const ImageEmbedLink = () => {
           url: response.url,
           image_type: "ai",
           align: "start",
+          uploading: false,
         };
 
         Transforms.setNodes(editor, updatedElement, {
@@ -538,13 +536,16 @@ export const ImageEmbedLink = () => {
     const randomFileName = generateRandomFilename(file);
     const blob = await urlToBlob(tempURL);
     const base64Image = await blobToBase64(blob);
+    const node = Node.get(editor, JSON.parse(activePath));
+    const id = node.id;
+
     const newElement = {
       file_name: randomFileName,
       align: "start",
       uploading: true,
     };
 
-    setTempBase64(base64Image);
+    setTempBase64((prev) => ({ ...prev, [id]: base64Image }));
 
     Transforms.setNodes(editor, newElement, { at: JSON.parse(activePath) });
     setShowEditBlockPopup({
@@ -565,6 +566,7 @@ export const ImageEmbedLink = () => {
           url: response.url,
           image_type: "ai",
           align: "start",
+          uploading: false,
         };
         Transforms.setNodes(editor, updatedElement, {
           at: JSON.parse(activePath),

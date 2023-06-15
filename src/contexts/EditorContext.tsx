@@ -49,7 +49,7 @@ const EditorProvider: React.FC<EquationProviderProps> = ({ children }) => {
   });
   const [selectedElementID, setSelectedElementID] = useState<string>("");
   const [activePath, setActivePath] = useState<string>("");
-  const [tempBase64, setTempBase64] = useState(null);
+  const [tempBase64, setTempBase64] = useState({});
   return (
     <EditorContext.Provider
       value={{

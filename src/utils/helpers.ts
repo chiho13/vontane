@@ -13,3 +13,29 @@ export const getURL = () => {
 export const hasSlideElement = (nodes: any[]) => {
   return nodes.some((node) => node.type === "slide");
 };
+
+export function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = () => {
+      resolve(reader.result);
+    };
+    reader.readAsDataURL(blob);
+  });
+}
+
+export async function urlToBlob(url) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    xhr.responseType = "blob";
+    xhr.onload = function () {
+      if (this.status === 200) {
+        resolve(this.response);
+      }
+    };
+    xhr.onerror = (err) => reject(err);
+    xhr.send();
+  });
+}

@@ -29,6 +29,13 @@ import { useTheme } from "styled-components";
 import { X } from "lucide-react";
 import React from "react";
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
 type ToolbarProps = {
   openLink: boolean;
   showMiniToolbar: boolean;
@@ -162,6 +169,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 
   const buttonsList = [
     {
+      name: "Bold",
       action: (e) => {
         e.preventDefault();
         toggleFormat(editor, "bold");
@@ -172,6 +180,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         "rounded-lg p-[5px] ml-1 transition duration-300 hover:bg-gray-200 hover:dark:bg-muted",
     },
     {
+      name: "Italic",
       action: (e) => {
         e.preventDefault();
         toggleFormat(editor, "italic");
@@ -182,6 +191,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         "rounded-lg p-[5px] transition duration-300 hover:bg-gray-200 hover:dark:bg-muted",
     },
     {
+      name: "Underline",
       action: (e) => {
         e.preventDefault();
         toggleFormat(editor, "underline");
@@ -192,6 +202,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         "rounded-lg p-[5px] transition duration-300 hover:bg-gray-200 hover:dark:bg-muted",
     },
     {
+      name: "Strikethrough",
       action: (e) => {
         e.preventDefault();
         toggleFormat(editor, "strikethrough");
@@ -202,6 +213,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         "rounded-lg p-[5px] transition duration-300 hover:bg-gray-200 hover:dark:bg-muted",
     },
     {
+      name: "Link",
       action: () => setOpenLink(true),
       icon: <ImLink />,
       isActive: hasURL,
@@ -212,6 +224,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
       separator: true,
     },
     {
+      name: "Bulleted List",
       action: (e) => {
         e.preventDefault();
         toggleBlock(editor, "bulleted-list");
@@ -222,6 +235,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         "rounded-lg p-[4px] ml-1 transition duration-300 hover:bg-gray-200 hover:dark:bg-muted",
     },
     {
+      name: "Ordered List",
       action: (e) => {
         e.preventDefault();
         toggleBlock(editor, "numbered-list");
@@ -232,6 +246,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         "rounded-lg p-[4px] transition duration-300 hover:bg-gray-200 hover:dark:bg-muted",
     },
     {
+      name: "Todo List",
       action: (e) => {
         e.preventDefault();
         toggleBlock(editor, "checked-list");
@@ -253,23 +268,49 @@ export const Toolbar: React.FC<ToolbarProps> = ({
       tabIndex={-1}
       ref={toolbarRef}
     >
-      <ChangeBlocks openLink={openLink} />
+      <TooltipProvider delayDuration={300}>
+        <Tooltip>
+          <TooltipTrigger>
+            <ChangeBlocks openLink={openLink} />
+          </TooltipTrigger>
+          <TooltipContent
+            className="text-bold  border-black dark:bg-white dark:text-gray-600"
+            side="top"
+            sideOffset={10}
+          >
+            <p className="text-[12px]">Turn Into</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
       <div className="h-full w-[1px] bg-gray-200 dark:bg-gray-700"></div>
 
       {!isParentTTS(editor) && (
         <>
-          <button
-            className={`ml-1 mr-1 flex h-[28px]  items-center rounded-lg   py-1 px-2 text-xs transition duration-300 hover:bg-gray-200 hover:dark:bg-muted `}
-            onMouseDown={(e) => {
-              e.preventDefault();
-              wrapWithTTS(editor);
-            }}
-            disabled={isParentTTS(editor)}
-          >
-            <BsSoundwave />
-            <span className="ml-1 w-[72px]">Text to MP3</span>
-          </button>
-          <div className="h-full w-[1px] bg-gray-200 dark:bg-gray-700"></div>
+          <TooltipProvider delayDuration={300}>
+            <Tooltip>
+              <TooltipTrigger>
+                <button
+                  className={`ml-1 mr-1 flex h-[28px]  items-center rounded-lg   py-1 px-2 text-xs transition duration-300 hover:bg-gray-200 hover:dark:bg-muted `}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    wrapWithTTS(editor);
+                  }}
+                  disabled={isParentTTS(editor)}
+                >
+                  <BsSoundwave />
+                  <span className="ml-1 w-[72px]">Text to MP3</span>
+                </button>
+                <div className="h-full w-[1px] bg-gray-200 dark:bg-gray-700"></div>
+              </TooltipTrigger>
+              <TooltipContent
+                className="text-bold border-black dark:bg-white  dark:text-gray-600"
+                side="top"
+                sideOffset={10}
+              >
+                <p className="text-[12px]">Wrap block into Text to MP3.</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </>
       )}
       {!openLink &&
@@ -280,19 +321,32 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               className="h-full w-[1px] bg-gray-200 dark:bg-gray-700"
             ></div>
           ) : (
-            <button
-              key={i}
-              className={`flex h-[28px] w-[28px] items-center ${button.additionalClass}`}
-              onMouseDown={button.action}
-            >
-              {React.cloneElement(button.icon, {
-                className: `${
-                  button.isActive
-                    ? "text-brand"
-                    : "text-darkblue dark:text-foreground"
-                }`,
-              })}
-            </button>
+            <TooltipProvider delayDuration={300}>
+              <Tooltip>
+                <TooltipTrigger>
+                  <button
+                    key={i}
+                    className={`flex h-[28px] w-[28px] items-center ${button.additionalClass}`}
+                    onMouseDown={button.action}
+                  >
+                    {React.cloneElement(button.icon, {
+                      className: `${
+                        button.isActive
+                          ? "text-brand"
+                          : "text-darkblue dark:text-foreground"
+                      }`,
+                    })}
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent
+                  className="text-bold  border-black dark:bg-white  dark:text-gray-600"
+                  side="top"
+                  sideOffset={10}
+                >
+                  <p className="text-[12px]">{button.name}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )
         )}
 

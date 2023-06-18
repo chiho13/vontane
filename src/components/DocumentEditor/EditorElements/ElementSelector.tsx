@@ -1,5 +1,4 @@
 import { EditorContext } from "@/contexts/EditorContext";
-import { TextSpeechProvider } from "@/contexts/TextSpeechContext";
 import React, { useContext } from "react";
 import { ReactEditor } from "slate-react";
 import {

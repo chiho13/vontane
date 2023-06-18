@@ -20,7 +20,8 @@ import { root } from "postcss";
 import { Info } from "lucide-react";
 import { api } from "@/utils/api";
 import { useRouter } from "next/router";
-import { LazyLoadComponent } from "react-lazy-load-image-component";
+
+import { PreviewContent } from "../PreviewContent";
 
 interface RightSideBarProps {
   showRightSidebar: boolean;
@@ -114,7 +115,6 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
             <TabsTrigger
               value="preview"
               className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
-              disabled={true}
             >
               Preview
             </TabsTrigger>
@@ -145,7 +145,9 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                 </div>
               ))}
           </TabsContent>
-          <TabsContent value="slide">Doc or Slide Preview</TabsContent>
+          <TabsContent value="preview">
+            <PreviewContent />
+          </TabsContent>
         </Tabs>
       </div>
     </div>

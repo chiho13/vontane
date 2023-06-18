@@ -91,32 +91,13 @@ export const ImageElement = React.memo((props) => {
   }, []);
 
   const [hasFetched, setHasFetched] = useState(false);
-  // const [imageURL, setImageURL] = useLocalStorage(
-  //   element.file_name,
-  //   element.url
-  // );
 
   const [tempURL, setTempURL] = useState(element.tempURL);
-
-  // useEffect(() => {
-  //   if (JSON.stringify(path) !== activePath) {
-  //     async function fetchImage() {
-  //       const blob = await urlToBlob(element.url);
-  //       const base64Image = await blobToBase64(blob);
-  //       setBase64URL(base64Image);
-  //     }
-  //     fetchImage();
-  //   }
-  // }, [element.url, activePath]);
 
   api.gpt.getAIImage.useQuery(
     { fileName: element.file_name, workspaceId },
     {
-      enabled:
-        !!element.file_name &&
-        !hasFetched &&
-        !tempBase64 &&
-        JSON.stringify(path) !== activePath,
+      enabled: !!element.file_name && !hasFetched && !tempBase64,
       onSuccess: async (data) => {
         const currentElement = Node.get(editor, path);
         const blob = await urlToBlob(data.signedURL);
@@ -518,17 +499,11 @@ export const ImageEmbedLink = () => {
       throw uploadError;
     }
 
-    const expiresIn = 60 * 60 * 24 * 7; // 24 hours in seconds
-    const { data: signedURL, error: signedURLError } =
-      await supabaseClient.storage
-        .from("dalle")
-        .createSignedUrl(filePath, expiresIn);
+    const { data } = await supabaseClient.storage
+      .from("dalle")
+      .getPublicUrl(filePath);
 
-    if (signedURLError || !signedURL) {
-      throw new Error("Failed to generate signed URL for the image file.");
-    }
-
-    return { fileName, url: signedURL.signedUrl };
+    return { fileName, url: data.publicUrl };
   }
 
   async function handleImageUpload(file: File, tempURL: string) {

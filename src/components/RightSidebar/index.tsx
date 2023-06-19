@@ -23,12 +23,20 @@ import { useRouter } from "next/router";
 
 import { PreviewContent } from "../PreviewContent";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 interface RightSideBarProps {
+  setRightSideBarWidth: any;
   showRightSidebar: boolean;
   rightSideBarWidth: number;
 }
 
 export const RightSideBar: React.FC<RightSideBarProps> = ({
+  setRightSideBarWidth,
   showRightSidebar,
   rightSideBarWidth,
 }) => {
@@ -46,6 +54,10 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
   }, [editor, activePath]);
 
   const { audioData, setAudioData, rightBarAudioIsLoading } = useTextSpeech();
+  const [viewport, setViewPort] = useState({
+    width: 390,
+    height: 844,
+  });
 
   const [audioURL, setAudioURL] = useState("");
   const rightSidebarStyle = {
@@ -53,10 +65,12 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
       showRightSidebar ? "0px" : `${rightSideBarWidth}px`
     })`,
     height: "calc(100vh - 120px)",
-    minWidth: "340px",
+    minWidth: "415px",
     maxWidth: "570px",
     flexBasis: `${rightSideBarWidth}px`,
     opacity: showRightSidebar ? "1" : "0",
+    flexGrow: 0,
+    flexShrink: 0,
     pointerEvents: showRightSidebar ? "auto" : "none",
     transition:
       "width 0.3s ease-in-out, opacity 0.4s ease-in-out, transform 0.3s ease-in-out",
@@ -95,15 +109,19 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
   return (
     <div
-      className="m-w-full bg-w mt-2 hidden grow rounded-md border border-gray-300 bg-white px-1 dark:border-gray-700 dark:bg-muted dark:text-lightgray lg:block"
+      className="m-w-full bg-w relative mt-2 hidden grow overflow-y-auto rounded-md border border-gray-300 bg-white px-1 dark:border-gray-700 dark:bg-muted dark:text-lightgray lg:block"
       style={rightSidebarStyle}
     >
-      <div className="p-2">
+      <div className="flex-grow p-2 pb-3">
         {/* <h2 className="mb-4 text-xl font-semibold">Right Sidebar</h2>
         <p>Hi kirby</p> */}
-        <Tabs defaultValue={tab} onValueChange={handleTabChange}>
+        <Tabs
+          defaultValue={tab}
+          onValueChange={handleTabChange}
+          className="flex flex-grow flex-col"
+        >
           <TabsList
-            className={`ring-gray ring-red grid h-10 w-full grid-cols-2  bg-lightgray dark:bg-accent`}
+            className={`ring-gray ring-red  grid h-10 w-full grid-cols-2  bg-lightgray dark:bg-accent`}
           >
             <TabsTrigger
               value="properties"
@@ -120,7 +138,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="properties">
+          <TabsContent value="properties" className="flex-grow overflow-y-auto">
             {rootNode?.type == "tts" &&
               (audioData && audioData.file_name ? (
                 <>
@@ -146,7 +164,51 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
               ))}
           </TabsContent>
           <TabsContent value="preview">
-            <PreviewContent />
+            <div
+              className={`relative overflow-y-auto rounded-md border border-gray-300 p-3 dark:border-gray-700`}
+              style={{
+                width: `${viewport.width}px`,
+                height: `${viewport.height}px`,
+              }}
+            >
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="absolute  right-2 top-2 mb-2 flex h-[28px] items-center justify-center rounded-md border border-muted-foreground bg-background p-1 text-xs  text-muted-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted">
+                    Device
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="start"
+                  className="border-2 border-gray-300  bg-background dark:border-accent dark:bg-secondary"
+                >
+                  <DropdownMenuItem
+                    className="dark:text-foreground hover:dark:bg-muted"
+                    onClick={() => {
+                      setRightSideBarWidth(418);
+                      setViewPort({
+                        width: 390,
+                        height: 692,
+                      });
+                    }}
+                  >
+                    <span className="text-foreground">iPhone 14</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="hover:dark:bg-muted"
+                    onClick={() => {
+                      setRightSideBarWidth(456);
+                      setViewPort({
+                        width: 428,
+                        height: 759,
+                      });
+                    }}
+                  >
+                    <span className="text-foreground"> iPhone 14 Pro Max</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <PreviewContent />
+            </div>
           </TabsContent>
         </Tabs>
       </div>

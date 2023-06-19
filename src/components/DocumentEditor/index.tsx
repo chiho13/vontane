@@ -1618,10 +1618,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   const [rightSideBarWidth, setRightSideBarWidth] = useLocalStorage(
     "sidebarWidth",
-    340
+    410
   );
 
-  const minSidebarWidth = 340;
+  const minSidebarWidth = 410;
   const maxSidebarWidth = 570;
   const { elementWidth, handleDrag, isDraggingRightSideBar, handleDragStop } =
     useResizeSidebar(rightSideBarWidth, minSidebarWidth, maxSidebarWidth);
@@ -1635,7 +1635,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     if (windowSize.width > breakpoints.xl) {
       setRightSideBarWidth(elementWidth);
     } else {
-      setRightSideBarWidth(370);
+      setRightSideBarWidth(410);
     }
   }, [elementWidth, windowSize]);
 
@@ -1645,7 +1645,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       style={{
         width:
           windowSize.width > breakpoints.xl
-            ? `${rightSideBarWidth + 800}px`
+            ? `${rightSideBarWidth + 770}px`
             : "95vw",
       }}
     >
@@ -1666,7 +1666,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       <div className="flex  lg:justify-center xl:px-4">
         <div className="mx-auto block">
           <div
-            className="relative  z-0  mt-2 rounded-md  border border-gray-300  bg-white px-2 dark:border-gray-700 dark:bg-muted dark:text-foreground lg:min-w-[600px] lg:px-0 xl:min-w-[800px]"
+            className="relative  z-0  mt-2 rounded-md  border border-gray-300  bg-white px-2 dark:border-gray-700 dark:bg-muted dark:text-foreground lg:min-w-[600px] lg:px-0 xl:min-w-[770px]"
             style={{
               right:
                 windowSize.width > breakpoints.lg
@@ -1674,7 +1674,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     ? -(rightSideBarWidth / 2)
                     : 0
                   : 0,
-              maxWidth: "800px",
+              maxWidth: "770px",
               width:
                 windowSize.width > breakpoints.lg
                   ? showRightSidebar
@@ -1960,6 +1960,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             </DraggableCore>
           </div>
           <RightSideBar
+            setRightSideBarWidth={setRightSideBarWidth}
             showRightSidebar={showRightSidebar}
             rightSideBarWidth={rightSideBarWidth}
           />

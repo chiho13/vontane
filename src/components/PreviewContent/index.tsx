@@ -41,21 +41,28 @@ const initialValue = [
 export function DisplayContent({ value }) {
   // Recursively parse through the document structure
   const parseNodes = (nodes) => {
-    return nodes.map((node) => {
-      if (Text.isText(node)) {
-        // Handle text nodes
-        return node.text;
-      } else if ("children" in node) {
-        // Handle other nodes
-        const children = parseNodes(node.children);
-        switch (node.type) {
-          case "paragraph":
-            return <p>{children}</p>;
-          default:
-            return <span>{children}</span>;
+    return nodes
+      .filter((node) => node.type !== "title")
+      .map((node) => {
+        if (Text.isText(node)) {
+          // Handle text nodes
+          if (node.bold) {
+            // if leaf node is bold, wrap the text in a bold tag
+            return <b>{node.text}</b>;
+          } else {
+            return node.text;
+          }
+        } else if ("children" in node) {
+          // Handle other nodes
+          const children = parseNodes(node.children);
+          switch (node.type) {
+            case "paragraph":
+              return <p className="mt-2 leading-7">{children}</p>;
+            default:
+              return <span>{children}</span>;
+          }
         }
-      }
-    });
+      });
   };
 
   return <>{parseNodes(value)}</>;

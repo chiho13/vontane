@@ -274,7 +274,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             <ChangeBlocks openLink={openLink} />
           </TooltipTrigger>
           <TooltipContent
-            className="text-bold  border-black dark:bg-white dark:text-gray-600"
+            className="text-bold  border-black text-white  dark:bg-white dark:text-gray-600"
             side="top"
             sideOffset={10}
           >
@@ -303,7 +303,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
                 <div className="h-full w-[1px] bg-gray-200 dark:bg-gray-700"></div>
               </TooltipTrigger>
               <TooltipContent
-                className="text-bold border-black dark:bg-white  dark:text-gray-600"
+                className="text-bold border-black text-white  dark:bg-white dark:text-gray-600"
                 side="top"
                 sideOffset={10}
               >
@@ -339,7 +339,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
                   </button>
                 </TooltipTrigger>
                 <TooltipContent
-                  className="text-bold  border-black dark:bg-white  dark:text-gray-600"
+                  className="text-bold  border-black text-white dark:bg-white dark:text-gray-600"
                   side="top"
                   sideOffset={10}
                 >

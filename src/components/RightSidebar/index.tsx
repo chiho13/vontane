@@ -139,7 +139,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
           </TabsList>
 
           <TabsContent value="properties" className="flex-grow overflow-y-auto">
-            {/* {rootNode?.type == "tts" &&
+            {rootNode?.type == "tts" &&
               (audioData && audioData.file_name ? (
                 <>
                   <h3 className="mt-4 mb-2 text-sm ">Text to MP3</h3>
@@ -147,7 +147,6 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                   <AudioPlayer
                     audioURL={audioURL}
                     fileName={audioData.file_name}
-                    content={audioData.content}
                   />
                 </>
               ) : (
@@ -161,7 +160,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                     "No Audio generated"
                   )}
                 </div>
-              ))} */}
+              ))}
           </TabsContent>
           <TabsContent value="preview">
             <div className="flex justify-end">

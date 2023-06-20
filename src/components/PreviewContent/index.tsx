@@ -14,6 +14,7 @@ import { useRouter } from "next/router";
 import LoadingSpinner from "@/icons/LoadingSpinner";
 
 import AudioPlayer from "@/components/AudioPlayer";
+import { useTextSpeech } from "@/contexts/TextSpeechContext";
 
 export const PreviewContent = ({ viewport }) => {
   const { editor: fromEditor } = useContext(EditorContext);
@@ -22,6 +23,7 @@ export const PreviewContent = ({ viewport }) => {
   const router = useRouter();
 
   const scrollRef = useRef(null);
+  const { rightBarAudioIsLoading } = useTextSpeech();
 
   useEffect(() => {
     const isLoading = fromEditor.children.some((node) => node.loading);
@@ -45,7 +47,7 @@ export const PreviewContent = ({ viewport }) => {
       case "tts":
         return (
           <div key={key}>
-            {node.loading && (
+            {node.file_name === "" && (
               <div className="flex items-center ">
                 <LoadingSpinner />
                 <span className="ml-3 ">Generating...</span>
@@ -53,7 +55,7 @@ export const PreviewContent = ({ viewport }) => {
             )}
             {node.file_name && (
               <AudioPlayer
-                key={node.id}
+                id={node.id}
                 audioURL={node.audio_url}
                 fileName={node.file_name}
               />

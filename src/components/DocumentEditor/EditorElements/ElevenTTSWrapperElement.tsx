@@ -8,6 +8,7 @@ import styled from "styled-components";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { Editor, Path, Transforms } from "slate";
 import { Plus } from "lucide-react";
+import { RxLetterCaseCapitalize } from "react-icons/rx";
 import { MoveBlock } from "@/components/MoveBlock";
 import { insertNewParagraph } from "../helpers/toggleBlock";
 import { TextIcon } from "@/icons/Text";
@@ -153,14 +154,10 @@ export const ElevenTTSWrapper = withConsecutiveGrouping((props) => {
                   );
                   ReactEditor.focus(editor);
                 }}
-                className="hover:dark:bg-muted"
+                className="group hover:dark:bg-muted"
               >
                 <div className="mr-2 block">
-                  <TextIcon
-                    strokeColor="stroke-darkgray dark:stroke-foreground"
-                    width={22}
-                    height={22}
-                  />
+                  <RxLetterCaseCapitalize className="mr-2 h-[22px] w-[22px]" />
                 </div>
                 <span className="text-foreground"> Text Block</span>
               </DropdownMenuItem>

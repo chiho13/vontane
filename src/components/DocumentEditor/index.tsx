@@ -1795,7 +1795,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                           <AnimatePresence>
                             {showMiniToolbar && (
                               <StyledMiniToolbar
-                                className=" rounded-lg border bg-white shadow-md shadow-gray-900 dark:border-gray-500 dark:bg-secondary dark:shadow-background"
+                                className=" rounded-lg border bg-white shadow-md shadow-gray-500 dark:border-gray-500 dark:bg-secondary dark:shadow-background"
                                 ref={toolbarRef}
                                 {...up_animation_props}
                                 exit={{ opacity: 0 }}

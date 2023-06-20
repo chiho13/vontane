@@ -167,9 +167,9 @@ function AudioPlayer({ audioURL, fileName, id }: Props): JSX.Element {
         onMouseEnter={handleMouseOver}
         onMouseLeave={handleMouseLeave}
       >
-        <div className="audioPlayer_timeline bg-gray-400 dark:bg-gray-700">
+        <div className="audioPlayer_timeline bg-gray-300 dark:bg-gray-700">
           <div
-            className="audioPlayer_timeline_track  bg-gray-400 bg-foreground group-hover:bg-brand dark:bg-foreground"
+            className="audioPlayer_timeline_track  bg-gray-400 bg-muted-foreground group-hover:bg-brand dark:bg-foreground"
             style={{
               width: `${
                 seekValue === seekMax

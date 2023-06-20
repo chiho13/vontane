@@ -69,11 +69,6 @@ export const TextSpeech = ({
   const path = ReactEditor.findPath(editor, element);
 
   const createTTSAudio = async () => {
-    Transforms.setNodes(
-      editor,
-      { loading: true }, // New properties
-      { at: path } // Location
-    );
     if (element.audio_url) {
       try {
         const response = await deleteTTS.mutateAsync({
@@ -108,7 +103,7 @@ export const TextSpeech = ({
       if (response) {
         console.log(response);
         setAudioIsLoading(false);
-        setRightBarAudioIsLoading(false);
+        setRightBarAudioIsLoading((prev) => ({ ...prev, [element.id]: false }));
         setAudioData({
           audio_url: response.url,
           file_name: response.fileName,
@@ -150,7 +145,7 @@ export const TextSpeech = ({
     event.preventDefault();
     event.stopPropagation();
     setAudioIsLoading(true);
-    setRightBarAudioIsLoading(true);
+    setRightBarAudioIsLoading((prev) => ({ ...prev, [element.id]: true }));
     setShowRightSidebar(true);
     createTTSAudio();
     console.log("lol", path);

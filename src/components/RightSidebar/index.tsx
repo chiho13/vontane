@@ -139,7 +139,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
           </TabsList>
 
           <TabsContent value="properties" className="flex-grow overflow-y-auto">
-            {rootNode?.type == "tts" &&
+            {/* {rootNode?.type == "tts" &&
               (audioData && audioData.file_name ? (
                 <>
                   <h3 className="mt-4 mb-2 text-sm ">Text to MP3</h3>
@@ -161,19 +161,13 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                     "No Audio generated"
                   )}
                 </div>
-              ))}
+              ))} */}
           </TabsContent>
           <TabsContent value="preview">
-            <div
-              className={`relative overflow-y-auto rounded-md border border-gray-300 p-3 dark:border-gray-700`}
-              style={{
-                width: `${viewport.width}px`,
-                height: `${viewport.height}px`,
-              }}
-            >
+            <div className="flex justify-end">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="absolute  right-2 top-2 mb-2 flex h-[28px] items-center justify-center rounded-md border border-muted-foreground bg-background p-1 text-xs  text-muted-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted">
+                  <button className="mb-2 flex h-[28px] items-center justify-center rounded-md border border-muted-foreground bg-background p-1 text-xs  text-muted-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted">
                     Device
                   </button>
                 </DropdownMenuTrigger>
@@ -207,8 +201,8 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-              <PreviewContent />
             </div>
+            <PreviewContent viewport={viewport} />
           </TabsContent>
         </Tabs>
       </div>

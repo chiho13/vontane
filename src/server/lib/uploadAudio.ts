@@ -44,17 +44,15 @@ export async function uploadAudioToSupabase(
       }
     }
 
-    const expiresIn = 60 * 60 * 24; // 24 hours in seconds
-    const { data: signedURL, error: signedURLError } =
-      await supabaseServerClient.storage
-        .from("tts-audio")
-        .createSignedUrl(filePath, expiresIn);
+    const { data } = await supabaseServerClient.storage
+      .from("tts-audio")
+      .getPublicUrl(filePath);
 
-    if (signedURLError || !signedURL) {
+    if (!data.publicUrl) {
       throw new Error("Failed to generate signed URL for the audio file.");
     }
 
-    return signedURL.signedUrl;
+    return data.publicUrl;
   } catch (error) {
     console.error("Error uploading audio file to Supabase:", error);
     throw new Error("Failed to upload audio file to Supabase storage.");

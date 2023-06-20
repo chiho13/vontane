@@ -16,10 +16,10 @@ import { useTextSpeech } from "@/contexts/TextSpeechContext";
 interface Props {
   audioURL: string | null;
   fileName: string;
-  content: string;
+  id?: string;
 }
 
-function AudioPlayer({ audioURL, fileName, content }: Props): JSX.Element {
+function AudioPlayer({ audioURL, fileName, id }: Props): JSX.Element {
   const [seekValue, setSeekValue] = useState<number>(0);
   const [seekMax, setSeekMax] = useState<number>(0);
   const [isSeeking, setIsSeeking] = useState<boolean>(false);
@@ -28,8 +28,9 @@ function AudioPlayer({ audioURL, fileName, content }: Props): JSX.Element {
 
   const theme = useTheme();
 
-  const { generatedAudio, setGenerateAudio, setIsPlaying, isPlaying } =
-    useTextSpeech();
+  const [generatedAudio, setGenerateAudio] = useState(null);
+
+  const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
     if (audioURL) {
@@ -86,15 +87,6 @@ function AudioPlayer({ audioURL, fileName, content }: Props): JSX.Element {
     }
   }, [generatedAudio, isSeeking]);
 
-  // useEffect(() => {
-  //   if (generatedAudio) {
-  //     generatedAudio;
-  //     generatedAudio.play();
-  //     setIsPlaying(true);
-  //     console.log(generatedAudio.src);
-  //   }
-  // }, [generatedAudio]);
-
   const handleSeekStart = () => {
     setIsSeeking(true);
     // generatedAudio?.pause();
@@ -119,7 +111,8 @@ function AudioPlayer({ audioURL, fileName, content }: Props): JSX.Element {
       const rect = event.currentTarget.getBoundingClientRect();
       const x = event.clientX - rect.left;
       const width = rect.width;
-      const percent = x / width;
+      let percent = x / width;
+      percent = Math.max(0, percent); // Ensure percent is not less than 0
       setSeekValue(percent * generatedAudio.duration);
       setNibPosition(percent);
     }
@@ -151,72 +144,68 @@ function AudioPlayer({ audioURL, fileName, content }: Props): JSX.Element {
   };
 
   return (
-    <AudioPlayerStyle className="relative block border border-gray-300 bg-white dark:border-gray-700 dark:bg-secondary">
-      <div className="flex items-center ">
-        <button
-          onClick={isPlaying ? handlePause : handlePlay}
-          className="play_pause_button group relative flex h-[24px] w-[24px] items-center justify-center rounded-full bg-brand transition duration-200 hover:bg-brand/90 dark:bg-foreground dark:hover:bg-brand"
-        >
-          {isPlaying ? (
-            <IoIosPause className="pause-icon h-5 w-5 text-white group-hover:text-gray-100 dark:text-brand  group-hover:dark:text-foreground" />
-          ) : (
-            <IoIosPlay className="play-icon relative left-[1px] h-5 w-5 text-white  group-hover:text-gray-100 dark:text-brand  group-hover:dark:text-foreground" />
-          )}
-        </button>
+    <AudioPlayerStyle
+      key={id}
+      className="relative flex items-center border border-gray-300 bg-white dark:border-gray-700 dark:bg-secondary"
+    >
+      <button
+        onClick={isPlaying ? handlePause : handlePlay}
+        className="play_pause_button group relative flex h-[24px] w-[24px] items-center justify-center rounded-full bg-brand transition duration-200 hover:bg-brand/90 dark:bg-foreground dark:hover:bg-brand"
+      >
+        {isPlaying ? (
+          <IoIosPause className="pause-icon h-5 w-5 text-white group-hover:text-gray-100 dark:text-brand  group-hover:dark:text-foreground" />
+        ) : (
+          <IoIosPlay className="play-icon relative left-[1px] h-5 w-5 text-white  group-hover:text-gray-100 dark:text-brand  group-hover:dark:text-foreground" />
+        )}
+      </button>
 
-        <div
-          className="audioPlayer_timeline_container group "
-          onMouseDown={handleSeekStart}
-          onMouseUp={handleSeekEnd}
-          onMouseMove={handleSeekMove}
-          onMouseEnter={handleMouseOver}
-          onMouseLeave={handleMouseLeave}
-        >
-          <div className="audioPlayer_timeline bg-gray-400 dark:bg-gray-700">
+      <div
+        className="audioPlayer_timeline_container group "
+        onMouseDown={handleSeekStart}
+        onMouseUp={handleSeekEnd}
+        onMouseMove={handleSeekMove}
+        onMouseEnter={handleMouseOver}
+        onMouseLeave={handleMouseLeave}
+      >
+        <div className="audioPlayer_timeline bg-gray-400 dark:bg-gray-700">
+          <div
+            className="audioPlayer_timeline_track  bg-gray-400 bg-foreground group-hover:bg-brand dark:bg-foreground"
+            style={{
+              width: `${
+                seekValue === seekMax
+                  ? "100"
+                  : (Math.floor(seekValue) / seekMax) * 100
+              }%`,
+              borderTopRightRadius: `${seekValue === seekMax ? "3px" : "0"}`,
+              borderBottomRightRadius: `${seekValue === seekMax ? "3px" : "0"}`,
+            }}
+          ></div>
+          {/* {showNib && <div className="audioPlayer_nib"></div>} */}
+          {showNib && (
             <div
-              className="audioPlayer_timeline_track  bg-gray-400 group-hover:bg-brand dark:bg-foreground"
+              className="audioPlayer_nib"
               style={{
-                width: `${
+                left: `${
                   seekValue === seekMax
                     ? "100"
                     : (Math.floor(seekValue) / seekMax) * 100
                 }%`,
-                borderTopRightRadius: `${seekValue === seekMax ? "3px" : "0"}`,
-                borderBottomRightRadius: `${
-                  seekValue === seekMax ? "3px" : "0"
-                }`,
+                transform: "translateX(-6px)",
               }}
             ></div>
-            {/* {showNib && <div className="audioPlayer_nib"></div>} */}
-            {showNib && (
-              <div
-                className="audioPlayer_nib"
-                style={{
-                  left: `${
-                    seekValue === seekMax
-                      ? "100"
-                      : (Math.floor(seekValue) / seekMax) * 100
-                  }%`,
-                  transform: "translateX(-6px)",
-                }}
-              ></div>
-            )}
-          </div>
+          )}
         </div>
-        {isPlaying ? (
-          <div className="audioPlayer_current-time mr-1">
-            {formatTime(Math.floor(seekValue))}
-          </div>
-        ) : (
-          <div className="audioPlayer_max-time mr-1">
-            {formatTime(Math.floor(seekMax))}
-          </div>
-        )}
-        <DownloadButton url={audioURL} fileName={fileName} />
       </div>
-      <div className="mt-4 items-center overflow-hidden overflow-ellipsis whitespace-nowrap text-sm">
-        {content}
-      </div>
+      {isPlaying ? (
+        <div className="audioPlayer_current-time mr-1">
+          {formatTime(Math.floor(seekValue))}
+        </div>
+      ) : (
+        <div className="audioPlayer_max-time mr-1">
+          {formatTime(Math.floor(seekMax))}
+        </div>
+      )}
+      <DownloadButton url={audioURL} fileName={fileName} />
     </AudioPlayerStyle>
   );
 }

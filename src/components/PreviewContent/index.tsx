@@ -1,69 +1,97 @@
 import { EditorContext } from "@/contexts/EditorContext";
 import React, {
-  useCallback,
   useContext,
   useEffect,
   useMemo,
   useState,
+  forwardRef,
+  useRef,
 } from "react";
 import { createEditor, Text } from "slate";
-import { Slate, Editable, withReact } from "slate-react";
-import { ElementSelector } from "@/components/DocumentEditor/EditorElements";
+import { withReact } from "slate-react";
+import { AudioElement } from "./PreviewElements/AudioElement";
 import { useRouter } from "next/router";
+import LoadingSpinner from "@/icons/LoadingSpinner";
 
-export const PreviewContent = () => {
+import AudioPlayer from "@/components/AudioPlayer";
+
+export const PreviewContent = ({ viewport }) => {
   const { editor: fromEditor } = useContext(EditorContext);
   const [localValue, setLocalValue] = useState(fromEditor.children);
   const editor = useMemo(() => withReact(createEditor()), []);
-  const MemoizedElementSelector = React.memo(ElementSelector);
   const router = useRouter();
-  const workspaceId = router.query.workspaceId;
+
+  const scrollRef = useRef(null);
 
   useEffect(() => {
-    setLocalValue(fromEditor.children);
+    const isLoading = fromEditor.children.some((node) => node.loading);
+    if (isLoading) {
+      scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      setLocalValue(fromEditor.children);
+    }
   }, [fromEditor.children]);
 
   console.log(fromEditor.children);
-  return <DisplayContent value={fromEditor.children} />;
-};
 
-const initialValue = [
-  {
-    type: "paragraph",
-    children: [
-      {
-        text: "This example shows what happens when the Editor is set to readOnly, it is not editable",
-      },
-    ],
-  },
-];
+  const renderElement = (node, children, key) => {
+    switch (node.type) {
+      case "paragraph":
+        return (
+          <p className="mt-2 leading-7" key={key}>
+            {children}
+          </p>
+        );
+      case "tts":
+        return (
+          <div key={key}>
+            {node.loading && (
+              <div className="flex items-center ">
+                <LoadingSpinner />
+                <span className="ml-3 ">Generating...</span>
+              </div>
+            )}
+            {node.file_name && (
+              <AudioPlayer
+                key={node.id}
+                audioURL={node.audio_url}
+                fileName={node.file_name}
+              />
+            )}
+            {children}
+          </div>
+        );
+      default:
+        return <span key={key}>{children}</span>;
+    }
+  };
 
-export function DisplayContent({ value }) {
-  // Recursively parse through the document structure
   const parseNodes = (nodes) => {
     return nodes
       .filter((node) => node.type !== "title")
-      .map((node) => {
+      .map((node, index) => {
         if (Text.isText(node)) {
-          // Handle text nodes
           if (node.bold) {
-            // if leaf node is bold, wrap the text in a bold tag
-            return <b>{node.text}</b>;
+            return <b key={index}>{node.text}</b>;
           } else {
-            return node.text;
+            return <span key={index}>{node.text}</span>;
           }
         } else if ("children" in node) {
-          // Handle other nodes
           const children = parseNodes(node.children);
-          switch (node.type) {
-            case "paragraph":
-              return <p className="mt-2 leading-7">{children}</p>;
-            default:
-              return <span>{children}</span>;
-          }
+          return renderElement(node, children, node.id ? node.id : index);
         }
       });
   };
 
-  return <>{parseNodes(value)}</>;
-}
+  return (
+    <div
+      className={`relative overflow-y-auto rounded-md border border-gray-300 p-3 dark:border-gray-700`}
+      style={{
+        width: `${viewport.width}px`,
+        height: `${viewport.height}px`,
+      }}
+    >
+      {parseNodes(localValue)}
+    </div>
+  );
+};

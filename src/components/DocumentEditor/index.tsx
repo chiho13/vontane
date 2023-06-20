@@ -119,6 +119,7 @@ type CustomElement = {
   liveContent: string;
   audio_url: string;
   file_name: string;
+  loading: boolean;
   latex?: string; // Add this line for the latex string
 };
 

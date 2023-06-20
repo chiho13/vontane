@@ -69,6 +69,11 @@ export const TextSpeech = ({
   const path = ReactEditor.findPath(editor, element);
 
   const createTTSAudio = async () => {
+    Transforms.setNodes(
+      editor,
+      { loading: true }, // New properties
+      { at: path } // Location
+    );
     if (element.audio_url) {
       try {
         const response = await deleteTTS.mutateAsync({
@@ -114,6 +119,7 @@ export const TextSpeech = ({
         Transforms.setNodes(
           editor,
           {
+            loading: false,
             audio_url: response.url,
             file_name: response.fileName,
             content: textSpeech,
@@ -194,7 +200,7 @@ export const TextSpeech = ({
           Transforms.select(editor, Editor.start(editor, path));
         }}
       ></div>
-      {selected && element.audio_url && (
+      {/* {selected && element.audio_url && (
         <button
           onClick={() => {
             setShowRightSidebar(true);
@@ -208,7 +214,7 @@ export const TextSpeech = ({
         >
           {isPlaying ? "Pause" : "Play"}
         </button>
-      )}
+      )} */}
       {/* {audioURL && <AudioPLayer audioURL={audioURL} fileName={fileName} />} */}
     </div>
   );

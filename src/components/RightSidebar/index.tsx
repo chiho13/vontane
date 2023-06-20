@@ -59,7 +59,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     height: 844,
   });
 
-  const [audioURL, setAudioURL] = useState("");
+  const [audioURL, setAudioURL] = useState();
   const rightSidebarStyle = {
     transform: `translateX(${
       showRightSidebar ? "0px" : `${rightSideBarWidth}px`
@@ -76,30 +76,36 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
       "width 0.3s ease-in-out, opacity 0.4s ease-in-out, transform 0.3s ease-in-out",
   };
 
-  const {
-    data: ttsaudiodata,
-    error: ttsaudiodataerror,
-    isLoading: ttsaudiodataloading,
-    refetch: ttsaudiodatarefetch,
-  } = api.texttospeech.getTextToSpeechFileName.useQuery(
-    { fileName: audioData.file_name, workspaceId },
-    {
-      enabled: false,
-      cacheTime: 5 * 60 * 1000, // Cache data for 5 minutes
-      staleTime: 5 * 60 * 1000, // Data is considered fresh for 5 minutes
-    }
-  );
   useEffect(() => {
-    if (audioData.file_name) {
-      ttsaudiodatarefetch();
+    if (audioData) {
+      setAudioURL(audioData.audio_url);
     }
-  }, [audioData.file_name]);
+  }, [audioData]);
 
-  useEffect(() => {
-    if (ttsaudiodata) {
-      setAudioURL(ttsaudiodata.signedURL);
-    }
-  }, [ttsaudiodata]);
+  // const {
+  //   data: ttsaudiodata,
+  //   error: ttsaudiodataerror,
+  //   isLoading: ttsaudiodataloading,
+  //   refetch: ttsaudiodatarefetch,
+  // } = api.texttospeech.getTextToSpeechFileName.useQuery(
+  //   { fileName: audioData.file_name, workspaceId },
+  //   {
+  //     enabled: false,
+  //     cacheTime: 5 * 60 * 1000, // Cache data for 5 minutes
+  //     staleTime: 5 * 60 * 1000, // Data is considered fresh for 5 minutes
+  //   }
+  // );
+  // useEffect(() => {
+  //   if (audioData.file_name) {
+  //     ttsaudiodatarefetch();
+  //   }
+  // }, [audioData.file_name]);
+
+  // useEffect(() => {
+  //   if (ttsaudiodata) {
+  //     setAudioURL(ttsaudiodata.signedURL);
+  //   }
+  // }, [ttsaudiodata]);
 
   const [tab, setTab] = useLocalStorage("tab", "properties");
 

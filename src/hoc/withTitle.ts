@@ -68,6 +68,7 @@ export const withTitle = (editor) => {
             type = "title";
             enforceType(type);
             break;
+
           default:
             break;
         }

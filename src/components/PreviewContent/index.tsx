@@ -7,7 +7,7 @@ import React, {
   forwardRef,
   useRef,
 } from "react";
-import { createEditor, Text } from "slate";
+import { createEditor, Path, Text, Node } from "slate";
 import { withReact } from "slate-react";
 import { AudioElement } from "./PreviewElements/AudioElement";
 import { useRouter } from "next/router";
@@ -15,15 +15,30 @@ import LoadingSpinner from "@/icons/LoadingSpinner";
 
 import AudioPlayer from "@/components/AudioPlayer";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
+import CollapsibleAudioPlayer from "./PreviewElements/CollapsibleAudio";
+
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 export const PreviewContent = ({ viewport }) => {
-  const { editor: fromEditor } = useContext(EditorContext);
+  const { editor: fromEditor, activePath } = useContext(EditorContext);
   const [localValue, setLocalValue] = useState(fromEditor.children);
   const editor = useMemo(() => withReact(createEditor()), []);
   const router = useRouter();
 
   const scrollRef = useRef(null);
   const { rightBarAudioIsLoading } = useTextSpeech();
+
+  const rootNode = useMemo(() => {
+    let path = activePath ? JSON.parse(activePath) : [];
+    while (path && path.length > 1) {
+      path = Path.parent(path);
+    }
+    return path.length ? Node.get(fromEditor, path) : null;
+  }, [fromEditor, activePath]);
 
   useEffect(() => {
     const isLoading = fromEditor.children.some((node) => node.loading);
@@ -36,7 +51,7 @@ export const PreviewContent = ({ viewport }) => {
 
   console.log(fromEditor.children);
 
-  const renderElement = (node, children, key) => {
+  const renderElement = (node, children, key, rootNode) => {
     switch (node.type) {
       case "paragraph":
         return (
@@ -46,22 +61,7 @@ export const PreviewContent = ({ viewport }) => {
         );
       case "tts":
         return (
-          <div key={key}>
-            {node.file_name === "" && (
-              <div className="flex items-center ">
-                <LoadingSpinner />
-                <span className="ml-3 ">Generating...</span>
-              </div>
-            )}
-            {node.file_name && (
-              <AudioPlayer
-                id={node.id}
-                audioURL={node.audio_url}
-                fileName={node.file_name}
-              />
-            )}
-            {children}
-          </div>
+          <CollapsibleAudioPlayer node={node} children={children} key={key} />
         );
       default:
         return <span key={key}>{children}</span>;
@@ -80,7 +80,12 @@ export const PreviewContent = ({ viewport }) => {
           }
         } else if ("children" in node) {
           const children = parseNodes(node.children);
-          return renderElement(node, children, node.id ? node.id : index);
+          return renderElement(
+            node,
+            children,
+            node.id ? node.id : index,
+            rootNode
+          );
         }
       });
   };

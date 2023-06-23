@@ -15,7 +15,7 @@ import { ReactEditor, useSelected } from "slate-react";
 import AudioPLayer from "@/components/AudioPlayer";
 import { extractTextValues } from "../DocumentEditor/helpers/extractText";
 import { Info } from "lucide-react";
-
+import LoadingSpinner from "@/icons/LoadingSpinner";
 const useDownloadFile = (url, fileName) => {
   const [file, setFile] = useState(null);
 
@@ -195,21 +195,12 @@ export const TextSpeech = ({
           Transforms.select(editor, Editor.start(editor, path));
         }}
       ></div>
-      {/* {selected && element.audio_url && (
-        <button
-          onClick={() => {
-            setShowRightSidebar(true);
-            if (!isPlaying) {
-              generatedAudio?.play();
-            } else {
-              generatedAudio?.pause();
-            }
-          }}
-          className=" ml-5 flex h-[34px] items-center justify-center rounded-md border-2 border-foreground bg-background p-0 px-2 text-sm  font-bold text-foreground hover:border-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:border-muted-foreground dark:bg-background dark:text-foreground dark:hover:bg-muted  "
-        >
-          {isPlaying ? "Pause" : "Play"}
-        </button>
-      )} */}
+
+      {selected && audioData.content !== element.content && (
+        <div className="m-2  flex rounded bg-yellow-300 p-2 text-sm text-orange-900 shadow-md">
+          Content Changed. Regenerate Audio
+        </div>
+      )}
       {/* {audioURL && <AudioPLayer audioURL={audioURL} fileName={fileName} />} */}
     </div>
   );

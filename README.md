@@ -41,6 +41,6 @@ currently under development (April)
 - [x] image block
 - [x] text to speech element wrapper
 - [] map block ?
-- [] preview content (WIP)
+- [] mobile preview content (WIP)
 - [] audio trimmer
 - [] musicXML

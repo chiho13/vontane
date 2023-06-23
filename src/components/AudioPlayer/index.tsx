@@ -12,14 +12,23 @@ import { DownloadButton } from "../DownloadButton";
 import { OptionMenu } from "../DocumentEditor/OptionMenu";
 import { IoIosPlay, IoIosPause } from "react-icons/io";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
+import { cn } from "@/utils/cn";
 
 interface Props {
   audioURL: string | null;
   fileName: string;
   id?: string;
+  classNames?: string;
+  isPreview?: boolean;
 }
 
-function AudioPlayer({ audioURL, fileName, id }: Props): JSX.Element {
+function AudioPlayer({
+  audioURL,
+  fileName,
+  id,
+  classNames = "py-[10px]",
+  isPreview = false,
+}: Props): JSX.Element {
   const [seekValue, setSeekValue] = useState<number>(0);
   const [seekMax, setSeekMax] = useState<number>(0);
   const [isSeeking, setIsSeeking] = useState<boolean>(false);
@@ -92,6 +101,24 @@ function AudioPlayer({ audioURL, fileName, id }: Props): JSX.Element {
     // generatedAudio?.pause();
   };
 
+  const handlePlay = () => {
+    setIsPlaying(true);
+    generatedAudio?.play();
+  };
+
+  const handlePause = () => {
+    setIsPlaying(false);
+    generatedAudio?.pause();
+  };
+
+  const handleStop = () => {
+    setIsPlaying(false);
+    generatedAudio?.pause();
+    if (generatedAudio) {
+      generatedAudio.currentTime = 0;
+    }
+  };
+
   const handleSeekEnd = (event: React.MouseEvent<HTMLDivElement>) => {
     setIsSeeking(false);
     const rect = event.currentTarget.getBoundingClientRect();
@@ -126,15 +153,6 @@ function AudioPlayer({ audioURL, fileName, id }: Props): JSX.Element {
     setShowNib(false);
   };
 
-  const handlePlay = () => {
-    setIsPlaying(true);
-    generatedAudio?.play();
-  };
-  const handlePause = () => {
-    setIsPlaying(false);
-    generatedAudio?.pause();
-  };
-
   const formatTime = (timeInSeconds: number) => {
     const nonNegativeTime = Math.max(0, timeInSeconds); // Ensure time is non-negative
     const date = new Date(nonNegativeTime * 1000);
@@ -146,7 +164,10 @@ function AudioPlayer({ audioURL, fileName, id }: Props): JSX.Element {
   return (
     <AudioPlayerStyle
       key={id}
-      className="relative flex items-center border border-gray-300 bg-white dark:border-gray-700 dark:bg-secondary"
+      className={cn(
+        `relative flex items-center border border-gray-300 bg-white dark:border-gray-700 dark:bg-secondary`,
+        classNames
+      )}
     >
       <button
         onClick={isPlaying ? handlePause : handlePlay}
@@ -205,7 +226,7 @@ function AudioPlayer({ audioURL, fileName, id }: Props): JSX.Element {
           {formatTime(Math.floor(seekMax))}
         </div>
       )}
-      <DownloadButton url={audioURL} fileName={fileName} />
+      {!isPreview && <DownloadButton url={audioURL} fileName={fileName} />}
     </AudioPlayerStyle>
   );
 }

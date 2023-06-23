@@ -82,31 +82,6 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     }
   }, [audioData]);
 
-  // const {
-  //   data: ttsaudiodata,
-  //   error: ttsaudiodataerror,
-  //   isLoading: ttsaudiodataloading,
-  //   refetch: ttsaudiodatarefetch,
-  // } = api.texttospeech.getTextToSpeechFileName.useQuery(
-  //   { fileName: audioData.file_name, workspaceId },
-  //   {
-  //     enabled: false,
-  //     cacheTime: 5 * 60 * 1000, // Cache data for 5 minutes
-  //     staleTime: 5 * 60 * 1000, // Data is considered fresh for 5 minutes
-  //   }
-  // );
-  // useEffect(() => {
-  //   if (audioData.file_name) {
-  //     ttsaudiodatarefetch();
-  //   }
-  // }, [audioData.file_name]);
-
-  // useEffect(() => {
-  //   if (ttsaudiodata) {
-  //     setAudioURL(ttsaudiodata.signedURL);
-  //   }
-  // }, [ttsaudiodata]);
-
   const [tab, setTab] = useLocalStorage("tab", "properties");
 
   const handleTabChange = (newTab) => {

@@ -197,7 +197,7 @@ export const TextSpeech = ({
       ></div>
 
       {selected && audioData.content !== element.content && (
-        <div className="m-2  flex rounded bg-yellow-300 p-2 text-sm text-orange-900 shadow-md">
+        <div className="mr-2 flex h-[34px] rounded bg-yellow-300 p-2 text-sm text-orange-900 shadow-md">
           Content Changed. Regenerate Audio
         </div>
       )}

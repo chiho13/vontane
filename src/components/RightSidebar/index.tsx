@@ -22,6 +22,8 @@ import { api } from "@/utils/api";
 import { useRouter } from "next/router";
 import { ChevronDown } from "lucide-react";
 
+import { saveAs } from "file-saver";
+
 import { PreviewContent } from "../PreviewContent";
 
 import {
@@ -106,6 +108,32 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     });
   };
 
+  const concatAudio = async () => {
+    console.log(editor.children);
+    // Assuming editor.children is an array of objects
+    let audioUrls = [];
+    editor.children.forEach((child) => {
+      if (child.audio_url) {
+        audioUrls.push(child.audio_url);
+      }
+    });
+
+    // Assuming audioUrls is an array of URLs for audio files
+    const blobs = await Promise.all(
+      audioUrls.map(async (audioUrl) => {
+        const response = await fetch(audioUrl);
+        const blob = await response.blob();
+        return blob;
+      })
+    );
+
+    // Concatenate the blobs
+    const concatenatedBlob = new Blob(blobs, { type: "audio/mpeg" }); // adjust the MIME type as needed
+
+    // Save concatenated blob
+    saveAs(concatenatedBlob, "concatenatedAudio.mp3");
+  };
+
   return (
     <div
       className="m-w-full bg-w relative mt-2 hidden grow overflow-y-auto rounded-md border border-gray-300 bg-white px-1 dark:border-gray-700 dark:bg-muted dark:text-lightgray lg:block"
@@ -164,7 +192,10 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
           <TabsContent value="preview">
             <div className="flex justify-end gap-3">
               {containsTtsNode(editor.children) && (
-                <button className="mb-2 flex h-[28px] items-center justify-center rounded-md border border-muted-foreground bg-background p-1 text-xs  text-muted-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted">
+                <button
+                  className="mb-2 flex h-[28px] items-center justify-center rounded-md border border-muted-foreground bg-background p-1 text-xs  text-muted-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted"
+                  onClick={concatAudio}
+                >
                   Export as Single Audio File
                 </button>
               )}

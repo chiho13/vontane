@@ -1961,6 +1961,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             </DraggableCore>
           </div>
           <RightSideBar
+            key={workspaceId}
             setRightSideBarWidth={setRightSideBarWidth}
             showRightSidebar={showRightSidebar}
             rightSideBarWidth={rightSideBarWidth}

@@ -18,16 +18,19 @@ import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import CollapsibleAudioPlayer from "./PreviewElements/CollapsibleAudio";
 
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ChevronDown } from "lucide-react";
 
 export const PreviewContent = ({ viewport }) => {
   const { editor: fromEditor, activePath } = useContext(EditorContext);
   const [localValue, setLocalValue] = useState(fromEditor.children);
   const editor = useMemo(() => withReact(createEditor()), []);
   const router = useRouter();
+  const [containsTts, setContainsTts] = useState(false);
 
   const scrollRef = useRef(null);
   const { rightBarAudioIsLoading } = useTextSpeech();
@@ -39,15 +42,6 @@ export const PreviewContent = ({ viewport }) => {
     }
     return path.length ? Node.get(fromEditor, path) : null;
   }, [fromEditor, activePath]);
-
-  useEffect(() => {
-    const isLoading = fromEditor.children.some((node) => node.loading);
-    if (isLoading) {
-      scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-    } else {
-      setLocalValue(fromEditor.children);
-    }
-  }, [fromEditor.children]);
 
   console.log(fromEditor.children);
 
@@ -68,6 +62,23 @@ export const PreviewContent = ({ viewport }) => {
     }
   };
 
+  const containsTtsNode = (nodes) => {
+    return nodes.some((node) => {
+      // if the node itself is of type "tts"
+      if (node.type === "tts") {
+        return true;
+      }
+
+      // if the node has children, recursively check them
+      if ("children" in node) {
+        return containsTtsNode(node.children);
+      }
+
+      // if neither the node nor its children are of type "tts"
+      return false;
+    });
+  };
+
   const parseNodes = (nodes) => {
     return nodes
       .filter((node) => node.type !== "title")
@@ -79,6 +90,9 @@ export const PreviewContent = ({ viewport }) => {
             return <span key={index}>{node.text}</span>;
           }
         } else if ("children" in node) {
+          if (node.type === "tts") {
+          }
+
           const children = parseNodes(node.children);
           return renderElement(
             node,
@@ -95,9 +109,32 @@ export const PreviewContent = ({ viewport }) => {
       className={`relative overflow-y-auto rounded-md border border-gray-300 p-3 dark:border-gray-700`}
       style={{
         width: `${viewport.width}px`,
-        height: `${viewport.height}px`,
       }}
     >
+      {/* <div className="flex justify-end">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="mb-2 flex h-[28px] items-center justify-center rounded-md border border-muted-foreground bg-background p-1 text-xs  text-muted-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted">
+              Export
+              <ChevronDown className="w-4" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="start"
+            className="border border-gray-500  bg-background dark:border-muted-foreground dark:bg-secondary"
+          >
+            <DropdownMenuItem
+              className="dark:text-foreground hover:dark:bg-muted"
+              onClick={() => {}}
+            >
+              <span className="text-foreground">iPhone 14</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="hover:dark:bg-muted">
+              <span className="text-foreground"> iPhone 14 Pro Max</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div> */}
       {parseNodes(localValue)}
     </div>
   );

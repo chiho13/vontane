@@ -20,15 +20,10 @@ import { root } from "postcss";
 import { Info } from "lucide-react";
 import { api } from "@/utils/api";
 import { useRouter } from "next/router";
+import { ChevronDown } from "lucide-react";
 
 import { PreviewContent } from "../PreviewContent";
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 interface RightSideBarProps {
   setRightSideBarWidth: any;
   showRightSidebar: boolean;
@@ -56,7 +51,6 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
   const { audioData, setAudioData, rightBarAudioIsLoading } = useTextSpeech();
   const [viewport, setViewPort] = useState({
     width: 390,
-    height: 844,
   });
 
   const [audioURL, setAudioURL] = useState();
@@ -144,44 +138,6 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
               ))}
           </TabsContent>
           <TabsContent value="preview">
-            <div className="flex justify-end">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="mb-2 flex h-[28px] items-center justify-center rounded-md border border-muted-foreground bg-background p-1 text-xs  text-muted-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted">
-                    Device
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="start"
-                  className="border-2 border-gray-300  bg-background dark:border-accent dark:bg-secondary"
-                >
-                  <DropdownMenuItem
-                    className="dark:text-foreground hover:dark:bg-muted"
-                    onClick={() => {
-                      setRightSideBarWidth(418);
-                      setViewPort({
-                        width: 390,
-                        height: 692,
-                      });
-                    }}
-                  >
-                    <span className="text-foreground">iPhone 14</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="hover:dark:bg-muted"
-                    onClick={() => {
-                      setRightSideBarWidth(456);
-                      setViewPort({
-                        width: 428,
-                        height: 759,
-                      });
-                    }}
-                  >
-                    <span className="text-foreground"> iPhone 14 Pro Max</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
             <PreviewContent viewport={viewport} />
           </TabsContent>
         </Tabs>

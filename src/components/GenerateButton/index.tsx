@@ -19,7 +19,7 @@ function GenerateButton({
 }: GenerateButtonProps) {
   return (
     <GenerateButtonStyle
-      className="items-center justify-center rounded-md border-2 border-foreground bg-background  p-0 px-2 text-foreground hover:border-gray-700 hover:bg-slate-100 hover:text-gray-700 dark:border-muted-foreground dark:bg-background dark:text-foreground dark:hover:bg-muted  "
+      className="items-center justify-center rounded-md border border-foreground bg-background  p-0 px-2 text-foreground hover:border-gray-700 hover:bg-slate-100 hover:text-gray-700 dark:border-muted-foreground dark:bg-background dark:text-foreground dark:hover:bg-muted  "
       isDisabled={isDisabled}
       onClick={onClick}
       disabled={isDisabled || audioIsLoading}

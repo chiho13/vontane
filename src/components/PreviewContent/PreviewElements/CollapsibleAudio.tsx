@@ -2,9 +2,9 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import AudioPlayer from "@/components/AudioPlayer";
 
-const CollapsibleAudioPlayer = ({ node, children, key }) => {
+export const CollapsibleAudioPlayer = ({ node, children, key }) => {
   return (
-    <div className="mb-2  space-y-2 rounded-md border p-2">
+    <div className="mb-2  space-y-2 rounded-md border p-2 dark:border-gray-700">
       {node.file_name && (
         <div key={key} className="mt-2 w-full rounded-md">
           <AudioPlayer
@@ -21,5 +21,3 @@ const CollapsibleAudioPlayer = ({ node, children, key }) => {
     </div>
   );
 };
-
-export default CollapsibleAudioPlayer;

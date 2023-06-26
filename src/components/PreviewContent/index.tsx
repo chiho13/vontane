@@ -9,19 +9,25 @@ import React, {
 } from "react";
 import { createEditor, Path, Text, Node } from "slate";
 import { withReact } from "slate-react";
-import { AudioElement } from "./PreviewElements/AudioElement";
 import { useRouter } from "next/router";
 import LoadingSpinner from "@/icons/LoadingSpinner";
 
 import AudioPlayer from "@/components/AudioPlayer";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
-import CollapsibleAudioPlayer from "./PreviewElements/CollapsibleAudio";
+import { CollapsibleAudioPlayer } from "@/components/PreviewContent/PreviewElements/CollapsibleAudio";
 
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export const PreviewContent = ({ viewport }) => {
   const { editor: fromEditor, activePath } = useContext(EditorContext);
@@ -93,10 +99,6 @@ export const PreviewContent = ({ viewport }) => {
   return (
     <div
       className={`relative overflow-y-auto rounded-md border border-gray-300 p-3 dark:border-gray-700`}
-      style={{
-        width: `${viewport.width}px`,
-        height: `${viewport.height}px`,
-      }}
     >
       {parseNodes(localValue)}
     </div>

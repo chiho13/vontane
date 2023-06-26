@@ -100,6 +100,11 @@ export const PreviewContent = ({ viewport }) => {
     <div
       className={`relative overflow-y-auto rounded-md border border-gray-300 p-3 dark:border-gray-700`}
     >
+      {/* {containsTtsNode(localValue) && (
+        <button className="mb-2 flex h-[28px] items-center justify-center rounded-md border border-muted-foreground bg-background p-1 text-xs  text-muted-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted">
+          Export as Single Audio File
+        </button>
+      )} */}
       {parseNodes(localValue)}
     </div>
   );

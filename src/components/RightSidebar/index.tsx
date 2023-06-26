@@ -20,6 +20,7 @@ import { root } from "postcss";
 import { Info } from "lucide-react";
 import { api } from "@/utils/api";
 import { useRouter } from "next/router";
+import { ChevronDown } from "lucide-react";
 
 import { PreviewContent } from "../PreviewContent";
 
@@ -88,6 +89,23 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     setTab(newTab); // This will also update value in localStorage
   };
 
+  const containsTtsNode = (nodes) => {
+    return nodes.some((node) => {
+      // if the node itself is of type "tts"
+      if (node.type === "tts") {
+        return true;
+      }
+
+      // if the node has children, recursively check them
+      if ("children" in node) {
+        return containsTtsNode(node.children);
+      }
+
+      // if neither the node nor its children are of type "tts"
+      return false;
+    });
+  };
+
   return (
     <div
       className="m-w-full bg-w relative mt-2 hidden grow overflow-y-auto rounded-md border border-gray-300 bg-white px-1 dark:border-gray-700 dark:bg-muted dark:text-lightgray lg:block"
@@ -144,16 +162,22 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
               ))}
           </TabsContent>
           <TabsContent value="preview">
-            <div className="flex justify-end">
+            <div className="flex justify-end gap-3">
+              {containsTtsNode(editor.children) && (
+                <button className="mb-2 flex h-[28px] items-center justify-center rounded-md border border-muted-foreground bg-background p-1 text-xs  text-muted-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted">
+                  Export as Single Audio File
+                </button>
+              )}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="mb-2 flex h-[28px] items-center justify-center rounded-md border border-muted-foreground bg-background p-1 text-xs  text-muted-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted">
                     Device
+                    <ChevronDown className="ml-1 w-3" />
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="start"
-                  className="border-2 border-gray-300  bg-background dark:border-accent dark:bg-secondary"
+                  className="border border-gray-300  bg-background dark:border-gray-500 dark:bg-secondary"
                 >
                   <DropdownMenuItem
                     className="dark:text-foreground hover:dark:bg-muted"

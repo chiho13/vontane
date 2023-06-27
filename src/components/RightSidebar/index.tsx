@@ -174,6 +174,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                   <AudioPlayer
                     audioURL={audioURL}
                     fileName={audioData.file_name}
+                    showAudioPlayer={true}
                   />
                 </>
               ) : (
@@ -199,7 +200,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                   Export as Single Audio File
                 </button>
               )}
-              <DropdownMenu>
+              {/* <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="mb-2 flex h-[28px] items-center justify-center rounded-md border border-muted-foreground bg-background p-1 text-xs  text-muted-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted">
                     Device
@@ -235,7 +236,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                     <span className="text-foreground"> iPhone 14 Pro Max</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
-              </DropdownMenu>
+              </DropdownMenu> */}
             </div>
             <PreviewContent viewport={viewport} />
           </TabsContent>

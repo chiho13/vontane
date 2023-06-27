@@ -237,7 +237,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                               className=" h-full  border border-gray-300 bg-muted px-2 dark:border-gray-400"
                               onClick={() => copyLink(audioData.audio_url)}
                             >
-                              <Copy />
+                              <Copy className="w-5" />
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent

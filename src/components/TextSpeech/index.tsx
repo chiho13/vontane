@@ -16,6 +16,16 @@ import AudioPLayer from "@/components/AudioPlayer";
 import { extractTextValues } from "../DocumentEditor/helpers/extractText";
 import { Info } from "lucide-react";
 import LoadingSpinner from "@/icons/LoadingSpinner";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
 const useDownloadFile = (url, fileName) => {
   const [file, setFile] = useState(null);
 
@@ -46,6 +56,8 @@ export const TextSpeech = ({
   const workspaceId = router.query.workspaceId as string;
   // const [audioIsLoading, setAudioIsLoading] = useState<boolean>(false);
   const [transcriptionId, setTranscriptionId] = useState<string>("");
+
+  const [audioChecked, setAudioChecked] = useState(element.audioplayer);
 
   const {
     audioData,
@@ -166,8 +178,19 @@ export const TextSpeech = ({
     }
   }, [selectedVoiceId, textSpeech]);
 
+  const showAudioPlayer = (value) => {
+    setAudioChecked(value);
+
+    Transforms.setNodes(
+      editor,
+      {
+        audioplayer: value,
+      }, // New properties
+      { at: path } // Location
+    );
+  };
   return (
-    <div className="flex w-[95%] justify-between">
+    <div className="flex w-[95%] justify-between gap-2">
       <div className="relative flex items-center lg:max-w-[980px]">
         <div className="mr-2">
           <VoiceDropdown
@@ -185,16 +208,45 @@ export const TextSpeech = ({
           />
         )}
       </div>
-      <div
-        className="flex grow items-center"
-        onMouseDown={(e) => {
-          // Prevent default action
-          e.preventDefault();
+      {selected && (
+        <div
+          className="flex grow items-center"
+          // onMouseDown={(e) => {
+          //   // Prevent default action
+          //   e.preventDefault();
 
-          ReactEditor.focus(editor);
-          Transforms.select(editor, Editor.start(editor, path));
-        }}
-      ></div>
+          //   ReactEditor.focus(editor);
+          //   Transforms.select(editor, Editor.start(editor, path));
+          // }}
+        >
+          <div className="flex items-center space-x-2 ">
+            <TooltipProvider delayDuration={300}>
+              <Tooltip>
+                <TooltipTrigger>
+                  <div className="flex items-center gap-2 ">
+                    <Switch
+                      id="audio-player"
+                      checked={audioChecked}
+                      onCheckedChange={showAudioPlayer}
+                    />
+                    <Label htmlFor="airplane-mode" className="text-xs">
+                      Audio Player
+                    </Label>
+                  </div>
+                </TooltipTrigger>
+
+                <TooltipContent
+                  className="border-black  dark:bg-white dark:text-muted"
+                  side="top"
+                  sideOffset={10}
+                >
+                  <p className="text-[12px]">Show / Hide in Preview</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+        </div>
+      )}
 
       {selected && element.content && audioData.content !== element.content && (
         <div className="mr-2 flex h-[34px] rounded bg-yellow-300 p-2 text-sm text-orange-900 shadow-md">

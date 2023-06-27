@@ -10,6 +10,7 @@ export const addTTSBlock = (editor: Editor, path: Path) => {
     type: "tts",
     voice_id: "022dAxTS7hgOwOZorFb9",
     name: "Arthur",
+    audioplayer: false,
     children: [
       {
         id: genNodeId(),

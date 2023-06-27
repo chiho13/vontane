@@ -118,6 +118,7 @@ type CustomElement = {
   content: string;
   liveContent: string;
   audio_url: string;
+  audioplayer: boolean;
   file_name: string;
   loading: boolean;
   latex?: string; // Add this line for the latex string

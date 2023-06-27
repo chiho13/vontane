@@ -66,6 +66,7 @@ export const PreviewContent = ({ viewport }) => {
           </p>
         );
       case "tts":
+        console.log(node.audioplayer);
         return (
           <CollapsibleAudioPlayer node={node} children={children} key={key} />
         );

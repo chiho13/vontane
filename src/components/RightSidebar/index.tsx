@@ -22,7 +22,7 @@ import { api } from "@/utils/api";
 import { useRouter } from "next/router";
 import { ChevronDown, Link, Copy } from "lucide-react";
 import { Input } from "@/components/ui/input";
-
+import { AudioManagerProvider } from "@/contexts/PreviewAudioContext";
 import { Button } from "@/components/ui/button";
 
 import { saveAs } from "file-saver";
@@ -163,113 +163,120 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
   };
 
   return (
-    <div
-      className="m-w-full bg-w relative mt-2 hidden grow overflow-y-auto rounded-md border border-gray-300 bg-white px-1 dark:border-gray-700 dark:bg-muted dark:text-lightgray lg:block"
-      style={rightSidebarStyle}
-    >
-      <div className="flex-grow p-2 pb-3">
-        {/* <h2 className="mb-4 text-xl font-semibold">Right Sidebar</h2>
+    <AudioManagerProvider>
+      <div
+        className="m-w-full bg-w relative mt-2 hidden grow overflow-y-auto rounded-md border border-gray-300 bg-white px-1 dark:border-gray-700 dark:bg-muted dark:text-lightgray lg:block"
+        style={rightSidebarStyle}
+      >
+        <div className="flex-grow p-2 pb-3">
+          {/* <h2 className="mb-4 text-xl font-semibold">Right Sidebar</h2>
         <p>Hi kirby</p> */}
-        <Tabs
-          defaultValue={tab}
-          onValueChange={handleTabChange}
-          className="flex flex-grow flex-col"
-        >
-          <TabsList
-            className={`ring-gray ring-red  grid h-10 w-full grid-cols-2  bg-lightgray dark:bg-accent`}
+          <Tabs
+            defaultValue={tab}
+            onValueChange={handleTabChange}
+            className="flex flex-grow flex-col"
           >
-            <TabsTrigger
+            <TabsList
+              className={`ring-gray ring-red  grid h-10 w-full grid-cols-2  bg-lightgray dark:bg-accent`}
+            >
+              <TabsTrigger
+                value="properties"
+                className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
+              >
+                Tools
+              </TabsTrigger>
+
+              <TabsTrigger
+                value="preview"
+                className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
+              >
+                Preview
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent
               value="properties"
-              className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
+              className="flex-grow overflow-y-auto"
             >
-              Tools
-            </TabsTrigger>
+              {rootNode?.type == "tts" &&
+                (audioData && audioData.file_name ? (
+                  <>
+                    <h3 className="text-bold mt-4 mb-2 text-sm   ">
+                      Text to MP3
+                    </h3>
 
-            <TabsTrigger
-              value="preview"
-              className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
-            >
-              Preview
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="properties" className="flex-grow overflow-y-auto">
-            {rootNode?.type == "tts" &&
-              (audioData && audioData.file_name ? (
-                <>
-                  <h3 className="text-bold mt-4 mb-2 text-sm   ">
-                    Text to MP3
-                  </h3>
-
-                  <div className="my-2 block">
-                    <AudioPlayer
-                      audioURL={audioURL}
-                      fileName={audioData.file_name}
-                      showAudioPlayer={true}
-                    />
-                  </div>
-
-                  <div className=" truncate  rounded-md border border-gray-300 p-1 dark:border-gray-700">
-                    {audioData.content}{" "}
-                  </div>
-
-                  <h3 className="text-bold mt-4 mb-2 text-sm">Share Audio</h3>
-                  <div className="relative flex items-center">
-                    <Link className="absolute left-3 w-4" />
-
-                    <input
-                      value={audioData.audio_url}
-                      className="w-full rounded-md border   border-gray-300 bg-muted p-2  pl-[40px] focus:outline-none dark:border-gray-700"
-                      readOnly={true}
-                    />
-                    <TooltipProvider delayDuration={300}>
-                      <Tooltip open={tooltipOpen} onOpenChange={setTooltipOpen}>
-                        <TooltipTrigger className="absolute right-1 h-[32px]">
-                          <Button
-                            variant="outline"
-                            className=" h-full  border border-gray-300 bg-muted px-2 dark:border-gray-400"
-                            onClick={() => copyLink(audioData.audio_url)}
-                          >
-                            <Copy />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent
-                          className="border-black px-[5px]  dark:bg-white dark:text-muted"
-                          side="top"
-                          sideOffset={10}
-                        >
-                          <p className="text-[12px]">
-                            {copied ? "Copied!" : "Copy Link"}
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
-                </>
-              ) : (
-                <div className="relative block rounded-lg border border-gray-300 bg-white p-4 dark:border-gray-700 dark:bg-secondary">
-                  {rightBarAudioIsLoading ? (
-                    <div className="flex items-center ">
-                      <LoadingSpinner />
-                      <span className="ml-3 ">Generating...</span>
+                    <div className="my-2 block">
+                      <AudioPlayer
+                        audioURL={audioURL}
+                        fileName={audioData.file_name}
+                        showAudioPlayer={true}
+                      />
                     </div>
-                  ) : (
-                    "No Audio generated"
-                  )}
-                </div>
-              ))}
-          </TabsContent>
-          <TabsContent value="preview">
-            <div className="flex justify-end gap-3">
-              {containsTtsNode(editor.children) && (
-                <button
-                  className="mb-2 flex h-[28px] items-center justify-center rounded-md border border-muted-foreground bg-background p-1 text-xs  text-muted-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted"
-                  onClick={concatAudio}
-                >
-                  Export as Single Audio File
-                </button>
-              )}
-              {/* <DropdownMenu>
+
+                    <div className=" truncate  rounded-md border border-gray-300 p-1 dark:border-gray-700">
+                      {audioData.content}{" "}
+                    </div>
+
+                    <h3 className="text-bold mt-4 mb-2 text-sm">Share Audio</h3>
+                    <div className="relative flex items-center">
+                      <Link className="absolute left-3 w-4" />
+
+                      <input
+                        value={audioData.audio_url}
+                        className="w-full rounded-md border   border-gray-300 bg-muted p-2  pl-[40px] focus:outline-none dark:border-gray-700"
+                        readOnly={true}
+                      />
+                      <TooltipProvider delayDuration={300}>
+                        <Tooltip
+                          open={tooltipOpen}
+                          onOpenChange={setTooltipOpen}
+                        >
+                          <TooltipTrigger className="absolute right-1 h-[32px]">
+                            <Button
+                              variant="outline"
+                              className=" h-full  border border-gray-300 bg-muted px-2 dark:border-gray-400"
+                              onClick={() => copyLink(audioData.audio_url)}
+                            >
+                              <Copy />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent
+                            className="border-black px-[5px]  dark:bg-white dark:text-muted"
+                            side="top"
+                            sideOffset={10}
+                          >
+                            <p className="text-[12px]">
+                              {copied ? "Copied!" : "Copy Link"}
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  </>
+                ) : (
+                  <div className="relative block rounded-lg border border-gray-300 bg-white p-4 dark:border-gray-700 dark:bg-secondary">
+                    {rightBarAudioIsLoading ? (
+                      <div className="flex items-center ">
+                        <LoadingSpinner />
+                        <span className="ml-3 ">Generating...</span>
+                      </div>
+                    ) : (
+                      "No Audio generated"
+                    )}
+                  </div>
+                ))}
+            </TabsContent>
+            <TabsContent value="preview">
+              <div className="flex justify-end gap-3">
+                {containsTtsNode(editor.children) && (
+                  <button
+                    className="mb-2 flex h-[28px] items-center justify-center rounded-md border border-muted-foreground bg-background p-1 text-xs  text-muted-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted"
+                    onClick={concatAudio}
+                  >
+                    Export as Single Audio File
+                  </button>
+                )}
+                {/* <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="mb-2 flex h-[28px] items-center justify-center rounded-md border border-muted-foreground bg-background p-1 text-xs  text-muted-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted">
                     Device
@@ -306,11 +313,12 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu> */}
-            </div>
-            <PreviewContent viewport={viewport} />
-          </TabsContent>
-        </Tabs>
+              </div>
+              <PreviewContent viewport={viewport} />
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
-    </div>
+    </AudioManagerProvider>
   );
 };

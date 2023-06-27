@@ -195,7 +195,7 @@ function AudioPlayer({
     <AudioPlayerStyle
       key={id}
       className={cn(
-        `relative flex items-center border border-gray-300 bg-white dark:border-gray-700 dark:bg-muted`,
+        `relative flex items-center  gap-2 border border-gray-300 bg-white dark:border-gray-700 dark:bg-muted`,
         classNames
       )}
     >
@@ -253,11 +253,11 @@ function AudioPlayer({
       )}
       {showAudioPlayer &&
         (isPlaying ? (
-          <div className="audioPlayer_current-time mr-1">
+          <div className="audioPlayer_current-time">
             {formatTime(Math.floor(seekValue))}
           </div>
         ) : (
-          <div className="audioPlayer_max-time mr-1">
+          <div className="audioPlayer_max-time">
             {formatTime(Math.floor(seekMax))}
           </div>
         ))}
@@ -266,7 +266,7 @@ function AudioPlayer({
           <TooltipTrigger>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="mr-3 flex h-[22px] items-center justify-center rounded-md border border-muted-foreground bg-background px-1 text-xs  text-muted-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted">
+                <button className="flex h-[22px] items-center justify-center rounded-md border border-muted-foreground bg-background px-1 text-xs  text-muted-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted">
                   {playbackSpeed}X{/* <ChevronDown className="ml-1 w-3" /> */}
                 </button>
               </DropdownMenuTrigger>

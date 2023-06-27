@@ -57,7 +57,7 @@ export function DownloadButton({
           </button>
         </TooltipTrigger>
         <TooltipContent
-          className="border-black  dark:bg-white dark:text-muted"
+          className=" border-black px-[5px] dark:bg-white dark:text-muted"
           side="top"
           sideOffset={10}
         >

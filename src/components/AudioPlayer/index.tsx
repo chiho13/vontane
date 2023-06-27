@@ -266,7 +266,7 @@ function AudioPlayer({
           <TooltipTrigger>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex h-[22px] items-center justify-center rounded-md border border-muted-foreground bg-background px-1 text-xs  text-muted-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted">
+                <button className="mr-2 flex  h-[22px] items-center justify-center rounded-md border border-muted-foreground bg-background px-1 text-xs  text-muted-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted">
                   {playbackSpeed}X{/* <ChevronDown className="ml-1 w-3" /> */}
                 </button>
               </DropdownMenuTrigger>
@@ -329,7 +329,7 @@ function AudioPlayer({
         </Tooltip>
       </TooltipProvider>
 
-      {showAudioPlayer && <DownloadButton url={audioURL} fileName={fileName} />}
+      {!isPreview && <DownloadButton url={audioURL} fileName={fileName} />}
     </AudioPlayerStyle>
   );
 }

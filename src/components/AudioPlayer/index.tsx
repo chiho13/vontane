@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 
 import { AudioPlayerStyle } from "./style";
 
@@ -11,6 +11,7 @@ import React from "react";
 import { DownloadButton } from "../DownloadButton";
 import { OptionMenu } from "../DocumentEditor/OptionMenu";
 import { IoIosPlay, IoIosPause } from "react-icons/io";
+import { AiFillSound } from "react-icons/ai";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { cn } from "@/utils/cn";
 
@@ -28,6 +29,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useLocalStorage } from "usehooks-ts";
+import { AudioManagerContext } from "@/contexts/PreviewAudioContext";
 
 interface Props {
   audioURL: string | null;
@@ -54,6 +56,7 @@ function AudioPlayer({
 
   const theme = useTheme();
 
+  const { playAudio, pauseAudio } = useContext(AudioManagerContext);
   const [generatedAudio, setGenerateAudio] = useState(null);
 
   const [isPlaying, setIsPlaying] = useState(false);
@@ -128,17 +131,33 @@ function AudioPlayer({
     }
   }, [playbackSpeed, generatedAudio]);
 
+  // const handlePlay = () => {
+  //   setIsPlaying(true);
+  //   if (generatedAudio) {
+
+  //     generatedAudio.play();
+  //   }
+  // };
+
+  // const handlePause = () => {
+  //   setIsPlaying(false);
+  //   generatedAudio?.pause();
+  // };
+
   const handlePlay = () => {
     setIsPlaying(true);
     if (generatedAudio) {
+      if (!showAudioPlayer) {
+        generatedAudio.currentTime = 0;
+      }
       generatedAudio.playbackRate = playbackSpeed;
-      generatedAudio.play();
+      playAudio(generatedAudio);
     }
   };
 
   const handlePause = () => {
     setIsPlaying(false);
-    generatedAudio?.pause();
+    pauseAudio();
   };
 
   const handleStop = () => {
@@ -199,16 +218,25 @@ function AudioPlayer({
         classNames
       )}
     >
-      <button
-        onClick={isPlaying ? handlePause : handlePlay}
-        className="play_pause_button group relative flex h-[24px] w-[24px] items-center justify-center rounded-full bg-brand transition duration-200 hover:bg-brand/90 dark:bg-foreground dark:hover:bg-brand"
-      >
-        {isPlaying ? (
-          <IoIosPause className="pause-icon h-5 w-5 text-white group-hover:text-gray-100 dark:text-brand  group-hover:dark:text-foreground" />
-        ) : (
-          <IoIosPlay className="play-icon relative left-[1px] h-5 w-5 text-white  group-hover:text-gray-100 dark:text-brand  group-hover:dark:text-foreground" />
-        )}
-      </button>
+      {showAudioPlayer ? (
+        <button
+          onClick={isPlaying ? handlePause : handlePlay}
+          className="play_pause_button group relative flex h-[24px] w-[24px] items-center justify-center rounded-full bg-brand transition duration-200 hover:bg-brand/90 dark:bg-foreground dark:hover:bg-brand"
+        >
+          {isPlaying ? (
+            <IoIosPause className="pause-icon h-5 w-5 text-white group-hover:text-gray-100 dark:text-brand  group-hover:dark:text-foreground" />
+          ) : (
+            <IoIosPlay className="play-icon relative left-[1px] h-5 w-5 text-white  group-hover:text-gray-100 dark:text-brand  group-hover:dark:text-foreground" />
+          )}
+        </button>
+      ) : (
+        <button
+          onClick={handlePlay}
+          className="play_pause_button group relative flex h-[24px] w-[24px] items-center justify-center rounded-full bg-brand transition duration-200 hover:bg-brand/90 dark:bg-foreground dark:hover:bg-brand"
+        >
+          <AiFillSound className="play-icon relative left-[1px] h-4 w-4 text-white  group-hover:text-gray-100 dark:text-brand  group-hover:dark:text-foreground" />
+        </button>
+      )}
 
       {showAudioPlayer && (
         <div
@@ -261,73 +289,75 @@ function AudioPlayer({
             {formatTime(Math.floor(seekMax))}
           </div>
         ))}
-      <TooltipProvider delayDuration={300}>
-        <Tooltip>
-          <TooltipTrigger>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="mr-2 flex  h-[22px] items-center justify-center rounded-md border border-muted-foreground bg-background px-1 text-xs  text-muted-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted">
-                  {playbackSpeed}X{/* <ChevronDown className="ml-1 w-3" /> */}
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="start"
-                className=" border border-gray-300 bg-background dark:border-gray-500 dark:bg-secondary"
-              >
-                <DropdownMenuItem
-                  className="dark:text-foreground hover:dark:bg-accent"
-                  onClick={() => setPlaybackSpeed(0.5)}
+      {showAudioPlayer && (
+        <TooltipProvider delayDuration={300}>
+          <Tooltip>
+            <TooltipTrigger>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="mr-2 flex  h-[22px] items-center justify-center rounded-md border border-muted-foreground bg-background px-1 text-xs  text-muted-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted">
+                    {playbackSpeed}X{/* <ChevronDown className="ml-1 w-3" /> */}
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="start"
+                  className=" border border-gray-300 bg-background dark:border-gray-500 dark:bg-secondary"
                 >
-                  <span className="text-foreground">0.5x</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="dark:text-foreground hover:dark:bg-accent"
-                  onClick={() => setPlaybackSpeed(0.75)}
-                >
-                  <span className="text-foreground">0.75x</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="hover:dark:bg-accent"
-                  onClick={() => setPlaybackSpeed(1.0)}
-                >
-                  <span className="text-foreground"> 1x</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="hover:dark:bg-accent"
-                  onClick={() => setPlaybackSpeed(1.25)}
-                >
-                  <span className="text-foreground"> 1.25x</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="hover:dark:bg-accent"
-                  onClick={() => setPlaybackSpeed(1.5)}
-                >
-                  <span className="text-foreground"> 1.5x</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="hover:dark:bg-accent"
-                  onClick={() => setPlaybackSpeed(1.75)}
-                >
-                  <span className="text-foreground"> 1.75x</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="hover:dark:bg-accent"
-                  onClick={() => setPlaybackSpeed(2.0)}
-                >
-                  <span className="text-foreground">2x</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </TooltipTrigger>
-          <TooltipContent
-            className="border-black  dark:bg-white dark:text-muted"
-            side="top"
-            sideOffset={10}
-          >
-            <p className="text-[12px]">Playback Speed</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+                  <DropdownMenuItem
+                    className="dark:text-foreground hover:dark:bg-accent"
+                    onClick={() => setPlaybackSpeed(0.5)}
+                  >
+                    <span className="text-foreground">0.5x</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="dark:text-foreground hover:dark:bg-accent"
+                    onClick={() => setPlaybackSpeed(0.75)}
+                  >
+                    <span className="text-foreground">0.75x</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="hover:dark:bg-accent"
+                    onClick={() => setPlaybackSpeed(1.0)}
+                  >
+                    <span className="text-foreground"> 1x</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="hover:dark:bg-accent"
+                    onClick={() => setPlaybackSpeed(1.25)}
+                  >
+                    <span className="text-foreground"> 1.25x</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="hover:dark:bg-accent"
+                    onClick={() => setPlaybackSpeed(1.5)}
+                  >
+                    <span className="text-foreground"> 1.5x</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="hover:dark:bg-accent"
+                    onClick={() => setPlaybackSpeed(1.75)}
+                  >
+                    <span className="text-foreground"> 1.75x</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="hover:dark:bg-accent"
+                    onClick={() => setPlaybackSpeed(2.0)}
+                  >
+                    <span className="text-foreground">2x</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </TooltipTrigger>
+            <TooltipContent
+              className="border-black  dark:bg-white dark:text-muted"
+              side="top"
+              sideOffset={10}
+            >
+              <p className="text-[12px]">Playback Speed</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
 
       {!isPreview && <DownloadButton url={audioURL} fileName={fileName} />}
     </AudioPlayerStyle>

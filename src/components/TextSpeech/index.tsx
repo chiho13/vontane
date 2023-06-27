@@ -193,11 +193,25 @@ export const TextSpeech = ({
     <div className="flex w-[95%] justify-between gap-2">
       <div className="relative flex items-center lg:max-w-[980px]">
         <div className="mr-2">
-          <VoiceDropdown
-            setSelectedVoiceId={setSelectedVoiceId}
-            selectedVoiceId={selectedVoiceId}
-            element={element}
-          />
+          <TooltipProvider delayDuration={300}>
+            <Tooltip>
+              <TooltipTrigger>
+                <VoiceDropdown
+                  setSelectedVoiceId={setSelectedVoiceId}
+                  selectedVoiceId={selectedVoiceId}
+                  element={element}
+                />
+              </TooltipTrigger>
+
+              <TooltipContent
+                className="border-black  dark:bg-white dark:text-muted"
+                side="top"
+                sideOffset={10}
+              >
+                <p className="text-[12px]">Choose Voice</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
 
         {selected && (

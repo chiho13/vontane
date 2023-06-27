@@ -230,7 +230,7 @@ export const TextSpeech = ({
                       onCheckedChange={showAudioPlayer}
                     />
                     <Label htmlFor="airplane-mode" className="text-xs">
-                      Audio Player
+                      Full Audio Player
                     </Label>
                   </div>
                 </TooltipTrigger>
@@ -240,7 +240,9 @@ export const TextSpeech = ({
                   side="top"
                   sideOffset={10}
                 >
-                  <p className="text-[12px]">Show / Hide in Preview</p>
+                  <p className="text-[12px]">
+                    Show Full Audio Player in Preview
+                  </p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>

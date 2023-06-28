@@ -65,6 +65,25 @@ export const PreviewContent = ({ viewport }) => {
             {children}
           </p>
         );
+
+      case "heading-one":
+        return (
+          <h1 className="text-4xl" key={key}>
+            {children}
+          </h1>
+        );
+      case "heading-two":
+        return (
+          <h2 className="text-3xl" key={key}>
+            {children}
+          </h2>
+        );
+      case "heading-three":
+        return (
+          <h3 className="text-2xl" key={key}>
+            {children}
+          </h3>
+        );
       case "tts":
         console.log(node.audioplayer);
         return (

@@ -213,7 +213,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                       />
                     </div>
 
-                    <div className=" truncate  rounded-md border border-gray-300 p-1 dark:border-gray-700">
+                    <div className=" truncate  rounded-md border border-gray-300 p-2 pl-3 dark:border-gray-700">
                       {audioData.content}{" "}
                     </div>
 

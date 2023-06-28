@@ -222,7 +222,7 @@ export const TextSpeech = ({
           />
         )}
       </div>
-      {selected && (
+      {selected && element.file_name && (
         <div
           className="flex grow items-center"
           // onMouseDown={(e) => {

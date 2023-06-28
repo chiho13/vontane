@@ -10,6 +10,15 @@ export const addMCQBlock = (editor, path) => {
     children: [
       {
         id: genNodeId(),
+        type: "paragraph",
+        children: [
+          {
+            text: "",
+          },
+        ],
+      },
+      {
+        id: genNodeId(),
         type: "option-list-item",
         children: [
           {

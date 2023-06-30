@@ -123,7 +123,7 @@ export const texttospeechRouter = createTRPCRouter({
         );
 
         // Extract the transcript from the response
-        const transcript = transcription.results;
+        const transcript = transcription.results.channels[0].alternatives[0];
 
         return { url: uploadedUrl, fileName, transcript };
       } catch (error) {

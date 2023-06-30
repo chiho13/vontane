@@ -36,7 +36,9 @@ export function extractTextValues(data) {
         if (child.type === "link") {
           paragraphText += child.children[0].text;
         } else {
-          paragraphText += child.text || (child.blank ? "BLANK" : "");
+          // Check for two or more underscores and replace with 'BLANK'
+          const text = child.text.replace(/_+/g, "BLANK");
+          paragraphText += text || (child.blank ? "BLANK" : "");
         }
       });
 

@@ -90,7 +90,7 @@ export const ElevenTTSWrapper = withConsecutiveGrouping((props) => {
         audio_url: element.audio_url,
         file_name: element.file_name,
         content: extractedText,
-        loading: false,
+        transcript: element.transcript,
       });
     } else if (element.type !== "tts" && audioData !== null) {
       setAudioData(null);

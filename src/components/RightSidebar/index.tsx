@@ -216,6 +216,11 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                     <div className=" truncate  rounded-md border border-gray-300 p-2 pl-3 dark:border-gray-700">
                       {audioData.content}{" "}
                     </div>
+                    {/* {audioData.transcript && (
+                      <div className=" truncate  rounded-md border border-gray-300 p-2 pl-3 dark:border-gray-700">
+                        {audioData.transcript?.transcript}{" "}
+                      </div>
+                    )} */}
 
                     <h3 className="text-bold mt-4 mb-2 text-sm">Share Audio</h3>
                     <div className="relative flex items-center">

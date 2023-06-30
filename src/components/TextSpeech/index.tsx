@@ -121,6 +121,7 @@ export const TextSpeech = ({
           audio_url: response.url,
           file_name: response.fileName,
           content: textSpeech,
+          transcript: response.transcript,
         });
         // setFileName(response.fileName);
 
@@ -131,6 +132,7 @@ export const TextSpeech = ({
             audio_url: response.url,
             file_name: response.fileName,
             content: textSpeech,
+            transcript: response.transcript,
           }, // New properties
           { at: path } // Location
         );

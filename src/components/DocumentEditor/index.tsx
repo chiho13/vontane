@@ -121,6 +121,7 @@ type CustomElement = {
   audioplayer: boolean;
   file_name: string;
   loading: boolean;
+  transcript: Object;
   latex?: string; // Add this line for the latex string
 };
 

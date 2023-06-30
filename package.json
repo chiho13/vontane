@@ -10,6 +10,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@deepgram/sdk": "^2.2.0",
     "@dnd-kit/core": "^6.0.8",
     "@dnd-kit/modifiers": "^6.0.1",
     "@dnd-kit/sortable": "^7.0.2",
@@ -37,6 +38,7 @@
     "@trpc/server": "^10.9.0",
     "@upstash/ratelimit": "^0.4.0",
     "@upstash/redis": "^1.20.1",
+    "axios": "^1.4.0",
     "babel-plugin-styled-components": "^2.0.7",
     "class-variance-authority": "^0.6.0",
     "classnames": "^2.3.2",

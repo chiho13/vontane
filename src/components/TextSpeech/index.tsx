@@ -81,6 +81,7 @@ export const TextSpeech = ({
   const path = ReactEditor.findPath(editor, element);
 
   const createTTSAudio = async () => {
+    setAudioIsLoading(true);
     if (element.audio_url) {
       try {
         const response = await deleteTTS.mutateAsync({
@@ -156,7 +157,7 @@ export const TextSpeech = ({
   async function generateAudio(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     event.stopPropagation();
-    setAudioIsLoading(true);
+
     setRightBarAudioIsLoading((prev) => ({ ...prev, [element.id]: true }));
     setShowRightSidebar(true);
     createTTSAudio();
@@ -217,22 +218,14 @@ export const TextSpeech = ({
         {selected && (
           <GenerateButton
             audioIsLoading={audioIsLoading}
-            onClick={rightBarAudioIsLoading ? undefined : generateAudio}
+            onClick={generateAudio}
             element={element}
           />
         )}
+        {audioIsLoading && <div>hi</div>}
       </div>
       {selected && element.file_name && (
-        <div
-          className="flex grow items-center"
-          // onMouseDown={(e) => {
-          //   // Prevent default action
-          //   e.preventDefault();
-
-          //   ReactEditor.focus(editor);
-          //   Transforms.select(editor, Editor.start(editor, path));
-          // }}
-        >
+        <div className="flex grow items-center">
           <div className="flex items-center space-x-2 ">
             <TooltipProvider delayDuration={300}>
               <Tooltip>

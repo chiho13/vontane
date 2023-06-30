@@ -72,43 +72,6 @@ const Home: NextPage = () => {
     }
   }, [workspaces, router, session]);
 
-  const {
-    data: texttospeechdata,
-    error: texttospeecherror,
-    isLoading: texttospeechloading,
-    refetch: texttospeechrefetch,
-  } = api.texttospeech.startConversion.useQuery(
-    { voice: selectedVoiceId, content: enteredText },
-    {
-      enabled: false,
-    }
-  );
-
-  const [isDisabled, setIsDisabled] = useState<boolean>(true);
-
-  useEffect(() => {
-    console.log(transcriptionId);
-  }, [transcriptionId]);
-
-  useEffect(() => {
-    if (audioIsLoading && !texttospeechloading) {
-      if (texttospeechdata) {
-        setTranscriptionId(texttospeechdata.transcriptionId);
-        console.log(texttospeechdata);
-      }
-
-      if (texttospeecherror) {
-        console.error(texttospeecherror);
-        // Handle the error as needed
-      }
-    }
-  }, [
-    audioIsLoading,
-    texttospeechdata,
-    texttospeecherror,
-    texttospeechloading,
-  ]);
-
   useEffect(() => {
     return () => setLoading(false);
   }, []);

@@ -4,6 +4,12 @@ export function extractTextValues(data) {
   function traverse(item) {
     let accumulator = [];
 
+    if (item.children) {
+      item.children.forEach((child) => {
+        accumulator.push(...traverse(child));
+      });
+    }
+
     if (
       item.type === "title" ||
       item.type === "heading-one" ||
@@ -48,8 +54,6 @@ export function extractTextValues(data) {
     }
 
     if (item.type === "mcq") {
-      // questionCounter++;
-
       const pronunciationAlphabet = [
         "A",
         "B",
@@ -78,38 +82,30 @@ export function extractTextValues(data) {
         "Why",
         "Zee",
       ];
-      // Filter to only get children of type 'option-list-item'
-      const options = item.children.filter(
-        (child) => child.type === "option-list-item"
-      );
+
       let optionsText = "";
 
-      options.forEach((option, index) => {
-        const optionLetter = pronunciationAlphabet[index];
-        const isFirstOption = index === 0;
-        const isLastOption = index === options.length - 1;
+      item.children
+        .filter((child) => child.type === "option-list-item")
+        .forEach((option, index) => {
+          const optionLetter = pronunciationAlphabet[index];
+          const isFirstOption = index === 0;
+          const isLastOption = index === item.children.length - 1;
 
-        const optionText = option.children[0].text;
+          const optionText = option.children[0].text;
 
-        if (isFirstOption) {
-          optionsText += `\noption ${optionLetter}: ${optionText}.. \n`;
-        } else if (isLastOption) {
-          optionsText += `option ${optionLetter}:  ${optionText} `;
-        } else {
-          optionsText += `option ${optionLetter}: ${optionText}..  \n`;
-        }
-      });
+          if (isFirstOption) {
+            optionsText += `\noption ${optionLetter}: ${optionText}.. \n`;
+          } else if (isLastOption) {
+            optionsText += `option ${optionLetter}:  ${optionText} `;
+          } else {
+            optionsText += `option ${optionLetter}: ${optionText}..  \n`;
+          }
+        });
 
       if (optionsText.trim() !== "") {
-        // Check if options text is not empty
         accumulator.push(optionsText);
       }
-    }
-
-    if (item.children) {
-      item.children.forEach((child) => {
-        accumulator.push(...traverse(child));
-      });
     }
 
     return accumulator;

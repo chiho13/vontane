@@ -11,6 +11,10 @@ import axios from "axios";
 import stream from "stream";
 import util from "util";
 
+import { Deepgram } from "@deepgram/sdk";
+
+const deepgram = new Deepgram(process.env.DEEPGRAM_SECRET || "");
+
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -100,14 +104,28 @@ export const texttospeechRouter = createTRPCRouter({
           input.workspaceId
         );
 
-        await downloadFile(uploadedUrl, "temp.mp3");
+        // await downloadFile(uploadedUrl, "temp.mp3");
 
-        const { data } = await openai.createTranscription(
-          fs.createReadStream("temp.mp3"),
-          "whisper-1"
+        // const { data } = await openai.createTranscription(
+        //   fs.createReadStream("temp.mp3"),
+        //   "whisper-1"
+        // );
+
+        // Transcribe the audio
+        // Sending the URL to a file
+        const audioSource = { url: uploadedUrl };
+        const transcription = await deepgram.transcription.preRecorded(
+          audioSource,
+          {
+            punctuate: true,
+            smart_format: true,
+          }
         );
 
-        return { url: uploadedUrl, fileName, transcript: data };
+        // Extract the transcript from the response
+        const transcript = transcription.results;
+
+        return { url: uploadedUrl, fileName, transcript };
       } catch (error) {
         console.error(error);
         throw new TRPCError({

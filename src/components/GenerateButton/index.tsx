@@ -13,7 +13,7 @@ interface GenerateButtonProps {
 
 function GenerateButton({
   isDisabled,
-  audioIsLoading,
+  audioIsLoading = true,
   onClick,
   element,
 }: GenerateButtonProps) {

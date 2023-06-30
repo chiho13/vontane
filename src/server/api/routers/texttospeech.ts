@@ -4,8 +4,30 @@ import { TRPCError } from "@trpc/server";
 import { uploadAudioToSupabase } from "@/server/lib/uploadAudio";
 import { nanoid } from "nanoid";
 
+import { Configuration, OpenAIApi } from "openai";
+
+import fs from "fs";
+import axios from "axios";
+import stream from "stream";
+import util from "util";
+
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+const openai = new OpenAIApi(configuration);
+
 const secretkey = process.env.ELEVENLABS_APIKEY;
 const userId = process.env.PLAYHT_USERID;
+const pipeline = util.promisify(stream.pipeline);
+
+async function downloadFile(url, filePath) {
+  const response = await axios({
+    url,
+    responseType: "stream",
+  });
+
+  await pipeline(response.data, fs.createWriteStream(filePath));
+}
 
 export const texttospeechRouter = createTRPCRouter({
   getVoices: protectedProcedure.query(async () => {
@@ -77,7 +99,15 @@ export const texttospeechRouter = createTRPCRouter({
           fileName,
           input.workspaceId
         );
-        return { url: uploadedUrl, fileName };
+
+        await downloadFile(uploadedUrl, "temp.mp3");
+
+        const { data } = await openai.createTranscription(
+          fs.createReadStream("temp.mp3"),
+          "whisper-1"
+        );
+
+        return { url: uploadedUrl, fileName, transcript: data };
       } catch (error) {
         console.error(error);
         throw new TRPCError({

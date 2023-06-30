@@ -70,6 +70,7 @@
     "slate-hyperscript": "^0.77.0",
     "slate-react": "^0.92.0",
     "socket.io-client": "^4.6.1",
+    "stream": "^0.0.2",
     "stripe": "^12.3.0",
     "styled-components": "^5.3.8",
     "superjson": "1.9.1",

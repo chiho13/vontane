@@ -51,6 +51,7 @@ export const MCQElement: React.FC<MCQElementProps> = withQuestionNumbering(
     useEffect(() => {
       Transforms.setNodes(editor, { questionNumber }, { at: path });
     }, []);
+    console.log(JSON.stringify(element));
     return (
       <div
         {...attributes}

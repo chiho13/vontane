@@ -218,25 +218,16 @@ function AudioPlayer({
         classNames
       )}
     >
-      {showAudioPlayer ? (
-        <button
-          onClick={isPlaying ? handlePause : handlePlay}
-          className="play_pause_button group relative flex h-[24px] w-[24px] items-center justify-center rounded-full bg-brand transition duration-200 hover:bg-brand/90 dark:bg-foreground dark:hover:bg-brand"
-        >
-          {isPlaying ? (
-            <IoIosPause className="pause-icon h-5 w-5 text-white group-hover:text-gray-100 dark:text-brand  group-hover:dark:text-foreground" />
-          ) : (
-            <IoIosPlay className="play-icon relative left-[1px] h-5 w-5 text-white  group-hover:text-gray-100 dark:text-brand  group-hover:dark:text-foreground" />
-          )}
-        </button>
-      ) : (
-        <button
-          onClick={handlePlay}
-          className="play_pause_button group relative flex h-[24px] w-[24px] items-center justify-center rounded-full bg-brand transition duration-200 hover:bg-brand/90 dark:bg-foreground dark:hover:bg-brand"
-        >
-          <AiFillSound className="play-icon relative left-[1px] h-4 w-4 text-white  group-hover:text-gray-100 dark:text-brand  group-hover:dark:text-foreground" />
-        </button>
-      )}
+      <button
+        onClick={isPlaying ? handlePause : handlePlay}
+        className="play_pause_button group relative flex h-[24px] w-[24px] items-center justify-center rounded-full bg-brand transition duration-200 hover:bg-brand/90 dark:bg-foreground dark:hover:bg-brand"
+      >
+        {isPlaying ? (
+          <IoIosPause className="pause-icon h-5 w-5 text-white group-hover:text-gray-100 dark:text-brand  group-hover:dark:text-foreground" />
+        ) : (
+          <IoIosPlay className="play-icon relative left-[1px] h-5 w-5 text-white  group-hover:text-gray-100 dark:text-brand  group-hover:dark:text-foreground" />
+        )}
+      </button>
 
       {showAudioPlayer && (
         <div

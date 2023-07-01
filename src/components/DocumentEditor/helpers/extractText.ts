@@ -97,11 +97,11 @@ export function extractTextValues(data) {
           const optionText = option.children[0].text;
 
           if (isFirstOption) {
-            optionsText += `\noption ${optionLetter}: ${optionText}.. \n`;
+            optionsText += `${optionText}.. \n`;
           } else if (isLastOption) {
-            optionsText += `option ${optionLetter}:  ${optionText} `;
+            optionsText += `${optionText} `;
           } else {
-            optionsText += `option ${optionLetter}: ${optionText}..  \n`;
+            optionsText += `${optionText}..  \n`;
           }
         });
 

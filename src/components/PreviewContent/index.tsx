@@ -15,6 +15,7 @@ import LoadingSpinner from "@/icons/LoadingSpinner";
 import AudioPlayer from "@/components/AudioPlayer";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { CollapsibleAudioPlayer } from "@/components/PreviewContent/PreviewElements/CollapsibleAudio";
+import { MCQ } from "@/components/PreviewContent/PreviewElements/MCQ";
 
 import {
   Collapsible,
@@ -55,8 +56,6 @@ export const PreviewContent = ({ viewport }) => {
     }
   }, [fromEditor.children]);
 
-  console.log(fromEditor.children);
-
   const renderElement = (node, children, key, rootNode) => {
     switch (node.type) {
       case "paragraph":
@@ -84,6 +83,8 @@ export const PreviewContent = ({ viewport }) => {
             {children}
           </h3>
         );
+      case "mcq":
+        return <MCQ node={node} key={key} children={children} />;
       case "tts":
         console.log(node.audioplayer);
         return (

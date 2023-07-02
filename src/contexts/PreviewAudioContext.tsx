@@ -1,13 +1,19 @@
 import React, { createContext, useState, FunctionComponent } from "react";
 
+type SearchWordTimestamp = { start: number; end: number }[];
+
 type AudioContextType = {
   playAudio: (audio: HTMLAudioElement) => void;
   pauseAudio: () => void;
+  timestamps: SearchWordTimestamp;
+  setTimestamps: (value: SearchWordTimestamp) => void;
 };
 
 const defaultAudioContext: AudioContextType = {
   playAudio: () => {},
   pauseAudio: () => {},
+  timestamps: [],
+  setTimestamps: () => {},
 };
 
 export const AudioManagerContext =
@@ -23,6 +29,7 @@ export const AudioManagerProvider: FunctionComponent<
   const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(
     null
   );
+  const [timestamps, setTimestamps] = useState<SearchWordTimestamp>([]);
 
   const playAudio = (audio: HTMLAudioElement) => {
     if (currentAudio && currentAudio !== audio) {

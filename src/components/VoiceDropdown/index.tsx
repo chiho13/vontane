@@ -222,13 +222,23 @@ function VoiceDropdown({
   const stopButtonRef = useRef<HTMLDivElement>(null);
   const desktopbreakpoint = window.screen.width > breakpoints.lg;
 
-  function handleVoiceSelection(voice: string, name: string): void {
-    setSelectedVoiceId(voice);
-    setSelectedItemText(name);
+  function handleVoiceSelection(voice: {
+    voice_id?: string;
+    name: any;
+    labels?: { accent: string; age: string; gender: string };
+    preview_url?: {};
+    voiceid?: any;
+  }): void {
+    setSelectedVoiceId(voice.voiceid);
+    setSelectedItemText(voice.name);
     // setSelectedItemText(name);
     Transforms.setNodes(
       editor,
-      { voice_id: voice, name }, // New properties
+      {
+        voice_id: voice.voice_id,
+        name: voice.name,
+        accent: voice.labels?.accent,
+      }, // New properties
       { at: path } // Location
     );
 
@@ -404,10 +414,11 @@ function VoiceDropdown({
     const capitalize = (str: string) =>
       str && str.charAt(0).toUpperCase() + str.slice(1);
 
+    console.log(voice);
     return (
       <tr
         key={index}
-        onClick={(e) => handleVoiceSelection(voice.voice_id, voice.name)}
+        onClick={(e) => handleVoiceSelection(voice)}
         className="cursor-pointer transition duration-200 hover:bg-gray-200 hover:dark:bg-accent"
         tabIndex={0}
         role="row"

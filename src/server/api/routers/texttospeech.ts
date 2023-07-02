@@ -60,6 +60,7 @@ export const texttospeechRouter = createTRPCRouter({
     .input(
       z.object({
         voice_id: z.string(),
+        accent: z.string(),
         content: z.string(),
         workspaceId: z.string(),
       })
@@ -113,12 +114,31 @@ export const texttospeechRouter = createTRPCRouter({
 
         // Transcribe the audio
         // Sending the URL to a file
+
+        let apiAccent;
+        switch (input.accent) {
+          case "british":
+            apiAccent = "en-GB";
+            break;
+          case "american":
+            apiAccent = "en-US";
+            break;
+          case "australian":
+            apiAccent = "en-AU";
+            break;
+          default:
+            // Default to en-US if accent value is not recognized
+            apiAccent = "en-US";
+            break;
+        }
+
         const audioSource = { url: uploadedUrl };
         const transcription = await deepgram.transcription.preRecorded(
           audioSource,
           {
             punctuate: true,
             smart_format: true,
+            language: apiAccent,
           }
         );
 

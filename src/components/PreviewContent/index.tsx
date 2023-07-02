@@ -29,6 +29,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { AudioManagerContext } from "@/contexts/PreviewAudioContext";
 
 export const PreviewContent = ({ viewport }) => {
   const { editor: fromEditor, activePath } = useContext(EditorContext);
@@ -56,7 +57,29 @@ export const PreviewContent = ({ viewport }) => {
     }
   }, [fromEditor.children]);
 
+  let lastTranscript = null;
+
+  const isMCQPresent = (children) => {
+    if (Array.isArray(children)) {
+      for (let child of children) {
+        if (child.node && child.node.type === "mcq") {
+          return true;
+        }
+
+        // If the child has its own children, check them too
+        if (Array.isArray(child.children)) {
+          if (isMCQPresent(child.children)) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  };
+
   const renderElement = (node, children, key, rootNode) => {
+    console.log(node.type);
+
     switch (node.type) {
       case "paragraph":
         return (
@@ -83,13 +106,16 @@ export const PreviewContent = ({ viewport }) => {
             {children}
           </h3>
         );
-      case "mcq":
-        return <MCQ node={node} key={key} children={children} />;
       case "tts":
-        console.log(node.audioplayer);
+        // Check if any child node is of type "mcq"
+        // Check if any child node is of type "mcq"
+
         return (
           <CollapsibleAudioPlayer node={node} children={children} key={key} />
         );
+      case "mcq":
+        return <MCQ node={node} key={key} children={children} />;
+
       default:
         return <span key={key}>{children}</span>;
     }

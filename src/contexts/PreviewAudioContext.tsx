@@ -1,4 +1,11 @@
-import React, { createContext, useState, FunctionComponent } from "react";
+import React, {
+  createContext,
+  useState,
+  FunctionComponent,
+  useEffect,
+} from "react";
+
+type Transcript = string;
 
 type SearchWordTimestamp = { start: number; end: number }[];
 
@@ -7,6 +14,8 @@ type AudioContextType = {
   pauseAudio: () => void;
   timestamps: SearchWordTimestamp;
   setTimestamps: (value: SearchWordTimestamp) => void;
+  transcript: Transcript;
+  setTranscript: (value: Transcript) => void;
 };
 
 const defaultAudioContext: AudioContextType = {
@@ -14,6 +23,8 @@ const defaultAudioContext: AudioContextType = {
   pauseAudio: () => {},
   timestamps: [],
   setTimestamps: () => {},
+  transcript: "", // default value for transcript
+  setTranscript: () => {}, // adjust setter
 };
 
 export const AudioManagerContext =
@@ -30,6 +41,7 @@ export const AudioManagerProvider: FunctionComponent<
     null
   );
   const [timestamps, setTimestamps] = useState<SearchWordTimestamp>([]);
+  const [transcript, setTranscript] = useState<Transcript>(""); // adjust useState
 
   const playAudio = (audio: HTMLAudioElement) => {
     if (currentAudio && currentAudio !== audio) {
@@ -45,11 +57,31 @@ export const AudioManagerProvider: FunctionComponent<
     }
   };
 
+  // useEffect(() => {
+  //   if (currentAudio && timestamps.length > 0) {
+  //     currentAudio.currentTime = timestamps[0].start; // assuming timestamps is an array of objects with start and end properties
+  //     currentAudio.play();
+
+  //     const intervalId = setInterval(() => {
+  //       if (currentAudio.currentTime >= timestamps[0].end) {
+  //         currentAudio.pause();
+  //         clearInterval(intervalId);
+  //       }
+  //     }, 1000); // checks every second
+
+  //     return () => clearInterval(intervalId);
+  //   }
+  // }, [timestamps, currentAudio]);
+
   return (
     <AudioManagerContext.Provider
       value={{
+        timestamps,
+        setTimestamps,
         playAudio,
         pauseAudio,
+        transcript,
+        setTranscript,
       }}
     >
       {children}

@@ -115,6 +115,7 @@ type CustomElement = {
   questionNumber?: number;
   voice_id: string;
   name: string;
+  accent: string;
   content: string;
   liveContent: string;
   audio_url: string;

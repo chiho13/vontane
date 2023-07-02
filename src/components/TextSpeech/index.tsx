@@ -94,6 +94,7 @@ export const TextSpeech = ({
             audio_url: "",
             file_name: "",
             content: "",
+            transcript: "",
           });
           // setFileName(response.fileName);
 
@@ -110,6 +111,7 @@ export const TextSpeech = ({
     try {
       const response = await startTTS.mutateAsync({
         voice_id: selectedVoiceId,
+        accent: element.accent,
         content: textSpeech,
         workspaceId,
       });
@@ -135,6 +137,17 @@ export const TextSpeech = ({
             transcript: response.transcript,
           }, // New properties
           { at: path } // Location
+        );
+
+        let childPath = [...path, 0];
+        Transforms.setNodes(
+          editor,
+          {
+            audio_url: response.url,
+            content: textSpeech,
+            transcript: response.transcript,
+          },
+          { at: childPath }
         );
       }
     } catch (error) {

@@ -34,7 +34,7 @@ export const MCQ = ({ node, children }) => {
               <label
                 htmlFor={item.id}
                 key={i}
-                className={`mb-1 mt-1 flex  cursor-pointer items-center rounded-md border border-gray-700 p-2 ${
+                className={`mb-1 mt-1 flex  cursor-pointer items-center rounded-md border border-gray-700 p-2 transition duration-300 hover:border-gray-500 hover:bg-accent/50 ${
                   selectedOption === item.id
                     ? " border-brand bg-brand text-white dark:border-foreground dark:bg-white dark:text-background "
                     : ""

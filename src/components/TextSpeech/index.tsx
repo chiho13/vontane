@@ -58,7 +58,7 @@ export const TextSpeech = ({
   const [transcriptionId, setTranscriptionId] = useState<string>("");
 
   const [audioChecked, setAudioChecked] = useState(element.audioplayer);
-
+  const containsMCQ = element.children.some((child) => child.type === "mcq");
   const {
     audioData,
     setAudioData,
@@ -239,7 +239,7 @@ export const TextSpeech = ({
         )}
         {audioIsLoading && <div>hi</div>}
       </div>
-      {selected && element.file_name && (
+      {!containsMCQ && selected && element.file_name && (
         <div className="flex grow items-center">
           <div className="flex items-center space-x-2 ">
             <TooltipProvider delayDuration={300}>

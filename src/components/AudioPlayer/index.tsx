@@ -229,126 +229,121 @@ function AudioPlayer({
         )}
       </button>
 
-      {showAudioPlayer && (
-        <div
-          className="audioPlayer_timeline_container group "
-          onMouseDown={handleSeekStart}
-          onMouseUp={handleSeekEnd}
-          onMouseMove={handleSeekMove}
-          onMouseEnter={handleMouseOver}
-          onMouseLeave={handleMouseLeave}
-        >
-          <div className="audioPlayer_timeline bg-gray-300 dark:bg-gray-700">
+      <div
+        className="audioPlayer_timeline_container group "
+        onMouseDown={handleSeekStart}
+        onMouseUp={handleSeekEnd}
+        onMouseMove={handleSeekMove}
+        onMouseEnter={handleMouseOver}
+        onMouseLeave={handleMouseLeave}
+      >
+        <div className="audioPlayer_timeline bg-gray-300 dark:bg-gray-700">
+          <div
+            className="audioPlayer_timeline_track  bg-gray-400 bg-muted-foreground group-hover:bg-brand dark:bg-foreground"
+            style={{
+              width: `${
+                seekValue === seekMax
+                  ? "100"
+                  : (Math.floor(seekValue) / seekMax) * 100
+              }%`,
+              borderTopRightRadius: `${seekValue === seekMax ? "3px" : "0"}`,
+              borderBottomRightRadius: `${seekValue === seekMax ? "3px" : "0"}`,
+            }}
+          ></div>
+          {/* {showNib && <div className="audioPlayer_nib"></div>} */}
+          {showNib && (
             <div
-              className="audioPlayer_timeline_track  bg-gray-400 bg-muted-foreground group-hover:bg-brand dark:bg-foreground"
+              className="audioPlayer_nib"
               style={{
-                width: `${
+                left: `${
                   seekValue === seekMax
                     ? "100"
                     : (Math.floor(seekValue) / seekMax) * 100
                 }%`,
-                borderTopRightRadius: `${seekValue === seekMax ? "3px" : "0"}`,
-                borderBottomRightRadius: `${
-                  seekValue === seekMax ? "3px" : "0"
-                }`,
+                transform: "translateX(-6px)",
               }}
             ></div>
-            {/* {showNib && <div className="audioPlayer_nib"></div>} */}
-            {showNib && (
-              <div
-                className="audioPlayer_nib"
-                style={{
-                  left: `${
-                    seekValue === seekMax
-                      ? "100"
-                      : (Math.floor(seekValue) / seekMax) * 100
-                  }%`,
-                  transform: "translateX(-6px)",
-                }}
-              ></div>
-            )}
-          </div>
+          )}
+        </div>
+      </div>
+
+      {isPlaying ? (
+        <div className="audioPlayer_current-time">
+          {formatTime(Math.floor(seekValue))}
+        </div>
+      ) : (
+        <div className="audioPlayer_max-time">
+          {formatTime(Math.floor(seekMax))}
         </div>
       )}
-      {showAudioPlayer &&
-        (isPlaying ? (
-          <div className="audioPlayer_current-time">
-            {formatTime(Math.floor(seekValue))}
-          </div>
-        ) : (
-          <div className="audioPlayer_max-time">
-            {formatTime(Math.floor(seekMax))}
-          </div>
-        ))}
-      {showAudioPlayer && (
-        <TooltipProvider delayDuration={300}>
-          <Tooltip>
-            <TooltipTrigger>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="mr-2 flex  h-[22px] items-center justify-center rounded-md border border-muted-foreground bg-background px-1 text-xs  text-muted-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted">
-                    {playbackSpeed}X{/* <ChevronDown className="ml-1 w-3" /> */}
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="start"
-                  className=" border border-gray-300 bg-background dark:border-gray-500 dark:bg-secondary"
+
+      <TooltipProvider delayDuration={300}>
+        <Tooltip>
+          <TooltipTrigger>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="mr-2 flex  h-[22px] items-center justify-center rounded-md border border-muted-foreground bg-background px-1 text-xs  text-muted-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted">
+                  {playbackSpeed}X{/* <ChevronDown className="ml-1 w-3" /> */}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="start"
+                className=" border border-gray-300 bg-background dark:border-gray-500 dark:bg-secondary"
+              >
+                <DropdownMenuItem
+                  className="dark:text-foreground hover:dark:bg-accent"
+                  onClick={() => setPlaybackSpeed(0.5)}
                 >
-                  <DropdownMenuItem
-                    className="dark:text-foreground hover:dark:bg-accent"
-                    onClick={() => setPlaybackSpeed(0.5)}
-                  >
-                    <span className="text-foreground">0.5x</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="dark:text-foreground hover:dark:bg-accent"
-                    onClick={() => setPlaybackSpeed(0.75)}
-                  >
-                    <span className="text-foreground">0.75x</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="hover:dark:bg-accent"
-                    onClick={() => setPlaybackSpeed(1.0)}
-                  >
-                    <span className="text-foreground"> 1x</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="hover:dark:bg-accent"
-                    onClick={() => setPlaybackSpeed(1.25)}
-                  >
-                    <span className="text-foreground"> 1.25x</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="hover:dark:bg-accent"
-                    onClick={() => setPlaybackSpeed(1.5)}
-                  >
-                    <span className="text-foreground"> 1.5x</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="hover:dark:bg-accent"
-                    onClick={() => setPlaybackSpeed(1.75)}
-                  >
-                    <span className="text-foreground"> 1.75x</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="hover:dark:bg-accent"
-                    onClick={() => setPlaybackSpeed(2.0)}
-                  >
-                    <span className="text-foreground">2x</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </TooltipTrigger>
-            <TooltipContent
-              className="border-black  dark:bg-white dark:text-muted"
-              side="top"
-              sideOffset={10}
-            >
-              <p className="text-[12px]">Playback Speed</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      )}
+                  <span className="text-foreground">0.5x</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="dark:text-foreground hover:dark:bg-accent"
+                  onClick={() => setPlaybackSpeed(0.75)}
+                >
+                  <span className="text-foreground">0.75x</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="hover:dark:bg-accent"
+                  onClick={() => setPlaybackSpeed(1.0)}
+                >
+                  <span className="text-foreground"> 1x</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="hover:dark:bg-accent"
+                  onClick={() => setPlaybackSpeed(1.25)}
+                >
+                  <span className="text-foreground"> 1.25x</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="hover:dark:bg-accent"
+                  onClick={() => setPlaybackSpeed(1.5)}
+                >
+                  <span className="text-foreground"> 1.5x</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="hover:dark:bg-accent"
+                  onClick={() => setPlaybackSpeed(1.75)}
+                >
+                  <span className="text-foreground"> 1.75x</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="hover:dark:bg-accent"
+                  onClick={() => setPlaybackSpeed(2.0)}
+                >
+                  <span className="text-foreground">2x</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </TooltipTrigger>
+          <TooltipContent
+            className="border-black  dark:bg-white dark:text-muted"
+            side="top"
+            sideOffset={10}
+          >
+            <p className="text-[12px]">Playback Speed</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
 
       {!isPreview && <DownloadButton url={audioURL} fileName={fileName} />}
     </AudioPlayerStyle>

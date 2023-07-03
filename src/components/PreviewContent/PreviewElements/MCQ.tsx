@@ -5,11 +5,12 @@ import { AudioManagerContext } from "@/contexts/PreviewAudioContext";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { AiFillSound } from "react-icons/ai";
 import { extractTextValues } from "@/components/DocumentEditor/helpers/extractText";
+import { last } from "lodash";
 function searchWordInTranscript(transcript, searchTerm) {
   let result = [];
 
   // Split the search term into individual words
-  let searchWords = searchTerm.split(" ");
+  let searchWords = searchTerm.toLowerCase().split(" ");
 
   let i = 0;
   while (i < transcript.length) {
@@ -62,7 +63,7 @@ export const MCQ = ({ node, children }) => {
 
   const playAudioSegment = (audioUrl, start, end) => {
     // Stop the current audio if it's playing
-    if (currentAudio) {
+    if (currentAudio && !currentAudio.paused) {
       currentAudio.pause();
       currentAudio.currentTime = 0;
     }
@@ -76,12 +77,20 @@ export const MCQ = ({ node, children }) => {
     const stopAudioAt = end;
     const intervalId = setInterval(() => {
       if (currentAudio && currentAudio.currentTime >= stopAudioAt) {
-        currentAudio.pause();
-        currentAudio.currentTime = 0;
-        currentAudio = null; // Clear the current audio
-        clearInterval(intervalId);
+        clearInterval(intervalId); // Clear the interval function
+        if (currentAudio) {
+          currentAudio.pause();
+          currentAudio.currentTime = 0;
+          currentAudio = null; // Clear the current audio
+        }
       }
     }, 10);
+  };
+
+  const playEntireAudio = (audioUrl) => {
+    currentAudio = new Audio(audioUrl);
+    currentAudio.currentTime = 0;
+    currentAudio.play();
   };
 
   const getApproximateTimestamp = (text, labeltext) => {
@@ -90,9 +99,14 @@ export const MCQ = ({ node, children }) => {
       word.toLowerCase().includes(labeltext.toLowerCase())
     );
 
-    const start = calculateApproximateStartTime(words, startIndex);
-    const end = calculateApproximateEndTime(words, startIndex);
-    return { start, end };
+    if (startIndex !== -1) {
+      const start = calculateApproximateStartTime(words, startIndex);
+      const end = calculateApproximateEndTime(words, startIndex);
+      return { start, end };
+    }
+
+    // If labeltext is not found, return a default timestamp
+    return { start: 0, end: 1 };
   };
 
   const calculateApproximateStartTime = (words, startIndex) => {
@@ -109,30 +123,25 @@ export const MCQ = ({ node, children }) => {
 
   const playQuestion = (item) => {
     const text = item.replace(/_+/g, "BLANK");
-    let cleanedSentence = text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
+    let cleanedSentence = text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g, "");
 
     let words = cleanedSentence.split(" ").filter((word) => word);
     let lastWord = words[words.length - 1];
 
+    console.log(lastWord);
     const timestamp = searchWordInTranscript(node.transcript.words, lastWord);
-    playAudioSegment(node.audio_url, 0, timestamp[0].end);
+    if (timestamp.length > 0) {
+      playAudioSegment(node.audio_url, 0, timestamp[0].end);
+    } else {
+      playEntireAudio(node.audio_url); // Pass null or an appropriate value for end timestamp
+    }
   };
 
   const playThisOption = (labeltext) => {
     const timestamp = searchWordInTranscript(node.transcript.words, labeltext);
 
     // If the exact match is not found, approximate the timestamp
-    if (!timestamp || timestamp.length === 0) {
-      const approximateTimestamp = getApproximateTimestamp(
-        node.content,
-        labeltext
-      );
-      playAudioSegment(
-        node.audio_url,
-        approximateTimestamp.start,
-        approximateTimestamp.end
-      );
-    } else {
+    if (timestamp.length > 0) {
       playAudioSegment(node.audio_url, timestamp[0].start, timestamp[0].end);
     }
   };

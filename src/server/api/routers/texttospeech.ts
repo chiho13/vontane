@@ -136,9 +136,9 @@ export const texttospeechRouter = createTRPCRouter({
         const transcription = await deepgram.transcription.preRecorded(
           audioSource,
           {
-            punctuate: true,
-            smart_format: true,
-            language: apiAccent,
+            language: "en",
+            model: "nova",
+            keywords: input.content.replace(/--/g, "").split(" "),
           }
         );
 

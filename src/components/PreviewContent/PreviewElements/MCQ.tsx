@@ -127,35 +127,53 @@ export const MCQ = ({ node, children }) => {
   };
 
   console.log(node);
+
+  let paragraphs = [];
+  let optionCounter = 0;
+
+  node.children.forEach((item) => {
+    if (item.type === "paragraph") {
+      paragraphs.push(item.children[0].text);
+    }
+  });
+
+  const fullQ = paragraphs.join(" ");
+
   return (
     <div>
+      <div className="relative mb-3 flex items-start gap-5 p-2">
+        <button
+          className="group relative flex items-center justify-center rounded-full bg-brand transition duration-200 hover:bg-brand/90 dark:bg-foreground dark:hover:bg-brand"
+          style={{
+            width: "24px",
+            height: "24px",
+            minWidth: "24px",
+            minHeight: "24px",
+            top: "5px",
+          }}
+          onClick={() => playQuestion(fullQ)}
+        >
+          <AiFillSound className="play-icon relative left-[1px] h-5 w-5 text-white  group-hover:text-gray-100 dark:text-brand  group-hover:dark:text-foreground" />
+        </button>
+        <div className="container">
+          {paragraphs.map((text, i) => (
+            <p key={i} className="mb-2">
+              {text}
+            </p>
+          ))}
+        </div>
+      </div>
       {node.children.map((item, i) => {
         switch (item.type) {
-          case "paragraph":
-            return (
-              <div className="mb-3 flex items-center p-2">
-                <button
-                  className="group relative flex items-center justify-center rounded-full bg-brand transition duration-200 hover:bg-brand/90 dark:bg-foreground dark:hover:bg-brand"
-                  style={{
-                    width: "24px",
-                    height: "24px",
-                    minWidth: "24px",
-                    minHeight: "24px",
-                  }}
-                  onClick={() => playQuestion(item.children[0].text)}
-                >
-                  <AiFillSound className="play-icon relative left-[1px] h-4 w-4 text-white  group-hover:text-gray-100 dark:text-brand  group-hover:dark:text-foreground" />
-                </button>
-                <p className="ml-4 " key={i}>
-                  {item.children[0].text}
-                </p>
-              </div>
-            );
+          case "image":
+            return <img src={item.url} width={item.width} />;
           case "option-list-item":
+            optionCounter++;
             return (
               <label
                 htmlFor={item.id}
                 key={i}
+                tabIndex={-1}
                 className={`mb-3 mt-3 flex  cursor-pointer items-center rounded-md border border-gray-700 p-2 transition duration-300 hover:border-gray-500 hover:bg-accent/50 ${
                   selectedOption === item.id
                     ? " border-brand bg-brand text-white dark:border-foreground dark:bg-gray-300 dark:text-background "
@@ -179,7 +197,7 @@ export const MCQ = ({ node, children }) => {
                       : "border-gray-700"
                   }`}
                 >
-                  {String.fromCharCode(65 + i - 1).toUpperCase()}{" "}
+                  {String.fromCharCode(65 + optionCounter - 1).toUpperCase()}{" "}
                 </div>
                 {item.children[0].text}
               </label>

@@ -97,7 +97,7 @@ export function extractTextValues(data) {
           const optionText = option.children[0].text;
 
           if (isFirstOption) {
-            optionsText += `option ${optionLetter} --  ${optionText} -- \n`;
+            optionsText += ` -- option ${optionLetter} --  ${optionText} -- \n`;
           } else if (isLastOption) {
             optionsText += `option ${optionLetter} --  ${optionText}.`;
           } else {

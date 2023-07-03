@@ -383,7 +383,12 @@ export const ImageEmbedLink = () => {
       newUrl = "/images/imagenotfound.png";
     }
 
-    const newElement = { ...currentElement, url: newUrl };
+    const newElement = {
+      ...currentElement,
+      url: newUrl,
+      align: "start",
+      file_name: newUrl,
+    };
     Transforms.setNodes(editor, newElement, { at: JSON.parse(activePath) });
 
     setShowEditBlockPopup({

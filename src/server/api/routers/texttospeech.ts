@@ -132,13 +132,86 @@ export const texttospeechRouter = createTRPCRouter({
             break;
         }
 
+        const stopWords = [
+          "a",
+          "b",
+          "c",
+          "d",
+          "e",
+          "f",
+          "g",
+          "option",
+          "an",
+          "the",
+          "and",
+          "or",
+          "but",
+          "of",
+          "with",
+          "at",
+          "from",
+          "into",
+          "during",
+          "including",
+          "until",
+          "against",
+          "among",
+          "throughout",
+          "despite",
+          "towards",
+          "upon",
+          "concerning",
+          "to",
+          "in",
+          "for",
+          "on",
+          "by",
+          "about",
+          "like",
+          "through",
+          "over",
+          "before",
+          "between",
+          "after",
+          "since",
+          "without",
+          "under",
+          "within",
+          "along",
+          "following",
+          "across",
+          "behind",
+          "beyond",
+          "plus",
+          "except",
+          "but",
+          "up",
+          "out",
+          "around",
+          "down",
+          "off",
+          "above",
+          "near",
+        ];
+
+        function extractKeywords(content) {
+          return content
+            .replace(/--/g, " ") // Replace -- with space
+            .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g, " ") // Remove punctuation
+            .split(/\s+/) // Split into words by whitespace
+            .filter(
+              (word) =>
+                word.length > 2 && !stopWords.includes(word.toLowerCase())
+            ); // Remove stop words and words of length 2 or less
+        }
+
         const audioSource = { url: uploadedUrl };
         const transcription = await deepgram.transcription.preRecorded(
           audioSource,
           {
             language: "en",
             model: "nova",
-            keywords: input.content.replace(/--/g, "").split(" "),
+            keywords: extractKeywords(input.content),
           }
         );
 

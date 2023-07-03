@@ -79,6 +79,7 @@ export const ElevenTTSWrapper = withConsecutiveGrouping((props) => {
 
   useEffect(() => {
     const extractedText = extractTextValues(element.children).join(" ");
+
     if (
       activePath &&
       JSON.parse(activePath)[0] === path[0] &&

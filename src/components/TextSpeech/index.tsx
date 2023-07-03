@@ -239,7 +239,7 @@ export const TextSpeech = ({
         )}
         {audioIsLoading && <div>hi</div>}
       </div>
-      {!containsMCQ && selected && element.file_name && (
+      {/* {!containsMCQ && selected && element.file_name && (
         <div className="flex grow items-center">
           <div className="flex items-center space-x-2 ">
             <TooltipProvider delayDuration={300}>
@@ -270,7 +270,7 @@ export const TextSpeech = ({
             </TooltipProvider>
           </div>
         </div>
-      )}
+      )} */}
 
       {selected && element.content && audioData.content !== element.content && (
         <div className="mr-2 flex h-[34px] rounded bg-yellow-300 p-2 text-sm text-orange-900 shadow-md">

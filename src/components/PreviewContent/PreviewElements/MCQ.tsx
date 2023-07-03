@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { AudioManagerContext } from "@/contexts/PreviewAudioContext";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { AiFillSound } from "react-icons/ai";
-import { extractTextValues } from "@/components/DocumentEditor/helpers/extractText";
-import { last } from "lodash";
+
+import { compareTwoStrings } from "@/utils/helpers";
+
 function searchWordInTranscript(transcript, searchTerm) {
   let result = [];
 
@@ -14,12 +15,14 @@ function searchWordInTranscript(transcript, searchTerm) {
 
   let i = 0;
   while (i < transcript.length) {
-    if (transcript[i].word === searchWords[0]) {
+    console.log(compareTwoStrings(transcript[i].word, searchWords[0]));
+    if (compareTwoStrings(transcript[i].word, searchWords[0]) > 0.6) {
+      // Tweaked this line
       let found = true;
       for (let j = 1; j < searchWords.length; j++) {
         if (
           i + j >= transcript.length ||
-          transcript[i + j].word !== searchWords[j]
+          compareTwoStrings(transcript[i + j].word, searchWords[j]) <= 0.6 // And this line
         ) {
           found = false;
           break;
@@ -28,7 +31,7 @@ function searchWordInTranscript(transcript, searchTerm) {
       if (found) {
         result.push({
           start: transcript[i].start,
-          end: transcript[i + searchWords.length - 1].end,
+          end: transcript[i + searchWords.length - 1].end + 0.18,
         });
         i += searchWords.length - 1;
       }
@@ -61,25 +64,30 @@ export const MCQ = ({ node, children }) => {
 
   let currentAudio = null;
 
-  const playAudioSegment = (audioUrl, start, end) => {
+  const playAudioSegment = async (audioUrl, start, end) => {
     // Stop the current audio if it's playing
-    if (currentAudio && !currentAudio.paused) {
-      currentAudio.pause();
+    if (currentAudio) {
+      await currentAudio.pause();
       currentAudio.currentTime = 0;
     }
 
     // Create a new Audio object and start playing
     currentAudio = new Audio(audioUrl);
     currentAudio.currentTime = start;
-    currentAudio.play();
+    try {
+      await currentAudio.play();
+    } catch (err) {
+      console.log("Error playing audio:", err);
+      return;
+    }
 
     // Stop the audio when it reaches the end time
     const stopAudioAt = end;
-    const intervalId = setInterval(() => {
+    const intervalId = setInterval(async () => {
       if (currentAudio && currentAudio.currentTime >= stopAudioAt) {
         clearInterval(intervalId); // Clear the interval function
         if (currentAudio) {
-          currentAudio.pause();
+          await currentAudio.pause();
           currentAudio.currentTime = 0;
           currentAudio = null; // Clear the current audio
         }
@@ -91,34 +99,6 @@ export const MCQ = ({ node, children }) => {
     currentAudio = new Audio(audioUrl);
     currentAudio.currentTime = 0;
     currentAudio.play();
-  };
-
-  const getApproximateTimestamp = (text, labeltext) => {
-    const words = text.split(" ");
-    const startIndex = words.findIndex((word) =>
-      word.toLowerCase().includes(labeltext.toLowerCase())
-    );
-
-    if (startIndex !== -1) {
-      const start = calculateApproximateStartTime(words, startIndex);
-      const end = calculateApproximateEndTime(words, startIndex);
-      return { start, end };
-    }
-
-    // If labeltext is not found, return a default timestamp
-    return { start: 0, end: 1 };
-  };
-
-  const calculateApproximateStartTime = (words, startIndex) => {
-    // Calculate the approximate start time based on word count and average word duration
-    const averageWordDuration = node.audio_duration / words.length;
-    return startIndex * averageWordDuration;
-  };
-
-  const calculateApproximateEndTime = (words, startIndex) => {
-    // Calculate the approximate end time based on word count and average word duration
-    const averageWordDuration = node.audio_duration / words.length;
-    return (startIndex + 1) * averageWordDuration;
   };
 
   const playQuestion = (item) => {
@@ -176,7 +156,7 @@ export const MCQ = ({ node, children }) => {
               <label
                 htmlFor={item.id}
                 key={i}
-                className={`mb-1 mt-1 flex  cursor-pointer items-center rounded-md border border-gray-700 p-2 transition duration-300 hover:border-gray-500 hover:bg-accent/50 ${
+                className={`mb-3 mt-3 flex  cursor-pointer items-center rounded-md border border-gray-700 p-2 transition duration-300 hover:border-gray-500 hover:bg-accent/50 ${
                   selectedOption === item.id
                     ? " border-brand bg-brand text-white dark:border-foreground dark:bg-gray-300 dark:text-background "
                     : ""

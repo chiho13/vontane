@@ -153,7 +153,7 @@ export const MCQ = ({ node, children }) => {
           }}
           onClick={() => playQuestion(fullQ)}
         >
-          <AiFillSound className="play-icon relative left-[1px] h-5 w-5 text-white  group-hover:text-gray-100 dark:text-brand  group-hover:dark:text-foreground" />
+          <AiFillSound className="play-icon relative left-[1px] h-4 w-4 text-white  group-hover:text-gray-100 dark:text-brand  group-hover:dark:text-foreground" />
         </button>
         <div className="container">
           {paragraphs.map((text, i) => (
@@ -179,7 +179,6 @@ export const MCQ = ({ node, children }) => {
                     ? " border-brand bg-brand text-white dark:border-foreground dark:bg-gray-300 dark:text-background "
                     : ""
                 }`}
-                onClick={() => playThisOption(item.children[0].text)}
               >
                 <input
                   type="radio"
@@ -189,6 +188,7 @@ export const MCQ = ({ node, children }) => {
                   onChange={handleOptionChange}
                   disabled={answerChecked}
                   className="ml-1 mr-2 hidden"
+                  onClick={() => playThisOption(item.children[0].text)}
                 />
                 <div
                   className={`mr-3 flex h-[28px] w-[28px] items-center justify-center rounded-md border ${

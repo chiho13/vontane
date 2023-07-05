@@ -8,12 +8,8 @@ export const DropdownStyle: StyledComponent<"div", any> = styled.div`
   .dropdown-menu {
     // border-top: 1px solid #aaaaaa;
    
-    bottom: 0;
     z-index 1000;
     
-    ${mq.lg`
-      bottom: revert;
-    `}
   }
 
   .dropdown_textbutton {

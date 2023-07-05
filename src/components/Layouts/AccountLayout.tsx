@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import { Plus } from "lucide-react";
 import { workspace } from "@prisma/client";
 import { useLocalStorage } from "usehooks-ts";
+import { ModeToggle } from "@/components/mode-toggle";
 
 import { mq, breakpoints } from "@/utils/breakpoints";
 import {
@@ -371,24 +372,9 @@ const Layout: React.FC<LayoutProps> = ({
                       <ChevronsUpDown className="w-4 text-darkgray dark:text-muted-foreground" />
                     }
                     dropdownMenuNonPortalOverride={
-                      "lg:absolute left-5 dark:bg-background"
+                      "sm:absolute left-5 dark:bg-background"
                     }
                   >
-                    <div className="p-1" role="none">
-                      <Link
-                        className="flex w-full items-center rounded-md px-4  py-2 text-left text-sm text-gray-700 transition duration-200 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-accent"
-                        role="menuitem"
-                        tabIndex={-1}
-                        id="menu-item-3"
-                        href="/account"
-                      >
-                        <Settings className="dark:text-foreground " />{" "}
-                        <span className="ml-2 dark:text-foreground ">
-                          Settings
-                        </span>
-                      </Link>
-                    </div>
-                    <hr className="my-0 h-[1px] border-t-0 bg-neutral-100 opacity-100 dark:opacity-20" />
                     <div className="p-1" role="none">
                       <button
                         onClick={logout}
@@ -449,7 +435,7 @@ const Layout: React.FC<LayoutProps> = ({
                     </span>
                   </button>
                 </SidebarItem>
-                {!profile?.is_subscribed && (
+                {/* {!profile?.is_subscribed && (
                   <SidebarItem
                     className={`${
                       isLocked ? "fixed bottom-10 " : "relative"
@@ -465,7 +451,7 @@ const Layout: React.FC<LayoutProps> = ({
                       </span>
                     </button>
                   </SidebarItem>
-                )}
+                )} */}
               </ul>
             </AccountLayoutStyle>
           </SidebarContent>
@@ -482,6 +468,9 @@ const Layout: React.FC<LayoutProps> = ({
           data-locked={isLocked}
         >
           {children}
+          <div className="fixed right-4 bottom-4">
+            <ModeToggle />
+          </div>
         </main>
       </LayoutContext.Provider>
     </>

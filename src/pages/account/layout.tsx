@@ -26,11 +26,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       href: "/account/settings",
       icon: "settings",
     },
-    {
-      title: "Upgrade",
-      href: "/account/upgrade",
-      icon: "upgrade",
-    },
   ];
   return (
     <div className="block min-h-screen  bg-background">

@@ -65,12 +65,7 @@ export function AudioElement(props) {
         >
           {children}
         </p> */}
-      <AudioPlayer
-        key={element.id}
-        audioURL={audioURL}
-        fileName={fileName}
-        element={element}
-      />
+      <AudioPlayer key={element.id} audioURL={audioURL} fileName={fileName} />
     </div>
   );
 }

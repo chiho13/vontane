@@ -468,7 +468,7 @@ const Layout: React.FC<LayoutProps> = ({
           data-locked={isLocked}
         >
           {children}
-          <div className="fixed right-4 bottom-4">
+          <div className="fixed right-2 bottom-2">
             <ModeToggle />
           </div>
         </main>

@@ -174,9 +174,9 @@ export const MCQ = ({ node, children }) => {
                 htmlFor={item.id}
                 key={i}
                 tabIndex={-1}
-                className={`mb-3 mt-3 flex  cursor-pointer items-center rounded-md border border-gray-700 p-2 transition duration-300 hover:border-gray-500 hover:bg-accent/50 ${
+                className={`group mb-3 mt-3  flex cursor-pointer items-center rounded-md border border-gray-700 p-2 hover:border-brand hover:bg-transparent hover:text-brand dark:hover:border-foreground dark:hover:bg-accent/50 dark:hover:text-foreground ${
                   selectedOption === item.id
-                    ? " border-brand bg-brand text-white dark:border-foreground dark:bg-gray-300 dark:text-background "
+                    ? " border-brand bg-brand text-white dark:border-foreground dark:bg-gray-300  dark:bg-gray-300 dark:text-background "
                     : ""
                 }`}
               >
@@ -191,7 +191,7 @@ export const MCQ = ({ node, children }) => {
                   onClick={() => playThisOption(item.children[0].text)}
                 />
                 <div
-                  className={`mr-3 flex h-[28px] w-[28px] items-center justify-center rounded-md border ${
+                  className={`mr-3 flex h-[28px] w-[28px] items-center justify-center rounded-md border   group-hover:border-brand dark:group-hover:border-foreground ${
                     selectedOption === item.id
                       ? "border-white dark:border-gray-700"
                       : "border-gray-700"

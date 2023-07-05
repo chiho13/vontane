@@ -29,8 +29,8 @@ export function ModeToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        align="start"
-        className="border-2 border-gray-300  bg-background dark:border-accent"
+        align="end"
+        className="z-100 border-2  border-gray-300 bg-background dark:border-accent"
       >
         <DropdownMenuItem onClick={() => setTheme("light")}>
           <Icons.sun className="mr-2 h-4 w-4" />

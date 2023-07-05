@@ -21,7 +21,7 @@ export function ModeToggle() {
         <Button
           variant="secondary"
           size="sm"
-          className="h-8 w-8 border-gray-500 px-0 text-gray-500 dark:border-foreground dark:text-foreground"
+          className="h-8 w-8 border-gray-500 px-0 text-gray-500 dark:border-muted-foreground dark:text-foreground"
         >
           <Icons.sun className="rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
           <Icons.moon className="absolute rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
@@ -30,18 +30,18 @@ export function ModeToggle() {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="z-100 border-2  border-gray-300 bg-background dark:border-accent"
+        className="z-100 border-2  border-gray-400 bg-background dark:border-muted-foreground"
       >
         <DropdownMenuItem onClick={() => setTheme("light")}>
-          <Icons.sun className="mr-2 h-4 w-4" />
+          <Icons.sun className="mr-2 h-4 w-4 text-foreground" />
           <span className="text-foreground">Light</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("dark")}>
-          <Icons.moon className="mr-2 h-4 w-4" />
+          <Icons.moon className="mr-2 h-4 w-4 text-foreground" />
           <span className="text-foreground">Dark</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("system")}>
-          <Icons.laptop className="mr-2 h-4 w-4" />
+          <Icons.laptop className="mr-2 h-4 w-4 text-foreground" />
           <span className="text-foreground">System</span>
         </DropdownMenuItem>
       </DropdownMenuContent>

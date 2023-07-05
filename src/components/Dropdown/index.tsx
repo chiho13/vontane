@@ -59,7 +59,6 @@ interface DropdownProps {
   clickOutside?: boolean;
   minHeight?: number;
   usePortal?: boolean;
-  callback?: (event) => void;
 }
 
 export interface DropdownRef {
@@ -173,7 +172,6 @@ function Dropdown(
     minHeight = 0,
     usePortal = false,
     clickOutside = true,
-    callback,
   }: DropdownProps,
   ref: ForwardedRef<DropdownRef>
 ) {

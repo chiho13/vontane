@@ -37,7 +37,6 @@ interface Props {
   id?: string;
   classNames?: string;
   isPreview?: boolean;
-  showAudioPlayer: boolean;
 }
 
 function AudioPlayer({
@@ -46,7 +45,6 @@ function AudioPlayer({
   id,
   classNames = "py-[10px]",
   isPreview = false,
-  showAudioPlayer,
 }: Props): JSX.Element {
   const [seekValue, setSeekValue] = useState<number>(0);
   const [seekMax, setSeekMax] = useState<number>(0);
@@ -147,9 +145,6 @@ function AudioPlayer({
   const handlePlay = () => {
     setIsPlaying(true);
     if (generatedAudio) {
-      if (!showAudioPlayer) {
-        generatedAudio.currentTime = 0;
-      }
       generatedAudio.playbackRate = playbackSpeed;
       playAudio(generatedAudio);
     }

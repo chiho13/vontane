@@ -43,7 +43,6 @@ export function DashboardNav({ items }: DashboardNavProps) {
 
       <div>
         {items.map((item, index) => {
-          const Icon = Icons[item.icon];
           return (
             item.href && (
               <Link key={index} href={item.disabled ? "/" : item.href}>
@@ -56,7 +55,6 @@ export function DashboardNav({ items }: DashboardNavProps) {
                     item.disabled && "cursor-not-allowed opacity-80"
                   )}
                 >
-                  <Icon className="mr-2 h-4 w-4" />
                   <span>{item.title}</span>
                 </span>
               </Link>

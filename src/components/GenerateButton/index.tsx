@@ -1,4 +1,4 @@
-import React from "react";
+import React, { MouseEventHandler } from "react";
 import LoadingSpinner from "../../icons/LoadingSpinner";
 import { GenerateButtonStyle } from "./style";
 import { ImPlay3 } from "react-icons/im";
@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 interface GenerateButtonProps {
   isDisabled?: boolean;
   audioIsLoading: boolean;
-  onClick: () => void;
+  onClick: MouseEventHandler<HTMLButtonElement>;
   element: any;
 }
 

@@ -1,4 +1,10 @@
-import { forwardRef, useContext, useEffect, useState } from "react";
+import {
+  forwardRef,
+  MouseEventHandler,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { api } from "@/utils/api";
 import VoiceDropdown from "@/components/VoiceDropdown";
 import GenerateButton from "@/components/GenerateButton";
@@ -174,7 +180,7 @@ export const TextSpeech = ({
     }
   }, [selectedVoiceId, textSpeech]);
 
-  async function generateAudio(event: React.FormEvent<HTMLFormElement>) {
+  async function generateAudio(event) {
     event.preventDefault();
     event.stopPropagation();
 

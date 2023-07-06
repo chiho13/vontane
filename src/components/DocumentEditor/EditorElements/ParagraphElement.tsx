@@ -7,7 +7,11 @@ import { hasSlideElement } from "@/utils/helpers";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { isParentMCQ } from "../helpers/toggleBlock";
 
-const ParagraphStyle = styled.div`
+interface ParagraphElementProps {
+  isParentMCQ: boolean;
+}
+
+const ParagraphStyle = styled.div<ParagraphElementProps>`
   p[data-placeholder]::after {
     content: attr(data-placeholder);
     pointer-events: none;

@@ -1,27 +1,40 @@
 import { RenderLeafProps } from "slate-react";
 
+import { BaseText } from "slate";
+
+interface MyText extends BaseText {
+  bold?: boolean;
+  italic?: boolean;
+  underline?: boolean;
+  strikethrough?: boolean;
+  highlighted?: boolean;
+  blank?: boolean;
+}
+
 export const Leaf: React.FC<RenderLeafProps> = ({
   attributes,
   children,
   leaf,
 }) => {
-  if (leaf.bold) {
+  const customLeaf = leaf as MyText;
+
+  if (customLeaf.bold) {
     children = <strong>{children}</strong>;
   }
 
-  if (leaf.italic) {
+  if (customLeaf.italic) {
     children = <em>{children}</em>;
   }
 
-  if (leaf.underline) {
+  if (customLeaf.underline) {
     children = <u>{children}</u>;
   }
 
-  if (leaf.strikethrough) {
+  if (customLeaf.strikethrough) {
     children = <del>{children}</del>;
   }
 
-  if (leaf.highlighted) {
+  if (customLeaf.highlighted) {
     children = (
       <span {...attributes} className="bg-blue-200 py-[3px] dark:bg-[#365476]">
         {children}
@@ -29,7 +42,7 @@ export const Leaf: React.FC<RenderLeafProps> = ({
     );
   }
 
-  if (leaf.blank) {
+  if (customLeaf.blank) {
     return (
       <span
         {...attributes}

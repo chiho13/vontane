@@ -97,17 +97,17 @@ transition: transform 300ms, ${(props) =>
     margin-top: ${(props) => (props.isLocked && props.isOpen ? "0" : "0")};
   }
 
-  ${mq.lg`
-  top: ${(props) => (props.isLocked && props.isOpen ? "0" : "70px")};
-  transform: ${(props) =>
-    props.isLocked || props.isOpen ? "translateX(0)" : "translate(-270px)"};
-    height: ${(props) => (props.isLocked && props.isOpen ? "100%" : "80%")};
+  ${(props) => mq.lg`
+  top: ${props.isLocked && props.isOpen ? "0" : "70px"};
+  transform: ${
+    props.isLocked || props.isOpen ? "translateX(0)" : "translate(-270px)"
+  };
+  height: ${props.isLocked && props.isOpen ? "100%" : "80%"};
 
-    
-    .dropdown-menu.dropdown-menu {
-      top: 50px !important;
-    }
-  `}
+  .dropdown-menu.dropdown-menu {
+    top: 50px !important;
+  }
+`}
 `;
 
 // left: ${(props) => (!props.isLocked && props.isOpen ? "250px" : "0")};

@@ -118,7 +118,10 @@ export const TextSpeech = ({
       if (response) {
         console.log(response);
         setAudioIsLoading(false);
-        setRightBarAudioIsLoading((prev) => ({ ...prev, [element.id]: false }));
+        let newLoadingState = { ...rightBarAudioIsLoading };
+        newLoadingState[element.id] = false;
+        setRightBarAudioIsLoading(newLoadingState);
+
         setAudioData({
           audio_url: response.url,
           file_name: response.fileName,
@@ -153,7 +156,9 @@ export const TextSpeech = ({
     } catch (error) {
       console.error("Error:", error);
       setAudioIsLoading(false);
-      setRightBarAudioIsLoading(false);
+      let newLoadingState = { ...rightBarAudioIsLoading };
+      newLoadingState[element.id] = false;
+      setRightBarAudioIsLoading(newLoadingState);
     }
   };
 
@@ -173,7 +178,9 @@ export const TextSpeech = ({
     event.preventDefault();
     event.stopPropagation();
 
-    setRightBarAudioIsLoading((prev) => ({ ...prev, [element.id]: true }));
+    let newLoadingState = { ...rightBarAudioIsLoading };
+    newLoadingState[element.id] = true;
+    setRightBarAudioIsLoading(newLoadingState);
     setShowRightSidebar(true);
     createTTSAudio();
     console.log("lol", path);

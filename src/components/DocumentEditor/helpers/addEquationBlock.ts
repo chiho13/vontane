@@ -1,5 +1,5 @@
 import { genNodeId } from "@/hoc/withID";
-import { Editor, Path, Transforms } from "slate";
+import { Element as SlateElement, Editor, Path, Transforms } from "slate";
 
 export const addEditableEquationBlock = (latex: string, editor, path: Path) => {
   const equationId = genNodeId();
@@ -14,6 +14,7 @@ export const addEditableEquationBlock = (latex: string, editor, path: Path) => {
 
   const [currentNode] = Editor.node(editor, path);
   const isEmptyNode =
+    SlateElement.isElement(currentNode) &&
     currentNode.type === "paragraph" &&
     currentNode.children.length === 1 &&
     currentNode.children[0].text === "";
@@ -23,11 +24,6 @@ export const addEditableEquationBlock = (latex: string, editor, path: Path) => {
   if (isEmptyNode) {
     Transforms.insertNodes(editor, equationNode, { at: path });
     newPath = path;
-    // Transforms.insertNodes(
-    //   editor,
-    //   { id: genNodeId(), type: "paragraph", children: [{ text: "" }] },
-    //   { at: Path.next(path) }
-    // );
   } else {
     Transforms.insertNodes(editor, equationNode, { at: Path.next(path) });
     newPath = Path.next(path);

@@ -24,7 +24,7 @@ const TitleStyle = styled.div`
 `;
 
 export function TitleElement(props) {
-  const { editor, showEditBlockPopup, elementID, setSelectedElementID } =
+  const { editor, showEditBlockPopup, setSelectedElementID } =
     useContext(EditorContext);
   const { attributes, children, element } = props;
   const path = ReactEditor.findPath(editor, element);

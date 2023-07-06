@@ -1,12 +1,12 @@
-import { Transforms, Editor, Path, Node } from "slate";
+import { Element as SlateElement, Transforms, Editor, Path, Node } from "slate";
 import { EditorContext } from "@/contexts/EditorContext";
 import { genNodeId } from "@/hoc/withID";
 
 export const findPathById = (editor, id) => {
   let foundPath = null;
 
-  for (const [node, path] of Node.nodes(editor, { at: [] })) {
-    if (node.id === id) {
+  for (const [node, path] of Node.nodes(editor)) {
+    if (SlateElement.isElement(node) && node.id === id) {
       foundPath = path;
       break;
     }

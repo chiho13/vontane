@@ -1,5 +1,5 @@
 // src/helpers/mcqHelper.js
-import { Editor, Path, Transforms } from "slate";
+import { Element as SlateElement, Editor, Path, Transforms } from "slate";
 import { ReactEditor } from "slate-react";
 import { genNodeId } from "@/hoc/withID";
 
@@ -43,6 +43,7 @@ export const addMCQBlock = (editor, path) => {
   const [currentNode] = Editor.node(editor, path);
   console.log(currentNode);
   const isEmptyNode =
+    SlateElement.isElement(currentNode) &&
     currentNode.type === "paragraph" &&
     currentNode.children.length === 1 &&
     currentNode.children[0].text === "";

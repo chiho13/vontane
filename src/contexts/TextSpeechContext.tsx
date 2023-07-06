@@ -24,8 +24,8 @@ interface TextSpeechContextType {
   setAudioData: (value: AudioData) => void;
   showRightSidebar: boolean;
   setShowRightSidebar: (value: boolean) => void;
-  rightBarAudioIsLoading: boolean;
-  setRightBarAudioIsLoading: (value: boolean) => void;
+  rightBarAudioIsLoading: Record<string, boolean>;
+  setRightBarAudioIsLoading: (value: Record<string, boolean>) => void;
   generatedAudio: HTMLAudioElement | null;
   setGenerateAudio: (value: HTMLAudioElement) => void;
   isPlaying: boolean;
@@ -42,7 +42,7 @@ const TextSpeechContext = createContext<TextSpeechContextType>({
   setAudioData: () => {},
   showRightSidebar: false,
   setShowRightSidebar: () => {},
-  rightBarAudioIsLoading: false,
+  rightBarAudioIsLoading: {},
   setRightBarAudioIsLoading: () => {},
   generatedAudio: null,
   setGenerateAudio: () => {},
@@ -71,8 +71,9 @@ const RightSideBarProvider = ({ children }: TextSpeechProviderProps) => {
     "showRightSidebar",
     true
   );
-  const [rightBarAudioIsLoading, setRightBarAudioIsLoading] =
-    useState<boolean>(false);
+  const [rightBarAudioIsLoading, setRightBarAudioIsLoading] = useState<
+    Record<string, boolean>
+  >({});
   const [generatedAudio, setGenerateAudio] = useState<HTMLAudioElement | null>(
     null
   );

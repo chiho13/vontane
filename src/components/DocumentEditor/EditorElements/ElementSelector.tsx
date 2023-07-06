@@ -14,7 +14,6 @@ import {
   OptionListItem,
   QuestionItem,
   TitleElement,
-  AudioElement,
   ImageElement,
   SlideBreak,
   ListItem,
@@ -30,8 +29,6 @@ export function ElementSelector(props) {
       return <TitleElement {...props} />;
     case "slide":
       return <SlideBreak {...props} />;
-    case "audio":
-      return <AudioElement {...props} />;
     case "tts":
       return <ElevenTTSWrapper {...props} />;
 

@@ -178,8 +178,8 @@ function Dropdown(
   const { activeDropdown, toggleDropdown } = useContext(DropdownContext);
   const [buttonPosition, setButtonPosition] = useState<{
     top: number;
-    right: number;
-  }>({ top: 0, right: 0 });
+    left: number;
+  }>({ top: 0, left: 0 });
 
   const isOpen = activeDropdown === dropdownId;
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -195,7 +195,7 @@ function Dropdown(
   const dropdownMenuRef = useRef<HTMLDivElement>(null);
   const adjustDropdownPosition = (
     dropdownMenu: HTMLElement,
-    buttonPosition: { top: number; right: number },
+    buttonPosition: { top: number; left: number },
     toggleButtonRect: DOMRect
   ) => {
     const windowHeight = window.innerHeight;
@@ -381,7 +381,7 @@ function Dropdown(
                   style={{
                     transformOrigin: "top left",
                     top: buttonPosition.top,
-                    right: buttonPosition.right,
+                    right: buttonPosition.left,
                   }}
                 >
                   {children}

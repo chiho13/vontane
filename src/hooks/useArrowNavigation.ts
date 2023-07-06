@@ -11,7 +11,9 @@ export function useArrowNavigation(
   const [focusedIndex, setFocusedIndex] = useState(initialIndex);
 
   const handleArrowNavigation = (
-    event: React.KeyboardEvent<HTMLInputElement>
+    event:
+      | React.KeyboardEvent<HTMLInputElement>
+      | React.KeyboardEvent<HTMLDivElement>
   ) => {
     if (
       event.key === "ArrowDown" ||

@@ -1,5 +1,12 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Editor, Transforms, createEditor, Path, Node } from "slate";
+import {
+  Element as SlateElement,
+  Editor,
+  Transforms,
+  createEditor,
+  Path,
+  Node,
+} from "slate";
 import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor, useFocused } from "slate-react";
 import { Check } from "lucide-react";
@@ -142,29 +149,31 @@ export const OptionListItem = withListNumbering(
         const parentPath = Path.parent(path);
         const [parentNode] = Editor.node(editor, parentPath);
 
-        parentNode.children.forEach((child, index) => {
-          if (child.correctAnswer) {
-            Transforms.setNodes(
-              editor,
-              { correctAnswer: false },
-              { at: [...parentPath, index] }
-            );
-          }
-        });
+        SlateElement.isElement(parentNode) &&
+          parentNode.children.forEach((child, index) => {
+            if (child.correctAnswer) {
+              Transforms.setNodes(
+                editor,
+                { correctAnswer: false },
+                { at: [...parentPath, index] }
+              );
+            }
+          });
       } else {
         // If the option is currently unchecked, check it and uncheck all other options
         const parentPath = Path.parent(path);
         const [parentNode] = Editor.node(editor, parentPath);
 
-        parentNode.children.forEach((child, index) => {
-          const isCorrectAnswer = Path.equals(path, [...parentPath, index]);
+        SlateElement.isElement(parentNode) &&
+          parentNode.children.forEach((child, index) => {
+            const isCorrectAnswer = Path.equals(path, [...parentPath, index]);
 
-          Transforms.setNodes(
-            editor,
-            { correctAnswer: isCorrectAnswer },
-            { at: [...parentPath, index] }
-          );
-        });
+            Transforms.setNodes(
+              editor,
+              { correctAnswer: isCorrectAnswer },
+              { at: [...parentPath, index] }
+            );
+          });
       }
     };
 

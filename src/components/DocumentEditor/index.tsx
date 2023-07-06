@@ -203,6 +203,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const router = useRouter();
   const { isLocked } = useContext(LayoutContext);
   const {
+    editor,
     showEditBlockPopup,
     setShowEditBlockPopup,
     activePath,
@@ -211,7 +212,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     setSelectedElementID,
   } = useContext(EditorContext);
 
-  const editor = createEditor();
   const [slatevalue, setValue] = useState(initialSlateValue);
   const [ghostslatevalue, setGhostValue] = useState(initialSlateValue);
 

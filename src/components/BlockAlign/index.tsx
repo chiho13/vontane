@@ -21,7 +21,7 @@ import {
 import { Icons } from "@/components/Icons";
 import { AlignLeft, AlignCenter, AlignRight, ChevronDown } from "lucide-react";
 import { ReactEditor } from "slate-react";
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext } from "../../contexts/EditorContext";
 import { Transforms } from "slate";
 
 export function BlockAlign({ element }) {

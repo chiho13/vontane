@@ -8,13 +8,13 @@ import React, {
   ReactNode,
 } from "react";
 import { MouseEvent } from "react";
-import { Path } from "slate";
+import { BaseEditor, Path, ReactEditor } from "slate";
 import { Editor } from "slate";
 import { useEditor } from "@/hooks/useEditor";
 
 // Create the EditorContext with the correct function signature
 const EditorContext = createContext<{
-  editor: Editor;
+  editor: any;
   showEditBlockPopup: any;
   setShowEditBlockPopup: Dispatch<SetStateAction<any>>;
   selectedElementID: string;
@@ -42,7 +42,7 @@ type EquationProviderProps = PropsWithChildren<{
 
 // Create an EquationProvider component that accepts a `children` prop and the `openEditBlockPopup` function
 const EditorProvider: React.FC<EquationProviderProps> = ({ children }) => {
-  const editor = useEditor();
+  const editor = useEditor() as ReactEditor;
   const [showEditBlockPopup, setShowEditBlockPopup] = useState({
     open: false,
     element: null,

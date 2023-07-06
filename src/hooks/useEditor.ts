@@ -19,7 +19,6 @@ import { genNodeId } from "@/hoc/withID";
 import isUrl from "is-url";
 import { withNormalizePasting } from "@/hoc/withPasting";
 import { withImages } from "@/hoc/withImages";
-
 interface CustomEditor extends ReactEditor {
   undo: () => void;
   redo: () => void;

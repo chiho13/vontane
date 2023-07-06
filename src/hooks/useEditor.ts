@@ -2,7 +2,14 @@
 
 import { useMemo, useRef } from "react";
 import { withReact } from "slate-react";
-import { createEditor, Editor, Path, Range, Transforms } from "slate";
+import {
+  BaseEditor,
+  createEditor,
+  Editor,
+  Path,
+  Range,
+  Transforms,
+} from "slate";
 
 import { withID } from "@/hoc/withID";
 import { withHistory } from "slate-history";
@@ -13,6 +20,11 @@ import isUrl from "is-url";
 import { withNormalizePasting } from "@/hoc/withPasting";
 import { withImages } from "@/hoc/withImages";
 
+interface CustomEditor extends BaseEditor {
+  undo: () => void;
+  redo: () => void;
+}
+
 export function useEditor() {
   const editor = useMemo(
     () =>
@@ -22,6 +34,6 @@ export function useEditor() {
         )
       ),
     []
-  );
+  ) as CustomEditor;
   return editor;
 }

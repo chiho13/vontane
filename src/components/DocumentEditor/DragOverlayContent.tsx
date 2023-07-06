@@ -4,9 +4,10 @@ import { useContext, useState } from "react";
 import { Editable, Slate } from "slate-react";
 import { LayoutContext } from "../Layouts/AccountLayout";
 import { ElementSelector } from "./EditorElements";
+import { EditorContext } from "../../contexts/EditorContext";
 
 export const DragOverlayContent = ({ element }) => {
-  const editor = useEditor();
+  const { editor } = useContext(EditorContext);
   const [value] = useState([{ ...element }]);
 
   const { isLocked } = useContext(LayoutContext);

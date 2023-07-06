@@ -11,7 +11,7 @@ import {
   Heading3,
 } from "lucide-react";
 import { EditorContext } from "@/contexts/EditorContext";
-import { Editor, Path, Transforms } from "slate";
+import { Element as SlateElement, Editor, Path, Transforms } from "slate";
 import { ReactEditor } from "slate-react";
 import { TextIcon } from "@/icons/Text";
 import { SlideBreak } from "@/icons/SlideBreak";
@@ -33,13 +33,13 @@ interface MiniDropdownProps {
   searchBarPosition: boolean;
 }
 
-function isCurrentNodeMCQ(editor) {
-  const { selection } = editor;
-  if (!selection) return false;
+// function isCurrentNodeMCQ(editor) {
+//   const { selection } = editor;
+//   if (!selection) return false;
 
-  const [node] = Editor.node(editor, selection);
-  return node.type === "mcq";
-}
+//   const [node] = Editor.node(editor, selection);
+//   return SlateElement.isElement(node) && node.type === "mcq";
+// }
 
 export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
   (
@@ -66,8 +66,6 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
     } = useContext(EditorContext);
     const [currentNode] = Editor.node(editor, JSON.parse(activePath));
     const [isKeyboardNav, setIsKeyboardNav] = useState(false);
-    const isEmpty =
-      currentNode.children.length === 1 && currentNode.children[0].text === "";
     const customElements = [
       {
         name: "Text",
@@ -203,7 +201,11 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         return false;
       }
 
-      if (parent.type == "mcq" && el.name === "Add Quiz Block") {
+      if (
+        SlateElement.isElement(parent) &&
+        parent.type == "mcq" &&
+        el.name === "Add Quiz Block"
+      ) {
         return false;
       }
 
@@ -263,7 +265,10 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
 
       ReactEditor.focus(editor);
 
-      if (currentNode.type !== "paragraph") {
+      if (
+        SlateElement.isElement(currentNode) &&
+        currentNode.type !== "paragraph"
+      ) {
         const newNode = {
           id: genNodeId(),
           type: "paragraph",

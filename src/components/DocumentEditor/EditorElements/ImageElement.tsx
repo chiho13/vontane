@@ -18,7 +18,7 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
-import { Node } from "slate";
+import { Element as SlateElement, Node } from "slate";
 import { Send } from "lucide-react";
 import LoadingSpinner from "@/icons/LoadingSpinner";
 import { LazyLoadImage } from "react-lazy-load-image-component";
@@ -439,7 +439,7 @@ export const ImageEmbedLink = () => {
     // const blob = await urlToBlob(imageURL);
     // const base64Image = await blobToBase64(blob);
     const node = Node.get(editor, JSON.parse(activePath));
-    const id = node.id;
+    const id = SlateElement.isElement(node) && node.id;
 
     const newElement = {
       file_name: fileName,
@@ -467,7 +467,6 @@ export const ImageEmbedLink = () => {
 
         const updatedElement = {
           url: response.url,
-          image_type: "ai",
           align: "start",
           uploading: false,
         };
@@ -517,7 +516,7 @@ export const ImageEmbedLink = () => {
     const blob = await urlToBlob(tempURL);
     const base64Image = await blobToBase64(blob);
     const node = Node.get(editor, JSON.parse(activePath));
-    const id = node.id;
+    const id = SlateElement.isElement(node) && node.id;
 
     const newElement = {
       file_name: randomFileName,
@@ -592,7 +591,7 @@ export const ImageEmbedLink = () => {
           <form className="z-100 relative mx-auto w-[90%] items-center space-y-3 py-2">
             <FormField
               control={uploadForm.control}
-              name="upload"
+              name="file.upload"
               render={() => (
                 <FormItem>
                   {/* <FormLabel>Upload Image</FormLabel> */}

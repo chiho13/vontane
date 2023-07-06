@@ -15,7 +15,6 @@ export const CollapsibleAudioPlayer = ({ node, children, key }) => {
             fileName={node.file_name}
             classNames="py-0 shadow-none border-0"
             isPreview={true}
-            showAudioPlayer={node.audioplayer}
           />
         </div>
       )}

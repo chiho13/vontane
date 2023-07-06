@@ -7,7 +7,7 @@ import { BsFillCaretDownFill, BsSoundwave } from "react-icons/bs";
 import Dropdown, { DropdownContext, DropdownProvider } from "../Dropdown";
 import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor } from "slate-react";
-import { Editor, Path, Transforms } from "slate";
+import { Element as SlateElement, Editor, Path, Transforms } from "slate";
 import { genNodeId } from "@/hoc/withID";
 import { nanoid } from "nanoid";
 import { useArrowNavigation } from "@/hooks/useArrowNavigation";
@@ -21,15 +21,30 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 const isParentTTS = (editor, node) => {
   const path = ReactEditor.findPath(editor, node);
   const parent = Editor.parent(editor, path);
 
-  return parent && parent[0].type === "tts";
+  return (
+    parent && SlateElement.isElement(parent[0]) && parent[0].type === "tts"
+  );
 };
 
 interface OptionMenuProps {
   element: any;
+}
+
+interface OptionMenuElement {
+  name: string;
+  action: (event: React.MouseEvent) => void;
+  icon: React.ReactElement;
 }
 
 export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
@@ -38,7 +53,7 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
     const { editor } = useContext(EditorContext);
     const { activeDropdown, toggleDropdown } = useContext(DropdownContext);
 
-    const optionMenuElements = [
+    let optionMenuElements: (OptionMenuElement | string)[] = [
       {
         name: "Text to MP3",
         action: () => wrapElementWithTTS(editor, element),
@@ -63,25 +78,36 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
         ),
       },
     ].filter((item) => {
-      // Exclude "Duplicate" option if element type is "tts"
-      if (element.type === "tts" && item.name === "Duplicate") {
-        return false;
-      }
-
-      if (item.name === "Text to MP3") {
-        if (
-          element.type === "tts" ||
-          element.type === "slide" ||
-          element.type === "image" ||
-          isParentTTS(editor, element)
-        ) {
+      if (typeof item === "string") {
+        // item is a separator, we don't need to do any action here
+        return true;
+      } else {
+        // Exclude "Duplicate" option if element type is "tts"
+        if (element.type === "tts" && item.name === "Duplicate") {
           return false;
         }
-      }
 
+        if (item.name === "Text to MP3") {
+          if (
+            element.type === "tts" ||
+            element.type === "slide" ||
+            element.type === "image" ||
+            isParentTTS(editor, element)
+          ) {
+            return false;
+          }
+        }
+      }
       // Otherwise, include the option
       return true;
     });
+
+    const actionableItems = optionMenuElements.filter(
+      (item) => item !== "separator"
+    );
+    if (actionableItems.length === 1) {
+      optionMenuElements = actionableItems;
+    }
 
     const [isKeyboardNav, setIsKeyboardNav] = useState(false);
 
@@ -124,7 +150,7 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
     return (
       <>
         <div
-          className={`option-menu-container  relative  ${
+          className={`option-menu-container relative top-1  ${
             activeDropdown === element.id && "opacity-100"
           }`}
           onMouseDown={(e) => {
@@ -133,62 +159,42 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
             e.preventDefault();
           }}
         >
-          <Dropdown
-            dropdownId={element.id}
-            ref={ref}
-            usePortal={true}
-            dropdownButtonClassName=" p-0 border-transparent relative outline-none border-0 shadow-none bg-transparent w-full h-[26px] justify-start transition-colors duration-300 focus:ring-2 focus:ring-black focus:ring-opacity-30"
-            dropdownMenuClassName=" top-0 w-[200px] border-0 dark:bg-muted"
-            icon={
-              <div className="flex h-[22px] w-[22px] items-center  justify-center rounded-md bg-gray-200  p-0 hover:bg-gray-300 dark:bg-muted  dark:hover:bg-accent">
-                <MoreHorizontal className="option-menu w-[18px]  w-[18px] text-darkergray dark:text-foreground" />
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <div className="flex h-[22px] w-[22px] items-center justify-center rounded-md bg-gray-200 p-0 hover:bg-gray-300 dark:bg-muted dark:hover:bg-accent">
+                <MoreHorizontal className="option-menu w-[18px] w-[18px] text-darkergray dark:text-foreground" />
               </div>
-            }
-          >
-            <div
-              tabIndex={-1}
-              onMouseLeave={() => {
-                setIsKeyboardNav(false);
-                setFocusedIndex(-1);
-              }}
-              onKeyDown={(e) => {
-                setIsKeyboardNav(true);
-                handleArrowNavigation(e);
-              }}
-            >
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className=" top-0 w-[200px] border dark:border-accent dark:bg-muted">
               {optionMenuElements.map((item, index) => {
-                if (item === "separator") {
+                if (typeof item === "string") {
                   // This is a separator. Render it as such.
                   return (
                     <div className="h-[1px] w-full bg-gray-200 dark:bg-gray-700"></div>
                   );
-                }
-                return (
-                  <div className="p-1 " role="none">
-                    <button
+                } else {
+                  return (
+                    <DropdownMenuItem
+                      key={index}
                       onClick={item.action}
-                      className={`  flex  w-full items-center rounded-sm px-4 py-1 text-left text-sm text-gray-700 transition duration-200 hover:text-gray-900 focus:outline-none dark:text-foreground   ${
+                      className={`flex w-full items-center rounded-sm px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:text-gray-900 focus:outline-none dark:text-foreground ${
                         focusedIndex === index
                           ? "bg-gray-200 dark:bg-accent"
                           : ""
                       }`}
-                      role="menuitem"
-                      tabIndex={-1}
-                      id="menu-item-3"
                       onMouseOver={() => {
                         if (isKeyboardNav) return;
                         setFocusedIndex(index);
                       }}
                     >
                       <span>{item.icon}</span>
-
                       <span>{item.name}</span>
-                    </button>
-                  </div>
-                );
+                    </DropdownMenuItem>
+                  );
+                }
               })}
-            </div>
-          </Dropdown>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </>
     );
@@ -197,22 +203,20 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
 export const OptionMenu = forwardRef<HTMLDivElement, OptionMenuProps>(
   ({ element }, ref) => {
     return (
-      <DropdownProvider>
-        <TooltipProvider delayDuration={300}>
-          <Tooltip>
-            <TooltipTrigger>
-              <OptionDropdown element={element} ref={ref} />
-            </TooltipTrigger>
-            <TooltipContent
-              className="border-black  dark:bg-white dark:text-muted"
-              side="top"
-              sideOffset={10}
-            >
-              <p className="text-[12px]">Actions</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </DropdownProvider>
+      <TooltipProvider delayDuration={300}>
+        <Tooltip>
+          <TooltipTrigger>
+            <OptionDropdown element={element} ref={ref} />
+          </TooltipTrigger>
+          <TooltipContent
+            className="border-black  dark:bg-white dark:text-muted"
+            side="top"
+            sideOffset={10}
+          >
+            <p className="text-[12px]">Actions</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     );
   }
 );

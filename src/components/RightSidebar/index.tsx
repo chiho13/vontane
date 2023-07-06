@@ -13,7 +13,7 @@ import { useLocalStorage } from "usehooks-ts";
 import AudioPlayer from "../AudioPlayer";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { EditorContext } from "@/contexts/EditorContext";
-import { Editor, Node, Path } from "slate";
+import { Descendant, Editor, Node, Path } from "slate";
 import LoadingSpinner from "@/icons/LoadingSpinner";
 import { extractTextValues } from "../DocumentEditor/helpers/extractText";
 import { root } from "postcss";
@@ -48,6 +48,10 @@ interface RightSideBarProps {
   rightSideBarWidth: number;
 }
 
+interface AudioNode {
+  audio_url?: string;
+}
+
 export const RightSideBar: React.FC<RightSideBarProps> = ({
   setRightSideBarWidth,
   showRightSidebar,
@@ -75,8 +79,8 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
   const [copied, setCopied] = useState(false);
   const [tooltipOpen, setTooltipOpen] = useState(false);
 
-  const [audioURL, setAudioURL] = useState();
-  const rightSidebarStyle = {
+  const [audioURL, setAudioURL] = useState(null);
+  const rightSidebarStyle: React.CSSProperties = {
     transform: `translateX(${
       showRightSidebar ? "0px" : `${rightSideBarWidth}px`
     })`,
@@ -125,8 +129,8 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     console.log(editor.children);
     // Assuming editor.children is an array of objects
     let audioUrls = [];
-    editor.children.forEach((child) => {
-      if (child.audio_url) {
+    editor.children.forEach((child: Descendant) => {
+      if ("children" in child && "audio_url" in child) {
         audioUrls.push(child.audio_url);
       }
     });

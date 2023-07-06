@@ -6,7 +6,11 @@ import styled from "styled-components";
 import { hasSlideElement } from "@/utils/helpers";
 import { isParentMCQ } from "../helpers/toggleBlock";
 
-const HeadingElementStyle = styled.div`
+interface HeadingElementProps {
+  isParentMCQ: boolean;
+}
+
+const HeadingElementStyle = styled.div<HeadingElementProps>`
   & h1,
   & h2,
   & h3 {

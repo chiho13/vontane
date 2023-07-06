@@ -9,6 +9,7 @@ import React, {
   useLayoutEffect,
 } from "react";
 import {
+  Element as SlateElement,
   createEditor,
   Editor,
   Transforms,
@@ -109,34 +110,36 @@ interface DocumentEditorProps {
 type CustomElement = {
   id: string;
   type: string;
-  children: CustomText[];
+  children: any[];
   altText?: string;
   correctAnswer?: false;
   questionNumber?: number;
-  voice_id: string;
-  name: string;
-  accent: string;
-  content: string;
-  liveContent: string;
-  audio_url: string;
-  audioplayer: boolean;
-  file_name: string;
-  loading: boolean;
-  transcript: Object;
+  voice_id?: string;
+  checked?: boolean;
+  name?: string;
+  accent?: string;
+  content?: string;
+  liveContent?: string;
+  audio_url?: string;
+  audioplayer?: boolean;
+  file_name?: string;
+  loading?: boolean;
+  transcript?: Object;
   latex?: string; // Add this line for the latex string
+  slideNumber?: Number;
 };
 
 type CustomText = {
-  url: string | undefined;
-  highlighted: any;
-  link: any;
-  highlight: any;
-  blank: any;
-  strikethrough: any;
-  underline: any;
-  italic: any;
-  bold: any;
-  text: string;
+  url?: string | undefined;
+  highlighted?: any;
+  link?: any;
+  highlight?: any;
+  blank?: any;
+  strikethrough?: any;
+  underline?: any;
+  italic?: any;
+  bold?: any;
+  text?: string;
 };
 
 declare module "slate" {
@@ -321,13 +324,13 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       const currentNode = Node.get(editor, path);
 
       const isEmpty =
+        SlateElement.isElement(currentNode) &&
         currentNode.children.length === 1 &&
         currentNode.children[0].text === "" &&
         currentNode.type !== "equation" &&
         currentNode.type !== "mcq" &&
         currentNode.type !== "image" &&
         currentNode.type !== "slide";
-      console.log(currentNode.type);
       console.log(targetRect.height);
       if (!isEmpty) {
         insertNewParagraph(editor, Path.next(path));
@@ -403,7 +406,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         selection.anchor.path
       );
 
-      setIsTyping(true);
       const _currentNodePath = selection.anchor.path.slice(0, -1);
 
       // setActivePath(JSON.stringify(selection.anchor.path));
@@ -412,8 +414,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         editor,
         startPosition.path
       );
-
-      setIsTyping(currentNode.id);
 
       let updatedNode = null;
 
@@ -459,7 +459,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             event.preventDefault();
             // Unwrap any existing list items
 
-            if (parentNode.type === "paragraph") {
+            if (
+              SlateElement.isElement(parentNode) &&
+              parentNode.type === "paragraph"
+            ) {
               toggleBlock(editor, "bulleted-list");
               Transforms.delete(editor, { unit: "character", reverse: true });
               // Transforms.move(editor, { distance: 1, unit: "character" });
@@ -473,9 +476,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       if (event.key === "Enter") {
         event.preventDefault();
 
-        if (selection) {
-          console.log(parentNode.type);
-
+        if (SlateElement.isElement(parentNode) && selection) {
           if (
             [
               "numbered-list",
@@ -573,6 +574,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             if (
               !nextNode ||
               (nextNode &&
+                SlateElement.isElement(nextNode[0]) &&
                 nextNode[0].type !== "mcq" &&
                 nextNode[0].type !== "equation")
             ) {
@@ -664,9 +666,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           const parentNode = Editor.parent(editor, _currentNodePath);
           // Check if currentNode is an equation
 
-          console.log(currentNode.type);
-
           if (
+            SlateElement.isElement(currentNode) &&
             ["numbered-list", "bulleted-list", "checked-list"].includes(
               currentNode.type
             )
@@ -688,7 +689,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
           // Check if the current node is a paragraph and the cursor is at the start
 
-          if (currentNode.type === "paragraph") {
+          if (
+            SlateElement.isElement(currentNode) &&
+            currentNode.type === "paragraph"
+          ) {
             const prevNodeEntry = Editor.previous(editor, {
               at: _currentNodePath,
             });
@@ -703,14 +707,16 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               );
 
               if (
-                (_prevNode.type === "mcq" && isStart) ||
-                (_prevNode.type === "slide" && isStart) ||
-                (_prevNode.type === "equation" && isStart)
+                SlateElement.isElement(_prevNode) &&
+                ((_prevNode.type === "mcq" && isStart) ||
+                  (_prevNode.type === "slide" && isStart) ||
+                  (_prevNode.type === "equation" && isStart))
               ) {
                 event.preventDefault();
                 const nextParagraph = Editor.previous(editor, {
                   at: _currentNodePath,
-                  match: (n) => n.type === "paragraph",
+                  match: (n) =>
+                    SlateElement.isElement(n) && n.type === "paragraph",
                 });
 
                 if (nextParagraph) {
@@ -722,6 +728,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
               if (
                 Node.string(_prevNode) === "" &&
+                SlateElement.isElement(_prevNode) &&
                 _prevNode.type !== "paragraph" &&
                 isStart
               ) {
@@ -768,9 +775,15 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           //   }
           // }
 
-          if (currentNode.type === "list-item") {
+          if (
+            SlateElement.isElement(currentNode) &&
+            currentNode.type === "list-item"
+          ) {
             const parentNode = Editor.parent(editor, currentNodePath);
-            if (parentNode[0].type === "mcq") {
+            if (
+              SlateElement.isElement(parentNode[0]) &&
+              parentNode[0].type === "mcq"
+            ) {
               // Check if the list-item text is empty
               const isEmpty =
                 currentNode.children.length === 1 &&
@@ -782,7 +795,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           }
 
           if (
-            (currentNode.type === "option-list-item" || updatedNode) &&
+            ((SlateElement.isElement(currentNode) &&
+              currentNode.type === "option-list-item") ||
+              updatedNode) &&
+            SlateElement.isElement(parentNode[0]) &&
             parentNode[0].type === "mcq"
           ) {
             const optionListItems = parentNode[0].children.filter(
@@ -791,7 +807,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
             if (optionListItems.length <= 2) {
               const isEmpty =
-                (currentNode.children.length === 1 &&
+                (SlateElement.isElement(currentNode) &&
+                  currentNode.children.length === 1 &&
                   currentNode.children[0].text === "") ||
                 (updatedNode && updatedNode.children[0].text === "");
               if (isEmpty) {
@@ -800,7 +817,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             }
           }
 
-          if (currentNode.type === "question-item") {
+          if (
+            SlateElement.isElement(currentNode) &&
+            currentNode.type === "question-item"
+          ) {
             const isFirstQuestionItem =
               parentNode[0].children[0] === currentNode;
             if (
@@ -811,7 +831,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             }
           }
 
-          if (currentNode.type === "option-list-item") {
+          if (
+            SlateElement.isElement(currentNode) &&
+            currentNode.type === "option-list-item"
+          ) {
             const isFirstQuestionItem =
               parentNode[0].children[0] === currentNode;
             if (

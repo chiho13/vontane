@@ -118,11 +118,11 @@ export const wrapWithTTS = (
 
     const [startPoint, endPoint] = Range.edges(selection);
     const startBlock = Editor.above(editor, {
-      match: (n) => Editor.isBlock(editor, n),
+      match: (n) => SlateElement.isElement(n) && Editor.isBlock(editor, n),
       at: startPoint.path,
     })!;
     const endBlock = Editor.above(editor, {
-      match: (n) => Editor.isBlock(editor, n),
+      match: (n) => SlateElement.isElement(n) && Editor.isBlock(editor, n),
       at: endPoint.path,
     })!;
 
@@ -169,7 +169,7 @@ export const isParentTTS = (editor) => {
   if (!selection) return false;
 
   const parent = Editor.above(editor, {
-    match: (n) => n.type === "tts",
+    match: (n) => SlateElement.isElement(n) && n.type === "tts",
   });
 
   return !!parent;
@@ -180,7 +180,7 @@ export const isParentMCQ = (editor) => {
   if (!selection) return false;
 
   const parent = Editor.above(editor, {
-    match: (n) => n.type === "mcq",
+    match: (n) => SlateElement.isElement(n) && n.type === "mcq",
   });
 
   return !!parent;

@@ -1,4 +1,5 @@
 import { useEditor } from "@/hooks/useEditor";
+import React from "react";
 import { useContext, useState } from "react";
 import { Editable, Slate } from "slate-react";
 import { LayoutContext } from "../Layouts/AccountLayout";

@@ -55,7 +55,9 @@ function AudioPlayer({
   const theme = useTheme();
 
   const { playAudio, pauseAudio } = useContext(AudioManagerContext);
-  const [generatedAudio, setGenerateAudio] = useState(null);
+  const [generatedAudio, setGenerateAudio] = useState<HTMLAudioElement | null>(
+    null
+  );
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useLocalStorage<number>(

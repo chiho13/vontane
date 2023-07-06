@@ -100,6 +100,7 @@ import { breakpoints } from "@/utils/breakpoints";
 import { useLocalStorage } from "usehooks-ts";
 import { HOTKEYS } from "@/config/hotkeys";
 import isHotkey from "is-hotkey";
+
 interface DocumentEditorProps {
   workspaceId: string;
   handleTextChange?: (value: any) => void;
@@ -202,7 +203,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const router = useRouter();
   const { isLocked } = useContext(LayoutContext);
   const {
-    editor,
     showEditBlockPopup,
     setShowEditBlockPopup,
     activePath,
@@ -211,6 +211,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     setSelectedElementID,
   } = useContext(EditorContext);
 
+  const editor = createEditor();
   const [slatevalue, setValue] = useState(initialSlateValue);
   const [ghostslatevalue, setGhostValue] = useState(initialSlateValue);
 

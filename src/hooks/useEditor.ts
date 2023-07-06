@@ -25,13 +25,3 @@ export function useEditor() {
   );
   return editor;
 }
-
-// export function useEditor() {
-//   const editorRef = useRef();
-//   if (!editorRef.current)
-//     editorRef.current = withNormalizePasting(
-//       withTitle(withHistory(withColumns(withReact(createEditor()))))
-//     );
-
-//   return editorRef.current;
-// }

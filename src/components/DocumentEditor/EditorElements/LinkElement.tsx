@@ -15,7 +15,11 @@ const InlineChromiumBugfix = () => (
   </span>
 );
 
-export const LinkElement = (props) => {
+export const LinkElement = (props: {
+  attributes: any;
+  children: any;
+  element: any;
+}) => {
   const { attributes, children, element } = props;
   const selected = useSelected();
   const { editor } = useContext(EditorContext);

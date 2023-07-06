@@ -12,7 +12,7 @@ import {
 } from "slate";
 
 import { withID } from "@/hoc/withID";
-import { withHistory } from "slate-history";
+import { withHistory, HistoryEditor } from "slate-history";
 import { withColumns } from "@/hoc/withColumns";
 import { withTitle, withCustomDelete } from "@/hoc/withTitle";
 import { genNodeId } from "@/hoc/withID";
@@ -24,6 +24,9 @@ interface CustomEditor extends ReactEditor {
   undo: () => void;
   redo: () => void;
 }
+declare module "slate" {
+  interface ReactEditor extends HistoryEditor {}
+}
 
 export function useEditor() {
   const editor = useMemo(
@@ -32,8 +35,8 @@ export function useEditor() {
         withNormalizePasting(
           withCustomDelete(withTitle(withHistory(withReact(createEditor()))))
         )
-      ),
+      ) as CustomEditor,
     []
-  ) as CustomEditor;
+  );
   return editor;
 }

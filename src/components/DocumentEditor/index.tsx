@@ -112,6 +112,8 @@ type CustomElement = {
   type: string;
   children: any[];
   altText?: string;
+  align?: string;
+  uploading?: boolean;
   correctAnswer?: false;
   questionNumber?: number;
   voice_id?: string;

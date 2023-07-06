@@ -5,6 +5,7 @@ import {
   Point,
   Element as SlateElement,
 } from "slate";
+import { genNodeId } from "./withID";
 
 export const withColumns = (editor) => {
   const { insertBreak, deleteBackward } = editor;
@@ -14,7 +15,7 @@ export const withColumns = (editor) => {
     if (selection) {
       const [start] = Range.edges(selection);
       const cellEntry = Editor.above(editor, {
-        match: (n) => n.type === "column-cell",
+        match: (n) => SlateElement.isElement(n) && n.type === "column-cell",
       });
       if (cellEntry) {
         const [, cellPath] = cellEntry;
@@ -22,10 +23,14 @@ export const withColumns = (editor) => {
         const colIndex = cellPath[cellPath.length - 1];
 
         if (colIndex === 0) {
-          const newRow = Array.from({ length: table.children.length }, () => ({
-            type: "column-cell",
-            children: [{ type: "paragraph", children: [{ text: "" }] }],
-          }));
+          const newRow = Array.from(
+            { length: table.children.length },
+            (_, index) => ({
+              id: `${genNodeId()}${index}`,
+              type: "column-cell",
+              children: [{ type: "paragraph", children: [{ text: "" }] }],
+            })
+          );
           Transforms.insertNodes(editor, newRow, {
             at: tablePath.concat(table.children.length),
           });

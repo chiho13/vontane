@@ -1,42 +1,56 @@
 import { createEditor, Editor, Path, Range, Transforms } from "slate";
 import { genNodeId } from "./withID";
 import { jsx } from "slate-hyperscript";
+import { Element as SlateElement } from "slate";
 
 const transformListItems = (listItems, listType) => {
-  return listItems.map((li) => {
+  return listItems.map((li: Node) => {
     const children = Array.from(li.childNodes)
-      .map((node) => {
-        if (node.nodeName === "#text") {
-          return { text: node.textContent.trim() };
-        } else if (node.nodeName === "A") {
-          return {
-            id: genNodeId(),
-            type: "link",
-            text: node.textContent.trim(),
-            url: node.getAttribute("href"),
-          };
-        } else if (node.nodeName === "P") {
-          return Array.from(node.childNodes)
-            .map((childNode) => {
-              if (childNode.nodeType === 3) {
-                return { text: childNode.textContent.trim() };
-              } else if (
-                childNode.nodeName === "B" ||
-                childNode.nodeName === "STRONG"
-              ) {
-                return { text: childNode.textContent.trim(), bold: true };
-              }
-              return null;
-            })
-            .filter(Boolean);
+      .map((node: Node) => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          // Check if node is a text node
+          const textNode = node as Text;
+          return { text: textNode.textContent.trim() };
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          // Check if node is an element
+          const element = node as Element;
+          if (element.tagName === "A") {
+            return {
+              id: genNodeId(),
+              type: "link",
+              text: element.textContent.trim(),
+              url: element.getAttribute("href"),
+            };
+          } else if (element.tagName === "P") {
+            return Array.from(element.childNodes)
+              .map((childNode: Node) => {
+                if (childNode.nodeType === Node.TEXT_NODE) {
+                  const textChild = childNode as Text;
+                  return { text: textChild.textContent.trim() };
+                } else if (childNode.nodeType === Node.ELEMENT_NODE) {
+                  const childElement = childNode as Element;
+                  if (
+                    childElement.tagName === "B" ||
+                    childElement.tagName === "STRONG"
+                  ) {
+                    return {
+                      text: childElement.textContent.trim(),
+                      bold: true,
+                    };
+                  }
+                }
+                return null;
+              })
+              .filter(Boolean);
+          }
         }
         return null;
       })
-      .flat() // flatten the array in case of nested elements
+      .flat()
       .filter(Boolean);
 
     if (!children.length) {
-      children.push({ text: "" }); // ensure there is always a text node
+      children.push({ text: "" });
     }
 
     return { id: genNodeId(), type: listType, children: children };

@@ -1,7 +1,7 @@
 // import { useMemo, withReact, createEditor } from '../deps';
 
 import { useMemo, useRef } from "react";
-import { withReact } from "slate-react";
+import { ReactEditor, withReact } from "slate-react";
 import {
   BaseEditor,
   createEditor,
@@ -20,7 +20,7 @@ import isUrl from "is-url";
 import { withNormalizePasting } from "@/hoc/withPasting";
 import { withImages } from "@/hoc/withImages";
 
-interface CustomEditor extends BaseEditor {
+interface CustomEditor extends ReactEditor {
   undo: () => void;
   redo: () => void;
 }

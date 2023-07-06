@@ -56,232 +56,234 @@ function generateRandomFilename(file) {
   return `${id}.${extension}`;
 }
 
-export const ImageElement = React.memo((props) => {
-  const { attributes, children, element } = props;
-  const {
-    editor,
-    showEditBlockPopup,
-    selectedElementID,
-    activePath,
-    setActivePath,
-    setShowEditBlockPopup,
-    setSelectedElementID,
-    setTempBase64,
-    tempBase64,
-  } = useContext(EditorContext);
+export const ImageElement = React.memo(
+  (props: { attributes: any; children: any; element: any }) => {
+    const { attributes, children, element } = props;
+    const {
+      editor,
+      showEditBlockPopup,
+      selectedElementID,
+      activePath,
+      setActivePath,
+      setShowEditBlockPopup,
+      setSelectedElementID,
+      setTempBase64,
+      tempBase64,
+    } = useContext(EditorContext);
 
-  const path = ReactEditor.findPath(editor, element);
-  const router = useRouter();
-  const workspaceId = router.query.workspaceId as string;
+    const path = ReactEditor.findPath(editor, element);
+    const router = useRouter();
+    const workspaceId = router.query.workspaceId as string;
 
-  const [isResizing, setIsResizing] = useState(false);
-  const [imageWidth, setWidth] = useState(element.width); // default width
-  const [imageHeight, setHeight] = useState(element.height); // default height
+    const [isResizing, setIsResizing] = useState(false);
+    const [imageWidth, setWidth] = useState(element.width); // default width
+    const [imageHeight, setHeight] = useState(element.height); // default height
 
-  const [imageURL, setImageURL] = useState(element.url);
-  const [base64URL, setBase64URL] = useState(
-    tempBase64[element.id] || element.url
-  );
-  const [align, setAlign] = useState(element.align || "start");
+    const [imageURL, setImageURL] = useState(element.url);
+    const [base64URL, setBase64URL] = useState(
+      tempBase64[element.id] || element.url
+    );
+    const [align, setAlign] = useState(element.align || "start");
 
-  const selected = useSelected();
-  const ref = useRef(null);
-  const handleMouseDown = useCallback((e) => {
-    setIsResizing(true);
-  }, []);
+    const selected = useSelected();
+    const ref = useRef(null);
+    const handleMouseDown = useCallback((e) => {
+      setIsResizing(true);
+    }, []);
 
-  const [hasFetched, setHasFetched] = useState(false);
+    const [hasFetched, setHasFetched] = useState(false);
 
-  const [tempURL, setTempURL] = useState(element.tempURL);
+    const [tempURL, setTempURL] = useState(element.tempURL);
 
-  api.gpt.getAIImage.useQuery(
-    { fileName: element.file_name, workspaceId },
-    {
-      enabled: !!element.file_name && !hasFetched && !tempBase64,
-      onSuccess: async (data) => {
-        const currentElement = Node.get(editor, path);
-        const blob = await urlToBlob(data.signedURL);
-        const base64Image = await blobToBase64(blob);
-        setBase64URL(base64Image);
-        console.log("get ai image");
-        setHasFetched(true); // set hasFetched to true after the first successful fetch
-      },
-      cacheTime: 5 * 60 * 1000,
-      staleTime: 5 * 60 * 1000,
-    }
-  );
-
-  const handleMouseUp = useCallback(
-    (e) => {
-      setIsResizing(false);
-      const newElement = { ...element, width: imageWidth };
-
-      Transforms.setNodes(editor, newElement, { at: path });
-    },
-    [imageWidth]
-  );
-
-  useEffect(() => {}, [selected]);
-
-  const handleMouseMove = useCallback(
-    (e) => {
-      if (isResizing) {
-        let newWidth;
-        if (align === "end") {
-          // When the alignment is "end", calculate the new width based on the difference between
-          // the right edge of the image and the mouse position
-          newWidth = ref.current.getBoundingClientRect().right - e.clientX;
-        } else {
-          // Otherwise, calculate the new width as before
-          newWidth = e.clientX - ref.current.getBoundingClientRect().left;
-        }
-
-        if (newWidth < 250) {
-          // If it is, set the width to the minimum width
-          setWidth(250);
-        } else {
-          // Otherwise, use the new width
-          setWidth(newWidth);
-        }
+    api.gpt.getAIImage.useQuery(
+      { fileName: element.file_name, workspaceId },
+      {
+        enabled: !!element.file_name && !hasFetched && !tempBase64,
+        onSuccess: async (data) => {
+          const currentElement = Node.get(editor, path);
+          const blob = await urlToBlob(data.signedURL);
+          const base64Image = await blobToBase64(blob);
+          setBase64URL(base64Image);
+          console.log("get ai image");
+          setHasFetched(true); // set hasFetched to true after the first successful fetch
+        },
+        cacheTime: 5 * 60 * 1000,
+        staleTime: 5 * 60 * 1000,
       }
-    },
-    [isResizing, align] // Also add "align" to the dependency array
-  );
+    );
 
-  // State for image loading status
-  const [loadingImage, setLoadingImage] = useState(true);
+    const handleMouseUp = useCallback(
+      (e) => {
+        setIsResizing(false);
+        const newElement = { ...element, width: imageWidth };
 
-  // Event handler for image load
-  const handleImageLoad = () => {
-    setLoadingImage(false);
-  };
+        Transforms.setNodes(editor, newElement, { at: path });
+      },
+      [imageWidth]
+    );
 
-  // Apply the blur filter if the image is still loading
-  const imageStyle = loadingImage
-    ? { filter: "blur(10px)", transition: "filter 0.3s" }
-    : { transition: "filter 0.3s" };
+    useEffect(() => {}, [selected]);
 
-  useEffect(() => {
-    if (isResizing) {
-      window.addEventListener("mousemove", handleMouseMove);
-      window.addEventListener("mouseup", handleMouseUp);
-    } else {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
-    }
+    const handleMouseMove = useCallback(
+      (e) => {
+        if (isResizing) {
+          let newWidth;
+          if (align === "end") {
+            // When the alignment is "end", calculate the new width based on the difference between
+            // the right edge of the image and the mouse position
+            newWidth = ref.current.getBoundingClientRect().right - e.clientX;
+          } else {
+            // Otherwise, calculate the new width as before
+            newWidth = e.clientX - ref.current.getBoundingClientRect().left;
+          }
 
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
+          if (newWidth < 250) {
+            // If it is, set the width to the minimum width
+            setWidth(250);
+          } else {
+            // Otherwise, use the new width
+            setWidth(newWidth);
+          }
+        }
+      },
+      [isResizing, align] // Also add "align" to the dependency array
+    );
+
+    // State for image loading status
+    const [loadingImage, setLoadingImage] = useState(true);
+
+    // Event handler for image load
+    const handleImageLoad = () => {
+      setLoadingImage(false);
     };
-  }, [isResizing, handleMouseMove, handleMouseUp]);
 
-  return (
-    <div data-id={element.id} data-path={JSON.stringify(path)}>
-      {!element.file_name ? (
-        <>
-          <div
-            tabIndex={-1}
-            className={`hover:bg-gray-muted relative flex  cursor-pointer items-center rounded-md bg-gray-100 p-2 transition dark:bg-secondary hover:dark:bg-accent 
+    // Apply the blur filter if the image is still loading
+    const imageStyle = loadingImage
+      ? { filter: "blur(10px)", transition: "filter 0.3s" }
+      : { transition: "filter 0.3s" };
+
+    useEffect(() => {
+      if (isResizing) {
+        window.addEventListener("mousemove", handleMouseMove);
+        window.addEventListener("mouseup", handleMouseUp);
+      } else {
+        window.removeEventListener("mousemove", handleMouseMove);
+        window.removeEventListener("mouseup", handleMouseUp);
+      }
+
+      return () => {
+        window.removeEventListener("mousemove", handleMouseMove);
+        window.removeEventListener("mouseup", handleMouseUp);
+      };
+    }, [isResizing, handleMouseMove, handleMouseUp]);
+
+    return (
+      <div data-id={element.id} data-path={JSON.stringify(path)}>
+        {!element.file_name ? (
+          <>
+            <div
+              tabIndex={-1}
+              className={`hover:bg-gray-muted relative flex  cursor-pointer items-center rounded-md bg-gray-100 p-2 transition dark:bg-secondary hover:dark:bg-accent 
       dark:hover:bg-background/70
       `}
-            contentEditable={false}
-            onMouseDown={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setShowEditBlockPopup({
-                open: true,
-                element: "image",
-              });
-              setActivePath(JSON.stringify(path));
-              setSelectedElementID(element.id);
-            }}
-          >
-            {!tempURL ? (
-              <div className="flex items-center">
-                <ImageIcon
-                  width={46}
-                  height={46}
-                  className="rounded-md opacity-30 dark:bg-transparent"
-                />
-                <span className="ml-4 opacity-30">Add an Image</span>
-              </div>
-            ) : (
-              <div className="flex items-center">
-                <img src={tempURL} width={100} className="rounded-md" />
-                <span className="ml-4 opacity-80">Uploading...</span>
-              </div>
-            )}
-
-            {children}
-          </div>
-          <div className="absolute  top-0 right-2 z-10 flex opacity-0 group-hover:opacity-100 ">
-            <OptionMenu element={element} />
-          </div>
-        </>
-      ) : (
-        <div
-          tabIndex={-1}
-          className={`flex justify-${align}`}
-          contentEditable={false}
-          style={{
-            width: "calc(100% - 10px)",
-          }}
-        >
-          <div className="relative rounded-md bg-gray-200 dark:bg-background">
-            <img
-              src={base64URL}
-              width={imageWidth}
-              height={imageHeight}
-              ref={ref}
-              className="rounded-md"
-            />
-            <div
-              className={`absolute top-0 ${
-                align === "end" ? "-left-[3px]" : "-right-[3px]"
-              } flex h-full items-center`}
-              onMouseDown={handleMouseDown}
+              contentEditable={false}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setShowEditBlockPopup({
+                  open: true,
+                  element: "image",
+                });
+                setActivePath(JSON.stringify(path));
+                setSelectedElementID(element.id);
+              }}
             >
-              <div
-                className={`  flex h-full  w-[18px] items-center opacity-0  lg:group-hover:opacity-100 xl:pointer-events-auto `}
-              >
-                <div className="mx-auto block h-[60px] w-[6px]  cursor-col-resize rounded-lg border border-foreground bg-[#b4b4b4] dark:bg-background"></div>
-              </div>
-            </div>
-            {tempBase64[element.id] && (
-              <div className="absolute top-1 left-1 z-10 flex items-center gap-1  ">
-                {element.uploading ? (
-                  <div className="rounded-md bg-black bg-opacity-50 p-[4px]">
-                    <LoadingSpinner />
-                  </div>
-                ) : (
-                  <div className="rounded-md bg-black  bg-opacity-50 p-[4px]">
-                    <FileCheck className="text-gray-400 dark:text-white" />
-                  </div>
-                )}
-              </div>
-            )}
-            <div className="absolute top-0 right-1 z-10 flex items-center gap-1  ">
-              {!element.uploading && (
-                <>
-                  <BlockAlign element={element} />
-                  <DownloadButton
-                    url={element.url}
-                    fileName={element.file_name}
-                    className=" h-[22px] w-[22px] rounded-md border-0 p-[4px] dark:bg-muted hover:dark:bg-muted/90 "
-                    iconClassName="dark:stroke-foreground"
+              {!tempURL ? (
+                <div className="flex items-center">
+                  <ImageIcon
+                    width={46}
+                    height={46}
+                    className="rounded-md opacity-30 dark:bg-transparent"
                   />
-                </>
+                  <span className="ml-4 opacity-30">Add an Image</span>
+                </div>
+              ) : (
+                <div className="flex items-center">
+                  <img src={tempURL} width={100} className="rounded-md" />
+                  <span className="ml-4 opacity-80">Uploading...</span>
+                </div>
               )}
+
+              {children}
+            </div>
+            <div className="absolute  top-0 right-2 z-10 flex opacity-0 group-hover:opacity-100 ">
               <OptionMenu element={element} />
             </div>
+          </>
+        ) : (
+          <div
+            tabIndex={-1}
+            className={`flex justify-${align}`}
+            contentEditable={false}
+            style={{
+              width: "calc(100% - 10px)",
+            }}
+          >
+            <div className="relative rounded-md bg-gray-200 dark:bg-background">
+              <img
+                src={base64URL}
+                width={imageWidth}
+                height={imageHeight}
+                ref={ref}
+                className="rounded-md"
+              />
+              <div
+                className={`absolute top-0 ${
+                  align === "end" ? "-left-[3px]" : "-right-[3px]"
+                } flex h-full items-center`}
+                onMouseDown={handleMouseDown}
+              >
+                <div
+                  className={`  flex h-full  w-[18px] items-center opacity-0  lg:group-hover:opacity-100 xl:pointer-events-auto `}
+                >
+                  <div className="mx-auto block h-[60px] w-[6px]  cursor-col-resize rounded-lg border border-foreground bg-[#b4b4b4] dark:bg-background"></div>
+                </div>
+              </div>
+              {tempBase64[element.id] && (
+                <div className="absolute top-1 left-1 z-10 flex items-center gap-1  ">
+                  {element.uploading ? (
+                    <div className="rounded-md bg-black bg-opacity-50 p-[4px]">
+                      <LoadingSpinner />
+                    </div>
+                  ) : (
+                    <div className="rounded-md bg-black  bg-opacity-50 p-[4px]">
+                      <FileCheck className="text-gray-400 dark:text-white" />
+                    </div>
+                  )}
+                </div>
+              )}
+              <div className="absolute top-0 right-1 z-10 flex items-center gap-1  ">
+                {!element.uploading && (
+                  <>
+                    <BlockAlign element={element} />
+                    <DownloadButton
+                      url={element.url}
+                      fileName={element.file_name}
+                      className=" h-[22px] w-[22px] rounded-md border-0 p-[4px] dark:bg-muted hover:dark:bg-muted/90 "
+                      iconClassName="dark:stroke-foreground"
+                    />
+                  </>
+                )}
+                <OptionMenu element={element} />
+              </div>
+            </div>
+            {children}
           </div>
-          {children}
-        </div>
-      )}
-    </div>
-  );
-});
+        )}
+      </div>
+    );
+  }
+);
 
 export const ImageEmbedLink = () => {
   const router = useRouter();

@@ -114,7 +114,7 @@ type CustomElement = {
   altText?: string;
   align?: string;
   uploading?: boolean;
-  correctAnswer?: false;
+  correctAnswer?: boolean;
   questionNumber?: number;
   voice_id?: string;
   checked?: boolean;

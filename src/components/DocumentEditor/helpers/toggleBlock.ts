@@ -4,6 +4,7 @@ import {
   Text,
   Range,
   Element as SlateElement,
+  BaseElement as SlateBaseElement,
   BaseEditor,
   Path,
 } from "slate";
@@ -11,9 +12,12 @@ import { ReactEditor } from "slate-react";
 import { genNodeId } from "@/hoc/withID";
 
 const LIST_TYPES = ["numbered-list", "bulleted-list", "checked-list"];
+export interface MyElement extends SlateBaseElement {
+  type: string;
+}
 
 export const isBlockActive = (
-  editor: BaseEditor & ReactEditor,
+  editor: any,
   format: string,
   blockType: any = "type"
 ) => {
@@ -33,10 +37,7 @@ export const isBlockActive = (
   return !!match;
 };
 
-export const toggleBlock = (
-  editor: BaseEditor & ReactEditor,
-  format: string
-) => {
+export const toggleBlock = (editor: any, format: string) => {
   const isActive = isBlockActive(editor, format, "type");
   const isList = LIST_TYPES.includes(format);
 
@@ -69,10 +70,7 @@ export const toggleBlock = (
   // }
 };
 
-export const isFormatActive = (
-  editor: BaseEditor & ReactEditor,
-  format: string
-) => {
+export const isFormatActive = (editor: any, format: string) => {
   let isActive = true;
   for (const [node] of Editor.nodes(editor, {
     match: Text.isText,
@@ -89,10 +87,7 @@ export const isFormatActive = (
   return isActive;
 };
 
-export const toggleFormat = (
-  editor: BaseEditor & ReactEditor,
-  format: string
-) => {
+export const toggleFormat = (editor: any, format: string) => {
   const isActive = isFormatActive(editor, format);
   Transforms.setNodes(
     editor,
@@ -101,10 +96,7 @@ export const toggleFormat = (
   );
 };
 
-export const wrapWithTTS = (
-  editor: BaseEditor & ReactEditor,
-  element?: any
-) => {
+export const wrapWithTTS = (editor: any, element?: any) => {
   let range;
 
   if (element) {
@@ -149,7 +141,7 @@ export const wrapWithTTS = (
   );
 };
 
-export const wrapElementWithTTS = (editor: Editor, element: any) => {
+export const wrapElementWithTTS = (editor: any, element: any) => {
   const path = ReactEditor.findPath(editor, element);
   Transforms.wrapNodes(
     editor,
@@ -164,12 +156,15 @@ export const wrapElementWithTTS = (editor: Editor, element: any) => {
   );
 };
 
-export const isParentTTS = (editor) => {
+export const isParentTTS = (editor: Editor) => {
   const { selection } = editor;
   if (!selection) return false;
 
   const parent = Editor.above(editor, {
-    match: (n) => SlateElement.isElement(n) && n.type === "tts",
+    match: (n) =>
+      SlateElement.isElement(n) &&
+      "type" in n &&
+      (n as MyElement).type === "tts",
   });
 
   return !!parent;
@@ -180,9 +175,11 @@ export const isParentMCQ = (editor) => {
   if (!selection) return false;
 
   const parent = Editor.above(editor, {
-    match: (n) => SlateElement.isElement(n) && n.type === "mcq",
+    match: (n) =>
+      SlateElement.isElement(n) &&
+      "type" in n &&
+      (n as MyElement).type === "mcq",
   });
-
   return !!parent;
 };
 

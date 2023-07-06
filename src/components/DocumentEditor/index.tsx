@@ -109,7 +109,7 @@ interface DocumentEditorProps {
 }
 
 type CustomElement = {
-  id: string;
+  id?: string;
   type: string;
   children: any[];
   altText?: string;

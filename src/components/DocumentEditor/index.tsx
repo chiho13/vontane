@@ -1594,10 +1594,14 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
                 // Get the text editor's dimensions
                 const textEditorRect =
-                  textEditorRef.current?.getBoundingClientRect() || { top: 0 };
+                  textEditorRef.current?.getBoundingClientRect() || {
+                    top: 0,
+                    width: 100,
+                    left: 0,
+                  };
 
-                const textEditorWidth = textEditorRect?.width || 100;
-                const textEditorLeft = textEditorRect?.left || 0;
+                const textEditorWidth = textEditorRect?.width;
+                const textEditorLeft = textEditorRect?.left;
 
                 // Get all rectangles that make up the selection
                 const rects = range.getClientRects();

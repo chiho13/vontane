@@ -101,7 +101,12 @@ export const ElevenTTSWrapper = withConsecutiveGrouping(
           transcript: element.transcript,
         });
       } else if (element.type !== "tts" && audioData !== null) {
-        setAudioData(null);
+        setAudioData({
+          audio_url: "",
+          file_name: "",
+          content: "",
+          transcript: "",
+        });
       }
     }, [activePath, element.children]);
 

@@ -1102,7 +1102,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
       const [parentElement, parentPath] = Editor.parent(editor, elementPath);
       const isInsideColumnCell =
-        parentElement.type === "column-cell" || parentElement.type === "tts";
+        SlateElement.isElement(parentElement) &&
+        (parentElement.type === "column-cell" || parentElement.type === "tts");
 
       const addButton =
         (isRoot &&

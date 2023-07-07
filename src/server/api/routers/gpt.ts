@@ -5,7 +5,6 @@ import { Configuration, OpenAIApi } from "openai";
 import { uploadImage, uploadImageBlob } from "@/server/lib/uploadImage";
 import { nanoid } from "nanoid";
 
-import fs from "fs";
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });

@@ -22,7 +22,7 @@ import {
 import { ReactEditor } from "slate-react";
 import { useTheme } from "styled-components";
 
-export const ChangeBlocks = ({ openLink }) => {
+export const ChangeBlocks = ({ openLink }: any) => {
   const { editor } = useContext(EditorContext);
 
   const theme = useTheme();

@@ -20,7 +20,11 @@ import {
   ElevenTTSWrapper,
 } from "./index";
 
-export function ElementSelector(props) {
+export function ElementSelector(props: {
+  attributes: any;
+  children: any;
+  element: any;
+}) {
   const { element, attributes, children } = props;
   const { editor } = useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);

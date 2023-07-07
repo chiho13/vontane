@@ -23,7 +23,7 @@ import {
 import { api } from "@/utils/api";
 import { useRouter } from "next/router";
 
-const findAllSimilarElements = (nodes) => {
+const findAllSimilarElements = (nodes: any) => {
   let similarElements = [];
   let currentGroupIndex = 0;
   let previousNode = null;

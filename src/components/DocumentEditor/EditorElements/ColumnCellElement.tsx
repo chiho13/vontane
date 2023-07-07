@@ -2,7 +2,11 @@ import { useContext } from "react";
 import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor } from "slate-react";
 
-export function ColumnCellElement(props) {
+export function ColumnCellElement(props: {
+  attributes: any;
+  children: any;
+  element: any;
+}) {
   const { attributes, children, element } = props;
 
   const { editor } = useContext(EditorContext);

@@ -7,7 +7,7 @@ import {
 } from "slate";
 import { genNodeId } from "./withID";
 
-export const withColumns = (editor) => {
+export const withColumns = (editor: any) => {
   const { insertBreak, deleteBackward } = editor;
 
   editor.insertBreak = () => {
@@ -40,7 +40,7 @@ export const withColumns = (editor) => {
     insertBreak();
   };
 
-  editor.deleteBackward = (unit) => {
+  editor.deleteBackward = (unit: any) => {
     const { selection } = editor;
 
     if (selection && Range.isCollapsed(selection)) {

@@ -1463,7 +1463,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     };
     const newPath = lastNodePath
       .slice(0, -1)
-      .concat(lastNodePath[lastNodePath.length - 1] + 1);
+      .concat(lastNodePath[lastNodePath.length - 1] + 1) as any[];
     Transforms.insertNodes(editor, newParagraph, { at: newPath });
     const leafNodePath = newPath.concat(0);
     Transforms.select(editor, Editor.start(editor, newPath));

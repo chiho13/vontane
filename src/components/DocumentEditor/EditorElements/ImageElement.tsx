@@ -315,7 +315,10 @@ export const ImageEmbedLink = () => {
 
             const isUnsplashUrl = urlObject.hostname.includes("unsplash.com");
 
-            return imageExtensions.includes(extension) || isUnsplashUrl;
+            return (
+              (extension && imageExtensions.includes(extension)) ||
+              isUnsplashUrl
+            );
           } catch (error) {
             // If an error is thrown when constructing the URL,
             // return false to indicate that the validation failed.

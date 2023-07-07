@@ -82,7 +82,7 @@ import { ElementSelector } from "./EditorElements";
 import { DragOverlayContent } from "./DragOverlayContent";
 import { RightSideBar } from "@/components/RightSidebar";
 
-import { findAncestorWithClass } from "@/utils/findAncestors";
+import { findAncestorWithClass } from "../../utils/findAncestors";
 
 import { useNewColumn } from "@/contexts/NewColumnContext";
 import { useSensor, useSensors, MouseSensor } from "@dnd-kit/core";

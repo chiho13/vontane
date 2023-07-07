@@ -1,5 +1,5 @@
 export function findAncestorWithClass(
-  element: HTMLElement | null,
+  element: any,
   className: string
 ): HTMLElement | null {
   while (element && element !== document.body) {

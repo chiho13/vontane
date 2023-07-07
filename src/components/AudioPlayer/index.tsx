@@ -126,7 +126,7 @@ function AudioPlayer({
   };
 
   useEffect(() => {
-    if (isPlaying) {
+    if (isPlaying && generatedAudio) {
       generatedAudio.playbackRate = playbackSpeed;
     }
   }, [playbackSpeed, generatedAudio]);

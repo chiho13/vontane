@@ -23,7 +23,7 @@ import {
   Point,
 } from "slate";
 
-import { ImageEmbedLink } from "@/components/DocumentEditor/EditorElements/ImageElement";
+import { ImageEmbedLink } from "./EditorElements/ImageElement";
 import scrollIntoView from "scroll-into-view-if-needed";
 import { isEqual } from "lodash";
 import { EditorContext } from "../../contexts/EditorContext";
@@ -91,7 +91,7 @@ import { FloatingModal } from "@/components/FloatingModal";
 import { Leaf } from "./LeafElements/TextLeaf";
 import { MiniDropdown } from "./MiniDropdown";
 import { OptionMenu } from "./OptionMenu";
-import { useTextSpeech } from "@/contexts/TextSpeechContext";
+import { useTextSpeech } from "../../contexts/TextSpeechContext";
 import { TextSpeech } from "@/components/TextSpeech";
 import ErrorBoundary from "../Errorboundary";
 import { textRegex } from "./helpers/textRegex";
@@ -1705,7 +1705,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         <button
           className="group fixed right-[30px] top-[30px] z-0 hidden rounded  border-gray-300 p-1 transition duration-300 hover:border-brand dark:border-gray-700 dark:hover:border-foreground dark:hover:bg-muted lg:block"
           onClick={() => {
-            setShowRightSidebar((prev) => !prev);
+            setShowRightSidebar(!showRightSidebar);
           }}
         >
           {!showRightSidebar ? (

@@ -9,6 +9,8 @@ import {
   Dispatch,
   useCallback,
 } from "react";
+
+import React from "react";
 import { useLocalStorage } from "usehooks-ts";
 
 // Define the shape of the context object

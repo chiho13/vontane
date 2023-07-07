@@ -31,7 +31,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { AudioManagerContext } from "@/contexts/PreviewAudioContext";
 
-export const PreviewContent = ({ viewport }) => {
+export const PreviewContent = () => {
   const { editor: fromEditor, activePath } = useContext(EditorContext);
   const [localValue, setLocalValue] = useState(fromEditor.children);
   const editor = useMemo(() => withReact(createEditor()), []);
@@ -48,18 +48,9 @@ export const PreviewContent = ({ viewport }) => {
     return path.length ? Node.get(fromEditor, path) : null;
   }, [fromEditor, activePath]);
 
-  useEffect(() => {
-    const isLoading = fromEditor.children.some((node) => node.loading);
-    if (isLoading) {
-      scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-    } else {
-      setLocalValue(fromEditor.children);
-    }
-  }, [fromEditor.children]);
-
   let lastTranscript = null;
 
-  const isMCQPresent = (children) => {
+  const isMCQPresent = (children: any[]) => {
     if (Array.isArray(children)) {
       for (let child of children) {
         if (child.node && child.node.type === "mcq") {
@@ -77,7 +68,19 @@ export const PreviewContent = ({ viewport }) => {
     return false;
   };
 
-  const renderElement = (node, children, key, rootNode) => {
+  const renderElement = (
+    node: { type: any },
+    children:
+      | string
+      | number
+      | boolean
+      | React.ReactElement<any, string | React.JSXElementConstructor<any>>
+      | React.ReactFragment
+      | null
+      | undefined,
+    key: React.Key | null | undefined,
+    rootNode: Node | null
+  ) => {
     console.log(node.type);
 
     switch (node.type) {
@@ -121,10 +124,10 @@ export const PreviewContent = ({ viewport }) => {
     }
   };
 
-  const parseNodes = (nodes) => {
+  const parseNodes = (nodes: any) => {
     return nodes
-      .filter((node) => node.type !== "title")
-      .map((node, index) => {
+      .filter((node: any) => node.type !== "title")
+      .map((node: any, index: any) => {
         if (Text.isText(node)) {
           if (node.bold) {
             return <b key={index}>{node.text}</b>;

@@ -24,7 +24,7 @@ import { ReactEditor } from "slate-react";
 import { EditorContext } from "../../contexts/EditorContext";
 import { Transforms } from "slate";
 
-export function BlockAlign({ element }) {
+export function BlockAlign({ element }: any) {
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const { editor } = React.useContext(EditorContext);
 

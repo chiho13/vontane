@@ -1135,7 +1135,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       const optionMenuRef = elementRefs.get(element);
 
       const optionMenu =
-        isRoot || parentElement.type === "tts" ? (
+        isRoot ||
+        (SlateElement.isElement(parentElement) &&
+          parentElement.type === "tts") ? (
           <div className="flex w-[30px] ">
             <div className="absolute   top-0 right-[10px]  items-center">
               <OptionMenu element={element} ref={optionMenuRef} />

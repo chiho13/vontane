@@ -4,19 +4,15 @@ import { useContext, useState } from "react";
 import { Editable, ReactEditor, Slate } from "slate-react";
 import { LayoutContext } from "../Layouts/AccountLayout";
 import { ElementSelector } from "./EditorElements";
-import { EditorContext } from "../../contexts/EditorContext";
-import { BaseEditor } from "slate";
 
 interface CustomEditor extends ReactEditor {
   undo: () => void;
   redo: () => void;
 }
 
-export const DragOverlayContent = ({ element }) => {
+export const DragOverlayContent = ({ element }: any) => {
   const editor = useEditor() as CustomEditor;
   const [value] = useState([{ ...element }]);
-
-  const { isLocked } = useContext(LayoutContext);
 
   return (
     <Slate editor={editor} value={value}>

@@ -487,7 +487,7 @@ export const ImageEmbedLink = () => {
       console.error("Error creating image:", error);
     }
   }
-  const session = useSession();
+  const session = useSession() as any;
 
   async function uploadImageBlob(
     fileName: string,
@@ -522,7 +522,7 @@ export const ImageEmbedLink = () => {
     const blob = await urlToBlob(tempURL);
     const base64Image = await blobToBase64(blob);
     const node = Node.get(editor, JSON.parse(activePath));
-    const id = SlateElement.isElement(node) && node.id;
+    const id = SlateElement.isElement(node) && (node.id as any);
 
     const newElement = {
       file_name: randomFileName,
@@ -609,7 +609,8 @@ export const ImageEmbedLink = () => {
                         accept="image/*"
                         className="hidden"
                         onChange={(event) => {
-                          const file = event.target.files[0];
+                          const file =
+                            event.target.files && event.target.files[0];
                           if (file) {
                             const imageURL = URL.createObjectURL(file);
 

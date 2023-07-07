@@ -2,7 +2,7 @@ import { Element as SlateElement, Transforms, Editor, Path, Node } from "slate";
 import { EditorContext } from "@/contexts/EditorContext";
 import { genNodeId } from "@/hoc/withID";
 
-export const findPathById = (editor, id) => {
+export const findPathById = (editor, id): Path | null => {
   let foundPath = null;
 
   for (const [node, path] of Node.nodes(editor)) {

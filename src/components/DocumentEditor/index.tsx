@@ -145,6 +145,11 @@ type CustomText = {
   text?: string;
 };
 
+interface CustomNode {
+  latex?: string;
+  id?: string; // if 'id' is also not defined on Node
+}
+
 declare module "slate" {
   interface CustomTypes {
     Editor: BaseEditor & ReactEditor;
@@ -985,7 +990,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     const currentPathString = JSON.stringify(path);
     setActivePath(currentPathString);
     const spaceBelowTarget = window.innerHeight - targetRect.top;
-    const [currentNode] = Editor.node(editor, path);
+    const currentNode = Editor.node(editor, path)[0] as any;
 
     setCurrentLatex(currentNode.latex);
     setSelectedElementID(currentNode.id);
@@ -1164,7 +1169,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   const [isDragging, setIsDragging] = useState(false);
   const [savedSelection, setSavedSelection] = useState(null);
-  const textEditorRef = useRef(null);
+  const textEditorRef = useRef<HTMLDivElement>(null);
 
   const handleDragEnd = useCallback(
     function (event: { active: any; over: any }) {
@@ -1200,6 +1205,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
       console.log("toPath", toPath);
 
+      if (!fromPath) return;
+
+      if (!toPath) return;
       const [fromParentElement, fromParentPath] = Editor.parent(
         editor,
         fromPath
@@ -1233,6 +1241,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
         createColumns(fromPath, { id: over.id, path: targetPath }, editor);
       } else if (
+        SlateElement.isElement(fromParentElement) &&
+        SlateElement.isElement(toParentElement) &&
         fromParentElement.type === "column-cell" &&
         toParentElement.type === "column-cell"
       ) {
@@ -1255,6 +1265,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         ? [fromParentPath[0] + 1, ...fromParentPath.slice(1)]
         : fromParentPath;
       if (
+        SlateElement.isElement(fromParentElement) &&
         fromParentElement.type === "column-cell" &&
         fromParentElement.children.length === 1
       ) {
@@ -1269,6 +1280,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
         console.log(columnElement.children);
         if (
+          SlateElement.isElement(columnElement) &&
           columnElement.type === "column" &&
           columnElement.children.length === 1 &&
           columnElement.children[0]?.text === ""
@@ -1305,7 +1317,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
           const overNode = Node.get(editor, overPath);
 
-          if (overNode.type === "slide") {
+          if (SlateElement.isElement(overNode) && overNode.type === "slide") {
             setCreatingNewColumn(false);
             setInsertDirection(null);
             return;
@@ -1342,11 +1354,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       },
     });
 
-    return (
-      <div ref={droppable.setNodeRef} {...droppable.attributes}>
-        {children}
-      </div>
-    );
+    return <div ref={droppable.setNodeRef}>{children}</div>;
   }
 
   const handleDragStart = useCallback(function ({ active }) {
@@ -1432,11 +1440,13 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     const lastNodeDOM = document.querySelector(
       `[data-path="${JSON.stringify(lastNodePath)}"]`
     );
-    const lastNodeRect = lastNodeDOM.getBoundingClientRect();
+    const lastNodeRect = lastNodeDOM && lastNodeDOM.getBoundingClientRect();
     const clickedY = event.clientY;
     const isLastNodeEmpty =
-      lastNode.children.length === 1 && lastNode.children[0].text === "";
-    if (clickedY > lastNodeRect.bottom && !isLastNodeEmpty) {
+      SlateElement.isElement(lastNode) &&
+      lastNode.children.length === 1 &&
+      lastNode.children[0].text === "";
+    if (lastNodeRect && clickedY > lastNodeRect.bottom && !isLastNodeEmpty) {
       insertNewParagraphBelowLastNode(lastNodePath);
       event.stopPropagation();
     }
@@ -1529,7 +1539,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         event:
           | React.KeyboardEvent<HTMLDivElement>
           | React.MouseEvent<HTMLDivElement, MouseEvent>,
-        editor: BaseEditor & ReactEditor
+        editor: any
       ) => {
         event.stopPropagation();
 
@@ -1557,14 +1567,15 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               const [startNode] = Editor.parent(editor, startPath);
 
               if (
-                startNode.type === "paragraph" ||
-                startNode.type === "link" ||
-                startNode.type === "bulleted-list" ||
-                startNode.type === "numbered-list" ||
-                startNode.type === "checked-list" ||
-                startNode.type === "heading-one" ||
-                startNode.type === "heading-two" ||
-                startNode.type === "heading-three"
+                SlateElement.isElement(startNode) &&
+                (startNode.type === "paragraph" ||
+                  startNode.type === "link" ||
+                  startNode.type === "bulleted-list" ||
+                  startNode.type === "numbered-list" ||
+                  startNode.type === "checked-list" ||
+                  startNode.type === "heading-one" ||
+                  startNode.type === "heading-two" ||
+                  startNode.type === "heading-three")
               ) {
                 const startRange = document.createRange();
                 startRange.setStart(startContainer, range.startOffset);
@@ -1580,9 +1591,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
                 // Get the text editor's dimensions
                 const textEditorRect =
-                  textEditorRef.current.getBoundingClientRect();
-                const textEditorWidth = textEditorRect.width;
-                const textEditorLeft = textEditorRect.left;
+                  textEditorRef.current?.getBoundingClientRect() || { top: 0 };
+
+                const textEditorWidth = textEditorRect?.width || 100;
+                const textEditorLeft = textEditorRect?.left || 0;
 
                 // Get all rectangles that make up the selection
                 const rects = range.getClientRects();
@@ -1597,6 +1609,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                   0
                 );
 
+                const scrollTop = (textEditorRef.current as HTMLElement)
+                  .scrollTop;
+
                 setMiniToolbarPosition({
                   x: x,
                   y:
@@ -1604,7 +1619,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     window.scrollY -
                     textEditorRect.top -
                     60 +
-                    textEditorRef.current.scrollTop,
+                    scrollTop,
                 });
                 setShowMiniToolbar(true);
 
@@ -1757,8 +1772,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                                   height: "calc(100vh - 170px)",
                                 }}
                                 decorate={decorate}
-                                renderElement={renderElement}
-                                renderLeaf={Leaf}
+                                renderElement={renderElement as any}
+                                renderLeaf={Leaf as any}
                                 onMouseUp={(event) => {
                                   handleEditorMouseUp(event, editor);
                                   handleSelectedText(event, editor);

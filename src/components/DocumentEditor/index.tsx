@@ -26,7 +26,7 @@ import {
 import { ImageEmbedLink } from "./EditorElements/ImageElement";
 import scrollIntoView from "scroll-into-view-if-needed";
 import { isEqual } from "lodash";
-import { EditorContext } from "../../contexts/EditorContext";
+import { EditorContext } from "@/contexts/EditorContext";
 import { Slate, Editable, withReact, ReactEditor } from "slate-react";
 import { Plus, Sidebar } from "lucide-react";
 import {

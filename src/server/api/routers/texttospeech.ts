@@ -6,7 +6,6 @@ import { nanoid } from "nanoid";
 
 import { Configuration, OpenAIApi } from "openai";
 
-import fs from "fs";
 import axios from "axios";
 import stream from "stream";
 import util from "util";
@@ -23,15 +22,6 @@ const openai = new OpenAIApi(configuration);
 const secretkey = process.env.ELEVENLABS_APIKEY;
 const userId = process.env.PLAYHT_USERID;
 const pipeline = util.promisify(stream.pipeline);
-
-async function downloadFile(url, filePath) {
-  const response = await axios({
-    url,
-    responseType: "stream",
-  });
-
-  await pipeline(response.data, fs.createWriteStream(filePath));
-}
 
 export const texttospeechRouter = createTRPCRouter({
   getVoices: protectedProcedure.query(async () => {

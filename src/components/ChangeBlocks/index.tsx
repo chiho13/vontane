@@ -1,5 +1,5 @@
 import { EditorContext } from "@/contexts/EditorContext";
-import { useContext, useEffect, useRef, useState } from "react";
+import { SetStateAction, useContext, useEffect, useRef, useState } from "react";
 import { FaBold } from "react-icons/fa";
 import { FiItalic, FiUnderline } from "react-icons/fi";
 import { ImStrikethrough, ImLink } from "react-icons/im";
@@ -27,7 +27,8 @@ export const ChangeBlocks = ({ openLink }: any) => {
 
   const theme = useTheme();
 
-  const changeTextBlock = useRef(null);
+  const changeTextBlock = useRef<any>(null);
+
   const [isKeyboardNav, setIsKeyboardNav] = useState(false);
 
   const dropdownMenu = useRef(null);
@@ -84,36 +85,38 @@ export const ChangeBlocks = ({ openLink }: any) => {
   const [selectedBlock, setSelectedBlock] = useState(0);
 
   useEffect(() => {
-    if (editor && editor.selection) {
-      // Iterate over the changeBlockElements
-      for (let i = 0; i < changeBlockElements.length; i++) {
-        // Check if the block of the current element type is active
-        if (isBlockActive(editor, changeBlockElements[i].format, "type")) {
-          setSelectedBlock(i); // Set the selected block if it's active
-          break; // Break the loop as we've found the active block
-        }
+    if (!editor || !editor.selection) return;
+
+    for (let i = 0; i < changeBlockElements.length; i++) {
+      const element = changeBlockElements[i];
+      if (element && isBlockActive(editor, element.format, "type")) {
+        setSelectedBlock(i);
+        break;
       }
     }
   }, [editor?.selection]);
 
-  const TextBlockIcon = (
+  const selectedElement = changeBlockElements[selectedBlock];
+
+  const TextBlockIcon = selectedElement ? (
     <div className="flex items-center ">
-      {changeBlockElements[selectedBlock]["icon"]}
-      <span className="ml-2 mr-2">
-        {" "}
-        {changeBlockElements[selectedBlock]["name"]}
-      </span>
+      {selectedElement.icon}
+      <span className="ml-2 mr-2">{selectedElement.name}</span>
       <FaCaretDown className="w-4 stroke-darkblue dark:stroke-foreground" />
     </div>
-  );
+  ) : null;
 
   const { focusedIndex, setFocusedIndex, handleArrowNavigation } =
-    useArrowNavigation(changeBlockElements, -1, (index) => {
-      if (changeTextBlock.current) {
-        changeTextBlock.current.handleClose();
-        setSelectedBlock(index);
+    useArrowNavigation(
+      changeBlockElements,
+      -1,
+      (index: SetStateAction<number>) => {
+        if (changeTextBlock.current) {
+          changeTextBlock.current.handleClose();
+          setSelectedBlock(index);
+        }
       }
-    });
+    );
 
   useEffect(() => {
     if (openLink) {

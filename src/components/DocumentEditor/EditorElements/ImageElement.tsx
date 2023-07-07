@@ -445,7 +445,7 @@ export const ImageEmbedLink = () => {
     // const blob = await urlToBlob(imageURL);
     // const base64Image = await blobToBase64(blob);
     const node = Node.get(editor, JSON.parse(activePath));
-    const id = SlateElement.isElement(node) && node.id;
+    const id = SlateElement.isElement(node) && (node.id as any);
 
     const newElement = {
       file_name: fileName,

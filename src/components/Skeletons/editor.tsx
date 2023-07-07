@@ -8,6 +8,7 @@ import { Portal } from "react-portal";
 import { useLocalStorage } from "usehooks-ts";
 import { breakpoints } from "@/utils/breakpoints";
 
+import React from "react";
 export const EditorSkeleton = () => {
   const [showRightSidebar, setShowRightSidebar] = useState(
     JSON.parse(localStorage.getItem("showRightSidebar") || "true")

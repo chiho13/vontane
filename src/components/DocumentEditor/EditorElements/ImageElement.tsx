@@ -86,7 +86,8 @@ export const ImageElement = React.memo(
     const [align, setAlign] = useState(element.align || "start");
 
     const selected = useSelected();
-    const ref = useRef(null);
+    const ref = useRef<any>(null);
+
     const handleMouseDown = useCallback((e) => {
       setIsResizing(true);
     }, []);
@@ -131,7 +132,7 @@ export const ImageElement = React.memo(
           if (align === "end") {
             // When the alignment is "end", calculate the new width based on the difference between
             // the right edge of the image and the mouse position
-            newWidth = ref.current.getBoundingClientRect().right - e.clientX;
+            newWidth = ref.current?.getBoundingClientRect().right - e.clientX;
           } else {
             // Otherwise, calculate the new width as before
             newWidth = e.clientX - ref.current.getBoundingClientRect().left;

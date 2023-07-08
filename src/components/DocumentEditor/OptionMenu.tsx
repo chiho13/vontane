@@ -53,7 +53,7 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
     const { editor } = useContext(EditorContext);
     const { activeDropdown, toggleDropdown } = useContext(DropdownContext);
 
-    let optionMenuElements: (OptionMenuElement | string)[] = [
+    let optionMenuElements: any = [
       {
         name: "Text to MP3",
         action: () => wrapElementWithTTS(editor, element),

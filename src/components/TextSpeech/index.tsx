@@ -33,7 +33,7 @@ import {
 } from "@/components/ui/tooltip";
 
 const useDownloadFile = (url, fileName) => {
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState<any>(null);
 
   useEffect(() => {
     const fetchFile = async () => {

@@ -36,7 +36,7 @@ export const createColumns = (fromPath, over, editor) => {
   };
 
   // Find the target node's path
-  const toPath = findPathById(editor, over.id);
+  const toPath = findPathById(editor, over.id) as Path;
 
   // Insert the new column before or after the target node
   Transforms.insertNodes(editor, newColumn, {

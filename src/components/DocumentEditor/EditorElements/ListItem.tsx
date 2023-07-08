@@ -21,7 +21,7 @@ const ListItemStyle = styled.div`
 `;
 
 const findAllNumberedLists = (nodes) => {
-  let numberedLists = [];
+  let numberedLists: any[] = [];
   let currentListIndex = 0;
 
   nodes.forEach((node) => {

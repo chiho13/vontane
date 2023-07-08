@@ -145,7 +145,7 @@ export const PromptSelector = ({
   setQuestionHandler,
   genLoading,
 }) => {
-  const [selectedLevel, setSelectedLevel] = useState(null);
+  const [selectedLevel, setSelectedLevel] = useState<any>(null);
   const [selectedSubtopic, setSelectedSubtopic] = useState(null);
   const [hasPressedWrite, setHasPressedWrite] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -160,7 +160,7 @@ export const PromptSelector = ({
   };
 
   const getParentKey = (selectedTopic, topics) => {
-    let parentKey = null;
+    let parentKey: any = null;
     Object.entries(topics).forEach(([key, value]) => {
       if (Array.isArray(value) && value.includes(selectedTopic)) {
         parentKey = key;
@@ -220,7 +220,7 @@ export const PromptSelector = ({
 
   const handleSubtopicSelect = (selected) => {
     const { topic, quantity } = selected;
-    setSelectedSubtopic((prevState) => {
+    setSelectedSubtopic((prevState: any) => {
       const newState = { ...prevState };
 
       if (quantity === 0) {
@@ -229,7 +229,10 @@ export const PromptSelector = ({
         newState[topic] = quantity;
       }
 
-      const total = Object.values(newState).reduce((a, b) => a + b, 0);
+      const total: any = Object.values(newState).reduce(
+        (a: any, b: any) => a + b,
+        0
+      );
 
       if (total <= 5) {
         setQuestionCount(total);
@@ -257,7 +260,7 @@ export const PromptSelector = ({
           }}
           isLastLevel={false}
           selectedValue={selectedLevel?.level}
-          disableOtherLevels={questionCount}
+          disableOtherLevels={questionCount as any}
         />
         {selectedLevel && (
           <RecursiveList

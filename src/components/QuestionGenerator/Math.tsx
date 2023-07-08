@@ -33,9 +33,9 @@ export const MathQuestionGenerator = () => {
   };
 
   const insertNodesAtGivenPath = (
-    editor: BaseEditor & ReactEditor,
+    editor: any,
     nodesArray: any[],
-    startingPath: Path
+    startingPath: any[]
   ) => {
     nodesArray.forEach((node, index) => {
       // Calculate the path for each node in the array

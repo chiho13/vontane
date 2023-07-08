@@ -96,7 +96,7 @@ function VoiceDropdown({
   selectedVoiceId,
   element,
 }: VoiceDropdownProps) {
-  const voicesDropdownRef = useRef(null);
+  const voicesDropdownRef = useRef<any>(null);
   const [voiceDropdownIsOpen, setIsOpen] = useState(false);
 
   const genderFilterRef = useRef<any>({});
@@ -159,7 +159,7 @@ function VoiceDropdown({
   const [selectedFilterOption, setSelectedFilterOption] =
     useState<FilterOption>({ key: "", value: "" });
 
-  const [playingStates, setPlayingStates] = useState<boolean[]>(
+  const [playingStates, setPlayingStates] = useState<any>(
     new Array<boolean>(voices.length).fill(false)
   );
 
@@ -168,7 +168,7 @@ function VoiceDropdown({
 
   // const [isFiltering, setIsFiltering] = useState<boolean>(false);
 
-  const MemoizedSampleAudioVoice = memo(SampleAudioVoice);
+  const MemoizedSampleAudioVoice: any = memo(SampleAudioVoice);
 
   const [isOpen, setActiveFilter] = useState<string>("");
 
@@ -222,13 +222,7 @@ function VoiceDropdown({
   const stopButtonRef = useRef<HTMLDivElement>(null);
   const desktopbreakpoint = window.screen.width > breakpoints.lg;
 
-  function handleVoiceSelection(voice: {
-    voice_id?: string;
-    name: any;
-    labels?: { accent: string; age: string; gender: string };
-    preview_url?: {};
-    voiceid?: any;
-  }): void {
+  function handleVoiceSelection(voice: any): void {
     setSelectedVoiceId(voice.voiceid);
     setSelectedItemText(voice.name);
     // setSelectedItemText(name);
@@ -263,7 +257,7 @@ function VoiceDropdown({
           });
         }
       }
-      let newAudioElement = null;
+      let newAudioElement: any = null;
       if (filters.length > 0) {
         newAudioElement = new Audio(filteredVoices[index].preview_url);
       } else {
@@ -313,7 +307,7 @@ function VoiceDropdown({
   function onFilterChange(option: FilterOption): void {
     setSelectedFilterOption(option);
     setFilters((prevFilters: FilterOption[]) => {
-      const newFilters = [...prevFilters];
+      const newFilters: any[] = [...prevFilters];
       const { key, value } = option;
       const existingFilterIndex = newFilters.findIndex(
         (filter) => filter.key === key
@@ -329,13 +323,11 @@ function VoiceDropdown({
     setActiveFilter("");
   }
 
-  const [lastClickedOptions, setLastClickedOptions] = useState<{
-    [key: string]: FilterOption;
-  }>({});
+  const [lastClickedOptions, setLastClickedOptions] = useState<any>({});
 
   function onMobileFilterChange(option: FilterOption): void {
     setFilters((prevFilters: FilterOption[]) => {
-      const newFilters = [...prevFilters];
+      const newFilters: any[] = [...prevFilters];
       const { key, value } = option;
       const existingFilterIndex = newFilters.findIndex(
         (filter) => filter.key === key
@@ -410,7 +402,7 @@ function VoiceDropdown({
     index: number;
   }
 
-  const VoiceRow: React.FC<VoiceRowProps> = ({ voice, index }) => {
+  const VoiceRow = ({ voice, index }) => {
     const capitalize = (str: string) =>
       str && str.charAt(0).toUpperCase() + str.slice(1);
 

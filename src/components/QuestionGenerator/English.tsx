@@ -17,7 +17,7 @@ export const convertUnderscoresToBlank = (text) => {
     return [{ text }];
   }
 
-  const result = [];
+  const result: any = [];
 
   for (let i = 0; i < parts.length; i++) {
     result.push({ text: parts[i] });
@@ -76,9 +76,9 @@ export const EnglishQuestionGenerator = () => {
   };
 
   const insertNodesAtGivenPath = (
-    editor: BaseEditor & ReactEditor,
+    editor: any,
     nodesArray: any[],
-    startingPath: Path
+    startingPath: any[]
   ) => {
     nodesArray.forEach((node, index) => {
       // Calculate the path for each node in the array

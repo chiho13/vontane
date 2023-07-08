@@ -3,7 +3,7 @@ import { EditorContext } from "@/contexts/EditorContext";
 import { genNodeId } from "@/hoc/withID";
 
 export const findPathById = (editor, id): Path | null => {
-  let foundPath = null;
+  let foundPath: any = null;
 
   for (const [node, path] of Node.nodes(editor)) {
     if (SlateElement.isElement(node) && node.id === id) {

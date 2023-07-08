@@ -13,7 +13,7 @@ import { useLocalStorage } from "usehooks-ts";
 import AudioPlayer from "../AudioPlayer";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { EditorContext } from "@/contexts/EditorContext";
-import { Descendant, Editor, Node, Path } from "slate";
+import { Element as SlateElement, Descendant, Editor, Node, Path } from "slate";
 import LoadingSpinner from "@/icons/LoadingSpinner";
 import { extractTextValues } from "../DocumentEditor/helpers/extractText";
 import { root } from "postcss";
@@ -79,7 +79,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
   const [copied, setCopied] = useState(false);
   const [tooltipOpen, setTooltipOpen] = useState(false);
 
-  const [audioURL, setAudioURL] = useState(null);
+  const [audioURL, setAudioURL] = useState<string>("");
   const rightSidebarStyle: React.CSSProperties = {
     transform: `translateX(${
       showRightSidebar ? "0px" : `${rightSideBarWidth}px`
@@ -128,7 +128,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
   const concatAudio = async () => {
     console.log(editor.children);
     // Assuming editor.children is an array of objects
-    let audioUrls = [];
+    let audioUrls: any[] = [];
     editor.children.forEach((child: Descendant) => {
       if ("children" in child && "audio_url" in child) {
         audioUrls.push(child.audio_url);
@@ -202,7 +202,8 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
               value="properties"
               className="flex-grow overflow-y-auto"
             >
-              {rootNode?.type == "tts" &&
+              {SlateElement.isElement(rootNode) &&
+                rootNode?.type == "tts" &&
                 (audioData && audioData.file_name ? (
                   <>
                     <h3 className="text-bold mt-4 mb-2 text-sm   ">
@@ -213,7 +214,6 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                       <AudioPlayer
                         audioURL={audioURL}
                         fileName={audioData.file_name}
-                        showAudioPlayer={true}
                       />
                     </div>
 
@@ -323,7 +323,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                 </DropdownMenuContent>
               </DropdownMenu> */}
               </div>
-              <PreviewContent viewport={viewport} />
+              <PreviewContent />
             </TabsContent>
           </Tabs>
         </div>

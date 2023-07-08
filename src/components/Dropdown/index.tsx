@@ -182,7 +182,7 @@ function Dropdown(
   }>({ top: 0, left: 0 });
 
   const isOpen = activeDropdown === dropdownId;
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<any>(null);
 
   const theme = useTheme();
 

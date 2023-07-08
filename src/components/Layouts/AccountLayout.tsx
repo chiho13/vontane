@@ -10,7 +10,6 @@ import { useRouter } from "next/router";
 import { Plus } from "lucide-react";
 import { workspace } from "@prisma/client";
 import { useLocalStorage } from "usehooks-ts";
-import { ModeToggle } from "@/components/mode-toggle";
 
 import { mq, breakpoints } from "@/utils/breakpoints";
 import {
@@ -97,17 +96,17 @@ transition: transform 300ms, ${(props) =>
     margin-top: ${(props) => (props.isLocked && props.isOpen ? "0" : "0")};
   }
 
-  ${(props) => mq.lg`
-  top: ${props.isLocked && props.isOpen ? "0" : "70px"};
-  transform: ${
-    props.isLocked || props.isOpen ? "translateX(0)" : "translate(-270px)"
-  };
-  height: ${props.isLocked && props.isOpen ? "100%" : "80%"};
+  ${mq.lg`
+  top: ${(props) => (props.isLocked && props.isOpen ? "0" : "70px")};
+  transform: ${(props) =>
+    props.isLocked || props.isOpen ? "translateX(0)" : "translate(-270px)"};
+    height: ${(props) => (props.isLocked && props.isOpen ? "100%" : "80%")};
 
-  .dropdown-menu.dropdown-menu {
-    top: 50px !important;
-  }
-`}
+    
+    .dropdown-menu.dropdown-menu {
+      top: 50px !important;
+    }
+  `}
 `;
 
 // left: ${(props) => (!props.isLocked && props.isOpen ? "250px" : "0")};
@@ -372,9 +371,24 @@ const Layout: React.FC<LayoutProps> = ({
                       <ChevronsUpDown className="w-4 text-darkgray dark:text-muted-foreground" />
                     }
                     dropdownMenuNonPortalOverride={
-                      "sm:absolute left-5 dark:bg-background"
+                      "lg:absolute left-5 dark:bg-background"
                     }
                   >
+                    <div className="p-1" role="none">
+                      <Link
+                        className="flex w-full items-center rounded-md px-4  py-2 text-left text-sm text-gray-700 transition duration-200 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-accent"
+                        role="menuitem"
+                        tabIndex={-1}
+                        id="menu-item-3"
+                        href="/account"
+                      >
+                        <Settings className="dark:text-foreground " />{" "}
+                        <span className="ml-2 dark:text-foreground ">
+                          Settings
+                        </span>
+                      </Link>
+                    </div>
+                    <hr className="my-0 h-[1px] border-t-0 bg-neutral-100 opacity-100 dark:opacity-20" />
                     <div className="p-1" role="none">
                       <button
                         onClick={logout}
@@ -393,7 +407,9 @@ const Layout: React.FC<LayoutProps> = ({
               <ul className="mt-10 mb-10">
                 {workspaces &&
                   workspaces.map((workspace) => {
-                    const parsedSlateValue = JSON.parse(workspace.slate_value);
+                    const parsedSlateValue = JSON.parse(
+                      workspace.slate_value as any
+                    );
 
                     const workspaceName = parsedSlateValue[0].children[0].text;
                     const displayName =
@@ -435,7 +451,7 @@ const Layout: React.FC<LayoutProps> = ({
                     </span>
                   </button>
                 </SidebarItem>
-                {/* {!profile?.is_subscribed && (
+                {!profile?.is_subscribed && (
                   <SidebarItem
                     className={`${
                       isLocked ? "fixed bottom-10 " : "relative"
@@ -451,7 +467,7 @@ const Layout: React.FC<LayoutProps> = ({
                       </span>
                     </button>
                   </SidebarItem>
-                )} */}
+                )}
               </ul>
             </AccountLayoutStyle>
           </SidebarContent>
@@ -468,9 +484,6 @@ const Layout: React.FC<LayoutProps> = ({
           data-locked={isLocked}
         >
           {children}
-          <div className="fixed right-2 bottom-2">
-            <ModeToggle />
-          </div>
         </main>
       </LayoutContext.Provider>
     </>

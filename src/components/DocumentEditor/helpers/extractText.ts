@@ -2,7 +2,7 @@ import { textRegex } from "./textRegex";
 
 export function extractTextValues(data) {
   function traverse(item) {
-    let accumulator = [];
+    let accumulator: string[] = [];
 
     if (item.children) {
       item.children.forEach((child) => {

@@ -11,7 +11,7 @@ interface MCQElementProps {
 }
 
 const findMCQElements = (nodes) => {
-  let mcqElements = [];
+  let mcqElements: any[] = [];
   nodes.forEach((node) => {
     if (node.type === "mcq") {
       mcqElements.push(node);

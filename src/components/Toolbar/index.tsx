@@ -321,7 +321,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         </>
       )}
       {!openLink &&
-        buttonsList.map((button, i) =>
+        buttonsList.map((button: any, i) =>
           button.separator ? (
             <div
               key={i}

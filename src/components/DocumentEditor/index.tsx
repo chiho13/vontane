@@ -21,6 +21,7 @@ import {
   Location,
   Text,
   Point,
+  Descendant,
 } from "slate";
 
 import { ImageEmbedLink } from "./EditorElements/ImageElement";
@@ -1427,7 +1428,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       return;
     }
 
-    const lastNode = editor.children[editor.children.length - 1];
+    const lastNode: any = editor.children[editor.children.length - 1];
     const lastNodePath = ReactEditor.findPath(editor, lastNode);
 
     // if (

@@ -56,7 +56,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
   ) => {
     const theme = useTheme();
     const [search, setSearch] = useState("");
-    const searchInputRef = useRef(null);
+    const searchInputRef: any = useRef(null);
 
     const {
       editor,

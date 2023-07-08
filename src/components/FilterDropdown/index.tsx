@@ -20,7 +20,7 @@ import Image from "next/image";
 
 interface FilterProps {
   id: string;
-  options: { key: string; value: string };
+  options: any[];
   onChange: (option: { value: string }) => void;
   defaultTitle: string;
   isOpen?: boolean;

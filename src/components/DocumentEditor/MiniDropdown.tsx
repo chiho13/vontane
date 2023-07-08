@@ -325,7 +325,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
       ReactEditor.focus(editor);
     }
 
-    const listRefs = useRef([]);
+    const listRefs: any = useRef(null);
     listRefs.current = [];
     const addToRefs = (el) => {
       if (el && !listRefs.current.includes(el)) {

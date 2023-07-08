@@ -96,7 +96,7 @@ transition: transform 300ms, ${(props) =>
     margin-top: ${(props) => (props.isLocked && props.isOpen ? "0" : "0")};
   }
 
-  ${mq.lg`
+  @media (min-width: 1024px) {
   top: ${(props) => (props.isLocked && props.isOpen ? "0" : "70px")};
   transform: ${(props) =>
     props.isLocked || props.isOpen ? "translateX(0)" : "translate(-270px)"};
@@ -106,7 +106,7 @@ transition: transform 300ms, ${(props) =>
     .dropdown-menu.dropdown-menu {
       top: 50px !important;
     }
-  `}
+  }
 `;
 
 // left: ${(props) => (!props.isLocked && props.isOpen ? "250px" : "0")};

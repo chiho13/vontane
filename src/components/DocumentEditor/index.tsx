@@ -404,7 +404,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       for (const hotkey in HOTKEYS) {
         if (isHotkey(hotkey, event as any)) {
           event.preventDefault();
-          const mark = HOTKEYS[hotkey];
+          const mark = HOTKEYS[hotkey] as string;
           toggleFormat(editor, mark);
         }
       }

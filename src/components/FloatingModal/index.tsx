@@ -54,7 +54,7 @@ export const FloatingModal: React.FC<FloatingModalProps> = ({
 }) => {
   const [position, setPosition] = useState({ x: initialX, y: initialY });
   const [showFloatingModal, setShowFloatingModal] = useState(false);
-  const modalRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<any>(null);
   const dragging = useRef(false);
   let dragStart = { x: 0, y: 0 };
 

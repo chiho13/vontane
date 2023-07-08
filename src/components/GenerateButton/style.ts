@@ -1,14 +1,6 @@
-import styled, { StyledComponent } from "styled-components";
+import styled from "styled-components";
 
-interface GenerateButtonStyleProps {
-  isDisabled: boolean;
-}
-
-export const GenerateButtonStyle: StyledComponent<
-  "button",
-  any,
-  GenerateButtonStyleProps
-> = styled.button<GenerateButtonStyleProps>`
+export const GenerateButtonStyle = styled.button<any>`
   display: flex;
   font-weight: bold;
   height: 34px;

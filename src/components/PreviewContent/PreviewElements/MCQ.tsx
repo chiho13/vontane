@@ -8,7 +8,7 @@ import { AiFillSound } from "react-icons/ai";
 import { compareTwoStrings } from "@/utils/helpers";
 
 function searchWordInTranscript(transcript, searchTerm) {
-  let result = [];
+  let result: any = [];
 
   // Split the search term into individual words
   let searchWords = searchTerm.toLowerCase().split(" ");
@@ -62,7 +62,7 @@ export const MCQ = ({ node, children }) => {
     setAnswerChecked(true);
   };
 
-  let currentAudio = null;
+  let currentAudio: any = null;
 
   const playAudioSegment = async (audioUrl, start, end) => {
     // Stop the current audio if it's playing
@@ -128,7 +128,7 @@ export const MCQ = ({ node, children }) => {
 
   console.log(node);
 
-  let paragraphs = [];
+  let paragraphs: any = [];
   let optionCounter = 0;
 
   node.children.forEach((item) => {

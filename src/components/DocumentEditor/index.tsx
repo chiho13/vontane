@@ -1203,21 +1203,21 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       // setSelectedElementID(active.id);
 
       console.log("active", active.id, "over", over.id);
-      const fromPath = findPathById(editor, active.id);
-      const toPath = findPathById(editor, over.id);
+      const fromPath: any = findPathById(editor, active.id);
+      const toPath: any = findPathById(editor, over.id);
 
       console.log("toPath", toPath);
 
-      if (!fromPath) return;
-
-      if (!toPath) return;
-      const [fromParentElement, fromParentPath] = Editor.parent(
+      const [fromParentElement, fromParentPath]: any = Editor.parent(
         editor,
         fromPath
       );
 
       console.log(fromParentPath);
-      const [toParentElement, toParentPath] = Editor.parent(editor, toPath);
+      const [toParentElement, toParentPath]: any = Editor.parent(
+        editor,
+        toPath
+      );
 
       // Check if the dragged element should be inserted before or after the target element
       const toIndexOffset =

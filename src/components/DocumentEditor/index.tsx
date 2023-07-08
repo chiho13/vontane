@@ -94,7 +94,6 @@ import { MiniDropdown } from "./MiniDropdown";
 import { OptionMenu } from "./OptionMenu";
 import { useTextSpeech } from "../../contexts/TextSpeechContext";
 import { TextSpeech } from "@/components/TextSpeech";
-import ErrorBoundary from "../Errorboundary";
 import { textRegex } from "./helpers/textRegex";
 import { addMCQBlock } from "./helpers/addMCQBlock";
 import { breakpoints } from "@/utils/breakpoints";
@@ -1739,155 +1738,150 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             }}
           >
             <div className="block  lg:w-full">
-              <ErrorBoundary>
-                <DndContext
-                  onDragEnd={handleDragEnd}
-                  onDragStart={handleDragStart}
-                  sensors={sensors}
+              <DndContext
+                onDragEnd={handleDragEnd}
+                onDragStart={handleDragStart}
+                sensors={sensors}
+              >
+                <SortableContext
+                  items={slatevalue}
+                  strategy={verticalListSortingStrategy}
                 >
-                  <SortableContext
-                    items={slatevalue}
-                    strategy={verticalListSortingStrategy}
-                  >
-                    <ActiveElementProvider activeIndex={activeIndex}>
-                      <EditableStyle>
-                        <div
-                          ref={textEditorRef}
-                          tabIndex={0}
-                          className="editable-scrollbar relative z-0 mx-auto block overflow-y-auto  overflow-x-hidden rounded-md pt-4 pb-4 focus:outline-none  focus-visible:border-gray-300"
-                        >
-                          <Slate
-                            key={currentSlateKey}
-                            editor={editor}
-                            value={slatevalue}
-                            onChange={(newValue) => {
-                              if (!isEqual(slatevalue, newValue)) {
-                                // Compare the current and new values
-                                debouncedSetSlateValue(newValue);
+                  <ActiveElementProvider activeIndex={activeIndex}>
+                    <EditableStyle>
+                      <div
+                        ref={textEditorRef}
+                        tabIndex={0}
+                        className="editable-scrollbar relative z-0 mx-auto block overflow-y-auto  overflow-x-hidden rounded-md pt-4 pb-4 focus:outline-none  focus-visible:border-gray-300"
+                      >
+                        <Slate
+                          key={currentSlateKey}
+                          editor={editor}
+                          value={slatevalue}
+                          onChange={(newValue) => {
+                            if (!isEqual(slatevalue, newValue)) {
+                              // Compare the current and new values
+                              debouncedSetSlateValue(newValue);
 
-                                console.log("hello");
-                                console.log(JSON.stringify(newValue));
-                                if (handleTextChange) {
-                                  handleTextChange(newValue);
-                                }
+                              console.log("hello");
+                              console.log(JSON.stringify(newValue));
+                              if (handleTextChange) {
+                                handleTextChange(newValue);
                               }
-                            }}
-                          >
-                            <Droppable>
-                              <Editable
-                                className=" relative"
-                                style={{
-                                  height: "calc(100vh - 170px)",
-                                }}
-                                decorate={decorate}
-                                renderElement={renderElement as any}
-                                renderLeaf={Leaf as any}
-                                onMouseUp={(event) => {
-                                  handleEditorMouseUp(event, editor);
-                                  handleSelectedText(event, editor);
-                                }}
-                                spellCheck={false}
-                                onKeyDown={handleKeyDown}
-                                onKeyUp={(event) => {
-                                  handleSelectedText(event, editor);
-                                  debouncedSetIsTyping("");
+                            }
+                          }}
+                        >
+                          <Droppable>
+                            <Editable
+                              className=" relative"
+                              style={{
+                                height: "calc(100vh - 170px)",
+                              }}
+                              decorate={decorate}
+                              renderElement={renderElement as any}
+                              renderLeaf={Leaf as any}
+                              onMouseUp={(event) => {
+                                handleEditorMouseUp(event, editor);
+                                handleSelectedText(event, editor);
+                              }}
+                              spellCheck={false}
+                              onKeyDown={handleKeyDown}
+                              onKeyUp={(event) => {
+                                handleSelectedText(event, editor);
+                                debouncedSetIsTyping("");
 
+                                const { selection } = editor;
+                                if (!selection) return;
+                                const _currentNodePath =
+                                  selection.anchor.path.slice(0, -1);
+                                setusingCommandLine(false);
+                                const currentNode = Node.get(
+                                  editor,
+                                  _currentNodePath
+                                );
+
+                                if (event.key === "Backspace") {
                                   const { selection } = editor;
-                                  if (!selection) return;
-                                  const _currentNodePath =
-                                    selection.anchor.path.slice(0, -1);
-                                  setusingCommandLine(false);
-                                  const currentNode = Node.get(
-                                    editor,
-                                    _currentNodePath
-                                  );
 
-                                  if (event.key === "Backspace") {
-                                    const { selection } = editor;
+                                  if (
+                                    selection &&
+                                    Range.isCollapsed(selection)
+                                  ) {
+                                    const _currentNodePath =
+                                      selection.anchor.path.slice(0, -1);
+                                    const _stringcurrentNode = Editor.node(
+                                      editor,
+                                      _currentNodePath
+                                    );
+                                    const currentText = Node.string(
+                                      _stringcurrentNode[0]
+                                    );
+                                    // Check if currentNode is an equation
 
-                                    if (
-                                      selection &&
-                                      Range.isCollapsed(selection)
-                                    ) {
-                                      const _currentNodePath =
-                                        selection.anchor.path.slice(0, -1);
-                                      const _stringcurrentNode = Editor.node(
-                                        editor,
-                                        _currentNodePath
-                                      );
-                                      const currentText = Node.string(
-                                        _stringcurrentNode[0]
-                                      );
-                                      // Check if currentNode is an equation
-
-                                      if (currentText.endsWith("/")) {
-                                        // setShowDropdown(false);
-                                        setSearchMinidropdownText("");
+                                    if (currentText.endsWith("/")) {
+                                      // setShowDropdown(false);
+                                      setSearchMinidropdownText("");
+                                    } else {
+                                      const slashIndex =
+                                        currentText.lastIndexOf("/");
+                                      if (slashIndex !== -1) {
+                                        // Extract the text after the last "/" in the currentText
+                                        const searchText = currentText.slice(
+                                          slashIndex + 1
+                                        );
+                                        setSearchMinidropdownText(searchText);
                                       } else {
-                                        const slashIndex =
-                                          currentText.lastIndexOf("/");
-                                        if (slashIndex !== -1) {
-                                          // Extract the text after the last "/" in the currentText
-                                          const searchText = currentText.slice(
-                                            slashIndex + 1
-                                          );
-                                          setSearchMinidropdownText(searchText);
-                                        } else {
-                                          setSearchMinidropdownText("");
-                                          setusingCommandLine(false);
-                                          setShowDropdown(false); // Close the mini-dropdown if there's no "/"
-                                        }
+                                        setSearchMinidropdownText("");
+                                        setusingCommandLine(false);
+                                        setShowDropdown(false); // Close the mini-dropdown if there's no "/"
                                       }
                                     }
                                   }
-                                }}
+                                }
+                              }}
+                            />
+                          </Droppable>
+                        </Slate>
+                        <AnimatePresence>
+                          {showMiniToolbar && (
+                            <StyledMiniToolbar
+                              className=" rounded-lg border bg-white shadow-md shadow-gray-500 dark:border-gray-500 dark:bg-secondary dark:shadow-background"
+                              ref={toolbarRef}
+                              {...up_animation_props}
+                              exit={{ opacity: 0 }}
+                              style={{
+                                top: miniToolbarPosition.y,
+                                left: miniToolbarPosition.x,
+                              }}
+                              onMouseDown={(event) => {
+                                event.preventDefault();
+                                event.stopPropagation();
+                              }}
+                            >
+                              <Toolbar
+                                showMiniToolbar={showMiniToolbar}
+                                openLink={openLink}
+                                setOpenLink={setOpenLink}
+                                setShowMiniToolbar={setShowMiniToolbar}
                               />
-                            </Droppable>
-                          </Slate>
-                          <AnimatePresence>
-                            {showMiniToolbar && (
-                              <StyledMiniToolbar
-                                className=" rounded-lg border bg-white shadow-md shadow-gray-500 dark:border-gray-500 dark:bg-secondary dark:shadow-background"
-                                ref={toolbarRef}
-                                {...up_animation_props}
-                                exit={{ opacity: 0 }}
-                                style={{
-                                  top: miniToolbarPosition.y,
-                                  left: miniToolbarPosition.x,
-                                }}
-                                onMouseDown={(event) => {
-                                  event.preventDefault();
-                                  event.stopPropagation();
-                                }}
-                              >
-                                <Toolbar
-                                  showMiniToolbar={showMiniToolbar}
-                                  openLink={openLink}
-                                  setOpenLink={setOpenLink}
-                                  setShowMiniToolbar={setShowMiniToolbar}
-                                />
-                                {/* <TextSpeech key="selectedText" isSelected={true} /> */}
-                              </StyledMiniToolbar>
-                            )}
-                          </AnimatePresence>
-                        </div>
-                      </EditableStyle>
-                    </ActiveElementProvider>
-                  </SortableContext>
-                  {isDragging && (
-                    <DragOverlay>
-                      {activeId ? (
-                        <DragOverlayContent
-                          element={findElementInSlateValue(
-                            slatevalue,
-                            activeId
+                              {/* <TextSpeech key="selectedText" isSelected={true} /> */}
+                            </StyledMiniToolbar>
                           )}
-                        />
-                      ) : null}
-                    </DragOverlay>
-                  )}
-                </DndContext>
-              </ErrorBoundary>
+                        </AnimatePresence>
+                      </div>
+                    </EditableStyle>
+                  </ActiveElementProvider>
+                </SortableContext>
+                {isDragging && (
+                  <DragOverlay>
+                    {activeId ? (
+                      <DragOverlayContent
+                        element={findElementInSlateValue(slatevalue, activeId)}
+                      />
+                    ) : null}
+                  </DragOverlay>
+                )}
+              </DndContext>
               <AnimatePresence>
                 {showDropdown && activePath && (
                   <motion.div

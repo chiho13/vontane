@@ -43,6 +43,12 @@ type ToolbarProps = {
   setShowMiniToolbar: (value: boolean) => void;
 };
 
+interface LinkElement extends SlateElement {
+  type: "link";
+  url: string;
+  children: Node[];
+}
+
 export const Toolbar: React.FC<ToolbarProps> = ({
   openLink,
   showMiniToolbar,
@@ -59,7 +65,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   const theme = useTheme();
   const [inputValue, setInputValue] = useState("");
 
-  const urlInputRef = useRef(null);
+  const urlInputRef = useRef<any>(null);
 
   const LIST_TYPES = ["numbered-list", "bulleted-list", "checked-list"];
 
@@ -69,8 +75,9 @@ export const Toolbar: React.FC<ToolbarProps> = ({
       match: (n) =>
         !Editor.isEditor(n) && SlateElement.isElement(n) && n.type === "link",
     })) {
-      if (node.url) {
-        linkUrl = node.url;
+      const linkNode = node as LinkElement;
+      if (linkNode.url) {
+        linkUrl = linkNode.url;
         break;
       }
     }

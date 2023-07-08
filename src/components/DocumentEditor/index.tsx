@@ -423,7 +423,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         startPosition.path
       );
 
-      let updatedNode = null;
+      let updatedNode: any = null;
 
       const isEmpty = currentNode.children[0].text === "";
 
@@ -1605,7 +1605,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
                 // Get all rectangles that make up the selection
                 const rects = range.getClientRects();
-                const firstRect = rects[0];
+                const firstRect = rects[0] || { left: 0, top: 0 };
 
                 // Calculate mini toolbar position
                 const toolbarWidth = isParentTTS(editor) ? 370 : 480; // Update this value according to your toolbar width

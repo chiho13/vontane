@@ -38,7 +38,7 @@ const StyledOptionListItem = styled.li`
 `;
 
 const findAllNumberedLists = (nodes) => {
-  let numberedLists = [];
+  let numberedLists: any[] = [];
   let currentListIndex = 0;
 
   nodes.forEach((node) => {
@@ -93,14 +93,14 @@ const withListNumbering = (Component) => {
     }
 
     // First, find the parent MCQ of the current option-list-item element
-    const parentMcq = findParentMcq(editor.children, element.id);
+    const parentMcq: any = findParentMcq(editor.children, element.id);
 
     if (!parentMcq) {
       return <Component {...props} />;
     }
 
     // Then, find all option-list-item elements within the parent MCQ
-    const optionListItems = findAllNumberedLists(parentMcq.children);
+    const optionListItems: any[] = findAllNumberedLists(parentMcq.children);
 
     // Assign number to each option based on its position in the array
     const listNumber = optionListItems.reduce((num, list, index) => {

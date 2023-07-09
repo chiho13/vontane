@@ -1,4 +1,4 @@
-import { MirtOptions } from '../Mirt';
+import { MirtOptions } from "../Mirt";
 
 export const toSeconds = (milliseconds: number) => {
   return milliseconds / 1000;
@@ -12,16 +12,26 @@ export const debounce = (fn: Function, ms = 3000) => {
   };
 };
 
-export const getMinValue = (fineTuning: number, fineTuningResolution: number, duration: number): number => {
+export const getMinValue = (
+  fineTuning: number,
+  fineTuningResolution: number,
+  duration: number
+): number => {
   if (fineTuning === -1) return 0;
 
   return fineTuning - (fineTuningResolution * fineTuning) / duration;
 };
 
-export const getMaxValue = (fineTuning: number, fineTuningResolution: number, duration: number): number => {
+export const getMaxValue = (
+  fineTuning: number,
+  fineTuningResolution: number,
+  duration: number
+): number => {
   if (fineTuning === -1) return duration;
 
-  return fineTuning + (fineTuningResolution * (duration - fineTuning)) / duration;
+  return (
+    fineTuning + (fineTuningResolution * (duration - fineTuning)) / duration
+  );
 };
 
 export const getStartHandleValue = (
@@ -61,7 +71,8 @@ export const getEndHandleValue = (
   let value = 0;
 
   if (fineTuning >= 0 && fineTuningResolution) {
-    const max = fineTuning + (fineTuningResolution * (duration - fineTuning)) / duration;
+    const max =
+      fineTuning + (fineTuningResolution * (duration - fineTuning)) / duration;
 
     value = ((position - max) * 100 * -1) / fineTuningResolution;
   } else {
@@ -81,11 +92,12 @@ export const getWaveformData = async (
 ) => {
   const samples = Math.floor(canvas.offsetWidth / config.waveformBlockWidth);
 
-  let data: Float32Array;
+  let data: any;
 
   if (fineTuning >= 0) {
     const ftStart = fineTuning - (fineTuningResolution * fineTuning) / duration;
-    const ftEnd = fineTuning + (fineTuningResolution * (duration - fineTuning)) / duration;
+    const ftEnd =
+      fineTuning + (fineTuningResolution * (duration - fineTuning)) / duration;
     const min = Math.floor((rawData.length * ftStart) / duration);
     const max = Math.floor((rawData.length * ftEnd) / duration);
 
@@ -95,7 +107,7 @@ export const getWaveformData = async (
   }
 
   const blockSize = Math.floor(data.length / samples);
-  const filteredData = [];
+  const filteredData: any = [];
 
   for (let i = 0; i < samples; i++) {
     let blockStart = blockSize * i;

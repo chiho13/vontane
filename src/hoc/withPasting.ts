@@ -9,11 +9,11 @@ const transformListItems = (listItems, listType) => {
       .map((node: Node) => {
         if (node.nodeType === Node.TEXT_NODE) {
           // Check if node is a text node
-          const textNode = node as Text;
+          const textNode: any = node;
           return { text: textNode.textContent.trim() };
         } else if (node.nodeType === Node.ELEMENT_NODE) {
           // Check if node is an element
-          const element = node as Element;
+          const element: any = node;
           if (element.tagName === "A") {
             return {
               id: genNodeId(),
@@ -23,12 +23,12 @@ const transformListItems = (listItems, listType) => {
             };
           } else if (element.tagName === "P") {
             return Array.from(element.childNodes)
-              .map((childNode: Node) => {
+              .map((childNode: any) => {
                 if (childNode.nodeType === Node.TEXT_NODE) {
-                  const textChild = childNode as Text;
+                  const textChild = childNode;
                   return { text: textChild.textContent.trim() };
                 } else if (childNode.nodeType === Node.ELEMENT_NODE) {
-                  const childElement = childNode as Element;
+                  const childElement = childNode;
                   if (
                     childElement.tagName === "B" ||
                     childElement.tagName === "STRONG"
@@ -112,7 +112,7 @@ export const deserialize = (el) => {
   ) {
     parent = el.childNodes[0];
   }
-  let children = [];
+  let children: any = [];
 
   if (nodeName !== "UL" && nodeName !== "OL") {
     children = Array.from(parent.childNodes).map(deserialize).flat();

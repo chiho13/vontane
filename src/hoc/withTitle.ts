@@ -113,7 +113,8 @@ export const withCustomDelete = (editor) => {
                 if (pointBeforeLink) {
                   Transforms.splitNodes(editor, {
                     at: selection,
-                    match: (n) => Editor.isBlock(editor, n),
+                    match: (n) =>
+                      Element.isElement(n) && Editor.isBlock(editor, n),
                   });
                   const text = Node.string(parentBlock[0]);
                   Transforms.insertText(editor, text, { at: endOfPrevNode });

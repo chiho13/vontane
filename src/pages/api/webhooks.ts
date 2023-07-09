@@ -28,7 +28,7 @@ export const config = {
 };
 
 async function buffer(readable: Readable) {
-  const chunks = [];
+  const chunks: any[] = [];
   for await (const chunk of readable) {
     chunks.push(typeof chunk === "string" ? Buffer.from(chunk) : chunk);
   }

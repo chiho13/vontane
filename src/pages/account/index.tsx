@@ -17,7 +17,7 @@ const Account: NextPage = () => {
   const router = useRouter();
 
   const theme = useTheme();
-  const { profile, isLoading } = useUserContext();
+  const { profile, isLoading }: any = useUserContext();
 
   const plan = profile?.is_subscribed ? proPlan : freePlan;
 

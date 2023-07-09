@@ -21,7 +21,7 @@ import Image from "next/image";
 interface FilterProps {
   id: string;
   options: any[];
-  onChange: (option: { value: string }) => void;
+  onChange: any;
   defaultTitle: string;
   isOpen?: boolean;
   setActiveFilter: any;

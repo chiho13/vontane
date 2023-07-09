@@ -243,7 +243,7 @@ function VoiceDropdown({
   }
 
   const playAudio = useCallback(
-    (index: number): void => {
+    (index: number) => {
       if (sampleAudioElement) {
         sampleAudioElement.currentTime = 0;
         sampleAudioElement.pause();
@@ -304,7 +304,7 @@ function VoiceDropdown({
     value: string;
   }
 
-  function onFilterChange(option: FilterOption): void {
+  function onFilterChange(option: FilterOption) {
     setSelectedFilterOption(option);
     setFilters((prevFilters: FilterOption[]) => {
       const newFilters: any[] = [...prevFilters];
@@ -402,7 +402,7 @@ function VoiceDropdown({
     index: number;
   }
 
-  const VoiceRow = ({ voice, index }) => {
+  const VoiceRow: any = ({ voice, index }) => {
     const capitalize = (str: string) =>
       str && str.charAt(0).toUpperCase() + str.slice(1);
 

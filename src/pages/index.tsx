@@ -17,7 +17,6 @@ import { useRouter } from "next/router";
 import styled from "styled-components";
 
 import { DocumentEditor } from "@/components/DocumentEditor";
-import TablesExample from "@/components/TableExample";
 import { NewColumnProvider } from "@/contexts/NewColumnContext";
 import { useUserContext } from "@/contexts/UserContext";
 import { workspace } from "@prisma/client";
@@ -40,7 +39,7 @@ const Home: NextPage = () => {
   const [status, setStatus] = useState<string>("");
   const [audioUrl, setAudioUrl] = useState<string>("");
 
-  const { profile, workspaces } = useUserContext();
+  const { profile, workspaces }: any = useUserContext();
   const router = useRouter();
 
   // const dummyAudioElement = new Audio(

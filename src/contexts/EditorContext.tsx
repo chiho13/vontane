@@ -42,7 +42,7 @@ type EquationProviderProps = PropsWithChildren<{
 
 // Create an EquationProvider component that accepts a `children` prop and the `openEditBlockPopup` function
 const EditorProvider: React.FC<EquationProviderProps> = ({ children }) => {
-  const editor = useEditor() as ReactEditor;
+  const editor = useEditor();
   const [showEditBlockPopup, setShowEditBlockPopup] = useState({
     open: false,
     element: null,

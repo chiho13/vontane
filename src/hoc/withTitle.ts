@@ -92,7 +92,7 @@ export const withCustomDelete = (editor) => {
 
     if (selection && Range.isCollapsed(selection)) {
       const parentBlock = Editor.above(editor, {
-        match: (n) => Editor.isBlock(editor, n),
+        match: (n) => Element.isElement(n) && Editor.isBlock(editor, n),
       });
 
       if (parentBlock) {

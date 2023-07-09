@@ -40,6 +40,11 @@ export const PreviewContent = () => {
   const scrollRef = useRef(null);
   const { rightBarAudioIsLoading } = useTextSpeech();
 
+  // update localValue when fromEditor.children changes
+  useEffect(() => {
+    setLocalValue(fromEditor.children);
+  }, [fromEditor.children]);
+
   const rootNode = useMemo(() => {
     let path = activePath ? JSON.parse(activePath) : [];
     while (path && path.length > 1) {

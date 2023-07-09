@@ -14,7 +14,6 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import styled from "styled-components";
 import { useWorkspaceTitleUpdate } from "@/contexts/WorkspaceTitleContext";
 import { DocumentEditor } from "@/components/DocumentEditor";
-import TablesExample from "@/components/TableExample";
 import { NewColumnProvider } from "@/contexts/NewColumnContext";
 
 import { useRouter } from "next/router";
@@ -26,7 +25,7 @@ import { EditorSkeleton } from "../Skeletons/editor";
 
 // import "react-mirt/dist/css/react-mirt.css";
 type WorkspaceProps = {
-  workspaceId: string | string[];
+  workspaceId: string;
 };
 
 export const WorkspaceContainer: React.FC<WorkspaceProps> = ({

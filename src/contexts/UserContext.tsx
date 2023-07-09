@@ -46,8 +46,8 @@ function useUserProfile(userId: string | undefined) {
       )
     : { data: undefined, isLoading: false };
   const { data, isLoading } = queryResult;
-  const profile = data?.profile;
-  const workspaces = data?.workspaces;
+  const profile: any = data?.profile;
+  const workspaces: any = data?.workspaces;
 
   return { profile, workspaces, isLoading };
 }

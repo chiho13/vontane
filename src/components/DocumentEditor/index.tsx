@@ -187,7 +187,6 @@ const StyledMiniToolbar = styled(motion.div)`
 
 import { EditBlockPopup } from "../EditEquationBlock";
 import { EnglishQuestionGenerator } from "../QuestionGenerator/English";
-import useTextSpeechStatusPolling from "@/hooks/useTextSpeechAPI";
 import { addEditableEquationBlock } from "./helpers/addEquationBlock";
 import useResizeSidebar from "@/hooks/useResizeSidebar";
 import { debounce } from "lodash";

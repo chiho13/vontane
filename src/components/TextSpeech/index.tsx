@@ -8,7 +8,6 @@ import {
 import { api } from "@/utils/api";
 import VoiceDropdown from "@/components/VoiceDropdown";
 import GenerateButton from "@/components/GenerateButton";
-import useStatusPolling from "@/hooks/useTextSpeechAPI";
 import AudioPlayer from "@/components/AudioPlayer";
 import { Portal } from "react-portal";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";

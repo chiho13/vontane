@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { MirtOptions } from '../Mirt';
-import { debounce, getRawData, getWaveformData } from './utils';
+import React, { useEffect, useRef, useState } from "react";
+import { MirtOptions } from "../Mirt";
+import { debounce, getRawData, getWaveformData } from "./utils";
 export interface MirtWaveformProps {
   file: File | null;
   fineTuning: number;
@@ -24,11 +24,11 @@ const Waveform = ({
   const [waveformData, setWaveformData] = useState<Array<number>>();
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const updateCanvas = (data: number[]) => {
+  const updateCanvas = (data: any[]) => {
     if (!canvasRef.current) return;
 
     const canvas = canvasRef.current;
-    const context = canvas.getContext('2d');
+    const context = canvas.getContext("2d");
     const width = canvas.width;
     const height = canvas.height;
     const barWidth = width / data.length;
@@ -49,7 +49,7 @@ const Waveform = ({
   };
 
   useEffect(() => {
-    if (!rawData && file && file.type.startsWith('audio')) {
+    if (!rawData && file && file.type.startsWith("audio")) {
       getRawData(file).then((data) => {
         setRawData(data);
       });
@@ -64,13 +64,20 @@ const Waveform = ({
 
   useEffect(() => {
     if (canvasRef.current && size.width > 0 && rawData) {
-      getWaveformData(rawData, canvasRef.current, fineTuning, fineTuningResolution, duration, config).then((data) => {
+      getWaveformData(
+        rawData,
+        canvasRef.current,
+        fineTuning,
+        fineTuningResolution,
+        duration,
+        config
+      ).then((data) => {
         setWaveformData(data);
       });
     } else {
       if (canvasRef.current) {
         const canvas = canvasRef.current;
-        const context = canvas.getContext('2d');
+        const context = canvas.getContext("2d");
 
         if (!context) return;
 
@@ -81,7 +88,10 @@ const Waveform = ({
 
   useEffect(() => {
     if (config.waveformLoading && !waveformData) {
-      let data = Array.from({ length: 100 }, (_, i) => Math.sin((i / 100) * Math.PI * 6) * 0.3 + 0.5);
+      let data = Array.from(
+        { length: 100 },
+        (_, i) => Math.sin((i / 100) * Math.PI * 6) * 0.3 + 0.5
+      );
 
       const interval = setInterval(() => {
         if (waveformData) {
@@ -113,7 +123,14 @@ const Waveform = ({
     }
   };
 
-  return <canvas className="mirt__waveform-canvas" ref={canvasRef} width={size.width * 4} height={size.height * 4} />;
+  return (
+    <canvas
+      className="mirt__waveform-canvas"
+      ref={canvasRef}
+      width={size.width * 4}
+      height={size.height * 4}
+    />
+  );
 };
 
 export default Waveform;

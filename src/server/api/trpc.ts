@@ -124,37 +124,37 @@ const isAuthed = t.middleware(async ({ next, ctx }) => {
   });
 });
 
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN,
-});
+// const redis = new Redis({
+//   url: process.env.UPSTASH_REDIS_REST_URL,
+//   token: process.env.UPSTASH_REDIS_REST_TOKEN,
+// });
 
-const rateLimiter = new Ratelimit({
-  redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(5, "1 s"),
-});
+// const rateLimiter = new Ratelimit({
+//   redis: Redis.fromEnv(),
+//   limiter: Ratelimit.slidingWindow(5, "1 s"),
+// });
 
-const rateLimiterMiddleware = t.middleware(async ({ next, ctx }) => {
-  const ip = ctx.req.socket.remoteAddress ?? "127.0.0.1";
+// const rateLimiterMiddleware = t.middleware(async ({ next, ctx }) => {
+//   const ip = ctx.req.socket.remoteAddress ?? "127.0.0.1";
 
-  const { success, remaining } = await rateLimiter.limit(`mw_${ip}`);
-  console.log(
-    "Rate limiter middleware: Success:",
-    success,
-    "Remaining:",
-    remaining
-  );
+//   const { success, remaining } = await rateLimiter.limit(`mw_${ip}`);
+//   console.log(
+//     "Rate limiter middleware: Success:",
+//     success,
+//     "Remaining:",
+//     remaining
+//   );
 
-  if (!success) {
-    throw new TRPCError({
-      code: "CUSTOM",
-      message: "Too many requests, please try again later.",
-      status: 429,
-    });
-  }
+//   if (!success) {
+//     throw new TRPCError({
+//       code: "CUSTOM",
+//       message: "Too many requests, please try again later.",
+//       status: 429,
+//     });
+//   }
 
-  return next();
-});
+//   return next();
+// });
 
 // export const publicProcedure = t.procedure.use(rateLimiterMiddleware);
 // export const protectedProcedure = t.procedure

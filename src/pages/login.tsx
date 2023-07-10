@@ -21,6 +21,9 @@ const Login: NextPage = () => {
   }, [session]);
 
   async function loginWithGoogle() {
+    if (next) {
+      sessionStorage.setItem("next", decodeURIComponent(next as string));
+    }
     await supabase.auth.signInWithOAuth({
       provider: "google",
     });

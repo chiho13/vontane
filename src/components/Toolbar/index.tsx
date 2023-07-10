@@ -329,10 +329,9 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             ></div>
           ) : (
             <TooltipProvider delayDuration={300}>
-              <Tooltip>
+              <Tooltip key={i}>
                 <TooltipTrigger>
                   <button
-                    key={i}
                     className={`flex h-[28px] w-[28px] items-center ${button.additionalClass}`}
                     onMouseDown={button.action}
                   >

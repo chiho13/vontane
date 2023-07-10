@@ -39,6 +39,7 @@ export const mq: MediaQueries = Object.keys(breakpoints).reduce(
       first:
         | TemplateStringsArray
         | CSSObject
+        | any
         | ThemedStyledProps<object, DefaultTheme>,
       ...interpolations: Array<string | number | undefined>
     ) => css`

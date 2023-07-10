@@ -129,15 +129,16 @@ export const PreviewContent = () => {
     }
   };
 
-  const parseNodes = (nodes: any) => {
+  const parseNodes = (nodes: any[]) => {
     return nodes
       .filter((node: any) => node.type !== "title")
       .map((node: any, index: any) => {
         if (Text.isText(node)) {
-          if (node.bold) {
-            return <b key={index}>{node.text}</b>;
+          let customNode = node as any; // assert that node could be any type
+          if (customNode.bold) {
+            return <b key={index}>{customNode.text}</b>;
           } else {
-            return <span key={index}>{node.text}</span>;
+            return <span key={index}>{customNode.text}</span>;
           }
         } else if ("children" in node) {
           const children = parseNodes(node.children);

@@ -6,6 +6,7 @@ import { api } from "@/utils/api";
 import AudioPlayer from "@/components/AudioPlayer";
 import VoiceDropdown from "@/components/VoiceDropdown";
 import GenerateButton from "@/components/GenerateButton";
+import { GetServerSideProps } from "next";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 
@@ -27,8 +28,10 @@ const TextAreaInputStyle = styled.textarea`
   background: linear-gradient(120deg, #fdfbfb 0%, #f2f6f7 100%);
 `;
 
-export const getServerSideProps = async (context) => {
-  const { req, res } = context;
+export const getServerSideProps: GetServerSideProps<HomeProps> = async (
+  context
+) => {
+  const { req, res }: any = context;
   const { supabaseServerClient } = createInnerTRPCContext({}, req, res);
 
   const {
@@ -97,7 +100,12 @@ const Home: NextPage<HomeProps> = ({ session }) => {
 
   useEffect(() => {
     if (session && workspaces && workspaces.length > 0) {
-      router.push(`/${workspaces[0].id}`);
+      const nextPath = sessionStorage.getItem("next");
+      const defaultWorkspaceId = workspaces[0].id;
+      const redirectToPath = nextPath
+        ? `/${nextPath}`
+        : `/${defaultWorkspaceId}`;
+      router.push(redirectToPath);
     }
   }, [workspaces, router, session]);
 

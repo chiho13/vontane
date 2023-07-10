@@ -392,7 +392,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
           >
             <ul>
               {filteredList.map((item, index) => (
-                <li ref={addToRefs}>
+                <li ref={addToRefs} key={index}>
                   <motion.button
                     key={index}
                     whileTap={{ scale: 0.97 }}

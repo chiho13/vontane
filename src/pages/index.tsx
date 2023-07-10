@@ -21,13 +21,43 @@ import { NewColumnProvider } from "@/contexts/NewColumnContext";
 import { useUserContext } from "@/contexts/UserContext";
 import { workspace } from "@prisma/client";
 import { EditorSkeleton } from "@/components/Skeletons/editor";
+import { createInnerTRPCContext } from "@/server/api/trpc";
 
 const TextAreaInputStyle = styled.textarea`
   background: linear-gradient(120deg, #fdfbfb 0%, #f2f6f7 100%);
 `;
 
-const Home: NextPage = () => {
-  const session = useSession();
+export const getServerSideProps = async (context) => {
+  const { req, res } = context;
+  const { supabaseServerClient } = createInnerTRPCContext({}, req, res);
+
+  const {
+    data: { user },
+    error,
+  } = await supabaseServerClient.auth.getUser();
+
+  if (error || !user) {
+    // If no user, redirect to "/login".
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  // If there is a user, return the session and other necessary props.
+  return {
+    props: { session: user }, // Replace 'user' with your actual session data
+  };
+};
+
+type HomeProps = {
+  session: any; // Replace 'any' with your actual Session type.
+};
+
+const Home: NextPage<HomeProps> = ({ session }) => {
+  // const session = useSession();
   const [selectedVoiceId, setSelectedVoiceId] = React.useState<string>("");
 
   const [enteredText, setEnteredText] = React.useState<string[]>([]);

@@ -86,6 +86,7 @@ const ElevenTTSWrapperBase = (props: {
   useEffect(() => {
     const extractedText = extractTextValues(element.children).join(" ");
 
+    console.log(extractedText);
     if (
       activePath &&
       JSON.parse(activePath)[0] === path[0] &&

@@ -376,21 +376,6 @@ const Layout: React.FC<LayoutProps> = ({
                     }
                   >
                     <div className="p-1" role="none">
-                      <Link
-                        className="flex w-full items-center rounded-md px-4  py-2 text-left text-sm text-gray-700 transition duration-200 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-accent"
-                        role="menuitem"
-                        tabIndex={-1}
-                        id="menu-item-3"
-                        href="/account"
-                      >
-                        <Settings className="dark:text-foreground " />{" "}
-                        <span className="ml-2 dark:text-foreground ">
-                          Settings
-                        </span>
-                      </Link>
-                    </div>
-                    <hr className="my-0 h-[1px] border-t-0 bg-neutral-100 opacity-100 dark:opacity-20" />
-                    <div className="p-1" role="none">
                       <button
                         onClick={logout}
                         className="h-[40 px]  inline-flex w-full rounded-md px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:bg-gray-100 hover:text-gray-900 dark:text-foreground dark:hover:bg-accent"

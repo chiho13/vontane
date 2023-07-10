@@ -18,3 +18,5 @@ export function ColumnElement(props: any) {
     </div>
   );
 }
+
+ColumnElement.displayName = "ColumnElement";

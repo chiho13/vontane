@@ -31,7 +31,6 @@ import { BlockAlign } from "@/components/BlockAlign";
 import { createClient } from "@supabase/supabase-js";
 import { useSession } from "@supabase/auth-helpers-react";
 import { blobToBase64, urlToBlob } from "@/utils/helpers";
-
 import { env } from "@/env.mjs";
 
 import {
@@ -210,7 +209,12 @@ export const ImageElement = React.memo(
                 </div>
               ) : (
                 <div className="flex items-center">
-                  <img src={tempURL} width={100} className="rounded-md" />
+                  <Image
+                    src={tempURL}
+                    width={100}
+                    className="rounded-md"
+                    alt="alt"
+                  />
                   <span className="ml-4 opacity-80">Uploading...</span>
                 </div>
               )}
@@ -231,12 +235,13 @@ export const ImageElement = React.memo(
             }}
           >
             <div className="relative rounded-md bg-gray-200 dark:bg-background">
-              <img
+              <Image
                 src={base64URL}
                 width={imageWidth}
                 height={imageHeight}
                 ref={ref}
                 className="rounded-md"
+                alt="alt"
               />
               <div
                 className={`absolute top-0 ${

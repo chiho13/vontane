@@ -22,3 +22,5 @@ export function ColumnCellElement(props: {
     </div>
   );
 }
+
+ColumnCellElement.displayName = "ColumnCellElement";

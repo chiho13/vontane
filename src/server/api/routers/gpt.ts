@@ -85,9 +85,10 @@ export const GPTRouter = createTRPCRouter({
         throw new Error("Image data is missing.");
       }
 
-      const mimeType = imageBase64.match(
+      let match = imageBase64.match(
         /data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+).*,.*/
-      )[1];
+      );
+      const mimeType = match ? match[1] : null;
 
       // Convert MIME type to file extension
       const extensions = {
@@ -96,7 +97,7 @@ export const GPTRouter = createTRPCRouter({
         "image/gif": "gif",
         // Add more if needed
       };
-      const extension = extensions[mimeType];
+      const extension = mimeType && extensions[mimeType];
 
       const fileName = `${nanoid()}.${extension}`;
 
@@ -182,7 +183,8 @@ export const GPTRouter = createTRPCRouter({
           temperature: 0.2,
         });
 
-        const data = completion.data.choices[0].message.content;
+        const data = completion?.data?.choices?.[0]?.message?.content;
+
         return data;
       } catch (err) {
         console.error(err);
@@ -215,7 +217,8 @@ export const GPTRouter = createTRPCRouter({
           temperature: 0.7,
         });
 
-        const data = completion.data.choices[0].message.content;
+        const data = completion?.data?.choices?.[0]?.message?.content;
+
         return data;
       } catch (err) {
         console.error(err);
@@ -269,7 +272,8 @@ export const GPTRouter = createTRPCRouter({
           temperature: 0.2,
         });
 
-        const data = completion.data.choices[0].message.content;
+        const data = completion?.data?.choices?.[0]?.message?.content;
+
         return data;
       } catch (err) {
         console.error(err);
@@ -333,7 +337,8 @@ export const GPTRouter = createTRPCRouter({
           temperature: 0.2,
         });
 
-        const data = completion.data.choices[0].message.content;
+        const data = completion?.data?.choices?.[0]?.message?.content;
+
         return data;
       } catch (err) {
         console.error(err);

@@ -33,7 +33,7 @@ export const texttospeechRouter = createTRPCRouter({
         headers: {
           accept: "application/json",
           "xi-api-key": secretkey,
-        },
+        } as any,
       });
 
       const data = await response.json();
@@ -74,7 +74,7 @@ export const texttospeechRouter = createTRPCRouter({
             accept: "audio/mpeg",
             "xi-api-key": secretkey,
             "Content-Type": "application/json",
-          },
+          } as any,
           body: JSON.stringify(requestbody),
         });
 
@@ -206,7 +206,7 @@ export const texttospeechRouter = createTRPCRouter({
         );
 
         // Extract the transcript from the response
-        const transcript = transcription.results.channels[0].alternatives[0];
+        const transcript = transcription?.results?.channels[0]?.alternatives[0];
 
         return { url: uploadedUrl, fileName, transcript };
       } catch (error) {

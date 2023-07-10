@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import { Plus } from "lucide-react";
 import { workspace } from "@prisma/client";
 import { useLocalStorage } from "usehooks-ts";
+import { ModeToggle } from "../mode-toggle";
 
 import { mq, breakpoints } from "@/utils/breakpoints";
 import {
@@ -451,23 +452,6 @@ const Layout: React.FC<LayoutProps> = ({
                     </span>
                   </button>
                 </SidebarItem>
-                {!profile?.is_subscribed && (
-                  <SidebarItem
-                    className={`${
-                      isLocked ? "fixed bottom-10 " : "relative"
-                    } left-0`}
-                  >
-                    <button
-                      className={`flex items-center hover:bg-gray-200 dark:hover:bg-accent`}
-                      onClick={upgradeAccount}
-                    >
-                      <ArrowUpCircle className="text-darkergray dark:text-foreground " />{" "}
-                      <span className="ml-4 text-sm text-darkergray  dark:text-foreground ">
-                        Upgrade Account
-                      </span>
-                    </button>
-                  </SidebarItem>
-                )}
               </ul>
             </AccountLayoutStyle>
           </SidebarContent>
@@ -484,6 +468,10 @@ const Layout: React.FC<LayoutProps> = ({
           data-locked={isLocked}
         >
           {children}
+
+          <div className="fixed right-4 bottom-4">
+            <ModeToggle />
+          </div>
         </main>
       </LayoutContext.Provider>
     </>

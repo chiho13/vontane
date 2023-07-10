@@ -170,7 +170,10 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
                 if (typeof item === "string") {
                   // This is a separator. Render it as such.
                   return (
-                    <div className="h-[1px] w-full bg-gray-200 dark:bg-gray-700"></div>
+                    <div
+                      key={index}
+                      className="h-[1px] w-full bg-gray-200 dark:bg-gray-700"
+                    ></div>
                   );
                 } else {
                   return (

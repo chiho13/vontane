@@ -7,3 +7,5 @@ export function DefaultElement(props: {
 
   return <p {...attributes}>{children}</p>;
 }
+
+DefaultElement.displayName = "DefaultElement";

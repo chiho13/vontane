@@ -135,7 +135,7 @@ const getFingerprint = (req: NextApiRequest) => {
 };
 
 export const rateLimiterMiddleware = createTRPCUpstashLimiter({
-  t,
+  root: t,
   fingerprint: (ctx) => getFingerprint(ctx.req),
   windowMs: 20000,
   message: (hitInfo) =>

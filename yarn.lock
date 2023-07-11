@@ -1091,7 +1091,21 @@
     "@tanstack/query-core" "4.29.19"
     "use-sync-external-store" "^1.2.0"
 
-"@trpc/client@^10.9.0", "@trpc/client@10.34.0":
+"@trpc-limiter/core@0.0.8":
+  "integrity" "sha512-ptwRvjmCHIUow4mVh6O5JpDMVcDLMn+k1tpaB55ZLO/2YGFo705gN1KMM4tBWZNzp07hMyGZS7PXzn0MUxbxSQ=="
+  "resolved" "https://registry.npmjs.org/@trpc-limiter/core/-/core-0.0.8.tgz"
+  "version" "0.0.8"
+
+"@trpc-limiter/upstash@^0.0.3":
+  "integrity" "sha512-7Z8bLoZzKcmO2L+9V2SWKvlVZn7gQw+1sfKV7ynzWqrCDaGMntg6VsOMRCMVZUkqb5/sMMcMxzAbmP+Qm2h+Xw=="
+  "resolved" "https://registry.npmjs.org/@trpc-limiter/upstash/-/upstash-0.0.3.tgz"
+  "version" "0.0.3"
+  dependencies:
+    "@trpc-limiter/core" "0.0.8"
+    "@upstash/ratelimit" "^0.1.5"
+    "@upstash/redis" "^1.18.0"
+
+"@trpc/client@^10.0.0-proxy-beta.21", "@trpc/client@^10.9.0", "@trpc/client@10.34.0":
   "integrity" "sha512-nqtDTIqSY/9syo2EjSy4WWWXPU9GsamEh9Tsg698gLAh1nhgFc5+/YYeb+Ne1pbvWGZ5/3t9Dcz3h4wMyyJ9gQ=="
   "resolved" "https://registry.npmjs.org/@trpc/client/-/client-10.34.0.tgz"
   "version" "10.34.0"
@@ -1108,7 +1122,7 @@
   "resolved" "https://registry.npmjs.org/@trpc/react-query/-/react-query-10.34.0.tgz"
   "version" "10.34.0"
 
-"@trpc/server@^10.9.0", "@trpc/server@10.34.0":
+"@trpc/server@^10.0.0-proxy-beta.21", "@trpc/server@^10.9.0", "@trpc/server@10.34.0":
   "integrity" "sha512-2VMW44Fpaoyqb50dBtzdSWMhqt8lmoJiocEyBBeDb03R0W+XrzbVD5kU/wqKPlcp1DWeNCkOEIMtetMZCfo1hA=="
   "resolved" "https://registry.npmjs.org/@trpc/server/-/server-10.34.0.tgz"
   "version" "10.34.0"
@@ -1412,6 +1426,11 @@
   dependencies:
     "@upstash/redis" "^1.19.3"
 
+"@upstash/ratelimit@^0.1.5":
+  "integrity" "sha512-v0zq3Xpq42HQBvXDvm0C4djYvKC5TjHG29uCpbIQcOw0znJNroHewI8y4Yk4tBeEF1rvj2RjDkFihjCp6uTExQ=="
+  "resolved" "https://registry.npmjs.org/@upstash/ratelimit/-/ratelimit-0.1.5.tgz"
+  "version" "0.1.5"
+
 "@upstash/ratelimit@^0.4.0":
   "integrity" "sha512-Dsp9Mw09Flg28JRklKgFiCXqr3bqv8bbG0kgpUYoHjcgPPolFFyaYOj/I2HExvYLZiogl77NUavBoNvMOK0zUQ=="
   "resolved" "https://registry.npmjs.org/@upstash/ratelimit/-/ratelimit-0.4.3.tgz"
@@ -1419,7 +1438,7 @@
   dependencies:
     "@upstash/core-analytics" "^0.0.6"
 
-"@upstash/redis@^1.19.3", "@upstash/redis@^1.20.1":
+"@upstash/redis@^1.18.0", "@upstash/redis@^1.19.3", "@upstash/redis@^1.20.1", "@upstash/redis@^1.4.0":
   "version" "v1.22.0"
   dependencies:
     "isomorphic-fetch" "^3.0.0"

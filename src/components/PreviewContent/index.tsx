@@ -7,38 +7,14 @@ import React, {
   forwardRef,
   useRef,
 } from "react";
-import { createEditor, Path, Text, Node } from "slate";
-import { withReact } from "slate-react";
-import { useRouter } from "next/router";
-import LoadingSpinner from "@/icons/LoadingSpinner";
+import { Path, Text, Node } from "slate";
 
-import AudioPlayer from "@/components/AudioPlayer";
-import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { CollapsibleAudioPlayer } from "@/components/PreviewContent/PreviewElements/CollapsibleAudio";
 import { MCQ } from "@/components/PreviewContent/PreviewElements/MCQ";
-
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { AudioManagerContext } from "@/contexts/PreviewAudioContext";
 
 export const PreviewContent = () => {
   const { editor: fromEditor, activePath } = useContext(EditorContext);
   const [localValue, setLocalValue] = useState(fromEditor.children);
-  const editor = useMemo(() => withReact(createEditor()), []);
-  const router = useRouter();
-
-  const scrollRef = useRef(null);
-  const { rightBarAudioIsLoading } = useTextSpeech();
 
   // update localValue when fromEditor.children changes
   useEffect(() => {
@@ -52,8 +28,6 @@ export const PreviewContent = () => {
     }
     return path.length ? Node.get(fromEditor, path) : null;
   }, [fromEditor, activePath]);
-
-  let lastTranscript = null;
 
   const isMCQPresent = (children: any[]) => {
     if (Array.isArray(children)) {
@@ -162,11 +136,6 @@ export const PreviewContent = () => {
     <div
       className={`relative overflow-y-auto rounded-md border border-gray-300 p-3 dark:border-gray-700`}
     >
-      {/* {containsTtsNode(localValue) && (
-        <button className="mb-2 flex h-[28px] items-center justify-center rounded-md border border-muted-foreground bg-background p-1 text-xs  text-muted-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted">
-          Export as Single Audio File
-        </button>
-      )} */}
       {parseNodes(localValue)}
     </div>
   );

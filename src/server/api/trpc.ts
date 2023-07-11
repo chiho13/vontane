@@ -17,6 +17,7 @@
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { createTRPCUpstashLimiter } from "@trpc-limiter/upstash";
 
 import { prisma } from "@/server/db";
 import { stripe } from "@/server/stripe/client";
@@ -124,42 +125,33 @@ const isAuthed = t.middleware(async ({ next, ctx }) => {
   });
 });
 
-// const redis = new Redis({
-//   url: process.env.UPSTASH_REDIS_REST_URL,
-//   token: process.env.UPSTASH_REDIS_REST_TOKEN,
-// });
+const getFingerprint = (req: NextApiRequest) => {
+  const forwarded = req.headers["x-forwarded-for"];
+  const ip = forwarded
+    ? (typeof forwarded === "string" ? forwarded : forwarded[0])?.split(/, /)[0]
+    : req.socket.remoteAddress;
+  console.log(ip);
+  return ip || "127.0.0.1";
+};
 
-// const rateLimiter = new Ratelimit({
-//   redis: Redis.fromEnv(),
-//   limiter: Ratelimit.slidingWindow(5, "1 s"),
-// });
+export const rateLimiterMiddleware = createTRPCUpstashLimiter({
+  t,
+  fingerprint: (ctx) => getFingerprint(ctx.req),
+  windowMs: 20000,
+  message: (hitInfo) =>
+    `Too many requests, please try again later. ${Math.ceil(
+      (hitInfo.reset - Date.now()) / 1000
+    )}`,
+  onLimit: (hitInfo) => {
+    console.log(hitInfo);
+  },
+  max: 5,
+});
 
-// const rateLimiterMiddleware = t.middleware(async ({ next, ctx }) => {
-//   const ip = ctx.req.socket.remoteAddress ?? "127.0.0.1";
+export const publicProcedure = t.procedure.use(rateLimiterMiddleware);
+export const protectedProcedure = t.procedure
+  .use(isAuthed)
+  .use(rateLimiterMiddleware);
 
-//   const { success, remaining } = await rateLimiter.limit(`mw_${ip}`);
-//   console.log(
-//     "Rate limiter middleware: Success:",
-//     success,
-//     "Remaining:",
-//     remaining
-//   );
-
-//   if (!success) {
-//     throw new TRPCError({
-//       code: "CUSTOM",
-//       message: "Too many requests, please try again later.",
-//       status: 429,
-//     });
-//   }
-
-//   return next();
-// });
-
-// export const publicProcedure = t.procedure.use(rateLimiterMiddleware);
-// export const protectedProcedure = t.procedure
-//   .use(isAuthed)
-//   .use(rateLimiterMiddleware);
-
-export const publicProcedure = t.procedure;
-export const protectedProcedure = t.procedure.use(isAuthed);
+// export const publicProcedure = t.procedure;
+// export const protectedProcedure = t.procedure.use(isAuthed);

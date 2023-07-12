@@ -213,7 +213,7 @@ const Layout: React.FC<LayoutProps> = ({
 
   const createWorkspaceMutation = api.workspace.createWorkspace.useMutation();
   const handleWorkspaceRoute = (workspaceId: string, workspaceName: string) => {
-    router.push(`/${workspaceId}`);
+    router.push(`/docs/${workspaceId}`);
     refetchWorkspaces();
   };
 

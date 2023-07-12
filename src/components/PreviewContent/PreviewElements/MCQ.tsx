@@ -176,7 +176,7 @@ export const MCQ = ({ node, children }) => {
                 tabIndex={-1}
                 className={`group mb-3 mt-3  flex cursor-pointer items-center rounded-md border border-gray-700 p-2 hover:border-brand hover:bg-transparent hover:text-brand dark:hover:border-foreground dark:hover:bg-accent/50 dark:hover:text-foreground ${
                   selectedOption === item.id
-                    ? " border-brand bg-brand text-white dark:border-foreground dark:bg-gray-300  dark:bg-gray-300 dark:text-background "
+                    ? " border-brand bg-brand text-white hover:border-gray-700 hover:bg-brand hover:text-white dark:border-foreground  dark:bg-gray-300 dark:bg-gray-300 dark:text-background dark:hover:bg-gray-300 dark:hover:text-background "
                     : ""
                 }`}
               >
@@ -193,7 +193,7 @@ export const MCQ = ({ node, children }) => {
                 <div
                   className={`mr-3 flex h-[28px] w-[28px] items-center justify-center rounded-md border   group-hover:border-brand dark:group-hover:border-foreground ${
                     selectedOption === item.id
-                      ? "border-white dark:border-gray-700"
+                      ? "border-white group-hover:border-white  dark:border-gray-700   dark:group-hover:border-background"
                       : "border-gray-700"
                   }`}
                 >

@@ -174,11 +174,13 @@ export const MCQ = ({ node, children }) => {
                 htmlFor={item.id}
                 key={i}
                 tabIndex={-1}
-                className={`group mb-3 mt-3  flex cursor-pointer items-center rounded-md border border-gray-700 p-2 hover:border-brand hover:bg-transparent hover:text-brand dark:hover:border-foreground dark:hover:bg-accent/50 dark:hover:text-foreground ${
-                  selectedOption === item.id
-                    ? " border-brand bg-brand text-white hover:border-gray-700 hover:bg-brand hover:text-white dark:border-foreground  dark:bg-gray-300 dark:bg-gray-300 dark:text-background dark:hover:bg-gray-300 dark:hover:text-background "
-                    : ""
-                }`}
+                className={`
+    group mb-3 mt-3 flex cursor-pointer items-center rounded-md border p-2 
+    ${
+      selectedOption === item.id
+        ? "border-brand bg-brand text-white dark:border-foreground dark:bg-gray-300 dark:text-background"
+        : "border-gray-700 hover:border-brand hover:bg-transparent hover:text-brand dark:hover:border-foreground dark:hover:bg-accent/50 dark:hover:text-foreground"
+    }`}
               >
                 <input
                   type="radio"
@@ -191,13 +193,15 @@ export const MCQ = ({ node, children }) => {
                   onClick={() => playThisOption(item.children[0].text)}
                 />
                 <div
-                  className={`mr-3 flex h-[28px] w-[28px] items-center justify-center rounded-md border   group-hover:border-brand dark:group-hover:border-foreground ${
-                    selectedOption === item.id
-                      ? "border-white group-hover:border-white  dark:border-gray-700   dark:group-hover:border-background"
-                      : "border-gray-700"
-                  }`}
+                  className={`
+      mr-3 flex h-[28px] w-[28px] items-center justify-center rounded-md border 
+      ${
+        selectedOption === item.id
+          ? "border-white dark:border-gray-700"
+          : "border-gray-700 group-hover:border-brand dark:group-hover:border-foreground"
+      }`}
                 >
-                  {String.fromCharCode(65 + optionCounter - 1).toUpperCase()}{" "}
+                  {String.fromCharCode(65 + optionCounter - 1).toUpperCase()}
                 </div>
                 {item.children[0].text}
               </label>

@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useSession } from "@supabase/auth-helpers-react";
-import LoginPage from "./login";
 import { useRouter } from "next/router";
 import { WorkspaceContainer } from "@/components/WorkspaceContainer";
 import { useUserContext } from "@/contexts/UserContext";
@@ -34,7 +33,7 @@ const Workspace: NextPage<WorkspaceProps> = ({ session }) => {
       <WorkspaceContainer workspaceId={workspaceId} />
     </Layout>
   ) : (
-    <LoginPage />
+    <div></div>
   );
 };
 

@@ -104,7 +104,7 @@ const Home: NextPage<HomeProps> = ({ session }) => {
       const defaultWorkspaceId = workspaces[0].id;
       const redirectToPath = nextPath
         ? `/${nextPath}`
-        : `/${defaultWorkspaceId}`;
+        : `/docs/${defaultWorkspaceId}`;
       router.push(redirectToPath);
     }
   }, [workspaces, router, session]);

@@ -113,10 +113,17 @@ export const PreviewContent = () => {
     return nodes
       .filter((node: any) => node.type !== "title")
       .map((node: any, index: any) => {
+        console.log(node);
         if (Text.isText(node)) {
           let customNode = node as any; // assert that node could be any type
           if (customNode.bold) {
             return <b key={index}>{customNode.text}</b>;
+          } else if (customNode.italic) {
+            return <i key={index}>{customNode.text}</i>;
+          } else if (customNode.underline) {
+            return <u key={index}>{customNode.text}</u>;
+          } else if (customNode.strikethrough) {
+            return <del key={index}>{customNode.text}</del>;
           } else {
             return <span key={index}>{customNode.text}</span>;
           }

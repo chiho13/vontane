@@ -5,7 +5,7 @@ import { uploadAudioToSupabase } from "@/server/lib/uploadAudio";
 import { nanoid } from "nanoid";
 
 import { Configuration, OpenAIApi } from "openai";
-
+import { rateLimiterMiddleware } from "@/server/api/trpc";
 import axios from "axios";
 import stream from "stream";
 import util from "util";
@@ -47,6 +47,7 @@ export const texttospeechRouter = createTRPCRouter({
     }
   }),
   startConversion: protectedProcedure
+    .use(rateLimiterMiddleware)
     .input(
       z.object({
         voice_id: z.string(),

@@ -133,7 +133,16 @@ export const MCQ = ({ node, children }) => {
 
   node.children.forEach((item) => {
     if (item.type === "paragraph") {
-      paragraphs.push(item.children[0].text);
+      let renderedChildren = item.children.map((child, index) => {
+        console.log(child.bold);
+        if (child.bold) {
+          return <b key={index}>{child.text}</b>;
+        } else {
+          return child.text;
+        }
+      });
+
+      paragraphs.push(<p key={item.id}>{renderedChildren}</p>);
     }
   });
 
@@ -203,7 +212,11 @@ export const MCQ = ({ node, children }) => {
                 >
                   {String.fromCharCode(65 + optionCounter - 1).toUpperCase()}
                 </div>
-                {item.children[0].text}
+                {item.children[0].bold ? (
+                  <b>{item.children[0].text}</b>
+                ) : (
+                  item.children[0].text
+                )}
               </label>
             );
 

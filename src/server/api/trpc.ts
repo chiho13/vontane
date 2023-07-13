@@ -145,13 +145,13 @@ export const rateLimiterMiddleware = createTRPCUpstashLimiter({
   onLimit: (hitInfo) => {
     console.log(hitInfo);
   },
-  max: 10,
+  max: 5,
 });
 
-export const publicProcedure = t.procedure.use(rateLimiterMiddleware);
-export const protectedProcedure = t.procedure
-  .use(isAuthed)
-  .use(rateLimiterMiddleware);
+// export const publicProcedure = t.procedure.use(rateLimiterMiddleware);
+// export const protectedProcedure = t.procedure
+//   .use(isAuthed)
+//   .use(rateLimiterMiddleware);
 
-// export const publicProcedure = t.procedure;
-// export const protectedProcedure = t.procedure.use(isAuthed);
+export const publicProcedure = t.procedure;
+export const protectedProcedure = t.procedure.use(isAuthed);

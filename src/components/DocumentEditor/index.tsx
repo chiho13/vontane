@@ -105,6 +105,8 @@ interface DocumentEditorProps {
   workspaceId: string;
   handleTextChange?: (value: any) => void;
   initialSlateValue?: any;
+  setSyncStatus: (value: any) => void;
+  syncStatus: string;
   setFetchWorkspaceIsLoading: (value: any) => void;
 }
 
@@ -199,6 +201,8 @@ import { z } from "zod";
 
 export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   workspaceId,
+  setSyncStatus,
+  syncStatus,
   handleTextChange,
   initialSlateValue,
   setFetchWorkspaceIsLoading,
@@ -1138,7 +1142,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         (SlateElement.isElement(parentElement) &&
           parentElement.type === "tts") ? (
           <div className="flex w-[30px] ">
-            <div className="absolute   top-0 right-[10px]  items-center">
+            <div className="absolute   right-[10px] top-0  items-center">
               <OptionMenu element={element} ref={optionMenuRef} />
             </div>
           </div>
@@ -1736,6 +1740,20 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               transition: "right 0.3s ease-in-out, width 0.3s ease-in-out",
             }}
           >
+            <div className="absolute right-3 top-2 z-10 flex items-center gap-2 rounded-md border border-gray-300  bg-gray-200 px-2  py-1 text-xs text-slate-500 dark:border-gray-600 dark:bg-accent dark:text-slate-200">
+              {" "}
+              {syncStatus === "syncing"
+                ? "Syncing"
+                : syncStatus === "synced"
+                ? "Synced"
+                : ""}
+              <div
+                className={`h-2 w-2 rounded-full transition duration-200 
+                ${syncStatus === "syncing" ? "bg-yellow-500" : "bg-green-500"}
+            `}
+              ></div>
+            </div>
+
             <div className="block  lg:w-full">
               <DndContext
                 onDragEnd={handleDragEnd}
@@ -1751,7 +1769,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                       <div
                         ref={textEditorRef}
                         tabIndex={0}
-                        className="editable-scrollbar relative z-0 mx-auto block overflow-y-auto  overflow-x-hidden rounded-md pt-4 pb-4 focus:outline-none  focus-visible:border-gray-300"
+                        className="editable-scrollbar relative z-0 mx-auto block overflow-y-auto  overflow-x-hidden rounded-md pb-4 pt-4 focus:outline-none  focus-visible:border-gray-300"
                       >
                         <Slate
                           key={currentSlateKey}
@@ -1765,6 +1783,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                               console.log("hello");
                               console.log(JSON.stringify(newValue));
                               if (handleTextChange) {
+                                setSyncStatus("syncing");
                                 handleTextChange(newValue);
                               }
                             }
@@ -1922,7 +1941,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               <AnimatePresence>
                 {showEditBlockPopup.open && (
                   <>
-                    <div className="closeOutside z-1  fixed top-0 left-0 h-full w-screen  opacity-50"></div>
+                    <div className="closeOutside z-1  fixed left-0 top-0 h-full w-screen  opacity-50"></div>
                     <motion.div
                       {...y_animation_props}
                       className="fixed  z-10 z-10 mx-auto mt-2 mt-2 w-[380px]"

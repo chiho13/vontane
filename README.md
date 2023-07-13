@@ -40,8 +40,9 @@ currently under development (April)
 - [x] slide integration
 - [x] image block
 - [x] text to speech element wrapper
+- [x] deploy to staging
 - [] speech to text - audio timestamp - replace audio player seeking - for quizzes and custom stuff
 - [] mobile preview content (WIP)
-- [] deploy to staging
+
 - [] map block ?
 - [] audio trimmer

@@ -182,6 +182,8 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
   const [pubLoading, setPubLoading] = useState(false);
   const [hovering, setHovering] = useState(false);
+  const [firstHover, setFirstHover] = useState(false);
+
   const debouncedSetHovering = useCallback(debounce(setHovering, 100), [
     setHovering,
   ]);
@@ -195,6 +197,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
   const publishWorkspace = async () => {
     setPubLoading(true);
+    setFirstHover(true);
     setTimeout(async () => {
       try {
         const response = await publishWorkspaceMutation.mutateAsync({
@@ -213,27 +216,64 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
   return (
     <AudioManagerProvider>
-      <Button
-        className={`text-bold absolute -right-[1px] -top-[30px] h-[28px] rounded-md  text-sm text-white hover:bg-brand/90 hover:text-white dark:border-t-gray-700 dark:bg-slate-100 dark:text-muted dark:hover:bg-slate-300 dark:hover:text-background ${
-          published
-            ? "bg-green-400 text-foreground dark:bg-green-400"
-            : "bg-brand "
-        }`}
-        onClick={!pubLoading && publishWorkspace}
-        onMouseEnter={() => debouncedSetHovering(true)}
-        onMouseLeave={() => debouncedSetHovering(false)}
-      >
-        {pubLoading ? (
-          <>
-            <LoadingSpinner strokeColor="stroke-white dark:stroke-background" />{" "}
-            <span className="ml-3">
-              {!published ? "Publishing..." : "Unpublishing..."}
-            </span>
-          </>
-        ) : (
-          publishText
-        )}
-      </Button>
+      {!published ? (
+        <Button
+          className={`text-bold absolute -right-[1px] -top-[30px] h-[28px] rounded-md px-3 text-sm  text-white hover:bg-brand/90 hover:text-white disabled:opacity-100 dark:border-t-gray-700 dark:bg-slate-100 dark:text-muted dark:hover:bg-slate-300 dark:hover:text-background ${
+            published
+              ? "bg-green-400 text-foreground dark:bg-green-400"
+              : "bg-brand "
+          }`}
+          disabled={pubLoading}
+          onClick={!pubLoading && publishWorkspace}
+        >
+          {pubLoading ? (
+            <>
+              <LoadingSpinner strokeColor="stroke-white dark:stroke-background" />{" "}
+              <span className="ml-3">
+                {!published ? "Publishing..." : "Unpublishing..."}
+              </span>
+            </>
+          ) : (
+            publishText
+          )}
+        </Button>
+      ) : (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              className={`text-bold absolute -right-[1px] -top-[30px] flex h-[28px] rounded-md px-3 text-sm  text-white disabled:opacity-100 dark:border-t-gray-700 dark:bg-slate-100 dark:text-muted ${
+                published
+                  ? "bg-green-400 text-foreground hover:bg-green-400 hover:text-foreground dark:bg-green-400"
+                  : "bg-brand "
+              }`}
+            >
+              {pubLoading ? (
+                <>
+                  <LoadingSpinner strokeColor="stroke-white dark:stroke-background" />{" "}
+                  <span className="ml-3">
+                    {!published ? "Publishing..." : "Unpublishing..."}
+                  </span>
+                </>
+              ) : (
+                publishText
+              )}
+              <ChevronDown className="ml-1 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="end"
+            className="border border-gray-300  bg-background dark:border-gray-500 dark:bg-secondary"
+          >
+            <DropdownMenuItem
+              className="hover:dark:bg-muted"
+              disabled={pubLoading}
+              onClick={!pubLoading && publishWorkspace}
+            >
+              <span className="text-foreground"> Draft</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
 
       <div
         className="m-w-full mt-2 hidden h-full grow overflow-y-auto rounded-md  border border-gray-300 bg-white  dark:border-gray-700 dark:bg-muted dark:text-lightgray lg:block"

@@ -182,7 +182,6 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
   const [pubLoading, setPubLoading] = useState(false);
   const [hovering, setHovering] = useState(false);
-  const [firstHover, setFirstHover] = useState(false);
 
   const debouncedSetHovering = useCallback(debounce(setHovering, 100), [
     setHovering,
@@ -197,21 +196,19 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
   const publishWorkspace = async () => {
     setPubLoading(true);
-    setFirstHover(true);
-    setTimeout(async () => {
-      try {
-        const response = await publishWorkspaceMutation.mutateAsync({
-          id: workspaceId,
-        });
-        if (response) {
-          setPubLoading(false);
-          setPublished(response.published);
-        }
-      } catch (error) {
+
+    try {
+      const response = await publishWorkspaceMutation.mutateAsync({
+        id: workspaceId,
+      });
+      if (response) {
         setPubLoading(false);
-        console.error("Error publishing:", error);
+        setPublished(response.published);
       }
-    }, 1000);
+    } catch (error) {
+      setPubLoading(false);
+      console.error("Error publishing:", error);
+    }
   };
 
   return (
@@ -247,22 +244,13 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                   : "bg-brand "
               }`}
             >
-              {pubLoading ? (
-                <>
-                  <LoadingSpinner strokeColor="stroke-white dark:stroke-background" />{" "}
-                  <span className="ml-3">
-                    {!published ? "Publishing..." : "Unpublishing..."}
-                  </span>
-                </>
-              ) : (
-                publishText
-              )}
+              {publishText}
               <ChevronDown className="ml-1 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
-            className="border border-gray-300  bg-background p-3 dark:border-gray-500 dark:bg-secondary"
+            className="w-[180px] border border-gray-300  bg-background p-3 dark:border-gray-500 dark:bg-secondary"
           >
             <div className="flex flex-col gap-4 ">
               <DropdownMenuItem

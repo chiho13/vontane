@@ -368,14 +368,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                   </>
                 ) : (
                   <div className="relative block rounded-lg border border-gray-300 bg-white p-4 dark:border-gray-700 dark:bg-secondary">
-                    {rightBarAudioIsLoading ? (
-                      <div className="flex items-center ">
-                        <LoadingSpinner />
-                        <span className="ml-3 ">Generating...</span>
-                      </div>
-                    ) : (
-                      "No Audio generated"
-                    )}
+                    No Audio generated
                   </div>
                 ))}
             </TabsContent>

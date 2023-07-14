@@ -38,7 +38,9 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = ({
 
   //   const [workspaceId, setWorkSpaceId] = useState(router.query.workspaceId);
 
-  const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'synced'>('idle');
+  const [syncStatus, setSyncStatus] = useState<"idle" | "syncing" | "synced">(
+    "idle"
+  );
   const {
     data: workspaceData,
     refetch: refetchWorkspaceData,
@@ -73,7 +75,7 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = ({
         const parsedSlateValue = JSON.parse(slateValue);
         setInitialSlateValue(parsedSlateValue);
         setFetchWorkspaceIsLoading(false);
-        setSyncStatus('synced');
+        setSyncStatus("synced");
       }
     }
 
@@ -86,16 +88,14 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = ({
   const updateWorkspaceMutation = api.workspace.updateWorkspace.useMutation();
 
   const updateWorkspace = async (newSlateValue: any) => {
-   
-
     try {
       await updateWorkspaceMutation.mutateAsync({
         id: workspaceId,
         slate_value: JSON.stringify(newSlateValue),
       });
-      setSyncStatus('synced'); // Syncing is complete
+      setSyncStatus("synced"); // Syncing is complete
     } catch (error) {
-      setSyncStatus('idle'); // Reset to idle if there's an error
+      setSyncStatus("idle"); // Reset to idle if there's an error
       console.error("Error updating workspace:", error);
     }
   };
@@ -128,8 +128,7 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = ({
     <NewColumnProvider>
       {!fetchWorkspaceIsLoading && initialSlateValue && workspaceId && (
         <EditorProvider key={workspaceId}>
-          <RightSideBarProvider key={workspaceId}>
-
+          <RightSideBarProvider key={workspaceId} workspaceData={workspaceData}>
             <DocumentEditor
               key={workspaceId}
               setSyncStatus={setSyncStatus}

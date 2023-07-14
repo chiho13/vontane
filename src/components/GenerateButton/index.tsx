@@ -20,7 +20,7 @@ function GenerateButton({ isDisabled, onClick, element }: GenerateButtonProps) {
       onClick={onClick}
       disabled={isDisabled || rightBarAudioIsLoading[element.id]}
     >
-      {true ? (
+      {rightBarAudioIsLoading[element.id] ? (
         <>
           <LoadingSpinner strokeColor="stroke-gray-800 dark:stroke-white" />
           {/* <div className="ml-2 text-sm">Generating</div> */}

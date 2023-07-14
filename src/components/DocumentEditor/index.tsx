@@ -1700,7 +1700,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       style={{
         width:
           windowSize.width > breakpoints.xl
-            ? `${rightSideBarWidth + 770}px`
+            ? `${rightSideBarWidth + 790}px`
             : "95vw",
       }}
     >

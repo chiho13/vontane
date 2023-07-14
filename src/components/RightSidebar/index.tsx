@@ -42,6 +42,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Portal } from "react-portal";
 interface RightSideBarProps {
   setRightSideBarWidth: any;
   showRightSidebar: boolean;
@@ -168,17 +169,21 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
   return (
     <AudioManagerProvider>
+      <Button className="text-bold absolute -right-[1px] -top-[30px] h-[28px] rounded-md bg-brand  text-sm text-white hover:bg-[#B6D6FA] hover:text-foreground dark:border-t-gray-700 dark:bg-slate-100 dark:text-muted dark:hover:bg-slate-300 dark:hover:text-background">
+        Publish
+      </Button>
       <div
-        className="m-w-full bg-w relative mt-2 hidden grow overflow-y-auto rounded-md border border-gray-300 bg-white px-1 dark:border-gray-700 dark:bg-muted dark:text-lightgray lg:block"
+        className="m-w-full mt-2 hidden h-full grow overflow-y-auto rounded-md  border border-gray-300 bg-white  dark:border-gray-700 dark:bg-muted dark:text-lightgray lg:block"
         style={rightSidebarStyle}
       >
         <div className="flex-grow p-2 pb-3">
           {/* <h2 className="mb-4 text-xl font-semibold">Right Sidebar</h2>
         <p>Hi kirby</p> */}
+
           <Tabs
             defaultValue={tab}
             onValueChange={handleTabChange}
-            className="flex flex-grow flex-col"
+            className="z-10 flex flex-grow flex-col "
           >
             <TabsList
               className={`ring-gray ring-red  grid h-10 w-full grid-cols-2  bg-lightgray dark:bg-accent`}
@@ -198,15 +203,12 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent
-              value="properties"
-              className="flex-grow overflow-y-auto"
-            >
+            <TabsContent value="properties" className="flex-grow">
               {SlateElement.isElement(rootNode) &&
                 rootNode?.type == "tts" &&
                 (audioData && audioData.file_name ? (
                   <>
-                    <h3 className="text-bold mt-4 mb-2 text-sm   ">
+                    <h3 className="text-bold mb-2 mt-4 text-sm   ">
                       Text to MP3
                     </h3>
 
@@ -226,7 +228,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                       </div>
                     )} */}
 
-                    <h3 className="text-bold mt-4 mb-2 text-sm">Share Audio</h3>
+                    <h3 className="text-bold mb-2 mt-4 text-sm">Share Audio</h3>
                     <div className="relative flex items-center">
                       <Link className="absolute left-3 w-4" />
 

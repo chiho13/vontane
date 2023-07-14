@@ -6,6 +6,7 @@ import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { AiFillSound } from "react-icons/ai";
 
 import { compareTwoStrings } from "@/utils/helpers";
+import { renderToStaticMarkup } from "react-dom/server";
 
 function searchWordInTranscript(transcript, searchTerm) {
   let result: any = [];
@@ -108,13 +109,13 @@ export const MCQ = ({ node, children }) => {
     let words = cleanedSentence.split(" ").filter((word) => word);
     let lastWord = words[words.length - 1];
 
-    console.log(lastWord);
-    const timestamp = searchWordInTranscript(node.transcript.words, lastWord);
-    if (timestamp.length > 0) {
-      playAudioSegment(node.audio_url, 0, timestamp[0].end);
-    } else {
-      playEntireAudio(node.audio_url); // Pass null or an appropriate value for end timestamp
-    }
+    console.log(item);
+    const timestamp = searchWordInTranscript(node.transcript.words, item);
+    // if (timestamp.length > 0) {
+    playAudioSegment(node.audio_url, 0, timestamp[0].end);
+    // } else {
+    //   playEntireAudio(node.audio_url); // Pass null or an appropriate value for end timestamp
+    // }
   };
 
   const playThisOption = (labeltext) => {
@@ -131,10 +132,13 @@ export const MCQ = ({ node, children }) => {
   let paragraphs: any = [];
   let optionCounter = 0;
 
+  let fullQ = "";
+
   node.children.forEach((item) => {
     if (item.type === "paragraph") {
       let renderedChildren = item.children.map((child, index) => {
         console.log(child.bold);
+        fullQ += child.text;
         if (child.bold) {
           return <b key={index}>{child.text}</b>;
         } else {
@@ -146,7 +150,7 @@ export const MCQ = ({ node, children }) => {
     }
   });
 
-  const fullQ = paragraphs.join(" ");
+  console.log(fullQ);
 
   return (
     <div>

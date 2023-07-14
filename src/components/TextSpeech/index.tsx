@@ -122,7 +122,7 @@ export const TextSpeech = ({
       });
       if (response) {
         console.log(response);
-        setAudioIsLoading(false);
+        setAudioIsLoading(true);
         let newLoadingState = { ...rightBarAudioIsLoading };
         newLoadingState[element.id] = false;
         setRightBarAudioIsLoading(newLoadingState);
@@ -241,15 +241,9 @@ export const TextSpeech = ({
             </Tooltip>
           </TooltipProvider>
         </div>
-
         {selected && (
-          <GenerateButton
-            audioIsLoading={audioIsLoading}
-            onClick={generateAudio}
-            element={element}
-          />
+          <GenerateButton onClick={generateAudio} element={element} />
         )}
-        {audioIsLoading && <div>hi</div>}
       </div>
       {/* {!containsMCQ && selected && element.file_name && (
         <div className="flex grow items-center">

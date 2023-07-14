@@ -197,7 +197,7 @@ export const MCQ = ({ node, children }) => {
                   value={item.id}
                   checked={selectedOption === item.id}
                   onChange={handleOptionChange}
-                  disabled={answerChecked}
+                  // disabled={answerChecked}
                   className="ml-1 mr-2 hidden"
                   onClick={() => playThisOption(item.children[0].text)}
                 />
@@ -228,7 +228,7 @@ export const MCQ = ({ node, children }) => {
         variant="outline"
         className="mt-3 w-full "
         onClick={handleCheck}
-        disabled={answerChecked}
+        // disabled={answerChecked}
       >
         Check
       </Button>

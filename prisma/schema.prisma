@@ -25,6 +25,8 @@ model workspace {
   id          String      @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
   name        String?
   slate_value String?
+  published     Boolean     @default(false)
+  published_at  DateTime?
   created_at  DateTime    @default(dbgenerated("now()"))
   author_id   String      @db.Uuid
   author      user        @relation(fields: [author_id], references: [id])

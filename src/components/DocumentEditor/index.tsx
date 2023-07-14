@@ -1706,7 +1706,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     >
       <Portal>
         <button
-          className="group fixed right-[30px] top-[30px] z-0 hidden rounded  border-gray-300 p-1 transition duration-300 hover:border-brand dark:border-gray-700 dark:hover:border-foreground dark:hover:bg-muted lg:block"
+          className="group fixed right-[30px] top-[25px] z-0 hidden rounded  border-gray-300 p-1 transition duration-300 hover:border-brand dark:border-gray-700 dark:hover:border-foreground dark:hover:bg-muted lg:block"
           onClick={() => {
             setShowRightSidebar(!showRightSidebar);
           }}

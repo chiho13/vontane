@@ -14,6 +14,32 @@ import { TRPCError } from "@trpc/server";
 const ee = new EventEmitter();
 
 export const workspaceRouter = createTRPCRouter({
+  publishWorkspace: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const workspace = await ctx.prisma.workspace.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!workspace) {
+        throw new Error("workspace  not found");
+      }
+
+      if (ctx.user.id !== workspace.author_id) {
+        throw new Error("Unauthorized access");
+      }
+
+      // toggle the published status and adjust the published_at date accordingly
+      const updatedWorkspace = await ctx.prisma.workspace.update({
+        where: { id: input.id },
+        data: {
+          published: !workspace.published,
+          published_at: workspace.published ? null : new Date(),
+        },
+      });
+
+      return updatedWorkspace;
+    }),
   getWorkspaces: protectedProcedure.query(async ({ ctx }) => {
     const workspaces = await ctx.prisma.workspace.findMany({
       where: { author_id: ctx.user.id },

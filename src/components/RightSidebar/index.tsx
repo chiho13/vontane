@@ -1,4 +1,5 @@
 import React, {
+  useCallback,
   useContext,
   useEffect,
   useLayoutEffect,
@@ -24,7 +25,7 @@ import { ChevronDown, Link, Copy } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { AudioManagerProvider } from "@/contexts/PreviewAudioContext";
 import { Button } from "@/components/ui/button";
-
+import { debounce } from "lodash";
 import { saveAs } from "file-saver";
 
 import { PreviewContent } from "../PreviewContent";
@@ -71,11 +72,15 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     return path.length ? Node.get(editor, path) : null;
   }, [editor, activePath]);
 
-  const { audioData, setAudioData, rightBarAudioIsLoading } = useTextSpeech();
+  const { audioData, setAudioData, rightBarAudioIsLoading, workspaceData } =
+    useTextSpeech();
   const [viewport, setViewPort] = useState({
     width: 390,
     height: 844,
   });
+
+  const [prevWorkspaceId, setPrevWorkspaceId] = useState(null);
+  const [published, setPublished] = useState(workspaceData.workspace.published);
 
   const [copied, setCopied] = useState(false);
   const [tooltipOpen, setTooltipOpen] = useState(false);
@@ -96,6 +101,14 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     transition:
       "width 0.3s ease-in-out, opacity 0.4s ease-in-out, transform 0.3s ease-in-out",
   };
+
+  useEffect(() => {
+    if (prevWorkspaceId !== workspaceId) {
+      // workspaceId has changed
+      setPublished(workspaceData.workspace.published);
+      setPrevWorkspaceId(workspaceId);
+    }
+  }, [workspaceId, prevWorkspaceId, workspaceData]);
 
   useEffect(() => {
     if (audioData) {
@@ -167,11 +180,61 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     }
   };
 
+  const [pubLoading, setPubLoading] = useState(false);
+  const [hovering, setHovering] = useState(false);
+  const debouncedSetHovering = useCallback(debounce(setHovering, 100), [
+    setHovering,
+  ]);
+
+  const publishText = published
+    ? hovering
+      ? "Unpublish"
+      : "Published"
+    : "Publish";
+  const publishWorkspaceMutation = api.workspace.publishWorkspace.useMutation();
+
+  const publishWorkspace = async () => {
+    setPubLoading(true);
+    setTimeout(async () => {
+      try {
+        const response = await publishWorkspaceMutation.mutateAsync({
+          id: workspaceId,
+        });
+        if (response) {
+          setPubLoading(false);
+          setPublished(response.published);
+        }
+      } catch (error) {
+        setPubLoading(false);
+        console.error("Error publishing:", error);
+      }
+    }, 1000);
+  };
+
   return (
     <AudioManagerProvider>
-      <Button className="text-bold absolute -right-[1px] -top-[30px] h-[28px] rounded-md bg-brand  text-sm text-white hover:bg-[#B6D6FA] hover:text-foreground dark:border-t-gray-700 dark:bg-slate-100 dark:text-muted dark:hover:bg-slate-300 dark:hover:text-background">
-        Publish
+      <Button
+        className={`text-bold absolute -right-[1px] -top-[30px] h-[28px] rounded-md  text-sm text-white hover:bg-brand/90 hover:text-white dark:border-t-gray-700 dark:bg-slate-100 dark:text-muted dark:hover:bg-slate-300 dark:hover:text-background ${
+          published
+            ? "bg-green-400 text-foreground dark:bg-green-400"
+            : "bg-brand "
+        }`}
+        onClick={!pubLoading && publishWorkspace}
+        onMouseEnter={() => debouncedSetHovering(true)}
+        onMouseLeave={() => debouncedSetHovering(false)}
+      >
+        {pubLoading ? (
+          <>
+            <LoadingSpinner strokeColor="stroke-white dark:stroke-background" />{" "}
+            <span className="ml-3">
+              {!published ? "Publishing..." : "Unpublishing..."}
+            </span>
+          </>
+        ) : (
+          publishText
+        )}
       </Button>
+
       <div
         className="m-w-full mt-2 hidden h-full grow overflow-y-auto rounded-md  border border-gray-300 bg-white  dark:border-gray-700 dark:bg-muted dark:text-lightgray lg:block"
         style={rightSidebarStyle}

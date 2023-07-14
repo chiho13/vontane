@@ -93,7 +93,7 @@ export const PreviewContent = () => {
         // Check if any child node is of type "mcq"
 
         return (
-          <CollapsibleAudioPlayer node={node} key={key}>
+          <CollapsibleAudioPlayer node={node}>
             {children}
           </CollapsibleAudioPlayer>
         );

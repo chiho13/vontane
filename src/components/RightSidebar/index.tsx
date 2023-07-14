@@ -262,15 +262,26 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
-            className="border border-gray-300  bg-background dark:border-gray-500 dark:bg-secondary"
+            className="border border-gray-300  bg-background p-3 dark:border-gray-500 dark:bg-secondary"
           >
-            <DropdownMenuItem
-              className="hover:dark:bg-muted"
-              disabled={pubLoading}
-              onClick={!pubLoading && publishWorkspace}
-            >
-              <span className="text-foreground"> Draft</span>
-            </DropdownMenuItem>
+            <div className="flex flex-col gap-4 ">
+              <DropdownMenuItem
+                className="flex cursor-pointer justify-center border border-gray-300 dark:border-gray-700 hover:dark:bg-accent"
+                disabled={pubLoading}
+                onClick={!pubLoading && publishWorkspace}
+              >
+                <span className="text-foreground"> Unpublish</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className=" flex cursor-pointer justify-center bg-brand hover:dark:bg-brand/90"
+                disabled={pubLoading}
+                onClick={() => {
+                  console.log("hi");
+                }}
+              >
+                <span className="text-foreground"> View Site</span>
+              </DropdownMenuItem>
+            </div>
           </DropdownMenuContent>
         </DropdownMenu>
       )}

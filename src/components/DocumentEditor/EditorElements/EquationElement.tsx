@@ -12,9 +12,6 @@ export function EquationElement(props) {
     useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);
 
-  // console.log(elementID, element.id);
-  // console.log(selectedElementID, element.id, showEditBlockPopup);
-
   return (
     <div
       tabIndex={0}
@@ -22,7 +19,7 @@ export function EquationElement(props) {
       data-id={element.id}
       className={` equation-element relative mr-4  flex w-[95%]  items-center rounded-md p-2 transition  hover:bg-gray-100 dark:hover:bg-background 
       ${
-        showEditBlockPopup || selectedElementID === element.id
+        showEditBlockPopup.open || element.latex?.trim() === ""
           ? " bg-[#E0EDFB] dark:bg-background"
           : "bg-transparent"
       }

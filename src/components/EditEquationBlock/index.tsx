@@ -112,7 +112,7 @@ export const EditBlockPopup = React.forwardRef<
     (e) => {
       setValue(e.target.value);
       onChange(e.target.value, altText);
-      debouncedAltTextRefetch();
+      // debouncedAltTextRefetch();
     },
     [altText]
   );
@@ -230,6 +230,16 @@ export const EditBlockPopup = React.forwardRef<
     }
   };
 
+  const textAreaRef = useRef(null);
+
+  useEffect(() => {
+    if (textAreaRef.current) {
+      const textArea: HTMLTextAreaElement = textAreaRef.current;
+      textArea.selectionStart = textArea.value.length;
+      textArea.selectionEnd = textArea.value.length;
+    }
+  }, [value]);
+
   return (
     <>
       <EditBlockPopupStyle
@@ -273,9 +283,11 @@ export const EditBlockPopup = React.forwardRef<
 
         <div className="relative flex h-[130px] justify-between ">
           <textarea
+            ref={textAreaRef}
             aria-label={altText}
             aria-live="off"
             value={value}
+            autoFocus
             className="w-full resize-none rounded-md border border-gray-200 bg-transparent p-2 focus:border-[#007AFF] focus:outline-none dark:border-gray-700"
             onChange={onEquationChange}
             placeholder="TEX code"

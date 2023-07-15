@@ -110,7 +110,7 @@ export const MCQ = ({ node, children }) => {
     let lastWord = words[words.length - 1];
 
     console.log(item);
-    const timestamp = searchWordInTranscript(node.transcript.words, item);
+    const timestamp = searchWordInTranscript(node.transcript.words, lastWord);
     // if (timestamp.length > 0) {
     playAudioSegment(node.audio_url, 0, timestamp[0].end);
     // } else {

@@ -38,7 +38,7 @@ const Login: NextPage = () => {
           <link rel="icon" href="/favicon.ico" />
         </Head>
         <main className="flex min-h-screen justify-center bg-gradient-to-b from-[#f1f1f1] to-[#e9e9e9]">
-          <div className="mt-16 mr-10 ml-10 h-[300px] w-full rounded bg-white  p-10 shadow sm:w-[400px]">
+          <div className="ml-10 mr-10 mt-16 h-[300px] w-full rounded bg-white  p-10 shadow sm:w-[400px]">
             <p
               tabIndex={0}
               role="heading"
@@ -50,7 +50,7 @@ const Login: NextPage = () => {
             <button
               aria-label="Continue with google"
               role="button"
-              className="mt-10 flex w-full items-center rounded-lg border border-gray-700 py-3.5 px-4 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-1"
+              className="mt-10 flex w-full items-center rounded-lg border border-accent px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-1"
               onClick={loginWithGoogle}
             >
               <svg

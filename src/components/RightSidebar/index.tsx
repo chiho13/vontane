@@ -72,8 +72,13 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     return path.length ? Node.get(editor, path) : null;
   }, [editor, activePath]);
 
-  const { audioData, setAudioData, rightBarAudioIsLoading, workspaceData } =
-    useTextSpeech();
+  const {
+    audioData,
+    setAudioData,
+    rightBarAudioIsLoading,
+    workspaceData,
+    refetchWorkspaceData,
+  } = useTextSpeech();
   const [viewport, setViewPort] = useState({
     width: 390,
     height: 844,
@@ -101,14 +106,9 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     transition:
       "width 0.3s ease-in-out, opacity 0.4s ease-in-out, transform 0.3s ease-in-out",
   };
-
   useEffect(() => {
-    if (prevWorkspaceId !== workspaceId) {
-      // workspaceId has changed
-      setPublished(workspaceData.workspace.published);
-      setPrevWorkspaceId(workspaceId);
-    }
-  }, [workspaceId, prevWorkspaceId, workspaceData]);
+    setPublished(workspaceData.workspace.published);
+  }, [workspaceData, router.isReady]);
 
   useEffect(() => {
     if (audioData) {
@@ -204,6 +204,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
       if (response) {
         setPubLoading(false);
         setPublished(response.published);
+        refetchWorkspaceData();
       }
     } catch (error) {
       setPubLoading(false);
@@ -254,20 +255,24 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
           >
             <div className="flex flex-col gap-4 ">
               <DropdownMenuItem
-                className="flex cursor-pointer justify-center border border-gray-300 dark:border-gray-700 hover:dark:bg-accent"
+                className="flex cursor-pointer justify-center border border-gray-300 dark:border-accent hover:dark:bg-accent"
                 disabled={pubLoading}
                 onClick={!pubLoading && publishWorkspace}
               >
                 <span className="text-foreground"> Unpublish</span>
               </DropdownMenuItem>
               <DropdownMenuItem
-                className=" flex cursor-pointer justify-center bg-brand hover:dark:bg-brand/90"
+                className=" group flex cursor-pointer justify-center bg-brand hover:bg-brand/90 hover:dark:bg-brand/90"
                 disabled={pubLoading}
                 onClick={() => {
-                  console.log("hi");
+                  console.log(workspaceId);
+
+                  router.push(`/public/${workspaceId}`);
                 }}
               >
-                <span className="text-foreground"> View Site</span>
+                <span className="text-white group-hover:text-black dark:text-foreground group-hover:dark:text-white">
+                  View Site
+                </span>
               </DropdownMenuItem>
             </div>
           </DropdownMenuContent>
@@ -275,7 +280,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
       )}
 
       <div
-        className="m-w-full mt-2 hidden h-full grow overflow-y-auto rounded-md  border border-gray-300 bg-white  dark:border-gray-700 dark:bg-muted dark:text-lightgray lg:block"
+        className="m-w-full mt-2 hidden h-full grow overflow-y-auto rounded-md  border border-gray-300 bg-white  dark:border-accent dark:bg-muted dark:text-lightgray lg:block"
         style={rightSidebarStyle}
       >
         <div className="flex-grow p-2 pb-3">
@@ -321,11 +326,11 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                       />
                     </div>
 
-                    <div className=" truncate  rounded-md border border-gray-300 p-2 pl-3 dark:border-gray-700">
+                    <div className=" truncate  rounded-md border border-gray-300 p-2 pl-3 dark:border-accent">
                       {audioData.content}{" "}
                     </div>
                     {/* {audioData.transcript && (
-                      <div className=" truncate  rounded-md border border-gray-300 p-2 pl-3 dark:border-gray-700">
+                      <div className=" truncate  rounded-md border border-gray-300 p-2 pl-3 dark:border-accent">
                         {audioData.transcript?.transcript}{" "}
                       </div>
                     )} */}
@@ -336,7 +341,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
                       <input
                         value={audioData.audio_url}
-                        className="w-full rounded-md border   border-gray-300 bg-muted p-2  pl-[40px] focus:outline-none dark:border-gray-700"
+                        className="w-full rounded-md border   border-gray-300 bg-muted p-2  pl-[40px] focus:outline-none dark:border-accent"
                         readOnly={true}
                       />
                       <TooltipProvider delayDuration={300}>
@@ -367,7 +372,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                     </div>
                   </>
                 ) : (
-                  <div className="relative block rounded-lg border border-gray-300 bg-white p-4 dark:border-gray-700 dark:bg-secondary">
+                  <div className="relative block rounded-lg border border-gray-300 bg-white p-4 dark:border-accent dark:bg-secondary">
                     No Audio generated
                   </div>
                 ))}
@@ -376,7 +381,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
               <div className="flex justify-end gap-3">
                 {containsTtsNode(editor.children) && (
                   <button
-                    className="mb-2 flex h-[28px] items-center justify-center rounded-md border border-muted-foreground bg-background p-1 text-xs  text-muted-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted"
+                    className="mb-2 flex h-[28px] items-center justify-center rounded-md border border-muted-foreground bg-background p-1 text-xs  text-muted-foreground hover:border-accent hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted"
                     onClick={concatAudio}
                   >
                     Export as Single Audio File
@@ -384,7 +389,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                 )}
                 {/* <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="mb-2 flex h-[28px] items-center justify-center rounded-md border border-muted-foreground bg-background p-1 text-xs  text-muted-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted">
+                  <button className="mb-2 flex h-[28px] items-center justify-center rounded-md border border-muted-foreground bg-background p-1 text-xs  text-muted-foreground hover:border-accent hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted">
                     Device
                     <ChevronDown className="ml-1 w-3" />
                   </button>

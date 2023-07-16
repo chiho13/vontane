@@ -184,7 +184,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
       icon: <FaBold />,
       isActive: isFormatActive(editor, "bold"),
       additionalClass:
-        "rounded-lg p-[5px] ml-1 transition duration-300 hover:bg-gray-200 hover:dark:bg-muted",
+        "rounded-lg p-[5px] ml-1 transition duration-300 hover:bg-gray-200 hover:dark:bg-accent",
     },
     {
       name: "Italic",
@@ -195,7 +195,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
       icon: <FiItalic />,
       isActive: isFormatActive(editor, "italic"),
       additionalClass:
-        "rounded-lg p-[5px] transition duration-300 hover:bg-gray-200 hover:dark:bg-muted",
+        "rounded-lg p-[5px] transition duration-300 hover:bg-gray-200 hover:dark:bg-accent",
     },
     {
       name: "Underline",
@@ -206,7 +206,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
       icon: <FiUnderline />,
       isActive: isFormatActive(editor, "underline"),
       additionalClass:
-        "rounded-lg p-[5px] transition duration-300 hover:bg-gray-200 hover:dark:bg-muted",
+        "rounded-lg p-[5px] transition duration-300 hover:bg-gray-200 hover:dark:bg-accent",
     },
     {
       name: "Strikethrough",
@@ -217,7 +217,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
       icon: <ImStrikethrough />,
       isActive: isFormatActive(editor, "strikethrough"),
       additionalClass:
-        "rounded-lg p-[5px] transition duration-300 hover:bg-gray-200 hover:dark:bg-muted",
+        "rounded-lg p-[5px] transition duration-300 hover:bg-gray-200 hover:dark:bg-accent",
     },
     {
       name: "Link",
@@ -225,7 +225,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
       icon: <ImLink />,
       isActive: hasURL,
       additionalClass:
-        "rounded-lg p-[5px] mr-1 transition duration-300 hover:bg-gray-200 hover:dark:bg-muted",
+        "rounded-lg p-[5px] mr-1 transition duration-300 hover:bg-gray-200 hover:dark:bg-accent",
     },
     {
       separator: true,
@@ -239,7 +239,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
       icon: <List width={20} height={20} />,
       isActive: isBlockActive(editor, "bulleted-list", "type"),
       additionalClass:
-        "rounded-lg p-[4px] ml-1 transition duration-300 hover:bg-gray-200 hover:dark:bg-muted",
+        "rounded-lg p-[4px] ml-1 transition duration-300 hover:bg-gray-200 hover:dark:bg-accent",
     },
     {
       name: "Ordered List",
@@ -250,7 +250,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
       icon: <ListOrdered width={20} height={20} />,
       isActive: isBlockActive(editor, "numbered-list", "type"),
       additionalClass:
-        "rounded-lg p-[4px] transition duration-300 hover:bg-gray-200 hover:dark:bg-muted",
+        "rounded-lg p-[4px] transition duration-300 hover:bg-gray-200 hover:dark:bg-accent",
     },
     {
       name: "Todo List",
@@ -261,7 +261,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
       icon: <MdChecklist width={20} height={20} />,
       isActive: isBlockActive(editor, "checked-list", "type"),
       additionalClass:
-        "rounded-lg p-[4px] mr-1 transition duration-300 hover:bg-gray-200 hover:dark:bg-muted",
+        "rounded-lg p-[4px] mr-1 transition duration-300 hover:bg-gray-200 hover:dark:bg-accent",
     },
   ];
 
@@ -297,7 +297,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             <Tooltip>
               <TooltipTrigger>
                 <button
-                  className={`ml-1 mr-1 flex h-[28px]  items-center rounded-lg   py-1 px-2 text-xs transition duration-300 hover:bg-gray-200 hover:dark:bg-muted `}
+                  className={`ml-1 mr-1 flex h-[28px]  items-center rounded-lg   px-2 py-1 text-xs transition duration-300 hover:bg-gray-200 hover:dark:bg-accent `}
                   onMouseDown={(e) => {
                     e.preventDefault();
                     wrapWithTTS(editor);

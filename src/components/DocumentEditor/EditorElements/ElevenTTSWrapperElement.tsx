@@ -118,12 +118,10 @@ const ElevenTTSWrapperBase = (props: {
       className={` relative  ${
         isFirstInGroup ? "border-t" : ""
       } border-b border-muted-foreground p-1 pb-3 pl-0 dark:border-muted-foreground ${
-        selected
-          ? " bg-brand/30 dark:bg-brand/20"
-          : "bg-slate-200 dark:bg-background"
+        selected ? " bg-brand/20 dark:bg-brand/20" : "bg-white dark:bg-muted"
       }`}
     >
-      <div className="ml-[49px] mb-5 mt-4" contentEditable={false}>
+      <div className="mb-5 ml-[49px] mt-4" contentEditable={false}>
         <TextSpeech
           selectedVoiceId={selectedVoiceId}
           setSelectedVoiceId={setSelectedVoiceId}
@@ -131,7 +129,7 @@ const ElevenTTSWrapperBase = (props: {
         />
       </div>
       {children}
-      <div className="absolute top-[5px] right-[10px] z-10">
+      <div className="absolute right-[10px] top-[5px] z-10">
         <OptionMenu element={element} />
       </div>
       {selected && <MoveBlock editor={editor} path={path} />}

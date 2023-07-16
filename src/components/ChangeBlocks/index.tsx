@@ -139,7 +139,7 @@ export const ChangeBlocks = ({ openLink }: any) => {
               dropdownId="changeBlockDropdown"
               clickOutside={false}
               ref={changeTextBlock}
-              dropdownButtonClassName="p-[3px] px-2 flex text-darkblue items-center h-[28px] relative border outline-none border-0  dark:border-gray-700 shadow-none bg-transparent w-full  justify-start transition-colors duration-300  border focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-opacity-40 hover:bg-gray-200 dark:hover:bg-muted"
+              dropdownButtonClassName="p-[3px] px-2 flex text-darkblue items-center h-[28px] relative border outline-none border-0  dark:border-accent shadow-none bg-transparent w-full  justify-start transition-colors duration-300  border focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-opacity-40 hover:bg-gray-200 dark:hover:bg-accent"
               icon={TextBlockIcon}
               dropdownMenuNonPortalOverride="top-[38px] z-100 border-black dark:bg-secondary lg:absolute w-[200px]"
             >
@@ -164,10 +164,10 @@ export const ChangeBlocks = ({ openLink }: any) => {
                         if (isKeyboardNav) return;
                         setFocusedIndex(index);
                       }}
-                      className={`inline-flex w-full items-center rounded-md px-4 py-2 text-left text-sm font-semibold text-darkblue text-[#333333] transition duration-200 focus:outline-none dark:text-foreground
+                      className={`inline-flex w-full items-center rounded-md px-4 py-2 text-left text-sm font-semibold text-[#333333] text-darkblue transition duration-200 focus:outline-none dark:text-foreground
                         ${
                           focusedIndex === index
-                            ? "bg-gray-200 dark:bg-muted"
+                            ? "bg-gray-200 dark:bg-accent"
                             : ""
                         }
                         `}

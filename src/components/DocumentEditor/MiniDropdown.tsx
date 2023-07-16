@@ -345,7 +345,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
     return (
       <>
         <div
-          className="closeOutside z-1  fixed top-0 left-0 h-full w-screen  opacity-50"
+          className="closeOutside z-1  fixed left-0 top-0 h-full w-screen  opacity-50"
           onClick={() => {
             setShowDropdown(false);
           }}
@@ -384,7 +384,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
           )}
           <div
             ref={ref}
-            className="dropdown-menu h-[320px] overflow-y-auto rounded-md border border-gray-200 bg-white p-2 shadow-md dark:border-gray-700 dark:bg-secondary"
+            className="dropdown-menu h-[320px] overflow-y-auto rounded-md border border-gray-200 bg-white p-2 shadow-md dark:border-accent dark:bg-secondary"
             onMouseLeave={() => {
               setIsKeyboardNav(false);
               setFocusedIndex(-1);
@@ -396,7 +396,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
                   <motion.button
                     key={index}
                     whileTap={{ scale: 0.97 }}
-                    className={`mb-1 flex w-full items-center gap-2 rounded-md border-2 border-gray-100 p-2 shadow-sm transition duration-300 dark:border-gray-700
+                    className={`mb-1 flex w-full items-center gap-2 rounded-md border-2 border-gray-100 p-2 shadow-sm transition duration-300 dark:border-accent
                     ${
                       focusedIndex === index
                         ? "border-gray-200 bg-gray-200 dark:border-muted-foreground dark:bg-muted"

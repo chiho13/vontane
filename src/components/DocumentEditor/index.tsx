@@ -1706,7 +1706,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     >
       <Portal>
         <button
-          className="group fixed right-[30px] top-[25px] z-0 hidden rounded  border-gray-300 p-1 transition duration-300 hover:border-brand dark:border-gray-700 dark:hover:border-foreground dark:hover:bg-muted lg:block"
+          className="group fixed right-[30px] top-[25px] z-0 hidden rounded  border-gray-300 p-1 transition duration-300 hover:border-brand dark:border-accent dark:hover:border-foreground dark:hover:bg-muted lg:block"
           onClick={() => {
             setShowRightSidebar(!showRightSidebar);
           }}
@@ -1721,7 +1721,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       <div className="flex  lg:justify-center xl:px-4">
         <div className="mx-auto block">
           <div
-            className="relative  z-0  mt-2 rounded-md  border border-gray-300  bg-white px-2 dark:border-gray-700 dark:bg-muted dark:text-foreground lg:min-w-[600px] lg:px-0 xl:min-w-[770px]"
+            className="relative  z-0  mt-2 rounded-md  border border-gray-300  bg-white px-2 dark:border-accent dark:bg-muted dark:text-foreground lg:min-w-[600px] lg:px-0 xl:min-w-[770px]"
             style={{
               right:
                 windowSize.width > breakpoints.lg
@@ -1779,6 +1779,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                             if (!isEqual(slatevalue, newValue)) {
                               // Compare the current and new values
                               debouncedSetSlateValue(newValue);
+                              // setValue(newValue);
 
                               console.log("hello");
                               console.log(JSON.stringify(newValue));
@@ -1979,7 +1980,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                       ) : (
                         <div
                           ref={editBlockDropdownRef}
-                          className="z-100 h-[270px] rounded-lg border p-2 dark:border-gray-700 dark:border-gray-700  dark:bg-muted dark:text-foreground lg:w-[400px]  lg:w-[500px]"
+                          className="z-100 h-[270px] rounded-lg border p-2 dark:border-accent dark:border-accent  dark:bg-muted dark:text-foreground lg:w-[400px]  lg:w-[500px]"
                         >
                           <ImageEmbedLink />
                         </div>

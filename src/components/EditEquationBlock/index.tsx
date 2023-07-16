@@ -244,7 +244,7 @@ export const EditBlockPopup = React.forwardRef<
     <>
       <EditBlockPopupStyle
         ref={ref}
-        className="block rounded-md border border-gray-200 bg-gray-100 p-2 shadow-md dark:border-gray-700 dark:bg-secondary"
+        className="block rounded-md border border-gray-200 bg-gray-100 p-2 shadow-md dark:border-accent dark:bg-secondary"
       >
         {/* <div className="flex">
           <form
@@ -288,7 +288,7 @@ export const EditBlockPopup = React.forwardRef<
             aria-live="off"
             value={value}
             autoFocus
-            className="w-full resize-none rounded-md border border-gray-200 bg-transparent p-2 focus:border-[#007AFF] focus:outline-none dark:border-gray-700"
+            className="w-full resize-none rounded-md border border-gray-200 bg-transparent p-2 focus:border-[#007AFF] focus:outline-none dark:border-accent"
             onChange={onEquationChange}
             placeholder="TEX code"
           />

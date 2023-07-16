@@ -9,17 +9,59 @@ import React, {
 } from "react";
 import { Path, Text, Node } from "slate";
 
+import { api } from "@/utils/api";
 import { CollapsibleAudioPlayer } from "@/components/PreviewContent/PreviewElements/CollapsibleAudio";
 import { MCQ } from "@/components/PreviewContent/PreviewElements/MCQ";
-
-export const PreviewContent = () => {
+import { useRouter } from "next/router";
+import { ModeToggle } from "@/components/mode-toggle";
+const PublicPage = () => {
+  const router = useRouter();
+  const workspaceId = router.query.publishedId as string;
   const { editor: fromEditor, activePath } = useContext(EditorContext);
-  const [localValue, setLocalValue] = useState(fromEditor.children);
+  const [localValue, setLocalValue] = useState(null);
+
+  const {
+    data: workspaceData,
+    refetch: refetchWorkspaceData,
+    error,
+    isLoading,
+  } = api.workspace.getWorkspace.useQuery(
+    {
+      id: workspaceId || "",
+    },
+    {
+      enabled: false,
+      cacheTime: 5 * 60 * 1000, // Cache data for 5 minutes
+      staleTime: 5 * 60 * 1000, // Data is considered fresh for 5 minutes
+    }
+  );
+
+  useEffect(() => {
+    if (router.isReady) {
+      refetchWorkspaceData();
+    }
+  }, [workspaceId, router.isReady]);
+
+  useEffect(() => {
+    if (workspaceData) {
+      const slateValue = workspaceData.workspace.slate_value;
+
+      if (slateValue) {
+        console.log(slateValue);
+        const parsedSlateValue = JSON.parse(slateValue);
+        setLocalValue(parsedSlateValue);
+      }
+    }
+
+    return () => {
+      setLocalValue(null);
+    };
+  }, [workspaceData]);
 
   // update localValue when fromEditor.children changes
-  useEffect(() => {
-    setLocalValue(fromEditor.children);
-  }, [fromEditor.children]);
+  //   useEffect(() => {
+  //     setLocalValue(fromEditor.children);
+  //   }, [fromEditor.children]);
 
   const rootNode = useMemo(() => {
     let path = activePath ? JSON.parse(activePath) : [];
@@ -46,6 +88,16 @@ export const PreviewContent = () => {
     }
     return false;
   };
+
+  if (error || (workspaceData && !workspaceData.workspace.published)) {
+    // Show 404 page if workspaceId is not found
+    return (
+      <div className="flex h-[100vh] w-full flex-col items-center justify-center">
+        <div className="text-bold mb-2 text-6xl">404</div>
+        <p className="text-2xl">Workspace not found</p>
+      </div>
+    );
+  }
 
   const renderElement = (
     node: { type: any },
@@ -140,10 +192,21 @@ export const PreviewContent = () => {
   };
 
   return (
-    <div
-      className={`relative overflow-y-auto rounded-md border border-gray-300 p-3 dark:border-accent`}
-    >
-      {parseNodes(localValue)}
-    </div>
+    localValue && (
+      <>
+        <div
+          className={`relative  h-[100vh] overflow-y-auto rounded-md bg-white p-4 dark:bg-muted `}
+        >
+          <div className="mx-auto max-w-[800px] xl:mt-[120px]">
+            {parseNodes(localValue)}
+          </div>
+        </div>
+        <div className="fixed bottom-2 right-2">
+          <ModeToggle />
+        </div>
+      </>
+    )
   );
 };
+
+export default PublicPage;

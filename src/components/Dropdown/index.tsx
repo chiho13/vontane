@@ -331,7 +331,7 @@ function Dropdown(
 
   const dropdownButtonStyleOverride =
     dropdownButtonClassName ||
-    " border-2 border-gray-300 bg-white dark:bg-muted dark:border-gray-700 px-4 py-2 shadow-md shadow-sm outline-none hover:bg-gray-50 focus-visible:border-gray-400";
+    " border-2 border-gray-300 bg-white dark:bg-muted dark:border-accent px-4 py-2 shadow-md shadow-sm outline-none hover:bg-gray-50 focus-visible:border-gray-400";
 
   const _dropdownMenuNonPortalOverride =
     dropdownMenuNonPortalOverride || "dark:bg-muted lg:absolute";
@@ -345,7 +345,7 @@ function Dropdown(
           {activeDropdown === dropdownId && (
             <Portal>
               <motion.div {...clickoutside_props}>
-                <div className="closeOutside z-1  fixed top-0 left-0 h-full w-screen  opacity-50"></div>
+                <div className="closeOutside z-1  fixed left-0 top-0 h-full w-screen  opacity-50"></div>
               </motion.div>
             </Portal>
           )}
@@ -372,7 +372,7 @@ function Dropdown(
                 <motion.div
                   {...animation_props}
                   id={dropdownId}
-                  className={`dropdown-menu z-10000 absolute min-w-[100px] origin-top-right rounded-md border-2  bg-white shadow-lg ring-1 ring-black ring-opacity-5 dark:border-gray-700 dark:bg-muted dark:text-foreground ${dropdownMenuStyleOverride}`}
+                  className={`dropdown-menu z-10000 absolute min-w-[100px] origin-top-right rounded-md border-2  bg-white shadow-lg ring-1 ring-black ring-opacity-5 dark:border-accent dark:bg-muted dark:text-foreground ${dropdownMenuStyleOverride}`}
                   role="menu"
                   aria-orientation="vertical"
                   aria-labelledby="voices-dropdown"
@@ -391,7 +391,7 @@ function Dropdown(
               <motion.div
                 {...animation_props}
                 id={dropdownId}
-                className={`dropdown-menu z-10000 fixed left-0  top-12 mt-2 w-full min-w-[200px] origin-top-right  bg-white  shadow-lg ring-1 ring-black ring-opacity-5 dark:border dark:border-gray-700 lg:rounded-md ${_dropdownMenuNonPortalOverride}`}
+                className={`dropdown-menu z-10000 fixed left-0  top-12 mt-2 w-full min-w-[200px] origin-top-right  bg-white  shadow-lg ring-1 ring-black ring-opacity-5 dark:border dark:border-accent lg:rounded-md ${_dropdownMenuNonPortalOverride}`}
                 role="menu"
                 aria-orientation="vertical"
                 aria-labelledby="voices-dropdown"

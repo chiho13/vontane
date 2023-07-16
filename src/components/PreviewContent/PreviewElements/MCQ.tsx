@@ -155,19 +155,21 @@ export const MCQ = ({ node, children }) => {
   return (
     <div>
       <div className="relative mb-3 flex items-start gap-5 p-2">
-        <button
-          className="group relative flex items-center justify-center rounded-full bg-brand transition duration-200 hover:bg-brand/90 dark:bg-foreground dark:hover:bg-brand"
-          style={{
-            width: "24px",
-            height: "24px",
-            minWidth: "24px",
-            minHeight: "24px",
-            top: "5px",
-          }}
-          onClick={() => playQuestion(fullQ)}
-        >
-          <AiFillSound className="play-icon relative left-[1px] h-4 w-4 text-white  group-hover:text-gray-100 dark:text-brand  group-hover:dark:text-foreground" />
-        </button>
+        {node.url && (
+          <button
+            className="group relative flex items-center justify-center rounded-full bg-brand transition duration-200 hover:bg-brand/90 dark:bg-foreground dark:hover:bg-brand"
+            style={{
+              width: "24px",
+              height: "24px",
+              minWidth: "24px",
+              minHeight: "24px",
+              top: "5px",
+            }}
+            onClick={() => playQuestion(fullQ)}
+          >
+            <AiFillSound className="play-icon relative left-[1px] h-4 w-4 text-white  group-hover:text-gray-100 dark:text-brand  group-hover:dark:text-foreground" />
+          </button>
+        )}
         <div className="container">
           {paragraphs.map((text, i) => (
             <p key={i} className="mb-2">
@@ -192,7 +194,7 @@ export const MCQ = ({ node, children }) => {
     ${
       selectedOption === item.id
         ? "border-brand bg-brand text-white dark:border-foreground dark:bg-gray-300 dark:text-background"
-        : "border-gray-700 hover:border-brand hover:bg-transparent hover:text-brand dark:hover:border-foreground dark:hover:bg-accent/50 dark:hover:text-foreground"
+        : "border-accent hover:border-brand hover:bg-transparent hover:text-brand dark:hover:border-foreground dark:hover:bg-accent/50 dark:hover:text-foreground"
     }`}
               >
                 <input
@@ -210,8 +212,8 @@ export const MCQ = ({ node, children }) => {
       mr-3 flex h-[28px] w-[28px] items-center justify-center rounded-md border 
       ${
         selectedOption === item.id
-          ? "border-white dark:border-gray-700"
-          : "border-gray-700 group-hover:border-brand dark:group-hover:border-foreground"
+          ? "border-white dark:border-accent"
+          : "border-accent group-hover:border-brand dark:group-hover:border-foreground"
       }`}
                 >
                   {String.fromCharCode(65 + optionCounter - 1).toUpperCase()}

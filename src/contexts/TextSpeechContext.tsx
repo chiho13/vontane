@@ -32,6 +32,7 @@ interface TextSpeechContextType {
   isPlaying: boolean;
   setIsPlaying: (value: boolean) => void;
   workspaceData: any;
+  refetchWorkspaceData: any;
 }
 // Create the context with default values
 const TextSpeechContext = createContext<TextSpeechContextType>({
@@ -51,12 +52,14 @@ const TextSpeechContext = createContext<TextSpeechContextType>({
   isPlaying: false,
   setIsPlaying: () => {},
   workspaceData: {},
+  refetchWorkspaceData: {},
 });
 
 // Define the shape of the provider props
 interface TextSpeechProviderProps {
   children: ReactNode;
   workspaceData: any;
+  refetchWorkspaceData: any;
 }
 
 // Create a custom hook to use the context
@@ -67,6 +70,7 @@ const useTextSpeech = () => {
 const RightSideBarProvider = ({
   children,
   workspaceData,
+  refetchWorkspaceData,
 }: TextSpeechProviderProps) => {
   const [audioData, setAudioData] = useState({
     audio_url: "",
@@ -101,6 +105,7 @@ const RightSideBarProvider = ({
         isPlaying,
         setIsPlaying,
         workspaceData,
+        refetchWorkspaceData,
       }}
     >
       {children}

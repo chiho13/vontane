@@ -93,6 +93,7 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = ({
         id: workspaceId,
         slate_value: JSON.stringify(newSlateValue),
       });
+
       setSyncStatus("synced"); // Syncing is complete
     } catch (error) {
       setSyncStatus("idle"); // Reset to idle if there's an error
@@ -128,7 +129,11 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = ({
     <NewColumnProvider>
       {!fetchWorkspaceIsLoading && initialSlateValue && workspaceId && (
         <EditorProvider key={workspaceId}>
-          <RightSideBarProvider key={workspaceId} workspaceData={workspaceData}>
+          <RightSideBarProvider
+            key={workspaceId}
+            workspaceData={workspaceData}
+            refetchWorkspaceData={refetchWorkspaceData}
+          >
             <DocumentEditor
               key={workspaceId}
               setSyncStatus={setSyncStatus}

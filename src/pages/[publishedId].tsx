@@ -19,6 +19,7 @@ import { AudioManagerProvider } from "@/contexts/PreviewAudioContext";
 import { createInnerTRPCContext } from "@/server/api/trpc";
 import { GetServerSideProps } from "next";
 import { Button } from "@/components/ui/button";
+import { parseNodes } from "@/components/PreviewContent";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
@@ -53,34 +54,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 const PublishedPage = ({ workspaceData }) => {
   const router = useRouter();
-  const query = router.query.publishedId as string;
-  let parts = router.asPath.split("-");
-  let workspaceId = parts.slice(1).join("-");
-
-  const { editor: fromEditor, activePath } = useContext(EditorContext);
   const [localValue, setLocalValue] = useState(null);
-
-  // const {
-  //   data: workspaceData,
-  //   refetch: refetchWorkspaceData,
-  //   error,
-  //   isLoading,
-  // } = api.workspace.getWorkspace.useQuery(
-  //   {
-  //     id: workspaceId || "",
-  //   },
-  //   {
-  //     enabled: false,
-  //     cacheTime: 5 * 60 * 1000, // Cache data for 5 minutes
-  //     staleTime: 5 * 60 * 1000, // Data is considered fresh for 5 minutes
-  //   }
-  // );
-
-  // useEffect(() => {
-  //   if (router.isReady) {
-  //     refetchWorkspaceData();
-  //   }
-  // }, [workspaceId, router.isReady]);
 
   useEffect(() => {
     if (workspaceData) {
@@ -124,99 +98,6 @@ const PublishedPage = ({ workspaceData }) => {
       </div>
     );
   }
-
-  const renderElement = (
-    node: { type: string; url: string },
-    children:
-      | string
-      | number
-      | boolean
-      | React.ReactElement<any, string | React.JSXElementConstructor<any>>
-      | React.ReactFragment
-      | null
-      | undefined,
-    key: React.Key | null | undefined
-  ) => {
-    console.log(node.type);
-
-    switch (node.type) {
-      case "paragraph":
-        return (
-          <p className="mt-2 leading-7" key={key}>
-            {children}
-          </p>
-        );
-
-      case "heading-one":
-        return (
-          <h1 className="text-4xl" key={key}>
-            {children}
-          </h1>
-        );
-      case "heading-two":
-        return (
-          <h2 className="text-3xl" key={key}>
-            {children}
-          </h2>
-        );
-      case "heading-three":
-        return (
-          <h3 className="text-2xl" key={key}>
-            {children}
-          </h3>
-        );
-      case "link":
-        return (
-          <a
-            href={node.url}
-            target="_blank"
-            className="inline text-brand underline dark:text-blue-400"
-          >
-            {children}
-          </a>
-        );
-      case "tts":
-        return (
-          <CollapsibleAudioPlayer node={node} key={key}>
-            {children}
-          </CollapsibleAudioPlayer>
-        );
-      case "mcq":
-        return (
-          <MCQ node={node} key={key}>
-            {children}
-          </MCQ>
-        );
-
-      default:
-        return <span key={key}>{children}</span>;
-    }
-  };
-
-  const parseNodes = (nodes: any[]) => {
-    return nodes
-      .filter((node: any) => node.type !== "title")
-      .map((node: any, index: any) => {
-        console.log(node);
-        if (Text.isText(node)) {
-          let customNode = node as any; // assert that node could be any type
-          if (customNode.bold) {
-            return <b key={index}>{customNode.text}</b>;
-          } else if (customNode.italic) {
-            return <i key={index}>{customNode.text}</i>;
-          } else if (customNode.underline) {
-            return <u key={index}>{customNode.text}</u>;
-          } else if (customNode.strikethrough) {
-            return <del key={index}>{customNode.text}</del>;
-          } else {
-            return <span key={index}>{customNode.text}</span>;
-          }
-        } else if ("children" in node) {
-          const children = parseNodes(node.children);
-          return renderElement(node, children, node.id ? node.id : index);
-        }
-      });
-  };
 
   return (
     localValue && (

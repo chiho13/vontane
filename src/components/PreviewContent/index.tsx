@@ -12,6 +12,106 @@ import { Path, Text, Node } from "slate";
 import { CollapsibleAudioPlayer } from "@/components/PreviewContent/PreviewElements/CollapsibleAudio";
 import { MCQ } from "@/components/PreviewContent/PreviewElements/MCQ";
 
+const renderElement = (
+  node: { type: any; url: any },
+  children:
+    | string
+    | number
+    | boolean
+    | React.ReactElement<any, string | React.JSXElementConstructor<any>>
+    | React.ReactFragment
+    | null
+    | undefined,
+  key: React.Key | null | undefined
+) => {
+  console.log(node.type);
+
+  switch (node.type) {
+    case "paragraph":
+      return (
+        <p className="mt-2 leading-7" key={key}>
+          {children}
+        </p>
+      );
+
+    case "heading-one":
+      return (
+        <h1 className="text-4xl" key={key}>
+          {children}
+        </h1>
+      );
+    case "heading-two":
+      return (
+        <h2 className="text-3xl" key={key}>
+          {children}
+        </h2>
+      );
+
+    case "link":
+      return (
+        <a
+          href={node.url}
+          target="_blank"
+          className="inline text-brand underline dark:text-blue-400"
+        >
+          {children}
+        </a>
+      );
+    case "heading-three":
+      return (
+        <h3 className="text-2xl" key={key}>
+          {children}
+        </h3>
+      );
+    case "tts":
+      // Check if any child node is of type "mcq"
+      // Check if any child node is of type "mcq"
+
+      return (
+        <CollapsibleAudioPlayer node={node} key={key}>
+          {children}
+        </CollapsibleAudioPlayer>
+      );
+    case "mcq":
+      return (
+        <MCQ node={node} key={key}>
+          {children}
+        </MCQ>
+      );
+
+    default:
+      return <span key={key}>{children}</span>;
+  }
+};
+
+export const parseNodes = (nodes: any[]) => {
+  return nodes
+    .filter((node: any) => node.type !== "title")
+    .map((node: any, index: any) => {
+      console.log(node);
+      if (Text.isText(node)) {
+        let customNode = node as any; // assert that node could be any type
+        if (customNode.bold) {
+          return <b key={index}>{customNode.text}</b>;
+        } else if (customNode.italic) {
+          return <i key={index}>{customNode.text}</i>;
+        } else if (customNode.underline) {
+          return <u key={index}>{customNode.text}</u>;
+        } else if (customNode.strikethrough) {
+          return <del key={index}>{customNode.text}</del>;
+        } else {
+          return customNode.text !== "" ? (
+            <span key={index}>{customNode.text}</span>
+          ) : (
+            "\u00A0"
+          );
+        }
+      } else if ("children" in node) {
+        const children = parseNodes(node.children);
+        return renderElement(node, children, node.id ? node.id : index);
+      }
+    });
+};
 export const PreviewContent = () => {
   const { editor: fromEditor, activePath } = useContext(EditorContext);
   const [localValue, setLocalValue] = useState(fromEditor.children);
@@ -20,14 +120,6 @@ export const PreviewContent = () => {
   useEffect(() => {
     setLocalValue(fromEditor.children);
   }, [fromEditor.children]);
-
-  const rootNode = useMemo(() => {
-    let path = activePath ? JSON.parse(activePath) : [];
-    while (path && path.length > 1) {
-      path = Path.parent(path);
-    }
-    return path.length ? Node.get(fromEditor, path) : null;
-  }, [fromEditor, activePath]);
 
   const isMCQPresent = (children: any[]) => {
     if (Array.isArray(children)) {
@@ -45,109 +137,6 @@ export const PreviewContent = () => {
       }
     }
     return false;
-  };
-
-  const renderElement = (
-    node: { type: any; url: any },
-    children:
-      | string
-      | number
-      | boolean
-      | React.ReactElement<any, string | React.JSXElementConstructor<any>>
-      | React.ReactFragment
-      | null
-      | undefined,
-    key: React.Key | null | undefined,
-    rootNode: Node | null
-  ) => {
-    console.log(node.type);
-
-    switch (node.type) {
-      case "paragraph":
-        return (
-          <p className="mt-2 leading-7" key={key}>
-            {children}
-          </p>
-        );
-
-      case "heading-one":
-        return (
-          <h1 className="text-4xl" key={key}>
-            {children}
-          </h1>
-        );
-      case "heading-two":
-        return (
-          <h2 className="text-3xl" key={key}>
-            {children}
-          </h2>
-        );
-
-      case "link":
-        return (
-          <a
-            href={node.url}
-            target="_blank"
-            className="inline text-brand underline dark:text-blue-400"
-          >
-            {children}
-          </a>
-        );
-      case "heading-three":
-        return (
-          <h3 className="text-2xl" key={key}>
-            {children}
-          </h3>
-        );
-      case "tts":
-        // Check if any child node is of type "mcq"
-        // Check if any child node is of type "mcq"
-
-        return (
-          <CollapsibleAudioPlayer node={node} key={key}>
-            {children}
-          </CollapsibleAudioPlayer>
-        );
-      case "mcq":
-        return (
-          <MCQ node={node} key={key}>
-            {children}
-          </MCQ>
-        );
-
-      default:
-        return <span key={key}>{children}</span>;
-    }
-  };
-
-  const parseNodes = (nodes: any[]) => {
-    return nodes
-      .filter((node: any) => node.type !== "title")
-      .map((node: any, index: any) => {
-        console.log(node);
-        if (Text.isText(node)) {
-          let customNode = node as any; // assert that node could be any type
-          if (customNode.bold) {
-            return <b key={index}>{customNode.text}</b>;
-          } else if (customNode.italic) {
-            return <i key={index}>{customNode.text}</i>;
-          } else if (customNode.underline) {
-            return <u key={index}>{customNode.text}</u>;
-          } else if (customNode.strikethrough) {
-            return <del key={index}>{customNode.text}</del>;
-          } else {
-            return <span key={index}>{customNode.text}</span>;
-          }
-        } else if ("children" in node) {
-          const children = parseNodes(node.children);
-          return renderElement(
-            node,
-            children,
-            node.id ? node.id : index,
-            rootNode
-          );
-        }
-      });
   };
 
   return (

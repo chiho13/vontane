@@ -280,73 +280,75 @@ function AudioPlayer({
           </div>
         ))}
 
-      <TooltipProvider delayDuration={300}>
-        <Tooltip>
-          <TooltipTrigger>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="mr-2 flex  h-[22px] items-center justify-center rounded-md border border-muted-foreground bg-background px-1 text-xs  text-muted-foreground hover:border-accent hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted">
-                  {playbackSpeed}X{/* <ChevronDown className="ml-1 w-3" /> */}
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="start"
-                className=" border border-gray-300 bg-background dark:border-gray-500 dark:bg-secondary"
-              >
-                <DropdownMenuItem
-                  className="dark:text-foreground hover:dark:bg-accent"
-                  onClick={() => setPlaybackSpeed(0.5)}
+      {content.length > 100 && (
+        <TooltipProvider delayDuration={300}>
+          <Tooltip>
+            <TooltipTrigger>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="mr-2 flex  h-[22px] items-center justify-center rounded-md border border-muted-foreground bg-background px-1 text-xs  text-muted-foreground hover:border-accent hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted">
+                    {playbackSpeed}X{/* <ChevronDown className="ml-1 w-3" /> */}
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="start"
+                  className=" border border-gray-300 bg-background dark:border-gray-500 dark:bg-secondary"
                 >
-                  <span className="text-foreground">0.5x</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="dark:text-foreground hover:dark:bg-accent"
-                  onClick={() => setPlaybackSpeed(0.75)}
-                >
-                  <span className="text-foreground">0.75x</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="hover:dark:bg-accent"
-                  onClick={() => setPlaybackSpeed(1.0)}
-                >
-                  <span className="text-foreground"> 1x</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="hover:dark:bg-accent"
-                  onClick={() => setPlaybackSpeed(1.25)}
-                >
-                  <span className="text-foreground"> 1.25x</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="hover:dark:bg-accent"
-                  onClick={() => setPlaybackSpeed(1.5)}
-                >
-                  <span className="text-foreground"> 1.5x</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="hover:dark:bg-accent"
-                  onClick={() => setPlaybackSpeed(1.75)}
-                >
-                  <span className="text-foreground"> 1.75x</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="hover:dark:bg-accent"
-                  onClick={() => setPlaybackSpeed(2.0)}
-                >
-                  <span className="text-foreground">2x</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </TooltipTrigger>
-          <TooltipContent
-            className="border-black  dark:bg-white dark:text-muted"
-            side="top"
-            sideOffset={10}
-          >
-            <p className="text-[12px]">Playback Speed</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+                  <DropdownMenuItem
+                    className="dark:text-foreground hover:dark:bg-accent"
+                    onClick={() => setPlaybackSpeed(0.5)}
+                  >
+                    <span className="text-foreground">0.5x</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="dark:text-foreground hover:dark:bg-accent"
+                    onClick={() => setPlaybackSpeed(0.75)}
+                  >
+                    <span className="text-foreground">0.75x</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="hover:dark:bg-accent"
+                    onClick={() => setPlaybackSpeed(1.0)}
+                  >
+                    <span className="text-foreground"> 1x</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="hover:dark:bg-accent"
+                    onClick={() => setPlaybackSpeed(1.25)}
+                  >
+                    <span className="text-foreground"> 1.25x</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="hover:dark:bg-accent"
+                    onClick={() => setPlaybackSpeed(1.5)}
+                  >
+                    <span className="text-foreground"> 1.5x</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="hover:dark:bg-accent"
+                    onClick={() => setPlaybackSpeed(1.75)}
+                  >
+                    <span className="text-foreground"> 1.75x</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="hover:dark:bg-accent"
+                    onClick={() => setPlaybackSpeed(2.0)}
+                  >
+                    <span className="text-foreground">2x</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </TooltipTrigger>
+            <TooltipContent
+              className="border-black  dark:bg-white dark:text-muted"
+              side="top"
+              sideOffset={10}
+            >
+              <p className="text-[12px]">Playback Speed</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
 
       {!isPreview && <DownloadButton url={audioURL} fileName={fileName} />}
     </AudioPlayerStyle>

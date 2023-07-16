@@ -211,7 +211,7 @@ function AudioPlayer({
     <AudioPlayerStyle
       key={id}
       className={cn(
-        `relative flex items-center  gap-2 border border-gray-300 bg-white dark:border-accent dark:bg-muted`,
+        `relative flex items-center  gap-2 border border-gray-300 bg-white dark:border-accent dark:bg-transparent`,
         classNames
       )}
     >

@@ -141,7 +141,7 @@ export const PreviewContent = () => {
 
   return (
     <div
-      className={`relative overflow-y-auto rounded-md border border-gray-300 p-3 dark:border-accent`}
+      className={`dark:bg-public relative overflow-y-auto rounded-md border border-gray-300 p-3 dark:border-accent`}
     >
       {parseNodes(localValue)}
     </div>

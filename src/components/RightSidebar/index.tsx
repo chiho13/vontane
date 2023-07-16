@@ -267,7 +267,20 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                 onClick={() => {
                   console.log(workspaceId);
 
-                  router.push(`/public/${workspaceId}`);
+                  router.push(
+                    `/${editor.children[0].children[0].text
+                      .toLowerCase()
+                      .replace(/-/g, "_") // Add this line to remove dashes
+                      .split(" ")
+                      .join("_")}-${workspaceId}`
+                  );
+
+                  // console.log(
+                  //   editor.children[0].children[0].text
+                  //     .toLowerCase()
+                  //     .split(" ")
+                  //     .join("_")
+                  // );
                 }}
               >
                 <span className="text-white group-hover:text-black dark:text-foreground group-hover:dark:text-white">

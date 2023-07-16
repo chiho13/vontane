@@ -14,7 +14,8 @@ import { CollapsibleAudioPlayer } from "@/components/PreviewContent/PreviewEleme
 import { MCQ } from "@/components/PreviewContent/PreviewElements/MCQ";
 import { useRouter } from "next/router";
 import { ModeToggle } from "@/components/mode-toggle";
-const PublicPage = () => {
+import { AudioManagerProvider } from "@/contexts/PreviewAudioContext";
+const PublishedPage = () => {
   const router = useRouter();
   const workspaceId = router.query.publishedId as string;
   const { editor: fromEditor, activePath } = useContext(EditorContext);
@@ -63,14 +64,6 @@ const PublicPage = () => {
   //     setLocalValue(fromEditor.children);
   //   }, [fromEditor.children]);
 
-  const rootNode = useMemo(() => {
-    let path = activePath ? JSON.parse(activePath) : [];
-    while (path && path.length > 1) {
-      path = Path.parent(path);
-    }
-    return path.length ? Node.get(fromEditor, path) : null;
-  }, [fromEditor, activePath]);
-
   const isMCQPresent = (children: any[]) => {
     if (Array.isArray(children)) {
       for (let child of children) {
@@ -109,8 +102,7 @@ const PublicPage = () => {
       | React.ReactFragment
       | null
       | undefined,
-    key: React.Key | null | undefined,
-    rootNode: Node | null
+    key: React.Key | null | undefined
   ) => {
     console.log(node.type);
 
@@ -145,7 +137,7 @@ const PublicPage = () => {
         // Check if any child node is of type "mcq"
 
         return (
-          <CollapsibleAudioPlayer node={node}>
+          <CollapsibleAudioPlayer node={node} key={key}>
             {children}
           </CollapsibleAudioPlayer>
         );
@@ -181,32 +173,27 @@ const PublicPage = () => {
           }
         } else if ("children" in node) {
           const children = parseNodes(node.children);
-          return renderElement(
-            node,
-            children,
-            node.id ? node.id : index,
-            rootNode
-          );
+          return renderElement(node, children, node.id ? node.id : index);
         }
       });
   };
 
   return (
     localValue && (
-      <>
+      <AudioManagerProvider>
         <div
-          className={`relative  h-[100vh] overflow-y-auto rounded-md bg-white p-4 dark:bg-muted `}
+          className={`relative  h-[100vh] overflow-y-auto rounded-md bg-white p-4 dark:bg-public `}
         >
-          <div className="mx-auto max-w-[800px] xl:mt-[120px]">
+          <div className="mx-auto max-w-[800px] xl:mt-[100px]">
             {parseNodes(localValue)}
           </div>
         </div>
-        <div className="fixed bottom-2 right-2">
+        <div className="fixed bottom-4 right-4">
           <ModeToggle />
         </div>
-      </>
+      </AudioManagerProvider>
     )
   );
 };
 
-export default PublicPage;
+export default PublishedPage;

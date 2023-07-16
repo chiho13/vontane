@@ -33,6 +33,8 @@ interface TextSpeechContextType {
   setIsPlaying: (value: boolean) => void;
   workspaceData: any;
   refetchWorkspaceData: any;
+  tab: any;
+  setTab: any;
 }
 // Create the context with default values
 const TextSpeechContext = createContext<TextSpeechContextType>({
@@ -53,6 +55,8 @@ const TextSpeechContext = createContext<TextSpeechContextType>({
   setIsPlaying: () => {},
   workspaceData: {},
   refetchWorkspaceData: {},
+  tab: {},
+  setTab: () => {},
 });
 
 // Define the shape of the provider props
@@ -88,6 +92,7 @@ const RightSideBarProvider = ({
   const [generatedAudio, setGenerateAudio] = useState<HTMLAudioElement | null>(
     null
   );
+  const [tab, setTab] = useLocalStorage("tab", "properties");
 
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
@@ -106,6 +111,8 @@ const RightSideBarProvider = ({
         setIsPlaying,
         workspaceData,
         refetchWorkspaceData,
+        tab,
+        setTab,
       }}
     >
       {children}

@@ -78,6 +78,8 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     rightBarAudioIsLoading,
     workspaceData,
     refetchWorkspaceData,
+    tab,
+    setTab,
   } = useTextSpeech();
   const [viewport, setViewPort] = useState({
     width: 390,
@@ -115,8 +117,6 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
       setAudioURL(audioData.audio_url);
     }
   }, [audioData]);
-
-  const [tab, setTab] = useLocalStorage("tab", "properties");
 
   const handleTabChange = (newTab) => {
     setTab(newTab); // This will also update value in localStorage
@@ -303,7 +303,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
         <p>Hi kirby</p> */}
 
           <Tabs
-            defaultValue={tab}
+            value={tab}
             onValueChange={handleTabChange}
             className="z-10 flex flex-grow flex-col "
           >

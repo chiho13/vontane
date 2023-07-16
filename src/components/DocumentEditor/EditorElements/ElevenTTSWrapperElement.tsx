@@ -81,7 +81,13 @@ const ElevenTTSWrapperBase = (props: {
   const workspaceId = router.query.workspaceId as string;
   const selected = useSelected();
   const focused = useFocused();
-  const { audioData, setAudioData } = useTextSpeech();
+  const {
+    audioData,
+    setAudioData,
+    showRightSidebar,
+    setShowRightSidebar,
+    setTab,
+  } = useTextSpeech();
 
   useEffect(() => {
     const extractedText = extractTextValues(element.children).join(" ");
@@ -94,6 +100,7 @@ const ElevenTTSWrapperBase = (props: {
         audioData?.content !== extractedText)
     ) {
       console.log(extractedText);
+
       setAudioData({
         audio_url: element.audio_url,
         file_name: element.file_name,
@@ -120,6 +127,12 @@ const ElevenTTSWrapperBase = (props: {
       } border-b border-muted-foreground p-1 pb-3 pl-0 dark:border-muted-foreground ${
         selected ? " bg-brand/20 dark:bg-brand/20" : "bg-white dark:bg-muted"
       }`}
+      onClick={() => {
+        if (!showRightSidebar) {
+          setShowRightSidebar(true);
+          setTab("properties");
+        }
+      }}
     >
       <div className="mb-5 ml-[49px] mt-4" contentEditable={false}>
         <TextSpeech

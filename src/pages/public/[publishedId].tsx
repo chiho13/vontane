@@ -93,7 +93,7 @@ const PublishedPage = () => {
   }
 
   const renderElement = (
-    node: { type: any },
+    node: { type: string; url: string },
     children:
       | string
       | number
@@ -131,6 +131,16 @@ const PublishedPage = () => {
           <h3 className="text-2xl" key={key}>
             {children}
           </h3>
+        );
+      case "link":
+        return (
+          <a
+            href={node.url}
+            target="_blank"
+            className="inline text-brand underline dark:text-blue-400"
+          >
+            {children}
+          </a>
         );
       case "tts":
         // Check if any child node is of type "mcq"

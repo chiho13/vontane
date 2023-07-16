@@ -48,7 +48,7 @@ export const PreviewContent = () => {
   };
 
   const renderElement = (
-    node: { type: any },
+    node: { type: any; url: any },
     children:
       | string
       | number
@@ -81,6 +81,16 @@ export const PreviewContent = () => {
           <h2 className="text-3xl" key={key}>
             {children}
           </h2>
+        );
+
+      case "link":
+        return (
+          <a
+            href={node.url}
+            className="inline text-brand underline dark:text-blue-400"
+          >
+            {children}
+          </a>
         );
       case "heading-three":
         return (
@@ -141,7 +151,7 @@ export const PreviewContent = () => {
 
   return (
     <div
-      className={`dark:bg-public relative overflow-y-auto rounded-md border border-gray-300 p-3 dark:border-accent`}
+      className={`relative overflow-y-auto rounded-md border border-gray-300 p-3 dark:border-accent dark:bg-muted`}
     >
       {parseNodes(localValue)}
     </div>

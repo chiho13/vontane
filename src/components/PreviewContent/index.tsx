@@ -87,6 +87,7 @@ export const PreviewContent = () => {
         return (
           <a
             href={node.url}
+            target="_blank"
             className="inline text-brand underline dark:text-blue-400"
           >
             {children}

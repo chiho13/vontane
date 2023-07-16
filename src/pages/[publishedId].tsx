@@ -8,6 +8,7 @@ import React, {
   useRef,
 } from "react";
 import { Path, Text, Node } from "slate";
+import Link from "next/link";
 
 import { api } from "@/utils/api";
 import { CollapsibleAudioPlayer } from "@/components/PreviewContent/PreviewElements/CollapsibleAudio";
@@ -15,54 +16,82 @@ import { MCQ } from "@/components/PreviewContent/PreviewElements/MCQ";
 import { useRouter } from "next/router";
 import { ModeToggle } from "@/components/mode-toggle";
 import { AudioManagerProvider } from "@/contexts/PreviewAudioContext";
-const PublishedPage = () => {
+import { createInnerTRPCContext } from "@/server/api/trpc";
+import { GetServerSideProps } from "next";
+import { Button } from "@/components/ui/button";
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  try {
+    const { req, res }: any = context;
+    const { prisma } = createInnerTRPCContext({}, req, res);
+
+    // get the entire URL path
+    const path = context.resolvedUrl;
+    let parts = path.split("-");
+    let workspaceId = parts.slice(1).join("-");
+
+    const workspace = await prisma.workspace.findUnique({
+      where: { id: workspaceId },
+    });
+
+    if (!workspace.published) {
+      throw new Error("Workspace not found");
+    }
+
+    // If there is a user, return the session and other necessary props.
+    return {
+      props: { workspaceData: workspace.slate_value }, // Replace 'user' with your actual session data
+    };
+  } catch (error) {
+    return {
+      props: {
+        workspaceData: null,
+      },
+    };
+  }
+};
+
+const PublishedPage = ({ workspaceData }) => {
   const router = useRouter();
-  const workspaceId = router.query.publishedId as string;
+  const query = router.query.publishedId as string;
+  let parts = router.asPath.split("-");
+  let workspaceId = parts.slice(1).join("-");
+
   const { editor: fromEditor, activePath } = useContext(EditorContext);
   const [localValue, setLocalValue] = useState(null);
 
-  const {
-    data: workspaceData,
-    refetch: refetchWorkspaceData,
-    error,
-    isLoading,
-  } = api.workspace.getWorkspace.useQuery(
-    {
-      id: workspaceId || "",
-    },
-    {
-      enabled: false,
-      cacheTime: 5 * 60 * 1000, // Cache data for 5 minutes
-      staleTime: 5 * 60 * 1000, // Data is considered fresh for 5 minutes
-    }
-  );
+  // const {
+  //   data: workspaceData,
+  //   refetch: refetchWorkspaceData,
+  //   error,
+  //   isLoading,
+  // } = api.workspace.getWorkspace.useQuery(
+  //   {
+  //     id: workspaceId || "",
+  //   },
+  //   {
+  //     enabled: false,
+  //     cacheTime: 5 * 60 * 1000, // Cache data for 5 minutes
+  //     staleTime: 5 * 60 * 1000, // Data is considered fresh for 5 minutes
+  //   }
+  // );
 
-  useEffect(() => {
-    if (router.isReady) {
-      refetchWorkspaceData();
-    }
-  }, [workspaceId, router.isReady]);
+  // useEffect(() => {
+  //   if (router.isReady) {
+  //     refetchWorkspaceData();
+  //   }
+  // }, [workspaceId, router.isReady]);
 
   useEffect(() => {
     if (workspaceData) {
-      const slateValue = workspaceData.workspace.slate_value;
-
-      if (slateValue) {
-        console.log(slateValue);
-        const parsedSlateValue = JSON.parse(slateValue);
-        setLocalValue(parsedSlateValue);
-      }
+      const parsedSlateValue = JSON.parse(workspaceData);
+      setLocalValue(parsedSlateValue);
     }
 
     return () => {
       setLocalValue(null);
     };
   }, [workspaceData]);
-
-  // update localValue when fromEditor.children changes
-  //   useEffect(() => {
-  //     setLocalValue(fromEditor.children);
-  //   }, [fromEditor.children]);
 
   const isMCQPresent = (children: any[]) => {
     if (Array.isArray(children)) {
@@ -82,12 +111,16 @@ const PublishedPage = () => {
     return false;
   };
 
-  if (error || (workspaceData && !workspaceData.workspace.published)) {
+  if (!workspaceData) {
     // Show 404 page if workspaceId is not found
     return (
       <div className="flex h-[100vh] w-full flex-col items-center justify-center">
-        <div className="text-bold mb-2 text-6xl">404</div>
+        <div className="text-bold mb-2 text-8xl">404</div>
         <p className="text-2xl">Workspace not found</p>
+
+        <Link href="/">
+          <Button className="mt-4 ">Go Home</Button>
+        </Link>
       </div>
     );
   }
@@ -143,9 +176,6 @@ const PublishedPage = () => {
           </a>
         );
       case "tts":
-        // Check if any child node is of type "mcq"
-        // Check if any child node is of type "mcq"
-
         return (
           <CollapsibleAudioPlayer node={node} key={key}>
             {children}
@@ -194,7 +224,7 @@ const PublishedPage = () => {
         <div
           className={`relative  h-[100vh] overflow-y-auto rounded-md bg-white p-4 dark:bg-public `}
         >
-          <div className="mx-auto max-w-[800px] xl:mt-[100px]">
+          <div className="mx-auto max-w-[700px] xl:mt-[100px]">
             {parseNodes(localValue)}
           </div>
         </div>

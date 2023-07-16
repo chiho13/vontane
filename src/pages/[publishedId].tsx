@@ -228,7 +228,7 @@ const PublishedPage = ({ workspaceData }) => {
             {parseNodes(localValue)}
           </div>
         </div>
-        <div className="fixed bottom-4 right-4">
+        <div className="fixed bottom-4 right-4 hidden xl:block">
           <ModeToggle />
         </div>
       </AudioManagerProvider>

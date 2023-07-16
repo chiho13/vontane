@@ -214,83 +214,85 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
   return (
     <AudioManagerProvider>
-      {!published ? (
-        <Button
-          className={`text-bold absolute -right-[1px] -top-[30px] h-[28px] rounded-md px-3 text-sm  text-white hover:bg-brand/90 hover:text-white disabled:opacity-100 dark:border-t-gray-700 dark:bg-slate-100 dark:text-muted dark:hover:bg-slate-300 dark:hover:text-background ${
-            published
-              ? "bg-green-400 text-foreground dark:bg-green-400"
-              : "bg-brand "
-          }`}
-          disabled={pubLoading}
-          onClick={!pubLoading && publishWorkspace}
-        >
-          {pubLoading ? (
-            <>
-              <LoadingSpinner strokeColor="stroke-white dark:stroke-background" />{" "}
-              <span className="ml-3">
-                {!published ? "Publishing..." : "Unpublishing..."}
-              </span>
-            </>
-          ) : (
-            publishText
-          )}
-        </Button>
-      ) : (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              className={`text-bold absolute -right-[1px] -top-[30px] flex h-[28px] rounded-md px-3 text-sm  text-white disabled:opacity-100 dark:border-t-gray-700 dark:bg-slate-100 dark:text-muted ${
-                published
-                  ? "bg-green-400 text-foreground hover:bg-green-400 hover:text-foreground dark:bg-green-400"
-                  : "bg-brand "
-              }`}
-            >
-              {publishText}
-              <ChevronDown className="ml-1 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="end"
-            className="w-[180px] border border-gray-300  bg-background p-3 dark:border-gray-500 dark:bg-secondary"
+      <Portal>
+        {!published ? (
+          <Button
+            className={`text-bold fixed right-[80px] top-[25px] h-[28px] rounded-md px-3 text-sm  text-white hover:bg-brand/90 hover:text-white disabled:opacity-100 dark:border-t-gray-700 dark:bg-slate-100 dark:text-muted dark:hover:bg-slate-300 dark:hover:text-background ${
+              published
+                ? "bg-green-400 text-foreground dark:bg-green-400"
+                : "bg-brand "
+            }`}
+            disabled={pubLoading}
+            onClick={!pubLoading && publishWorkspace}
           >
-            <div className="flex flex-col gap-4 ">
-              <DropdownMenuItem
-                className="flex cursor-pointer justify-center border border-gray-300 dark:border-accent hover:dark:bg-accent"
-                disabled={pubLoading}
-                onClick={!pubLoading && publishWorkspace}
-              >
-                <span className="text-foreground"> Unpublish</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className=" group flex cursor-pointer justify-center bg-brand hover:bg-brand/90 hover:dark:bg-brand/90"
-                disabled={pubLoading}
-                onClick={() => {
-                  console.log(workspaceId);
-
-                  router.push(
-                    `/${editor.children[0].children[0].text
-                      .toLowerCase()
-                      .replace(/-/g, "_") // Add this line to remove dashes
-                      .split(" ")
-                      .join("_")}-${workspaceId}`
-                  );
-
-                  // console.log(
-                  //   editor.children[0].children[0].text
-                  //     .toLowerCase()
-                  //     .split(" ")
-                  //     .join("_")
-                  // );
-                }}
-              >
-                <span className="text-white group-hover:text-black dark:text-foreground group-hover:dark:text-white">
-                  View Site
+            {pubLoading ? (
+              <>
+                <LoadingSpinner strokeColor="stroke-white dark:stroke-background" />{" "}
+                <span className="ml-3">
+                  {!published ? "Publishing..." : "Unpublishing..."}
                 </span>
-              </DropdownMenuItem>
-            </div>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )}
+              </>
+            ) : (
+              publishText
+            )}
+          </Button>
+        ) : (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                className={`text-bold fixed  right-[80px]  top-[25px] flex h-[28px] rounded-md px-3 text-sm  text-white disabled:opacity-100 dark:border-t-gray-700 dark:bg-slate-100 dark:text-muted ${
+                  published
+                    ? "bg-green-400 text-foreground hover:bg-green-400 hover:text-foreground dark:bg-green-400"
+                    : "bg-brand "
+                }`}
+              >
+                {publishText}
+                <ChevronDown className="ml-1 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="w-[180px] border border-gray-300  bg-background p-3 dark:border-gray-500 dark:bg-secondary"
+            >
+              <div className="flex flex-col gap-4 ">
+                <DropdownMenuItem
+                  className="flex cursor-pointer justify-center border border-gray-300 dark:border-accent hover:dark:bg-accent"
+                  disabled={pubLoading}
+                  onClick={!pubLoading && publishWorkspace}
+                >
+                  <span className="text-foreground"> Unpublish</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className=" group flex cursor-pointer justify-center bg-brand hover:bg-brand/90 hover:dark:bg-brand/90"
+                  disabled={pubLoading}
+                  onClick={() => {
+                    console.log(workspaceId);
+
+                    router.push(
+                      `/${editor.children[0].children[0].text
+                        .toLowerCase()
+                        .replace(/-/g, "_") // Add this line to remove dashes
+                        .split(" ")
+                        .join("_")}-${workspaceId}`
+                    );
+
+                    // console.log(
+                    //   editor.children[0].children[0].text
+                    //     .toLowerCase()
+                    //     .split(" ")
+                    //     .join("_")
+                    // );
+                  }}
+                >
+                  <span className="text-white group-hover:text-black dark:text-foreground group-hover:dark:text-white">
+                    View Site
+                  </span>
+                </DropdownMenuItem>
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+      </Portal>
 
       <div
         className="m-w-full mt-2 hidden h-full grow overflow-y-auto rounded-md  border border-gray-300 bg-white  dark:border-accent dark:bg-muted dark:text-lightgray lg:block"
@@ -335,7 +337,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                     <div className="my-2 block">
                       <AudioPlayer
                         audioURL={audioURL}
-                        content={audioData.content}
+                        content={rootNode.content}
                         fileName={audioData.file_name}
                       />
                     </div>

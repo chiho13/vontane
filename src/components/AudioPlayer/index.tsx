@@ -34,6 +34,7 @@ import { AudioManagerContext } from "@/contexts/PreviewAudioContext";
 interface Props {
   audioURL: string | null;
   fileName: string;
+  content?: string;
   id?: string;
   classNames?: string;
   isPreview?: boolean;
@@ -42,6 +43,7 @@ interface Props {
 function AudioPlayer({
   audioURL,
   fileName,
+  content,
   id,
   classNames = "py-[10px]",
   isPreview = false,
@@ -226,53 +228,57 @@ function AudioPlayer({
         )}
       </button>
 
-      <div
-        className="audioPlayer_timeline_container group "
-        onMouseDown={handleSeekStart}
-        onMouseUp={handleSeekEnd}
-        onMouseMove={handleSeekMove}
-        onMouseEnter={handleMouseOver}
-        onMouseLeave={handleMouseLeave}
-      >
-        <div className="audioPlayer_timeline bg-gray-300 dark:bg-gray-700">
-          <div
-            className="audioPlayer_timeline_track  bg-gray-400 bg-muted-foreground group-hover:bg-brand dark:bg-foreground"
-            style={{
-              width: `${
-                seekValue === seekMax
-                  ? "100"
-                  : (Math.floor(seekValue) / seekMax) * 100
-              }%`,
-              borderTopRightRadius: `${seekValue === seekMax ? "3px" : "0"}`,
-              borderBottomRightRadius: `${seekValue === seekMax ? "3px" : "0"}`,
-            }}
-          ></div>
-          {/* {showNib && <div className="audioPlayer_nib"></div>} */}
-          {showNib && (
+      {content.length > 100 && (
+        <div
+          className="audioPlayer_timeline_container group "
+          onMouseDown={handleSeekStart}
+          onMouseUp={handleSeekEnd}
+          onMouseMove={handleSeekMove}
+          onMouseEnter={handleMouseOver}
+          onMouseLeave={handleMouseLeave}
+        >
+          <div className="audioPlayer_timeline bg-gray-300 dark:bg-gray-700">
             <div
-              className="audioPlayer_nib"
+              className="audioPlayer_timeline_track  bg-gray-400 bg-muted-foreground group-hover:bg-brand dark:bg-foreground"
               style={{
-                left: `${
+                width: `${
                   seekValue === seekMax
                     ? "100"
                     : (Math.floor(seekValue) / seekMax) * 100
                 }%`,
-                transform: "translateX(-6px)",
+                borderTopRightRadius: `${seekValue === seekMax ? "3px" : "0"}`,
+                borderBottomRightRadius: `${
+                  seekValue === seekMax ? "3px" : "0"
+                }`,
               }}
             ></div>
-          )}
-        </div>
-      </div>
-
-      {isPlaying ? (
-        <div className="audioPlayer_current-time">
-          {formatTime(Math.floor(seekValue))}
-        </div>
-      ) : (
-        <div className="audioPlayer_max-time">
-          {formatTime(Math.floor(seekMax))}
+            {/* {showNib && <div className="audioPlayer_nib"></div>} */}
+            {showNib && (
+              <div
+                className="audioPlayer_nib"
+                style={{
+                  left: `${
+                    seekValue === seekMax
+                      ? "100"
+                      : (Math.floor(seekValue) / seekMax) * 100
+                  }%`,
+                  transform: "translateX(-6px)",
+                }}
+              ></div>
+            )}
+          </div>
         </div>
       )}
+      {content.length > 100 &&
+        (isPlaying ? (
+          <div className="audioPlayer_current-time">
+            {formatTime(Math.floor(seekValue))}
+          </div>
+        ) : (
+          <div className="audioPlayer_max-time">
+            {formatTime(Math.floor(seekMax))}
+          </div>
+        ))}
 
       <TooltipProvider delayDuration={300}>
         <Tooltip>

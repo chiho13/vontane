@@ -335,6 +335,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                     <div className="my-2 block">
                       <AudioPlayer
                         audioURL={audioURL}
+                        content={audioData.content}
                         fileName={audioData.file_name}
                       />
                     </div>

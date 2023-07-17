@@ -41,8 +41,8 @@ currently under development (April)
 - [x] image block
 - [x] text to speech element wrapper
 - [x] deploy to staging
+- [x] preview content
 - [] speech to text - audio timestamp - replace audio player seeking - for quizzes and custom stuff
-- [] mobile preview content (WIP)
 
 - [] map block ?
 - [] audio trimmer

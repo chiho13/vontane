@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown, Copy, Link } from "lucide-react";
 import { useRouter } from "next/router";
 import { useClipboard } from "@/hooks/useClipboard";
+import { useLocalStorage } from "usehooks-ts";
 
 import {
   Tooltip,
@@ -24,6 +25,8 @@ export const PublishButton = ({
   pubLoading,
   publishWorkspace,
   editor,
+  openDropdown,
+  setOpenDropdown,
 }) => {
   const router = useRouter();
   const workspaceId = router.query.workspaceId as string;
@@ -32,6 +35,9 @@ export const PublishButton = ({
   const { copied: linkCopied, copyToClipboard: copyLink } = useClipboard();
   const { copied: iframeCopied, copyToClipboard: copyIframe } = useClipboard();
 
+  const openDropdownChange = (value) => {
+    setOpenDropdown(value);
+  };
   const publicURL = `${
     process.env.NEXT_PUBLIC_URL
   }/${editor.children[0].children[0].text
@@ -65,7 +71,7 @@ export const PublishButton = ({
           )}
         </Button>
       ) : (
-        <DropdownMenu>
+        <DropdownMenu open={openDropdown} onOpenChange={openDropdownChange}>
           <DropdownMenuTrigger asChild>
             <Button
               className={`text-bold fixed  right-[80px]  top-[25px] flex h-[28px] rounded-md px-3 text-sm  text-white disabled:opacity-100 dark:border-t-gray-700 dark:bg-slate-100 dark:text-muted ${

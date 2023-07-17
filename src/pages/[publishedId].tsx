@@ -103,7 +103,7 @@ const PublishedPage = ({ workspaceData }) => {
     localValue && (
       <AudioManagerProvider>
         <div
-          className={`relative  h-[100vh] overflow-y-auto rounded-md bg-white p-4 dark:bg-public `}
+          className={`relative  h-[100vh] overflow-y-auto rounded-md bg-white p-4 dark:bg-[#1A1A1A] `}
         >
           <div className="mx-auto max-w-[700px] xl:mt-[100px]">
             {parseNodes(localValue)}

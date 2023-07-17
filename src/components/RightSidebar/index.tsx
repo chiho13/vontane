@@ -29,6 +29,8 @@ import { debounce } from "lodash";
 import { saveAs } from "file-saver";
 
 import { PreviewContent } from "../PreviewContent";
+import { PublishButton } from "../PublishButton";
+import { useClipboard } from "@/hooks/useClipboard";
 
 import {
   Tooltip,
@@ -37,12 +39,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Portal } from "react-portal";
 interface RightSideBarProps {
   setRightSideBarWidth: any;
@@ -86,11 +82,9 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     height: 844,
   });
 
-  const [prevWorkspaceId, setPrevWorkspaceId] = useState(null);
   const [published, setPublished] = useState(workspaceData.workspace.published);
 
-  const [copied, setCopied] = useState(false);
-  const [tooltipOpen, setTooltipOpen] = useState(false);
+  const { copied, copyToClipboard: copyLink } = useClipboard();
 
   const [audioURL, setAudioURL] = useState<string>("");
   const rightSidebarStyle: React.CSSProperties = {
@@ -165,33 +159,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     saveAs(concatenatedBlob, "concatenatedAudio.mp3");
   };
 
-  const copyLink = async (text) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTooltipOpen(true);
-      // Optionally, hide tooltip after a delay
-      setTimeout(() => {
-        setCopied(false);
-        setTooltipOpen(false);
-      }, 2000);
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
-    }
-  };
-
   const [pubLoading, setPubLoading] = useState(false);
-  const [hovering, setHovering] = useState(false);
-
-  const debouncedSetHovering = useCallback(debounce(setHovering, 100), [
-    setHovering,
-  ]);
-
-  const publishText = published
-    ? hovering
-      ? "Unpublish"
-      : "Published"
-    : "Publish";
   const publishWorkspaceMutation = api.workspace.publishWorkspace.useMutation();
 
   const publishWorkspace = async () => {
@@ -214,94 +182,17 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
   return (
     <AudioManagerProvider>
-      <Portal>
-        {!published ? (
-          <Button
-            className={`text-bold fixed right-[80px] top-[25px] h-[28px] rounded-md px-3 text-sm  text-white hover:bg-brand/90 hover:text-white disabled:opacity-100 dark:border-t-gray-700 dark:bg-slate-100 dark:text-muted dark:hover:bg-slate-300 dark:hover:text-background ${
-              published
-                ? "bg-green-400 text-foreground dark:bg-green-400"
-                : "bg-brand "
-            }`}
-            disabled={pubLoading}
-            onClick={!pubLoading && publishWorkspace}
-          >
-            {pubLoading ? (
-              <>
-                <LoadingSpinner strokeColor="stroke-white dark:stroke-background" />{" "}
-                <span className="ml-3">
-                  {!published ? "Publishing..." : "Unpublishing..."}
-                </span>
-              </>
-            ) : (
-              publishText
-            )}
-          </Button>
-        ) : (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                className={`text-bold fixed  right-[80px]  top-[25px] flex h-[28px] rounded-md px-3 text-sm  text-white disabled:opacity-100 dark:border-t-gray-700 dark:bg-slate-100 dark:text-muted ${
-                  published
-                    ? "bg-green-400 text-foreground hover:bg-green-400 hover:text-foreground dark:bg-green-400"
-                    : "bg-brand "
-                }`}
-              >
-                {publishText}
-                <ChevronDown className="ml-1 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              className="w-[180px] border border-gray-300  bg-background p-3 dark:border-gray-500 dark:bg-secondary"
-            >
-              <div className="flex flex-col gap-4 ">
-                <DropdownMenuItem
-                  className="flex cursor-pointer justify-center border border-gray-300 dark:border-accent hover:dark:bg-accent"
-                  disabled={pubLoading}
-                  onClick={!pubLoading && publishWorkspace}
-                >
-                  <span className="text-foreground"> Unpublish</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className=" group flex cursor-pointer justify-center bg-brand hover:bg-brand/90 hover:dark:bg-brand/90"
-                  disabled={pubLoading}
-                  onClick={() => {
-                    console.log(workspaceId);
-
-                    router.push(
-                      `/${editor.children[0].children[0].text
-                        .toLowerCase()
-                        .replace(/-/g, "_") // Add this line to remove dashes
-                        .split(" ")
-                        .join("_")}-${workspaceId}`
-                    );
-
-                    // console.log(
-                    //   editor.children[0].children[0].text
-                    //     .toLowerCase()
-                    //     .split(" ")
-                    //     .join("_")
-                    // );
-                  }}
-                >
-                  <span className="text-white group-hover:text-black dark:text-foreground group-hover:dark:text-white">
-                    View Site
-                  </span>
-                </DropdownMenuItem>
-              </div>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
-      </Portal>
-
+      <PublishButton
+        published={published}
+        pubLoading={pubLoading}
+        publishWorkspace={publishWorkspace}
+        editor={editor}
+      />
       <div
         className="m-w-full mt-2 hidden h-full grow overflow-y-auto rounded-md  border border-gray-300 bg-white  dark:border-accent dark:bg-muted dark:text-lightgray lg:block"
         style={rightSidebarStyle}
       >
         <div className="flex-grow p-2 pb-3">
-          {/* <h2 className="mb-4 text-xl font-semibold">Right Sidebar</h2>
-        <p>Hi kirby</p> */}
-
           <Tabs
             value={tab}
             onValueChange={handleTabChange}
@@ -353,38 +244,22 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
                     <h3 className="text-bold mb-2 mt-4 text-sm">Share Audio</h3>
                     <div className="relative flex items-center">
-                      <Link className="absolute left-3 w-4" />
+                      <Link className="absolute left-3 w-4 dark:stroke-gray-300 " />
 
                       <input
                         value={audioData.audio_url}
-                        className="w-full rounded-md border   border-gray-300 bg-muted p-2  pl-[40px] focus:outline-none dark:border-accent"
+                        className=" h-[36px]  w-full rounded-md  rounded-r-none  border border-r-0 border-gray-300  bg-muted  p-2 pl-[40px] text-sm  focus:outline-none dark:border-accent dark:border-gray-400 dark:text-gray-400"
                         readOnly={true}
                       />
-                      <TooltipProvider delayDuration={300}>
-                        <Tooltip
-                          open={tooltipOpen}
-                          onOpenChange={setTooltipOpen}
-                        >
-                          <TooltipTrigger className="absolute right-1 h-[32px]">
-                            <Button
-                              variant="outline"
-                              className=" h-full  border border-gray-300 bg-muted px-2 dark:border-gray-400"
-                              onClick={() => copyLink(audioData.audio_url)}
-                            >
-                              <Copy className="w-5" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent
-                            className="border-black px-[5px]  dark:bg-white dark:text-muted"
-                            side="top"
-                            sideOffset={10}
-                          >
-                            <p className="text-[12px]">
-                              {copied ? "Copied!" : "Copy Link"}
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      <Button
+                        variant="outline"
+                        className=" h-[36px] rounded-l-none border border-gray-300 bg-muted px-2 text-center dark:border-gray-400"
+                        onClick={() => copyLink(audioData.audio_url)}
+                      >
+                        <p className="flex truncate text-xs ">
+                          {copied ? "Copied!" : "Copy Link"}
+                        </p>
+                      </Button>
                     </div>
                   </>
                 ) : (

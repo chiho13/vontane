@@ -72,6 +72,7 @@ export const TextSpeech = ({
     setShowRightSidebar,
     generatedAudio,
     isPlaying,
+    setTab,
   } = useTextSpeech();
 
   const [textSpeech, setTextSpeech] = useState(audioData.content || "");
@@ -186,6 +187,7 @@ export const TextSpeech = ({
     newLoadingState[element.id] = true;
     setRightBarAudioIsLoading(newLoadingState);
     setShowRightSidebar(true);
+    setTab("properties");
     createTTSAudio();
     console.log("lol", path);
     console.log(textSpeech);

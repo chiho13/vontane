@@ -87,6 +87,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
   const { copied, copyToClipboard: copyLink } = useClipboard();
 
   const [audioURL, setAudioURL] = useState<string>("");
+  const [openDropdown, setOpenDropdown] = useState(false);
   const rightSidebarStyle: React.CSSProperties = {
     transform: `translateX(${
       showRightSidebar ? "0px" : `${rightSideBarWidth}px`
@@ -173,6 +174,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
         setPubLoading(false);
         setPublished(response.published);
         refetchWorkspaceData();
+        setOpenDropdown(true);
       }
     } catch (error) {
       setPubLoading(false);
@@ -187,6 +189,8 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
         pubLoading={pubLoading}
         publishWorkspace={publishWorkspace}
         editor={editor}
+        openDropdown={openDropdown}
+        setOpenDropdown={setOpenDropdown}
       />
       <div
         className="m-w-full mt-2 hidden h-full grow overflow-y-auto rounded-md  border border-gray-300 bg-white  dark:border-accent dark:bg-muted dark:text-lightgray lg:block"

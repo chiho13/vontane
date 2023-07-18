@@ -250,10 +250,15 @@ function AudioPlayer({
           onMouseDown={handleSeekStart}
           onMouseUp={handleSeekEnd}
           onMouseMove={handleSeekMove}
-          onTouchStart={handleSeekStart}
+          onTouchStart={() => {
+            handleSeekStart();
+            handleMouseOver();
+          }}
           onTouchMove={handleSeekMove}
           onMouseEnter={handleMouseOver}
           onMouseLeave={handleMouseLeave}
+          onTouchEnd={handleMouseLeave}
+          onTouchCancel={handleMouseLeave}
         >
           <div className="audioPlayer_timeline bg-gray-300 dark:bg-gray-700">
             <div

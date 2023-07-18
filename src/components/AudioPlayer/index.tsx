@@ -185,8 +185,21 @@ function AudioPlayer({
     event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>
   ) => {
     if (isSeeking && generatedAudio) {
-      const rect = event.currentTarget.getBoundingClientRect();
-      const x = event.clientX - rect.left;
+      let x;
+      let rect;
+      if (event instanceof MouseEvent) {
+        // Mouse event
+        const mouseEvent = event as MouseEvent;
+        rect = event.currentTarget.getBoundingClientRect();
+        x = mouseEvent.clientX - rect.left;
+      } else if (event instanceof TouchEvent) {
+        // Touch event
+        const touchEvent = event as TouchEvent;
+        const touch = touchEvent.touches[0]; // Get the first touch point
+        rect = event.currentTarget.getBoundingClientRect();
+        x = touch.clientX - rect.left;
+      }
+
       const width = rect.width;
       let percent = x / width;
       percent = Math.max(0, percent); // Ensure percent is not less than 0

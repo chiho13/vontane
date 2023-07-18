@@ -34,6 +34,12 @@ const renderElement = (
         </p>
       );
 
+    case "block-quote":
+      return (
+        <blockquote className="text-red mt-3 border-l-4 border-gray-400 pl-4 text-gray-500 dark:text-gray-300 ">
+          {children}
+        </blockquote>
+      );
     case "heading-one":
       return (
         <h1 className="text-4xl" key={key}>
@@ -64,9 +70,6 @@ const renderElement = (
         </h3>
       );
     case "tts":
-      // Check if any child node is of type "mcq"
-      // Check if any child node is of type "mcq"
-
       return (
         <CollapsibleAudioPlayer node={node} key={key}>
           {children}
@@ -88,30 +91,40 @@ export const parseNodes = (nodes: any[]) => {
   return nodes
     .filter((node: any) => node.type !== "title")
     .map((node: any, index: any) => {
-      console.log(node);
       if (Text.isText(node)) {
         let customNode = node as any; // assert that node could be any type
-        if (customNode.bold) {
-          return <b key={index}>{customNode.text}</b>;
-        } else if (customNode.italic) {
-          return <i key={index}>{customNode.text}</i>;
-        } else if (customNode.underline) {
-          return <u key={index}>{customNode.text}</u>;
-        } else if (customNode.strikethrough) {
-          return <del key={index}>{customNode.text}</del>;
-        } else {
-          return customNode.text !== "" ? (
+
+        let component =
+          customNode.text !== "" ? (
             <span key={index}>{customNode.text}</span>
           ) : (
             "\u00A0"
           );
+
+        if (customNode.bold) {
+          component = <b key={index}>{component}</b>;
         }
+
+        if (customNode.italic) {
+          component = <i key={index}>{component}</i>;
+        }
+
+        if (customNode.underline) {
+          component = <u key={index}>{component}</u>;
+        }
+
+        if (customNode.strikethrough) {
+          component = <del key={index}>{component}</del>;
+        }
+
+        return component;
       } else if ("children" in node) {
         const children = parseNodes(node.children);
         return renderElement(node, children, node.id ? node.id : index);
       }
     });
 };
+
 export const PreviewContent = () => {
   const { editor: fromEditor, activePath } = useContext(EditorContext);
   const [localValue, setLocalValue] = useState(fromEditor.children);

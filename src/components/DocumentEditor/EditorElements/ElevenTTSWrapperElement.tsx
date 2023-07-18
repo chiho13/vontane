@@ -80,7 +80,6 @@ const ElevenTTSWrapperBase = (props: {
   const router = useRouter();
   const workspaceId = router.query.workspaceId as string;
   const selected = useSelected();
-  const focused = useFocused();
   const {
     audioData,
     setAudioData,

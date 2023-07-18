@@ -209,6 +209,7 @@ function AudioPlayer({
     return `${minutes}:${seconds}`;
   };
 
+  console.log(content.length);
   return (
     <AudioPlayerStyle
       key={id}
@@ -228,7 +229,7 @@ function AudioPlayer({
         )}
       </button>
 
-      {content.length > 100 && (
+      {content && content.length > 40 && (
         <div
           className="audioPlayer_timeline_container group "
           onMouseDown={handleSeekStart}
@@ -269,7 +270,8 @@ function AudioPlayer({
           </div>
         </div>
       )}
-      {content.length > 100 &&
+      {content &&
+        content.length > 40 &&
         (isPlaying ? (
           <div className="audioPlayer_current-time">
             {formatTime(Math.floor(seekValue))}
@@ -280,7 +282,7 @@ function AudioPlayer({
           </div>
         ))}
 
-      {content.length > 100 && (
+      {content && content.length > 40 && (
         <TooltipProvider delayDuration={300}>
           <Tooltip>
             <TooltipTrigger>

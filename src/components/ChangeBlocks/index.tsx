@@ -8,6 +8,7 @@ import { genNodeId } from "@/hoc/withID";
 import Dropdown, { DropdownProvider } from "../Dropdown";
 import { useArrowNavigation } from "@/hooks/useArrowNavigation";
 import { FaCaretDown } from "react-icons/fa";
+import { TbBlockquote } from "react-icons/tb";
 import {
   toggleBlock,
   isBlockActive,
@@ -21,6 +22,13 @@ import {
 } from "slate";
 import { ReactEditor } from "slate-react";
 import { useTheme } from "styled-components";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export const ChangeBlocks = ({ openLink }: any) => {
   const { editor } = useContext(EditorContext);
@@ -81,6 +89,14 @@ export const ChangeBlocks = ({ openLink }: any) => {
         />
       ),
     },
+    {
+      name: "Quote",
+      format: "block-quote",
+      action: () => toggleBlock(editor, "block-quote"),
+      icon: (
+        <TbBlockquote className="h-[18px] w-[18px] stroke-darkblue dark:stroke-foreground" />
+      ),
+    },
   ];
   const [selectedBlock, setSelectedBlock] = useState(0);
 
@@ -134,62 +150,39 @@ export const ChangeBlocks = ({ openLink }: any) => {
             
           </button> */}
 
-          <DropdownProvider>
-            <Dropdown
-              dropdownId="changeBlockDropdown"
-              clickOutside={false}
-              ref={changeTextBlock}
-              dropdownButtonClassName="p-[3px] px-2 flex text-darkblue items-center h-[28px] relative border outline-none border-0  dark:border-accent shadow-none bg-transparent w-full  justify-start transition-colors duration-300  border focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-opacity-40 hover:bg-gray-200 dark:hover:bg-accent"
-              icon={TextBlockIcon}
-              dropdownMenuNonPortalOverride="top-[38px] z-100 border-black dark:bg-secondary lg:absolute w-[200px]"
-            >
-              <div
-                className="p-2"
-                role="none"
-                tabIndex={-1}
-                onMouseLeave={() => {
-                  setIsKeyboardNav(false);
-                  setFocusedIndex(-1);
-                }}
-                onKeyDown={(e) => {
-                  setIsKeyboardNav(true);
-                  handleArrowNavigation(e);
-                }}
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <button
+                className={` flex h-[28px]  items-center rounded-md   px-2 py-1 text-xs transition duration-300 hover:bg-gray-200 dark:text-white hover:dark:bg-accent `}
               >
-                {changeBlockElements.map((element, index) => {
-                  return (
-                    <button
-                      key={index}
-                      onMouseOver={() => {
-                        if (isKeyboardNav) return;
-                        setFocusedIndex(index);
-                      }}
-                      className={`inline-flex w-full items-center rounded-md px-4 py-2 text-left text-sm font-semibold text-[#333333] text-darkblue transition duration-200 focus:outline-none dark:text-foreground
-                        ${
-                          focusedIndex === index
-                            ? "bg-gray-200 dark:bg-accent"
-                            : ""
-                        }
-                        `}
-                      role="menuitem"
-                      tabIndex={-1}
-                      id="menu-item-3"
-                      onClick={() => {
-                        element.action();
-                        setSelectedBlock(index);
-                        if (changeTextBlock.current) {
-                          changeTextBlock.current.handleClose();
-                        }
-                      }}
-                    >
-                      {element.icon}
-                      <span className="ml-3">{element.name}</span>
-                    </button>
-                  );
-                })}
+                {TextBlockIcon}
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="z-100 w-[200px] border-black dark:bg-secondary">
+              <div className="p-2" role="none" tabIndex={-1}>
+                {changeBlockElements.map((element, index) => (
+                  <DropdownMenuItem
+                    key={index}
+                    onMouseOver={() => {
+                      if (isKeyboardNav) return;
+                      setFocusedIndex(index);
+                    }}
+                    className={`inline-flex w-full items-center rounded-md px-4 py-2 text-left text-sm font-semibold text-[#333333] text-darkblue transition duration-200 focus:outline-none dark:text-foreground ${
+                      focusedIndex === index ? "bg-gray-200 dark:bg-accent" : ""
+                    }`}
+                    onSelect={() => {
+                      element.action();
+                      setSelectedBlock(index);
+                      // Closing the dropdown needs to be handled by your context
+                    }}
+                  >
+                    {element.icon}
+                    <span className="ml-3">{element.name}</span>
+                  </DropdownMenuItem>
+                ))}
               </div>
-            </Dropdown>
-          </DropdownProvider>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </>
     </div>

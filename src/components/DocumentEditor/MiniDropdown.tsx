@@ -22,6 +22,7 @@ import { toggleBlock, isParentTTS, isParentMCQ } from "./helpers/toggleBlock";
 import { addImageBlock } from "./helpers/addImageBlock";
 import { BsSoundwave } from "react-icons/bs";
 import { addTTSBlock } from "./helpers/addTTSBlock";
+import { TbBlockquote } from "react-icons/tb";
 
 interface MiniDropdownProps {
   isOpen: boolean;
@@ -163,7 +164,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
       {
         name: "Heading 1",
         description: "Big Section heading",
-        action: () => addHeading("heading-one"),
+        action: () => addBlock("heading-one"),
         icon: (
           <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
             <Heading1 className="stroke-darkergray" />
@@ -173,7 +174,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
       {
         name: "Heading 2",
         description: "Medium Section heading",
-        action: () => addHeading("heading-two"),
+        action: () => addBlock("heading-two"),
         icon: (
           <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
             <Heading2 className="stroke-darkergray" />
@@ -183,10 +184,20 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
       {
         name: "Heading 3",
         description: "Small Section heading",
-        action: () => addHeading("heading-three"),
+        action: () => addBlock("heading-three"),
         icon: (
           <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
             <Heading3 className="stroke-darkergray" />
+          </div>
+        ),
+      },
+      {
+        name: "Quote",
+        description: "Capture a quote",
+        action: () => addBlock("block-quote"),
+        icon: (
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
+            <TbBlockquote className="stroke-darkergray" />
           </div>
         ),
       },
@@ -250,8 +261,8 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
       }
     };
 
-    function addHeading(heading: string) {
-      toggleBlock(editor, heading);
+    function addBlock(type: string) {
+      toggleBlock(editor, type);
       setShowDropdown(false);
       Transforms.select(editor, Editor.start(editor, JSON.parse(activePath)));
 

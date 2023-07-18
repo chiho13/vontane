@@ -187,14 +187,14 @@ function AudioPlayer({
     if (isSeeking && generatedAudio) {
       let x;
       let rect;
-      if (event instanceof MouseEvent) {
+      if (event.nativeEvent instanceof MouseEvent) {
         // Mouse event
-        const mouseEvent = event as MouseEvent;
+        const mouseEvent = event.nativeEvent as MouseEvent;
         rect = event.currentTarget.getBoundingClientRect();
         x = mouseEvent.clientX - rect.left;
-      } else if (event instanceof TouchEvent) {
+      } else if (event.nativeEvent instanceof TouchEvent) {
         // Touch event
-        const touchEvent = event as TouchEvent;
+        const touchEvent = event.nativeEvent as TouchEvent;
         const touch = touchEvent.touches[0]; // Get the first touch point
         rect = event.currentTarget.getBoundingClientRect();
         x = touch.clientX - rect.left;

@@ -250,6 +250,7 @@ function AudioPlayer({
           onMouseDown={handleSeekStart}
           onMouseUp={handleSeekEnd}
           onMouseMove={handleSeekMove}
+          onTouchStart={handleSeekStart}
           onTouchMove={handleSeekMove}
           onMouseEnter={handleMouseOver}
           onMouseLeave={handleMouseLeave}

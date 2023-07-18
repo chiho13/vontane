@@ -153,7 +153,7 @@ export const ChangeBlocks = ({ openLink }: any) => {
           <DropdownMenu>
             <DropdownMenuTrigger>
               <button
-                className={` flex h-[28px]  items-center rounded-md   px-2 py-1 text-xs transition duration-300 hover:bg-gray-200 dark:text-white hover:dark:bg-accent `}
+                className={` flex h-[28px] items-center rounded-md px-2 py-1 text-sm transition duration-300 hover:bg-gray-200 dark:text-white hover:dark:bg-accent `}
               >
                 {TextBlockIcon}
               </button>

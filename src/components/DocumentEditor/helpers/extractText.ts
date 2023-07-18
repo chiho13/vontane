@@ -27,6 +27,7 @@ export function extractTextValues(data) {
 
     if (
       item.type === "paragraph" ||
+      item.type === "block-quote" ||
       item.type === "checked-list" ||
       item.type === "numbered-list" ||
       item.type === "bulleted-list"
@@ -44,6 +45,18 @@ export function extractTextValues(data) {
 
       // Replace % with " percent"
       paragraphText = textRegex(paragraphText);
+
+      // Replace 'Book 1:1' with 'Book chapter 1 verse 1'
+      paragraphText = paragraphText.replace(
+        /(\b\w+\s+)(\d+):(\d+)\b/g,
+        "$1chapter $2 verse $3"
+      );
+
+      // Replace 'Book 1:1-3' with 'Book chapter 1 verses 1 to 3'
+      paragraphText = paragraphText.replace(
+        /(\b\w+\s+)(\d+):(\d+)-(\d+)\b/g,
+        "$1chapter $2 verses $3 to $4"
+      );
 
       if (paragraphText.trim() !== "") {
         // Check if text is not empty

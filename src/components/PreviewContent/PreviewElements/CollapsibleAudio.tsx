@@ -5,8 +5,12 @@ import { AudioManagerContext } from "@/contexts/PreviewAudioContext";
 
 export const CollapsibleAudioPlayer = ({ node, children }) => {
   const containsMCQ = node.children.some((child) => child.type === "mcq");
-  const flexInline = node.content.length < 100;
+  const containsBlockQuote = node.children.some(
+    (child) => child.type === "block-quote"
+  );
+  const flexInline = node.content.length < 40;
   console.log(flexInline);
+
   return (
     <div
       className={` mb-3 mt-3  rounded-md border p-2 dark:border-accent ${
@@ -25,8 +29,9 @@ export const CollapsibleAudioPlayer = ({ node, children }) => {
           />
         </div>
       )}
-
-      <div>{children}</div>
+      {/* {BlockQuote}
+       */}
+      {children}
     </div>
   );
 };

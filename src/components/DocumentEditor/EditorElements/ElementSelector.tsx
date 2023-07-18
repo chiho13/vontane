@@ -18,6 +18,7 @@ import {
   SlideBreak,
   ListItem,
   ElevenTTSWrapper,
+  BlockQuoteElement,
 } from "./index";
 
 export function ElementSelector(props: {
@@ -45,7 +46,8 @@ export function ElementSelector(props: {
 
     case "heading-three":
       return <HeadingElement {...props} tag="h3" />;
-
+    case "block-quote":
+      return <BlockQuoteElement {...props} />;
     case "paragraph":
       return <ParagraphElement {...props} />;
     case "link":

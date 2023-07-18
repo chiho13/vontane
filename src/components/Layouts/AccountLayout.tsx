@@ -54,7 +54,7 @@ const ToggleButtonWrapper = styled.div`
   justify-content: center;
 
   ${mq.lg`
-    height: 100%;
+    height: 80px;
   `}
 `;
 
@@ -341,7 +341,7 @@ const Layout: React.FC<LayoutProps> = ({
           <ToggleButtonWrapper
             style={{
               transform: isLocked ? "translateX(190px)" : "translateX(0)",
-              transition: isLocked ? "transform 300ms" : "transform 100ms",
+              transition: isOpen ? "transform 300ms" : "transform 100ms",
             }}
             onMouseEnter={handleMouseEnter}
           >
@@ -442,6 +442,11 @@ const Layout: React.FC<LayoutProps> = ({
             </AccountLayoutStyle>
           </SidebarContent>
         </SidebarContainer>
+
+        <div
+          className="fixed left-0 top-0 h-full w-[45px]"
+          onMouseEnter={handleMouseEnter}
+        ></div>
         <main
           className=" flex min-h-screen overflow-auto bg-[#f7f7f7] pt-4 dark:bg-background"
           style={{

@@ -494,6 +494,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               "bulleted-list",
               "checked-list",
               "option-list-item",
+              "block-quote",
             ].includes(parentNode.type)
           ) {
             const newPath = Path.next(parentPath);
@@ -514,7 +515,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             }
 
             if (Editor.isEnd(editor, selection.anchor, _currentNodePath)) {
-              insertNewNode(editor, parentPath, parentNode.type);
+              if (parentNode.type === "block-quote") {
+                insertNewNode(editor, parentPath, "paragraph");
+              } else {
+                insertNewNode(editor, parentPath, parentNode.type);
+              }
             }
 
             if (
@@ -679,9 +684,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
           if (
             SlateElement.isElement(currentNode) &&
-            ["numbered-list", "bulleted-list", "checked-list"].includes(
-              currentNode.type
-            )
+            [
+              "numbered-list",
+              "bulleted-list",
+              "checked-list",
+              "block-quote",
+            ].includes(currentNode.type)
           ) {
             let newProperties = {
               type: "paragraph",
@@ -1576,6 +1584,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 SlateElement.isElement(startNode) &&
                 (startNode.type === "paragraph" ||
                   startNode.type === "link" ||
+                  startNode.type === "block-quote" ||
                   startNode.type === "bulleted-list" ||
                   startNode.type === "numbered-list" ||
                   startNode.type === "checked-list" ||

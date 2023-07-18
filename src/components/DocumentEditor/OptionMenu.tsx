@@ -140,10 +140,12 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
       const [node] = Editor.node(editor, path);
 
       // Duplicate the current block
-      const newNode = { ...node, id: genNodeId() };
+      const newNode = JSON.parse(JSON.stringify(node)); // deep clone the node
+      newNode.id = genNodeId(); // assign new id
 
       // Insert the new block immediately after the current block
       Transforms.insertNodes(editor, newNode, { at: Path.next(path) });
+      // Add a delay before normalization to ensure state is updated
       toggleDropdown("");
     }
 

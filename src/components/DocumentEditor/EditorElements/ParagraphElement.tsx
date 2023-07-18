@@ -9,6 +9,7 @@ import { isParentMCQ } from "../helpers/toggleBlock";
 
 interface ParagraphElementProps {
   isParentMCQ: boolean;
+  type: string;
 }
 
 const ParagraphStyle = styled.div<ParagraphElementProps>`
@@ -19,6 +20,7 @@ const ParagraphStyle = styled.div<ParagraphElementProps>`
     user-select: none;
     position: absolute;
     top: ${(props) => (props.isParentMCQ ? "16px" : 0)};
+    margin-top: ${(props) => (props.type === "block-quote" ? "8px" : 0)};
   }
 `;
 
@@ -29,7 +31,7 @@ export function ParagraphElement(props) {
     selectedElementID,
     setSelectedElementID,
   } = useContext(EditorContext);
-  const { attributes, children, element } = props;
+  const { attributes, children, element, type } = props;
   const path = ReactEditor.findPath(editor, element);
   const [isVisible, setIsVisible] = useState(false);
   const focused = useFocused();
@@ -74,8 +76,10 @@ export function ParagraphElement(props) {
     shouldShowPlaceholder = isFirstNode && isEmpty;
   }
 
+  console.log(selected && path);
+
   return (
-    <ParagraphStyle isParentMCQ={isParentMCQ(editor)}>
+    <ParagraphStyle isParentMCQ={isParentMCQ(editor)} type={type}>
       <p
         ref={paragraphRef}
         className={`paragraph-element  ${
@@ -84,8 +88,10 @@ export function ParagraphElement(props) {
 
         `}
         {...attributes}
-        data-id={element.id}
-        data-path={JSON.stringify(path)}
+        {...(type !== "block-quote" && {
+          "data-id": element.id,
+          "data-path": JSON.stringify(path),
+        })}
         data-placeholder={shouldShowPlaceholder ? placeholder : ""}
       >
         {children}

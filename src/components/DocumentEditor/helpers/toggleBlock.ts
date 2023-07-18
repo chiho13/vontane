@@ -135,6 +135,7 @@ export const wrapWithTTS = (editor: any, element?: any) => {
       type: "tts",
       voice_id: "022dAxTS7hgOwOZorFb9",
       name: "Arthur",
+      accent: "british",
       children: [],
     },
     { at: range }
@@ -148,8 +149,9 @@ export const wrapElementWithTTS = (editor: any, element: any) => {
     {
       id: genNodeId(),
       type: "tts",
-      voice_id: "022dAxTS7hgOZorFb9",
+      voice_id: "022dAxTS7hgOwOZorFb9",
       name: "Arthur",
+      accent: "british",
       children: [],
     },
     { at: path }

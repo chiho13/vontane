@@ -181,7 +181,9 @@ function AudioPlayer({
     }
   };
 
-  const handleSeekMove = (event: React.MouseEvent<HTMLDivElement>) => {
+  const handleSeekMove = (
+    event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>
+  ) => {
     if (isSeeking && generatedAudio) {
       const rect = event.currentTarget.getBoundingClientRect();
       const x = event.clientX - rect.left;
@@ -235,6 +237,7 @@ function AudioPlayer({
           onMouseDown={handleSeekStart}
           onMouseUp={handleSeekEnd}
           onMouseMove={handleSeekMove}
+          onTouchMove={handleSeekMove}
           onMouseEnter={handleMouseOver}
           onMouseLeave={handleMouseLeave}
         >

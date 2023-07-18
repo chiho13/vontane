@@ -93,6 +93,7 @@ function AudioPlayer({
 
       const handleEnded = () => {
         setIsPlaying(false);
+        setSeekValue(seekMax);
       };
 
       const handlePlay = () => {
@@ -215,6 +216,7 @@ function AudioPlayer({
       let percent = x / width;
       percent = Math.max(0, Math.min(1, percent)); // Ensure percent is not less than 0
       setSeekValue(percent * generatedAudio.duration);
+      console.log(percent * generatedAudio.duration);
       setNibPosition(percent);
     }
   };

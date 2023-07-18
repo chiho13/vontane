@@ -167,10 +167,23 @@ function AudioPlayer({
     }
   };
 
-  const handleSeekEnd = (event: React.MouseEvent<HTMLDivElement>) => {
+  const handleSeekEnd = (
+    event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>
+  ) => {
     setIsSeeking(false);
+    let x;
     const rect = event.currentTarget.getBoundingClientRect();
-    const x = event.clientX - rect.left;
+    if (event.nativeEvent instanceof MouseEvent) {
+      // Mouse event
+      const mouseEvent = event.nativeEvent as MouseEvent;
+      x = mouseEvent.clientX - rect.left;
+    } else if (event.nativeEvent instanceof TouchEvent) {
+      // Touch event
+      const touchEvent = event.nativeEvent as TouchEvent;
+      const touch = touchEvent.changedTouches[0]; // Get the first touch point
+      x = touch.clientX - rect.left;
+    }
+
     const width = rect.width;
     const percent = x / width;
     if (generatedAudio && !generatedAudio.paused) {
@@ -186,17 +199,15 @@ function AudioPlayer({
   ) => {
     if (isSeeking && generatedAudio) {
       let x;
-      let rect;
+      const rect = event.currentTarget.getBoundingClientRect();
       if (event.nativeEvent instanceof MouseEvent) {
         // Mouse event
         const mouseEvent = event.nativeEvent as MouseEvent;
-        rect = event.currentTarget.getBoundingClientRect();
         x = mouseEvent.clientX - rect.left;
       } else if (event.nativeEvent instanceof TouchEvent) {
         // Touch event
         const touchEvent = event.nativeEvent as TouchEvent;
         const touch = touchEvent.touches[0]; // Get the first touch point
-        rect = event.currentTarget.getBoundingClientRect();
         x = touch.clientX - rect.left;
       }
 
@@ -257,7 +268,10 @@ function AudioPlayer({
           onTouchMove={handleSeekMove}
           onMouseEnter={handleMouseOver}
           onMouseLeave={handleMouseLeave}
-          onTouchEnd={handleMouseLeave}
+          onTouchEnd={(e) => {
+            handleMouseLeave();
+            handleSeekEnd(e);
+          }}
           onTouchCancel={handleMouseLeave}
         >
           <div className="audioPlayer_timeline bg-gray-300 dark:bg-gray-700">

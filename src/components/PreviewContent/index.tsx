@@ -8,6 +8,7 @@ import React, {
   useRef,
 } from "react";
 import { Path, Text, Node } from "slate";
+import { BiSolidQuoteLeft, BiSolidQuoteRight } from "react-icons/bi";
 
 import { CollapsibleAudioPlayer } from "@/components/PreviewContent/PreviewElements/CollapsibleAudio";
 import { MCQ } from "@/components/PreviewContent/PreviewElements/MCQ";
@@ -36,7 +37,7 @@ const renderElement = (
 
     case "block-quote":
       return (
-        <blockquote className="text-red mt-3 border-l-4 border-gray-400 pl-4 text-gray-500 dark:text-gray-300 ">
+        <blockquote className="text-red  relative mb-3  ml-3 mt-4 border-l-4 border-gray-400 pl-4 text-gray-500 dark:text-gray-300 ">
           {children}
         </blockquote>
       );

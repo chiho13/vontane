@@ -202,7 +202,7 @@ function AudioPlayer({
 
       const width = rect.width;
       let percent = x / width;
-      percent = Math.max(0, percent); // Ensure percent is not less than 0
+      percent = Math.max(0, Math.min(1, percent)); // Ensure percent is not less than 0
       setSeekValue(percent * generatedAudio.duration);
       setNibPosition(percent);
     }

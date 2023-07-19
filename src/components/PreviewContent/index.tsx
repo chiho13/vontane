@@ -170,7 +170,7 @@ export const PreviewContent = () => {
     <div
       className={`relative overflow-y-auto rounded-md border border-gray-300 p-3 dark:border-accent dark:bg-muted`}
     >
-      {parseNodes(localValue, total)}
+      {parseNodes(localValue)}
     </div>
   );
 };

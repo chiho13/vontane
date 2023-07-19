@@ -31,7 +31,7 @@ export const CollapsibleAudioPlayer = ({ node, children, index, nodes }) => {
     .reverse()
     .findIndex((node) => node.type === "tts");
   const isLastTTS = nodes.length - 1 - lastTTSIndex === nodes.indexOf(node);
-
+  const isNotLastOverall = nodeIndex === nodes.length;
   return (
     <div
       className={`mb-3 
@@ -41,7 +41,7 @@ export const CollapsibleAudioPlayer = ({ node, children, index, nodes }) => {
           : ""
       }
       ${
-        node.content && (isLastTTS || !isLastNode) ? "border-b" : ""
+        node.content && isLastTTS && !isLastNode ? "border-b" : ""
       } mt-4 pb-4 pt-2 dark:border-accent ${
         flexInline ? "flex items-center pb-4 " : ""
       }`}

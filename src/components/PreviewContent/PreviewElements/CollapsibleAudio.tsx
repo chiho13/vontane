@@ -34,28 +34,34 @@ export const CollapsibleAudioPlayer = ({ node, children, index, nodes }) => {
   const isNotLastOverall = nodeIndex === nodes.length;
   return (
     <div
-      className={`mb-3 
+      className={`mb-3 py-3
       ${node.content && isNotFirstOverall ? "border-t" : ""}
       ${
         node.content && isLastTTS && !isLastNode ? "border-b" : ""
-      } mt-4 pb-4 pt-2 dark:border-accent ${
-        flexInline ? "flex items-center pb-4 " : ""
-      }`}
+      } mt-4 dark:border-accent ${flexInline ? "flex items-center " : ""} 
+      ${
+        node.audioplayer || (node.content && node.content.length < 40)
+          ? "rounded-md border"
+          : ""
+      }
+      `}
     >
       {node.audio_url && !containsMCQ && (
-        <div className="mt-2 rounded-md">
+        <div className="">
           <AudioPlayer
             id={node.id}
             audioURL={node.audio_url}
             fileName={node.file_name}
             content={node.content}
+            showAudio={node.audioplayer}
             classNames="py-0 shadow-none border-0"
             isPreview={true}
           />
         </div>
       )}
       {/* {BlockQuote} */}
-      {children}
+
+      {!node.audioplayer && children}
     </div>
   );
 };

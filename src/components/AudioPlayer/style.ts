@@ -11,7 +11,6 @@ export const AudioPlayerStyle: StyledComponent<"div", any> = styled.div`
   .audioPlayer_max-time {
     display: block;
     font-size: 14px;
-    margin-left: 10px;
     width: 35px;
   }
 
@@ -23,19 +22,20 @@ export const AudioPlayerStyle: StyledComponent<"div", any> = styled.div`
     background: transparent;
     display: flex;
     align-items: center;
-    margin-left: 16px;
+    margin-left: 8px;
+    cursor: pointer;
   }
 
   .audioPlayer_timeline {
     width: 100%;
-    height: 6px;
+    height: 4px;
     position: relative;
-    cursor: pointer;
+
     border-radius: 3px;
   }
 
   .audioPlayer_timeline_track {
-    height: 6px;
+    height: 4px;
     position: absolute;
     top: 0;
     left: 0;
@@ -49,12 +49,12 @@ export const AudioPlayerStyle: StyledComponent<"div", any> = styled.div`
 
   .audioPlayer_nib {
     display: block;
-    width: 14px;
-    height: 14px;
+    width: 10px;
+    height: 10px;
     background-color: white;
     border: 1px solid #cccccc;
     position: absolute;
-    top: -4px;
+    top: -3px;
     border-radius: 50%;
     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   }

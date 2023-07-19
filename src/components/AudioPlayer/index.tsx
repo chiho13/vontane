@@ -237,7 +237,6 @@ function AudioPlayer({
     return `${minutes}:${seconds}`;
   };
 
-  console.log(content.length);
   return (
     <AudioPlayerStyle
       key={id}

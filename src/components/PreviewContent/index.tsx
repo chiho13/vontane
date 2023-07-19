@@ -23,10 +23,10 @@ const renderElement = (
     | React.ReactFragment
     | null
     | undefined,
-  key: React.Key | null | undefined
+  key: React.Key | null | undefined,
+  index: Number,
+  nodes: any
 ) => {
-  console.log(node.type);
-
   switch (node.type) {
     case "paragraph":
       return (
@@ -72,7 +72,12 @@ const renderElement = (
       );
     case "tts":
       return (
-        <CollapsibleAudioPlayer node={node} key={key}>
+        <CollapsibleAudioPlayer
+          node={node}
+          key={key}
+          index={index}
+          nodes={nodes}
+        >
           {children}
         </CollapsibleAudioPlayer>
       );
@@ -121,7 +126,13 @@ export const parseNodes = (nodes: any[]) => {
         return component;
       } else if ("children" in node) {
         const children = parseNodes(node.children);
-        return renderElement(node, children, node.id ? node.id : index);
+        return renderElement(
+          node,
+          children,
+          node.id ? node.id : index,
+          index,
+          nodes
+        );
       }
     });
 };
@@ -131,6 +142,8 @@ export const PreviewContent = () => {
   const [localValue, setLocalValue] = useState(fromEditor.children);
 
   // update localValue when fromEditor.children changes
+
+  const total = fromEditor.children.length;
   useEffect(() => {
     setLocalValue(fromEditor.children);
   }, [fromEditor.children]);
@@ -157,7 +170,7 @@ export const PreviewContent = () => {
     <div
       className={`relative overflow-y-auto rounded-md border border-gray-300 p-3 dark:border-accent dark:bg-muted`}
     >
-      {parseNodes(localValue)}
+      {parseNodes(localValue, total)}
     </div>
   );
 };

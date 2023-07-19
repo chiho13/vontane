@@ -142,3 +142,13 @@ body {
     --radius: 0.5rem;
   }
 }
+
+.mapboxgl-ctrl-attrib-inner {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  font-size: 10px;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.5); /* Optional: to enhance visibility */
+  border-top-left-radius: 5px; /* Optional: if you want rounded corners */
+}

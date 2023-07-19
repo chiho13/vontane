@@ -36,6 +36,7 @@ interface Props {
   fileName: string;
   content?: string;
   id?: string;
+  showAudio?: boolean;
   classNames?: string;
   isPreview?: boolean;
 }
@@ -46,6 +47,7 @@ function AudioPlayer({
   content,
   id,
   classNames = "py-[10px]",
+  showAudio,
   isPreview = false,
 }: Props): JSX.Element {
   const [seekValue, setSeekValue] = useState<number>(0);
@@ -241,7 +243,9 @@ function AudioPlayer({
     <AudioPlayerStyle
       key={id}
       className={cn(
-        `relative flex items-center  gap-2 border border-gray-300 bg-white dark:border-accent dark:bg-transparent`,
+        `relative flex items-center gap-2 border border-gray-300 bg-white dark:border-accent dark:bg-transparent
+        ${content && content.length > 40 && !showAudio ? "mb-6" : ""}
+        `,
         classNames
       )}
     >
@@ -305,9 +309,28 @@ function AudioPlayer({
               ></div>
             )}
           </div>
+          {/* {content && content.length > 40 && (
+            <div className="absolute -top-3 flex items-center">
+              <div className="text-xs">
+                {isPlaying ? "Now Playing" : "Listen"}{" "}
+              </div>
+            </div>
+          )} */}
+
+          {content && content.length > 40 && (
+            <div className="absolute -bottom-[12px] left-0 flex items-center">
+              <div className=" mr-1 text-xs">
+                {formatTime(Math.floor(seekValue))}
+              </div>
+              <div className="text-xs">{"/"}</div>
+              <div className="ml-1 text-xs ">
+                {formatTime(Math.floor(seekMax))}
+              </div>
+            </div>
+          )}
         </div>
       )}
-      {content &&
+      {/* {content &&
         content.length > 40 &&
         (isPlaying ? (
           <div className="audioPlayer_current-time">
@@ -317,7 +340,7 @@ function AudioPlayer({
           <div className="audioPlayer_max-time">
             {formatTime(Math.floor(seekMax))}
           </div>
-        ))}
+        ))} */}
 
       {content && content.length > 40 && (
         <TooltipProvider delayDuration={300}>

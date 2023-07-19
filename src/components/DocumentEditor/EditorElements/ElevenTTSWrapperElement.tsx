@@ -80,6 +80,8 @@ const ElevenTTSWrapperBase = (props: {
   const router = useRouter();
   const workspaceId = router.query.workspaceId as string;
   const selected = useSelected();
+
+  const [info, setInfo] = useState(true);
   const {
     audioData,
     setAudioData,
@@ -88,6 +90,7 @@ const ElevenTTSWrapperBase = (props: {
     setTab,
   } = useTextSpeech();
 
+  const extractedText = extractTextValues(element.children).join(" ");
   useEffect(() => {
     const extractedText = extractTextValues(element.children).join(" ");
 
@@ -139,6 +142,12 @@ const ElevenTTSWrapperBase = (props: {
           setSelectedVoiceId={setSelectedVoiceId}
           element={element}
         />
+        {extractedText.length <= 40 && (
+          <div className="mt-3 text-xs italic">
+            {" "}
+            Tip: Type 40+ characters to enable Audio Player
+          </div>
+        )}
       </div>
       {children}
       <div className="absolute right-[10px] top-[5px] z-10">

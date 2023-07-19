@@ -35,11 +35,7 @@ export const CollapsibleAudioPlayer = ({ node, children, index, nodes }) => {
   return (
     <div
       className={`mb-3 
-      ${
-        node.content && isFirstTTS && isNotFirstOverall && prevNodeIsPara
-          ? "border-t"
-          : ""
-      }
+      ${node.content && isNotFirstOverall ? "border-t" : ""}
       ${
         node.content && isLastTTS && !isLastNode ? "border-b" : ""
       } mt-4 pb-4 pt-2 dark:border-accent ${

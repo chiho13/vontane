@@ -12,7 +12,7 @@ import { Transforms } from "slate";
 import { debounce } from "lodash";
 import { Button } from "@/components/ui/button";
 import { OptionMenu } from "../OptionMenu";
-import { useResizeBlock } from "@/hooks/useResizeBlock";
+import { Position, useResizeBlock } from "@/hooks/useResizeBlock";
 import { block } from "million";
 import { BlockAlign } from "@/components/BlockAlign";
 
@@ -29,11 +29,8 @@ export function Mapbox(props) {
   const MAPTILER_ACCESS_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
   const MAP_ID = isDarkMode ? "streets-v2-dark" : "streets-v2";
 
-  const { handleMouseDown, setPos, ref, blockWidth } = useResizeBlock(
-    element,
-    editor,
-    path
-  );
+  const { handleMouseDown, setPos, ref, blockWidth, blockHeight } =
+    useResizeBlock(element, editor, path);
 
   const maptilerProvider = maptiler(MAPTILER_ACCESS_TOKEN, MAP_ID);
   const [shouldCenter, setShouldCenter] = useState(false);
@@ -63,7 +60,7 @@ export function Mapbox(props) {
           overflow: "hidden",
           width: blockWidth,
           maxWidth: 710,
-          height: 400,
+          height: blockHeight,
         }}
         ref={ref}
         data-id={element.id}
@@ -73,7 +70,7 @@ export function Mapbox(props) {
           className={`absolute -right-[3px] top-0 flex h-full items-center`}
           onMouseDown={() => {
             handleMouseDown();
-            setPos("right");
+            setPos(Position.Right);
           }}
         >
           <div
@@ -86,13 +83,26 @@ export function Mapbox(props) {
           className={`absolute -left-[3px] top-0 flex h-full items-center`}
           onMouseDown={() => {
             handleMouseDown();
-            setPos("left");
+            setPos(Position.Left);
           }}
         >
           <div
             className={`  z-10 flex h-full  w-[18px] items-center opacity-0  lg:group-hover:opacity-100 xl:pointer-events-auto `}
           >
             <div className="mx-auto block h-[60px] w-[6px]  cursor-col-resize rounded-lg border border-white bg-[#191919] opacity-70 dark:bg-background"></div>
+          </div>
+        </div>
+        <div
+          className={`absolute -bottom-[3px] left-0 right-0 flex `}
+          onMouseDown={() => {
+            handleMouseDown();
+            setPos(Position.Bottom);
+          }}
+        >
+          <div
+            className={`  z-10 flex h-[18px]  w-full items-center opacity-0  lg:group-hover:opacity-100 xl:pointer-events-auto `}
+          >
+            <div className="mx-auto block h-[6px] w-[60px]  cursor-row-resize rounded-lg border border-white bg-[#191919] opacity-70 dark:bg-background"></div>
           </div>
         </div>
         <div className="absolute  right-2 top-1 z-10 flex items-center gap-1 ">

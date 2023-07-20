@@ -222,7 +222,12 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         JSON.parse(activePath)
       );
 
-      if (!isRoot && (el.name === "Slide Break" || el.name === "Text to MP3")) {
+      if (
+        !isRoot &&
+        (el.name === "Slide Break" ||
+          el.name === "Text to MP3" ||
+          el.name === "Map")
+      ) {
         return false;
       }
 

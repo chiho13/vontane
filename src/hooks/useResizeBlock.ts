@@ -1,40 +1,61 @@
-import { useState, useRef, useCallback, useEffect } from "react";
-import { Transforms } from "slate";
+import {
+  useState,
+  useRef,
+  useCallback,
+  useEffect,
+  MutableRefObject,
+} from "react";
+import { Path, Transforms } from "slate";
 
-export const useResizeBlock = (element, editor, path) => {
-  const [isResizing, setIsResizing] = useState(false);
-  const [blockWidth, setWidth] = useState(element.width || 0);
-  const [pos, setPos] = useState("left");
+export enum Position {
+  Left = "left",
+  Right = "right",
+  Bottom = "bottom",
+}
+interface ResizeBlock {
+  handleMouseDown: () => void;
+  setPos: (pos: Position) => void;
+  ref: MutableRefObject<null>;
+  blockWidth: number;
+  blockHeight: number;
+}
+
+export const useResizeBlock = (
+  element: any,
+  editor: any,
+  path: Path
+): ResizeBlock => {
+  const [isResizing, setIsResizing] = useState<boolean>(false);
+  const [blockWidth, setWidth] = useState<number>(element.width || 710);
+  const [blockHeight, setHeight] = useState<number>(element.height || 400);
+  const [pos, setPos] = useState<Position>(Position.Left);
   const ref = useRef<any>(null);
 
   const handleMouseDown = useCallback(() => {
     setIsResizing(true);
   }, []);
 
-  const handleMouseUp = useCallback(
-    (e) => {
-      setIsResizing(false);
-      const newElement = { ...element, width: blockWidth };
+  const handleMouseUp = useCallback(() => {
+    setIsResizing(false);
+    const newElement = { ...element, width: blockWidth, height: blockHeight };
 
-      Transforms.setNodes(editor, newElement, { at: path });
-    },
-    [blockWidth, element, editor, path]
-  );
+    Transforms.setNodes(editor, newElement, { at: path });
+  }, [blockWidth, blockHeight, element, editor, path]);
 
   const handleMouseMove = useCallback(
-    (e) => {
+    (e: MouseEvent) => {
       if (isResizing) {
-        let newWidth;
-        if (pos === "left") {
-          newWidth = ref.current?.getBoundingClientRect().right - e.clientX;
+        if (pos === Position.Bottom) {
+          const newHeight =
+            e.clientY - (ref.current?.getBoundingClientRect().top || 0);
+          setHeight(Math.max(newHeight, 200));
         } else {
-          newWidth = e.clientX - ref.current.getBoundingClientRect().left;
-        }
+          const newWidth =
+            pos === Position.Left
+              ? (ref.current?.getBoundingClientRect().right || 0) - e.clientX
+              : e.clientX - (ref.current?.getBoundingClientRect().left || 0);
 
-        if (newWidth < 250) {
-          setWidth(250);
-        } else {
-          setWidth(newWidth);
+          setWidth(Math.max(newWidth, 250));
         }
       }
     },
@@ -56,5 +77,5 @@ export const useResizeBlock = (element, editor, path) => {
     };
   }, [isResizing, handleMouseMove, handleMouseUp]);
 
-  return { handleMouseDown, setPos, ref, blockWidth };
+  return { handleMouseDown, setPos, ref, blockWidth, blockHeight };
 };

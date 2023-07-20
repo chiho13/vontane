@@ -57,16 +57,58 @@ export function BlockAlign({ element }: any) {
               className="border-2 border-gray-300  bg-background dark:border-accent"
             >
               <DropdownMenuItem onClick={() => alignImage("start")}>
-                <AlignLeft className=" mr-2 h-4  w-4 dark:stroke-muted-foreground" />
-                <span className="text-muted-foreground">Left</span>
+                <AlignLeft
+                  className={`mr-2 h-4 w-4 ${
+                    element.align === "start"
+                      ? "stroke-foreground"
+                      : "dark:stroke-muted-foreground"
+                  }`}
+                />
+                <span
+                  className={`${
+                    element.align === "start"
+                      ? "text-foreground"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  Left
+                </span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => alignImage("center")}>
-                <AlignCenter className=" mr-2 h-4 w-4 dark:stroke-foreground" />
-                <span className="text-foreground">Center</span>
+                <AlignCenter
+                  className={`mr-2 h-4 w-4 ${
+                    element.align === "center"
+                      ? "stroke-foreground"
+                      : "dark:stroke-muted-foreground"
+                  }`}
+                />
+                <span
+                  className={`${
+                    element.align === "center"
+                      ? "text-foreground"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  Center
+                </span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => alignImage("end")}>
-                <AlignRight className="mr-2 h-4 w-4 dark:stroke-foreground" />
-                <span className="text-foreground">Right</span>
+                <AlignRight
+                  className={`mr-2 h-4 w-4 ${
+                    element.align === "end"
+                      ? "stroke-foreground"
+                      : "dark:stroke-muted-foreground"
+                  }`}
+                />
+                <span
+                  className={`${
+                    element.align === "end"
+                      ? "text-foreground"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  Right
+                </span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

@@ -48,7 +48,7 @@ import { useLocalStorage } from "usehooks-ts";
 import { api } from "@/utils/api";
 import { useRouter } from "next/router";
 import { nanoid } from "nanoid";
-import { useResizeBlock } from "@/hooks/useResizeBlock";
+import { useResizeBlock, Position } from "@/hooks/useResizeBlock";
 
 function generateRandomFilename(file) {
   const extension = file.name.split(".").pop();
@@ -175,26 +175,26 @@ export const ImageElement = React.memo(
                 className={`absolute -right-[3px] top-0 flex h-full items-center`}
                 onMouseDown={() => {
                   handleMouseDown();
-                  setPos("right");
+                  setPos(Position.Right);
                 }}
               >
                 <div
                   className={`  flex h-full  w-[18px] items-center opacity-0  lg:group-hover:opacity-100 xl:pointer-events-auto `}
                 >
-                  <div className="mx-auto block h-[60px] w-[6px]  cursor-col-resize rounded-lg border border-white bg-[#191919] opacity-60 dark:bg-background"></div>
+                  <div className="mx-auto block h-[60px] w-[6px]  cursor-col-resize rounded-lg border border-white bg-[#191919] opacity-70 dark:bg-background"></div>
                 </div>
               </div>
               <div
                 className={`absolute -left-[3px] top-0 flex h-full items-center`}
                 onMouseDown={() => {
                   handleMouseDown();
-                  setPos("left");
+                  setPos(Position.Left);
                 }}
               >
                 <div
                   className={`  flex h-full  w-[18px] items-center opacity-0  lg:group-hover:opacity-100 xl:pointer-events-auto `}
                 >
-                  <div className="mx-auto block h-[60px] w-[6px]  cursor-col-resize rounded-lg border border-white bg-[#191919] opacity-60 dark:bg-background"></div>
+                  <div className="mx-auto block h-[60px] w-[6px]  cursor-col-resize rounded-lg border border-white bg-[#191919] opacity-70 dark:bg-background"></div>
                 </div>
               </div>
               {tempBase64[element.id] && (

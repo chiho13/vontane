@@ -42,7 +42,7 @@ export function BlockAlign({ element }: any) {
         <TooltipTrigger>
           <DropdownMenu onOpenChange={setDropdownOpen}>
             <DropdownMenuTrigger asChild>
-              <button className=" flex h-[22px] w-[32px] items-center rounded-md border-0 border-gray-500 px-1 text-gray-500 dark:border-foreground dark:bg-muted dark:text-foreground hover:dark:bg-muted/90 ">
+              <Button className=" flex h-[22px] w-[32px] items-center rounded-md border-0 border-gray-500 bg-white px-1 text-gray-500 hover:bg-gray-200 dark:border-foreground dark:bg-muted dark:text-foreground hover:dark:bg-muted/90 ">
                 {element.align === "start" && <AlignLeft className="h-4 w-4" />}
                 {element.align === "center" && (
                   <AlignCenter className="h-4 w-4" />
@@ -50,15 +50,15 @@ export function BlockAlign({ element }: any) {
                 {element.align === "end" && <AlignRight className="h-4 w-4" />}
                 <ChevronDown className="h-3 w-3" />
                 <span className="sr-only">Toggle Align</span>
-              </button>
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="center"
               className="border-2 border-gray-300  bg-background dark:border-accent"
             >
               <DropdownMenuItem onClick={() => alignImage("start")}>
-                <AlignLeft className=" mr-2 h-4  w-4 dark:stroke-foreground" />
-                <span className="text-foreground">Left</span>
+                <AlignLeft className=" mr-2 h-4  w-4 dark:stroke-muted-foreground" />
+                <span className="text-muted-foreground">Left</span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => alignImage("center")}>
                 <AlignCenter className=" mr-2 h-4 w-4 dark:stroke-foreground" />

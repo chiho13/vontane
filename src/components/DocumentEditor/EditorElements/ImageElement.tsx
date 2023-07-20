@@ -48,6 +48,7 @@ import { useLocalStorage } from "usehooks-ts";
 import { api } from "@/utils/api";
 import { useRouter } from "next/router";
 import { nanoid } from "nanoid";
+import { useResizeBlock } from "@/hooks/useResizeBlock";
 
 function generateRandomFilename(file) {
   const extension = file.name.split(".").pop();
@@ -74,22 +75,18 @@ export const ImageElement = React.memo(
     const router = useRouter();
     const workspaceId = router.query.workspaceId as string;
 
-    const [isResizing, setIsResizing] = useState(false);
-    const [imageWidth, setWidth] = useState(element.width || "100%"); // default width
     const [imageHeight, setHeight] = useState(element.height); // default height
 
-    const [imageURL, setImageURL] = useState(element.url);
     const [base64URL, setBase64URL] = useState(
       tempBase64[element.id] || element.url
     );
     const [align, setAlign] = useState(element.align || "start");
 
-    const selected = useSelected();
-    const ref = useRef<any>(null);
-
-    const handleMouseDown = useCallback((e) => {
-      setIsResizing(true);
-    }, []);
+    const { handleMouseDown, setPos, ref, blockWidth } = useResizeBlock(
+      element,
+      editor,
+      path
+    );
 
     const [hasFetched, setHasFetched] = useState(false);
 
@@ -111,72 +108,6 @@ export const ImageElement = React.memo(
         staleTime: 5 * 60 * 1000,
       }
     );
-
-    const handleMouseUp = useCallback(
-      (e) => {
-        setIsResizing(false);
-        const newElement = { ...element, width: imageWidth };
-
-        Transforms.setNodes(editor, newElement, { at: path });
-      },
-      [imageWidth]
-    );
-
-    useEffect(() => {}, [selected]);
-
-    const handleMouseMove = useCallback(
-      (e) => {
-        if (isResizing) {
-          let newWidth;
-          if (align === "end") {
-            // When the alignment is "end", calculate the new width based on the difference between
-            // the right edge of the image and the mouse position
-            newWidth = ref.current?.getBoundingClientRect().right - e.clientX;
-          } else {
-            // Otherwise, calculate the new width as before
-            newWidth = e.clientX - ref.current.getBoundingClientRect().left;
-          }
-
-          if (newWidth < 250) {
-            // If it is, set the width to the minimum width
-            setWidth(250);
-          } else {
-            // Otherwise, use the new width
-            setWidth(newWidth);
-          }
-        }
-      },
-      [isResizing, align] // Also add "align" to the dependency array
-    );
-
-    // State for image loading status
-    const [loadingImage, setLoadingImage] = useState(true);
-
-    // Event handler for image load
-    const handleImageLoad = () => {
-      setLoadingImage(false);
-    };
-
-    // Apply the blur filter if the image is still loading
-    const imageStyle = loadingImage
-      ? { filter: "blur(10px)", transition: "filter 0.3s" }
-      : { transition: "filter 0.3s" };
-
-    useEffect(() => {
-      if (isResizing) {
-        window.addEventListener("mousemove", handleMouseMove);
-        window.addEventListener("mouseup", handleMouseUp);
-      } else {
-        window.removeEventListener("mousemove", handleMouseMove);
-        window.removeEventListener("mouseup", handleMouseUp);
-      }
-
-      return () => {
-        window.removeEventListener("mousemove", handleMouseMove);
-        window.removeEventListener("mouseup", handleMouseUp);
-      };
-    }, [isResizing, handleMouseMove, handleMouseUp]);
-
     return (
       <div data-id={element.id} data-path={JSON.stringify(path)}>
         {!element.file_name ? (
@@ -234,22 +165,36 @@ export const ImageElement = React.memo(
             <div className="relative rounded-md bg-gray-200 dark:bg-background">
               <Image
                 src={base64URL}
-                width={imageWidth}
+                width={blockWidth}
                 height={imageHeight}
                 ref={ref}
                 className="rounded-md"
                 alt="alt"
               />
               <div
-                className={`absolute top-0 ${
-                  align === "end" ? "-left-[3px]" : "-right-[3px]"
-                } flex h-full items-center`}
-                onMouseDown={handleMouseDown}
+                className={`absolute -right-[3px] top-0 flex h-full items-center`}
+                onMouseDown={() => {
+                  handleMouseDown();
+                  setPos("right");
+                }}
               >
                 <div
                   className={`  flex h-full  w-[18px] items-center opacity-0  lg:group-hover:opacity-100 xl:pointer-events-auto `}
                 >
-                  <div className="mx-auto block h-[60px] w-[6px]  cursor-col-resize rounded-lg border border-foreground bg-[#b4b4b4] dark:bg-background"></div>
+                  <div className="mx-auto block h-[60px] w-[6px]  cursor-col-resize rounded-lg border border-white bg-[#191919] opacity-60 dark:bg-background"></div>
+                </div>
+              </div>
+              <div
+                className={`absolute -left-[3px] top-0 flex h-full items-center`}
+                onMouseDown={() => {
+                  handleMouseDown();
+                  setPos("left");
+                }}
+              >
+                <div
+                  className={`  flex h-full  w-[18px] items-center opacity-0  lg:group-hover:opacity-100 xl:pointer-events-auto `}
+                >
+                  <div className="mx-auto block h-[60px] w-[6px]  cursor-col-resize rounded-lg border border-white bg-[#191919] opacity-60 dark:bg-background"></div>
                 </div>
               </div>
               {tempBase64[element.id] && (

@@ -12,6 +12,9 @@ import { Transforms } from "slate";
 import { debounce } from "lodash";
 import { Button } from "@/components/ui/button";
 import { OptionMenu } from "../OptionMenu";
+import { useResizeBlock } from "@/hooks/useResizeBlock";
+import { block } from "million";
+import { BlockAlign } from "@/components/BlockAlign";
 
 export function Mapbox(props) {
   const { editor, activePath, setActivePath } = useContext(EditorContext);
@@ -26,29 +29,21 @@ export function Mapbox(props) {
   const MAPTILER_ACCESS_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
   const MAP_ID = isDarkMode ? "streets-v2-dark" : "streets-v2";
 
+  const { handleMouseDown, setPos, ref, blockWidth } = useResizeBlock(
+    element,
+    editor,
+    path
+  );
+
   const maptilerProvider = maptiler(MAPTILER_ACCESS_TOKEN, MAP_ID);
   const [shouldCenter, setShouldCenter] = useState(false);
-  const [previousAnchor, setPreviousAnchor] = useState(null);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShouldCenter(true);
-    }, 500); // Change this to set your delay in milliseconds
-
-    // Cleanup function to clear the timer when component unmounts
-    return () => clearTimeout(timer);
-  }, []);
 
   const [zoom, setZoom] = useState(element.zoom || 11);
   const [anchor, setAnchor] = useState<Point>(
     element.latLng || [50.879, 4.6997]
   );
 
-  useEffect(() => {
-    if (!shouldCenter) {
-      setPreviousAnchor(anchor);
-    }
-  }, [shouldCenter, anchor]);
+  const [align, setAlign] = useState(element.align || "start");
 
   function setLatLng(newLatLng) {
     setAnchor(newLatLng);
@@ -60,74 +55,106 @@ export function Mapbox(props) {
   }
 
   return (
-    <div
-      className="relative rounded-md"
-      style={{
-        overflow: "hidden",
-        width: "100%",
-        height: "400px",
-      }}
-      data-id={element.id}
-      data-path={JSON.stringify(path)}
-    >
-      <div className="absolute  right-2 top-1 z-10 flex items-center gap-1 ">
-        <Button
-          size="xs"
-          onClick={(e) => {
-            e.stopPropagation();
-            console.log("settings");
-          }}
-          className="group h-[24px] w-[24px] border border-gray-400 bg-white px-0 hover:bg-gray-100 dark:border-gray-700 dark:bg-muted hover:dark:bg-muted/90"
-          style={{
-            zIndex: 1000,
-          }}
-          contentEditable={false}
-        >
-          <Settings className="w-4 stroke-foreground hover:stroke-foreground" />
-        </Button>
-
-        <OptionMenu element={element} />
-      </div>
-      <Map
-        provider={maptilerProvider}
-        dprs={[1, 2]}
-        center={anchor}
-        zoom={zoom}
-        attribution={false}
-        onClick={(el) => {
-          el.event.stopPropagation();
-          console.log(el.latLng);
-          setLatLng(el.latLng);
+    <div className={` flex justify-${align}`}>
+      <div
+        className="group relative  rounded-md"
+        tabIndex={-1}
+        style={{
+          overflow: "hidden",
+          width: blockWidth,
+          maxWidth: 710,
+          height: 400,
         }}
-        onBoundsChanged={({ center, zoom }) => {
-          setZoom(zoom);
-          // Transforms.setNodes(editor, { zoom }, { at: path });
-        }}
+        ref={ref}
+        data-id={element.id}
+        data-path={JSON.stringify(path)}
       >
-        <Draggable offset={[25, 50]} anchor={anchor} onDragEnd={setLatLng}>
-          <MapPin
-            size={50}
-            className="fill-white stroke-brand dark:fill-muted dark:stroke-white"
-            // fill={isDarkMode ? "#191919" : "white"}
-            strokeWidth={1.5}
-          />
-        </Draggable>
-
-        <a
-          href="https://www.maptiler.com/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="absolute bottom-0 left-0"
+        <div
+          className={`absolute -right-[3px] top-0 flex h-full items-center`}
+          onMouseDown={() => {
+            handleMouseDown();
+            setPos("right");
+          }}
         >
-          <Image
-            src={`/images/maptiler-logo${isDarkMode ? "-white" : ""}.png`}
-            width={100}
-            height={40}
-            alt="map tiler"
-          />
-        </a>
-      </Map>
-      {children}
+          <div
+            className={`  z-10 flex h-full  w-[18px] items-center opacity-0  lg:group-hover:opacity-100 xl:pointer-events-auto `}
+          >
+            <div className="mx-auto block h-[60px] w-[6px]  cursor-col-resize rounded-lg border border-white bg-[#191919] opacity-70 dark:bg-background"></div>
+          </div>
+        </div>
+        <div
+          className={`absolute -left-[3px] top-0 flex h-full items-center`}
+          onMouseDown={() => {
+            handleMouseDown();
+            setPos("left");
+          }}
+        >
+          <div
+            className={`  z-10 flex h-full  w-[18px] items-center opacity-0  lg:group-hover:opacity-100 xl:pointer-events-auto `}
+          >
+            <div className="mx-auto block h-[60px] w-[6px]  cursor-col-resize rounded-lg border border-white bg-[#191919] opacity-70 dark:bg-background"></div>
+          </div>
+        </div>
+        <div className="absolute  right-2 top-1 z-10 flex items-center gap-1 ">
+          <BlockAlign element={element} />
+          <Button
+            size="xs"
+            onClick={(e) => {
+              e.stopPropagation();
+              console.log("settings");
+            }}
+            className="group h-[24px] w-[24px] border border-gray-100 bg-white px-0 hover:border-gray-200 hover:bg-gray-200 dark:border-gray-700 dark:bg-muted hover:dark:bg-muted/90"
+            style={{
+              zIndex: 1000,
+            }}
+            contentEditable={false}
+          >
+            <Settings className="w-4 stroke-muted-foreground hover:stroke-muted-foreground" />
+          </Button>
+
+          <OptionMenu element={element} className="bg-white" />
+        </div>
+        <Map
+          provider={maptilerProvider}
+          dprs={[1, 2]}
+          center={anchor}
+          zoom={zoom}
+          attribution={false}
+          onClick={(el) => {
+            el.event.stopPropagation();
+            console.log(el.latLng);
+            setLatLng(el.latLng);
+          }}
+          onBoundsChanged={({ center, zoom }) => {
+            setZoom(zoom);
+            // Transforms.setNodes(editor, { zoom }, { at: path });
+          }}
+        >
+          <Draggable offset={[25, 50]} anchor={anchor} onDragEnd={setLatLng}>
+            <MapPin
+              size={50}
+              className="fill-white stroke-brand dark:fill-muted dark:stroke-white"
+              // fill={isDarkMode ? "#191919" : "white"}
+              strokeWidth={1.5}
+            />
+          </Draggable>
+
+          <a
+            href="https://www.maptiler.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="absolute bottom-0 left-0"
+          >
+            <Image
+              src={`/images/maptiler-logo${isDarkMode ? "-white" : ""}.png`}
+              width={100}
+              height={40}
+              alt="map tiler"
+            />
+          </a>
+        </Map>
+        {children}
+      </div>
     </div>
   );
 }

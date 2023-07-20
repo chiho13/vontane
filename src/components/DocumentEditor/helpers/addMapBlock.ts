@@ -9,7 +9,6 @@ export const addMapBlock = (editor, path) => {
     id,
     type: "map",
     width: "100%",
-    zoom: 11,
     children: [{ text: "" }],
   };
 

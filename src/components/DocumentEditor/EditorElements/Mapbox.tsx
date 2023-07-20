@@ -4,16 +4,13 @@ import { ReactEditor, useFocused, useSelected } from "slate-react";
 
 import { useTheme } from "next-themes";
 
-import { OriginalMarker } from "@/icons/Marker";
-
-import type { MarkerDragEvent, LngLat } from "react-map-gl";
 import { Map, Marker, Draggable, Point } from "pigeon-maps";
 import { maptiler } from "pigeon-maps/providers";
 import { MapPin } from "lucide-react";
 import Image from "next/image";
 import { Transforms } from "slate";
 import { debounce } from "lodash";
-import { Button } from "@/components/ui/button";
+
 export function Mapbox(props) {
   const { editor, activePath } = useContext(EditorContext);
 
@@ -28,26 +25,39 @@ export function Mapbox(props) {
   const MAP_ID = isDarkMode ? "streets-v2-dark" : "streets-v2";
 
   const maptilerProvider = maptiler(MAPTILER_ACCESS_TOKEN, MAP_ID);
+  const [shouldCenter, setShouldCenter] = useState(false);
+  const [previousAnchor, setPreviousAnchor] = useState(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShouldCenter(true);
+    }, 500); // Change this to set your delay in milliseconds
+
+    // Cleanup function to clear the timer when component unmounts
+    return () => clearTimeout(timer);
+  }, []);
 
   const [zoom, setZoom] = useState(element.zoom || 11);
   const [anchor, setAnchor] = useState<Point>(
     element.latLng || [50.879, 4.6997]
   );
 
+  useEffect(() => {
+    if (!shouldCenter) {
+      setPreviousAnchor(anchor);
+    }
+  }, [shouldCenter, anchor]);
+
   function setLatLng(newLatLng) {
     setAnchor(newLatLng);
 
-    Transforms.setNodes(editor, { latLng: newLatLng, zoom }, { at: path });
+    // Set new timer
+    setTimeout(() => {
+      Transforms.setNodes(editor, { latLng: newLatLng, zoom }, { at: path });
+    }, 300);
   }
 
   console.log(anchor);
-
-  // const debouncedSetNodes = useCallback(
-  //   debounce((zoom) => {
-  //     Transforms.setNodes(editor, { zoom }, { at: path });
-  //   }, 500),
-  //   [editor, path]
-  // );
 
   return (
     <div
@@ -66,7 +76,10 @@ export function Mapbox(props) {
         center={anchor}
         zoom={zoom}
         attribution={false}
-        onClick={setLatLng}
+        onClick={(el) => {
+          console.log(el.latLng);
+          setLatLng(el.latLng);
+        }}
         onBoundsChanged={({ center, zoom }) => {
           setZoom(zoom);
           // Transforms.setNodes(editor, { zoom }, { at: path });

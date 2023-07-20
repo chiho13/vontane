@@ -8,6 +8,7 @@ export const addMapBlock = (editor, path) => {
   const imageNode = {
     id,
     type: "map",
+    align: "center",
     width: "100%",
     children: [{ text: "" }],
   };

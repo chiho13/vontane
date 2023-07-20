@@ -13,6 +13,7 @@ import { nanoid } from "nanoid";
 import { useArrowNavigation } from "@/hooks/useArrowNavigation";
 import { wrapElementWithTTS } from "./helpers/toggleBlock";
 // import { isParentTTS, wrapWithTTS } from "./helpers/toggleBlock";
+import { cn } from "@/utils/cn";
 
 import {
   Tooltip,
@@ -27,6 +28,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Button } from "../ui/button";
 
 const isParentTTS = (editor, node) => {
   const path = ReactEditor.findPath(editor, node);
@@ -39,6 +41,7 @@ const isParentTTS = (editor, node) => {
 
 interface OptionMenuProps {
   element: any;
+  className?: string;
 }
 
 interface OptionMenuElement {
@@ -48,7 +51,7 @@ interface OptionMenuElement {
 }
 
 export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
-  ({ element }, ref) => {
+  ({ element, className }, ref) => {
     const optionMenuRef = useRef(null);
     const { editor } = useContext(EditorContext);
     const { activeDropdown, toggleDropdown } = useContext(DropdownContext);
@@ -163,9 +166,9 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
         >
           <DropdownMenu>
             <DropdownMenuTrigger>
-              <div className="flex h-[22px] w-[22px] items-center justify-center rounded-md bg-gray-200 p-0 hover:bg-gray-300 dark:bg-muted dark:hover:bg-accent">
+              <Button className="flex h-[22px] w-[22px] items-center justify-center rounded-md bg-white p-0 hover:bg-gray-200 dark:bg-muted dark:hover:bg-accent">
                 <MoreHorizontal className="option-menu w-[18px] w-[18px] text-darkergray dark:text-foreground" />
-              </div>
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className=" top-0 w-[200px] border dark:border-accent dark:bg-muted">
               {optionMenuElements.map((item, index) => {

@@ -105,9 +105,13 @@ export function SortableElement({
             {renderElement({ attributes, children, element })}
           </div>
         </div>
-        {element.type !== "image" && element.type !== "tts" && (
-          <div className="opacity-0 group-hover:opacity-100">{optionMenu}</div>
-        )}
+        {element.type !== "image" &&
+          element.type !== "tts" &&
+          element.type !== "map" && (
+            <div className="opacity-0 group-hover:opacity-100">
+              {optionMenu}
+            </div>
+          )}
       </div>
     </div>
   );

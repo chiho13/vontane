@@ -6,20 +6,22 @@ import { useTheme } from "next-themes";
 
 import { Map, Marker, Draggable, Point } from "pigeon-maps";
 import { maptiler } from "pigeon-maps/providers";
-import { MapPin } from "lucide-react";
+import { MapPin, Settings } from "lucide-react";
 import Image from "next/image";
 import { Transforms } from "slate";
 import { debounce } from "lodash";
+import { Button } from "@/components/ui/button";
+import { OptionMenu } from "../OptionMenu";
 
 export function Mapbox(props) {
-  const { editor, activePath } = useContext(EditorContext);
+  const { editor, activePath, setActivePath } = useContext(EditorContext);
 
   const { attributes, children, element } = props;
   const path = ReactEditor.findPath(editor, element);
   const { theme } = useTheme();
 
   const isDarkMode = theme === "dark";
-
+  const selected = useSelected();
   const defaultZoom = 11;
   const MAPTILER_ACCESS_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
   const MAP_ID = isDarkMode ? "streets-v2-dark" : "streets-v2";
@@ -57,8 +59,6 @@ export function Mapbox(props) {
     }, 300);
   }
 
-  console.log(anchor);
-
   return (
     <div
       className="relative rounded-md"
@@ -70,6 +70,24 @@ export function Mapbox(props) {
       data-id={element.id}
       data-path={JSON.stringify(path)}
     >
+      <div className="absolute  right-2 top-1 z-10 flex items-center gap-1 ">
+        <Button
+          size="xs"
+          onClick={(e) => {
+            e.stopPropagation();
+            console.log("settings");
+          }}
+          className="group h-[24px] w-[24px] border border-gray-400 bg-white px-0 hover:bg-gray-100 dark:border-gray-700 dark:bg-muted hover:dark:bg-muted/90"
+          style={{
+            zIndex: 1000,
+          }}
+          contentEditable={false}
+        >
+          <Settings className="w-4 stroke-foreground hover:stroke-foreground" />
+        </Button>
+
+        <OptionMenu element={element} />
+      </div>
       <Map
         provider={maptilerProvider}
         dprs={[1, 2]}
@@ -77,6 +95,7 @@ export function Mapbox(props) {
         zoom={zoom}
         attribution={false}
         onClick={(el) => {
+          el.event.stopPropagation();
           console.log(el.latLng);
           setLatLng(el.latLng);
         }}
@@ -93,6 +112,7 @@ export function Mapbox(props) {
             strokeWidth={1.5}
           />
         </Draggable>
+
         <a
           href="https://www.maptiler.com/"
           target="_blank"

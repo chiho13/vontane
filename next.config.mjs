@@ -31,6 +31,14 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "*",
+      },
+    ],
+  },
 
   webpack: (config, { isServer }) => {
     // Fixes npm packages that depend on `fs` module

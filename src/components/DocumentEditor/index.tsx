@@ -1780,7 +1780,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                       <div
                         ref={textEditorRef}
                         tabIndex={0}
-                        className="editable-scrollbar relative z-0 mx-auto block overflow-y-auto  overflow-x-hidden rounded-md pb-4 pt-4 focus:outline-none  focus-visible:border-gray-300"
+                        className="editable-scrollbar relative z-0 mx-auto block overflow-y-auto  overflow-x-hidden rounded-md pb-4 pr-1 pt-4 focus:outline-none  focus-visible:border-gray-300"
                       >
                         <Slate
                           key={currentSlateKey}

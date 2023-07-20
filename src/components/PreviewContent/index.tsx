@@ -5,6 +5,7 @@ import React, {
   useMemo,
   useState,
   forwardRef,
+  useCallback,
   useRef,
 } from "react";
 import { Path, Text, Node } from "slate";
@@ -12,8 +13,8 @@ import { BiSolidQuoteLeft, BiSolidQuoteRight } from "react-icons/bi";
 
 import { CollapsibleAudioPlayer } from "@/components/PreviewContent/PreviewElements/CollapsibleAudio";
 import { MCQ } from "@/components/PreviewContent/PreviewElements/MCQ";
-import Map from "react-map-gl";
 import { useTheme } from "next-themes";
+
 const renderElement = (
   node: { type: any; url: any },
   children:
@@ -171,31 +172,6 @@ export const PreviewContent = () => {
     <div
       className={`relative overflow-y-auto rounded-md border border-gray-300 p-3 dark:border-accent dark:bg-muted`}
     >
-      <div
-        className="relative rounded-md"
-        style={{
-          overflow: "hidden",
-          width: "100%",
-          height: "400px",
-        }}
-      >
-        <Map
-          mapLib={import("mapbox-gl")}
-          initialViewState={{
-            longitude: 0,
-            latitude: 55,
-            zoom: 3.5,
-          }}
-          style={{ width: "100%", height: "100%" }}
-          mapStyle={
-            theme === "dark"
-              ? "mapbox://styles/mapbox/navigation-guidance-night-v4"
-              : "mapbox://styles/mapbox/navigation-day-v1"
-          }
-          mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}
-        />
-      </div>
-
       {parseNodes(localValue)}
     </div>
   );

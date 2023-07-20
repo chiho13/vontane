@@ -16,3 +16,4 @@ export * from "./ImageElement";
 export * from "./LinkElement";
 export * from "./ElevenTTSWrapperElement";
 export * from "./BlockquoteElement";
+export * from "./Mapbox";

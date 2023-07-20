@@ -38,16 +38,16 @@ export const CollapsibleAudioPlayer = ({ node, children, index, nodes }) => {
       ${node.content && isNotFirstOverall ? "border-t" : ""}
       ${
         node.content && isLastTTS && !isLastNode ? "border-b" : ""
-      } mt-4 dark:border-accent ${flexInline ? "flex items-center " : ""} 
-      ${
-        node.audioplayer || (node.content && node.content.length < 40)
-          ? "rounded-md border"
-          : ""
-      }
+      } mt-4 dark:border-accent 
+      ${node.audioplayer ? "rounded-md border" : ""}
       `}
     >
       {node.audio_url && !containsMCQ && (
-        <div className="">
+        <div
+          className={`${
+            node.content && node.content.length < 40 ? "absolute left-3 " : ""
+          }`}
+        >
           <AudioPlayer
             id={node.id}
             audioURL={node.audio_url}
@@ -60,8 +60,13 @@ export const CollapsibleAudioPlayer = ({ node, children, index, nodes }) => {
         </div>
       )}
       {/* {BlockQuote} */}
-
-      {!node.audioplayer && children}
+      <div
+        className={`${
+          node.content && node.content.length < 40 ? "ml-[60px]" : ""
+        }`}
+      >
+        {!node.audioplayer && children}
+      </div>
     </div>
   );
 };

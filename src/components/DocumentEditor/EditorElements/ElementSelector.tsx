@@ -19,6 +19,7 @@ import {
   ListItem,
   ElevenTTSWrapper,
   BlockQuoteElement,
+  Mapbox,
 } from "./index";
 
 export function ElementSelector(props: {
@@ -36,7 +37,8 @@ export function ElementSelector(props: {
       return <SlideBreak {...props} />;
     case "tts":
       return <ElevenTTSWrapper {...props} />;
-
+    case "map":
+      return <Mapbox {...props} />;
     case "image":
       return <ImageElement {...props} />;
     case "heading-one":

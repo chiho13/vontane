@@ -246,38 +246,41 @@ export const TextSpeech = ({
           <GenerateButton onClick={generateAudio} element={element} />
         )}
       </div>
-      {!containsMCQ && selected && element.file_name && (
-        <div className="flex grow items-center">
-          <div className="flex items-center space-x-2 ">
-            <TooltipProvider delayDuration={300}>
-              <Tooltip>
-                <TooltipTrigger>
-                  <div className="flex items-center gap-2 ">
-                    <Switch
-                      id="audio-player"
-                      checked={audioChecked}
-                      onCheckedChange={showAudioPlayer}
-                    />
-                    <Label htmlFor="airplane-mode" className="text-xs">
-                      Audio only
-                    </Label>
-                  </div>
-                </TooltipTrigger>
+      {!containsMCQ &&
+        selected &&
+        element.file_name &&
+        textSpeech.length > 40 && (
+          <div className="flex grow items-center">
+            <div className="flex items-center space-x-2 ">
+              <TooltipProvider delayDuration={300}>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <div className="flex items-center gap-2 ">
+                      <Switch
+                        id="audio-player"
+                        checked={audioChecked}
+                        onCheckedChange={showAudioPlayer}
+                      />
+                      <Label htmlFor="airplane-mode" className="text-xs">
+                        Audio only
+                      </Label>
+                    </div>
+                  </TooltipTrigger>
 
-                <TooltipContent
-                  className="border-black  dark:bg-white dark:text-muted"
-                  side="top"
-                  sideOffset={10}
-                >
-                  <p className="text-[12px]">
-                    Show Full Audio Player in Preview
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+                  <TooltipContent
+                    className="border-black  dark:bg-white dark:text-muted"
+                    side="top"
+                    sideOffset={10}
+                  >
+                    <p className="text-[12px]">
+                      Show Full Audio Player in Preview
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
       {selected && element.content && audioData.content !== element.content && (
         <div className="mr-2 flex h-[34px] rounded bg-yellow-300 p-2 text-sm text-orange-900 shadow-md">

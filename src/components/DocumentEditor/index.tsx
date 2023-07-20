@@ -132,6 +132,8 @@ type CustomElement = {
   transcript?: Object;
   latex?: string; // Add this line for the latex string
   slideNumber?: Number;
+  latLng?: any;
+  zoom?: Number;
 };
 
 type CustomText = {

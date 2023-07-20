@@ -4126,6 +4126,11 @@
   "resolved" "https://registry.npmjs.org/pify/-/pify-2.3.0.tgz"
   "version" "2.3.0"
 
+"pigeon-maps@^0.21.3":
+  "integrity" "sha512-NbzISHHvMrcYBMBJ6NSSdTC1iGshSYOvsql9AqBfsE7KXni9xFIV9dkIWAfkKGCbafZ/0JysWZSp7zfg2piOFg=="
+  "resolved" "https://registry.npmjs.org/pigeon-maps/-/pigeon-maps-0.21.3.tgz"
+  "version" "0.21.3"
+
 "pirates@^4.0.1":
   "integrity" "sha512-saLsH7WeYYPiD25LDuLRRY/i+6HaPYr6G1OUlN39otzkSTxKnubR9RTxS3/Kk50s1g2JTgFwWQDQyplC5/SHZg=="
   "resolved" "https://registry.npmjs.org/pirates/-/pirates-4.0.6.tgz"

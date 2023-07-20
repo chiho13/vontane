@@ -20,14 +20,17 @@ import { genNodeId } from "@/hoc/withID";
 import { useArrowNavigation } from "@/hooks/useArrowNavigation";
 import { toggleBlock, isParentTTS, isParentMCQ } from "./helpers/toggleBlock";
 import { addImageBlock } from "./helpers/addImageBlock";
+import { addMapBlock } from "./helpers/addMapBlock";
 import { BsSoundwave } from "react-icons/bs";
 import { addTTSBlock } from "./helpers/addTTSBlock";
 import { TbBlockquote } from "react-icons/tb";
+import { TfiMapAlt } from "react-icons/tfi";
 
 interface MiniDropdownProps {
   isOpen: boolean;
   addMCQBlock: () => void;
   addEquationBlock: () => void;
+
   genBlock: (value: string) => void;
   setShowDropdown: (value: boolean) => void;
   activePath: string;
@@ -103,6 +106,17 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         ),
       },
       {
+        name: "Map",
+        description: "Embed a Map",
+        action: addMapBlockHandler,
+        icon: (
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-90">
+            <TfiMapAlt className="h-[30px] w-[30px] text-darkergray dark:text-darkergray" />
+          </div>
+        ),
+      },
+
+      {
         name: "Slide Break",
         description: "Slide mode: break the page",
         action: addSlideBreakHandler,
@@ -112,16 +126,16 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
           </div>
         ),
       },
-      {
-        name: "Add Quiz Block",
-        description: "Set a multiple choice question",
-        action: addMCQBlock,
-        icon: (
-          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
-            <CheckCircle className="stroke-darkergray" />
-          </div>
-        ),
-      },
+      // {
+      //   name: "Add Quiz Block",
+      //   description: "Set a multiple choice question",
+      //   action: addMCQBlock,
+      //   icon: (
+      //     <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
+      //       <CheckCircle className="stroke-darkergray" />
+      //     </div>
+      //   ),
+      // },
       // {
       //   name: "English MCQ",
       //   description: "English multiple choice question",
@@ -311,6 +325,17 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         open: true,
         element: "image",
       });
+      setActivePath(JSON.stringify(addedPath));
+    }
+
+    function addMapBlockHandler() {
+      const { newPath: addedPath, id } = addMapBlock(
+        editor,
+        JSON.parse(activePath)
+      );
+      setShowDropdown(false);
+      Transforms.select(editor, Editor.start(editor, addedPath));
+      ReactEditor.focus(editor);
       setActivePath(JSON.stringify(addedPath));
     }
 

@@ -120,7 +120,7 @@ export function Mapbox(props) {
             }}
             contentEditable={false}
           >
-            <Settings className="w-4 stroke-muted-foreground hover:stroke-muted-foreground" />
+            <Settings className="w-4 stroke-muted-foreground hover:stroke-muted-foreground dark:stroke-foreground" />
           </Button>
 
           <OptionMenu element={element} className="bg-white" />

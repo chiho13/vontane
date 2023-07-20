@@ -4,7 +4,7 @@ import { ReactEditor, useFocused, useSelected } from "slate-react";
 
 import { useTheme } from "next-themes";
 
-import { Map, Marker, Draggable, Point } from "pigeon-maps";
+import { Map, Marker, Draggable, Point, ZoomControl } from "pigeon-maps";
 import { maptiler } from "pigeon-maps/providers";
 import { MapPin, Settings } from "lucide-react";
 import Image from "next/image";
@@ -65,6 +65,7 @@ export function Mapbox(props) {
         ref={ref}
         data-id={element.id}
         data-path={JSON.stringify(path)}
+        contentEditable={false}
       >
         <div
           className={`absolute -right-[3px] top-0 flex h-full items-center`}
@@ -140,6 +141,7 @@ export function Mapbox(props) {
             // Transforms.setNodes(editor, { zoom }, { at: path });
           }}
         >
+          <ZoomControl />
           <Draggable offset={[25, 50]} anchor={anchor} onDragEnd={setLatLng}>
             <MapPin
               size={50}
@@ -163,7 +165,6 @@ export function Mapbox(props) {
             />
           </a>
         </Map>
-        {children}
       </div>
     </div>
   );

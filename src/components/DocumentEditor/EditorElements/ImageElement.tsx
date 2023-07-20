@@ -230,9 +230,6 @@ export const ImageElement = React.memo(
             tabIndex={-1}
             className={`flex justify-${align}`}
             contentEditable={false}
-            style={{
-              width: "calc(100% - 10px)",
-            }}
           >
             <div className="relative rounded-md bg-gray-200 dark:bg-background">
               <Image

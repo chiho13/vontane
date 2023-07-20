@@ -75,7 +75,7 @@ export const ImageElement = React.memo(
     const workspaceId = router.query.workspaceId as string;
 
     const [isResizing, setIsResizing] = useState(false);
-    const [imageWidth, setWidth] = useState(element.width); // default width
+    const [imageWidth, setWidth] = useState(element.width || "100%"); // default width
     const [imageHeight, setHeight] = useState(element.height); // default height
 
     const [imageURL, setImageURL] = useState(element.url);
@@ -183,8 +183,8 @@ export const ImageElement = React.memo(
           <>
             <div
               tabIndex={-1}
-              className={`hover:bg-gray-muted relative flex  cursor-pointer items-center rounded-md bg-gray-100 p-2 transition dark:bg-secondary hover:dark:bg-accent 
-      dark:hover:bg-background/70
+              className={`hover:bg-gray-muted relative flex  cursor-pointer items-center rounded-md bg-gray-100 p-2 transition dark:bg-secondary dark:hover:bg-background/70 
+      hover:dark:bg-accent
       `}
               contentEditable={false}
               onMouseDown={(e) => {
@@ -221,7 +221,7 @@ export const ImageElement = React.memo(
 
               {children}
             </div>
-            <div className="absolute  top-0 right-2 z-10 flex opacity-0 group-hover:opacity-100 ">
+            <div className="absolute  right-2 top-0 z-10 flex opacity-0 group-hover:opacity-100 ">
               <OptionMenu element={element} />
             </div>
           </>
@@ -256,7 +256,7 @@ export const ImageElement = React.memo(
                 </div>
               </div>
               {tempBase64[element.id] && (
-                <div className="absolute top-1 left-1 z-10 flex items-center gap-1  ">
+                <div className="absolute left-1 top-1 z-10 flex items-center gap-1  ">
                   {element.uploading ? (
                     <div className="rounded-md bg-black bg-opacity-50 p-[4px]">
                       <LoadingSpinner />
@@ -268,7 +268,7 @@ export const ImageElement = React.memo(
                   )}
                 </div>
               )}
-              <div className="absolute top-0 right-1 z-10 flex items-center gap-1  ">
+              <div className="absolute right-1 top-0 z-10 flex items-center gap-1  ">
                 {!element.uploading && (
                   <>
                     <BlockAlign element={element} />
@@ -399,6 +399,8 @@ export const ImageEmbedLink = () => {
       url: newUrl,
       align: "start",
       file_name: newUrl,
+      width: 700,
+      height: 400,
     };
     Transforms.setNodes(editor, newElement, { at: JSON.parse(activePath) });
 
@@ -574,7 +576,7 @@ export const ImageEmbedLink = () => {
   return (
     <Tabs defaultValue={tab} onValueChange={handleTabChange}>
       <TabsList
-        className={`ring-gray ring-red mb-3 grid h-10 w-full grid-cols-3 rounded-none rounded-lg bg-lightgray dark:bg-background`}
+        className={`ring-gray ring-red mb-3 grid h-10 w-full grid-cols-3 rounded-lg rounded-none bg-lightgray dark:bg-background`}
       >
         <TabsTrigger
           value="upload"
@@ -607,7 +609,7 @@ export const ImageEmbedLink = () => {
                 <FormItem>
                   {/* <FormLabel>Upload Image</FormLabel> */}
                   <FormControl>
-                    <label className=" flex h-10 cursor-pointer justify-center rounded bg-primary py-2 px-4 text-center text-primary-foreground outline-0 transition duration-300 hover:bg-primary/90">
+                    <label className=" flex h-10 cursor-pointer justify-center rounded bg-primary px-4 py-2 text-center text-primary-foreground outline-0 transition duration-300 hover:bg-primary/90">
                       Upload
                       <input
                         type="file"
@@ -687,7 +689,7 @@ export const ImageEmbedLink = () => {
             />
             <Button
               variant={"outline"}
-              className="absolute top-1 right-[10px] h-[30px] w-[30px] border-0 p-1"
+              className="absolute right-[10px] top-1 h-[30px] w-[30px] border-0 p-1"
               type="submit"
             >
               {isGenerating ? (

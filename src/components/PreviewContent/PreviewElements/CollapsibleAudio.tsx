@@ -45,7 +45,7 @@ export const CollapsibleAudioPlayer = ({ node, children, index, nodes }) => {
       {node.audio_url && !containsMCQ && (
         <div
           className={`${
-            node.content && node.content.length < 40 ? "absolute left-3 " : ""
+            node.content && node.content.length < 40 ? "absolute left-1 " : ""
           }`}
         >
           <AudioPlayer
@@ -62,7 +62,7 @@ export const CollapsibleAudioPlayer = ({ node, children, index, nodes }) => {
       {/* {BlockQuote} */}
       <div
         className={`${
-          node.content && node.content.length < 40 ? "ml-[60px]" : ""
+          node.content && node.content.length < 40 ? "ml-[70px]" : ""
         }`}
       >
         {!node.audioplayer && children}

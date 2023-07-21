@@ -49,6 +49,7 @@ export function MapBlock(props) {
           onBoundsChanged={({ zoom }) => {
             setZoom(zoom);
           }}
+          metaWheelZoom={true}
         >
           <ZoomControl />
           <Marker offset={[10, 15]} anchor={element.latLng}>

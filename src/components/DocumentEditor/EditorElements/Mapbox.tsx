@@ -140,6 +140,7 @@ export function Mapbox(props) {
             setZoom(zoom);
             // Transforms.setNodes(editor, { zoom }, { at: path });
           }}
+          metaWheelZoom={true}
         >
           <ZoomControl />
           <Draggable offset={[25, 50]} anchor={anchor} onDragEnd={setLatLng}>

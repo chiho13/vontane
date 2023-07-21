@@ -6,7 +6,7 @@ import { useTheme } from "next-themes";
 
 import { Map, Marker, Draggable, Point, ZoomControl } from "pigeon-maps";
 import { maptiler } from "pigeon-maps/providers";
-import { MapPin, Settings } from "lucide-react";
+import { MapPin, Settings, Map as MapIcon } from "lucide-react";
 import Image from "next/image";
 import { Transforms } from "slate";
 import { debounce } from "lodash";
@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Position, useResizeBlock } from "@/hooks/useResizeBlock";
 import { block } from "million";
 import { BlockAlign } from "@/components/BlockAlign";
+import Link from "next/link";
 
 export function MapBlock(props) {
   const { editor, activePath, setActivePath } = useContext(EditorContext);
@@ -52,7 +53,6 @@ export function MapBlock(props) {
           attribution={false}
           onBoundsChanged={({ center, zoom }) => {
             setZoom(zoom);
-            // Transforms.setNodes(editor, { zoom }, { at: path });
           }}
         >
           <ZoomControl />
@@ -78,6 +78,18 @@ export function MapBlock(props) {
               alt="map tiler"
             />
           </a>
+          <Link
+            href={`https://www.google.com/maps/?q=${element.latLng[0]},${element.latLng[1]}`}
+            target="_blank"
+          >
+            <Button
+              variant="outline"
+              className="absolute bottom-2 right-2 border bg-accent"
+              size="xs"
+            >
+              <MapIcon className="w-5" />
+            </Button>
+          </Link>
         </Map>
       </div>
     </div>

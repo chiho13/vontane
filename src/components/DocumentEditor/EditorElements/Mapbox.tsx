@@ -108,7 +108,7 @@ export function Mapbox(props) {
         </div>
         <div className="absolute  right-2 top-1 z-10 flex items-center gap-1 ">
           <BlockAlign element={element} />
-          <Button
+          {/* <Button
             size="xs"
             onClick={(e) => {
               e.stopPropagation();
@@ -121,7 +121,7 @@ export function Mapbox(props) {
             contentEditable={false}
           >
             <Settings className="w-4 stroke-muted-foreground hover:stroke-muted-foreground dark:stroke-foreground" />
-          </Button>
+          </Button> */}
 
           <OptionMenu element={element} className="bg-white" />
         </div>

@@ -48,7 +48,7 @@ export const useResizeBlock = (
         if (pos === Position.Bottom) {
           const newHeight =
             e.clientY - (ref.current?.getBoundingClientRect().top || 0);
-          setHeight(Math.min(Math.max(newHeight, 200), 800));
+          setHeight(Math.min(Math.max(newHeight, 150), 800));
         } else {
           const newWidth =
             pos === Position.Left

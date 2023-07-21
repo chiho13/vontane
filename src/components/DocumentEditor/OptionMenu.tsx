@@ -156,7 +156,7 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
     return (
       <>
         <div
-          className={`option-menu-container relative top-1  ${
+          className={` relative  flex items-center  ${
             activeDropdown === element.id && "opacity-100"
           }`}
           onMouseDown={(e) => {
@@ -217,11 +217,7 @@ export const OptionMenu = forwardRef<HTMLDivElement, OptionMenuProps>(
           <TooltipTrigger>
             <OptionDropdown element={element} ref={ref} />
           </TooltipTrigger>
-          <TooltipContent
-            className="border-black  dark:bg-white dark:text-muted"
-            side="top"
-            sideOffset={10}
-          >
+          <TooltipContent side="top" sideOffset={10}>
             <p className="text-[12px]">Actions</p>
           </TooltipContent>
         </Tooltip>

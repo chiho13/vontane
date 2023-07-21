@@ -401,11 +401,7 @@ function AudioPlayer({
                 </DropdownMenuContent>
               </DropdownMenu>
             </TooltipTrigger>
-            <TooltipContent
-              className="border-black  dark:bg-white dark:text-muted"
-              side="top"
-              sideOffset={10}
-            >
+            <TooltipContent side="top" sideOffset={10}>
               <p className="text-[12px]">Playback Speed</p>
             </TooltipContent>
           </Tooltip>

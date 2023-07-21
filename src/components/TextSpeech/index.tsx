@@ -232,11 +232,7 @@ export const TextSpeech = ({
                 />
               </TooltipTrigger>
 
-              <TooltipContent
-                className="border-black  dark:bg-white dark:text-muted"
-                side="top"
-                sideOffset={10}
-              >
+              <TooltipContent side="top" sideOffset={10}>
                 <p className="text-[12px]">Choose Voice</p>
               </TooltipContent>
             </Tooltip>

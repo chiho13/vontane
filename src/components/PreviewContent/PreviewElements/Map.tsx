@@ -13,9 +13,12 @@ import Link from "next/link";
 export function MapBlock(props) {
   const { element } = props;
 
-  const { theme } = useTheme();
+  const { theme, resolvedTheme } = useTheme();
 
-  const isDarkMode = theme === "dark";
+  // Default theme to system settings and fallback to 'light' if undefined.
+  const currentTheme = theme ?? resolvedTheme ?? "light";
+
+  const isDarkMode = currentTheme === "dark";
 
   const MAPTILER_ACCESS_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
   const MAP_ID = isDarkMode ? "streets-v2-dark" : "streets-v2";

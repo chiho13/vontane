@@ -25,7 +25,7 @@ export function MapBlock(props) {
   const [zoom, setZoom] = useState(element.zoom || 11);
 
   return (
-    <div className={` mb-3 mt-3 flex justify-${element.align}`}>
+    <div className={` mb-5 mt-5 flex justify-${element.align}`}>
       <div
         className="group relative  rounded-md"
         tabIndex={-1}

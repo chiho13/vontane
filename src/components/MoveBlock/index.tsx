@@ -35,7 +35,7 @@ export const MoveBlock: React.FC<MoveBlockProps> = ({ editor, path }) => {
 
   const selectedBlockIndex = path[0];
   return (
-    <div className="absolute  top-[7px] left-[10px] flex flex-col">
+    <div className="absolute  left-[10px] top-[7px] flex flex-col">
       {selectedBlockIndex && selectedBlockIndex > 1 && (
         <TooltipProvider delayDuration={0}>
           <Tooltip>
@@ -54,11 +54,7 @@ export const MoveBlock: React.FC<MoveBlockProps> = ({ editor, path }) => {
                 />
               </button>
             </TooltipTrigger>
-            <TooltipContent
-              className="border-black  dark:bg-white dark:text-muted"
-              side="left"
-              sideOffset={10}
-            >
+            <TooltipContent side="left" sideOffset={10}>
               <p className="text-[12px]">Move up</p>
             </TooltipContent>
           </Tooltip>
@@ -83,11 +79,7 @@ export const MoveBlock: React.FC<MoveBlockProps> = ({ editor, path }) => {
                   />
                 </button>
               </TooltipTrigger>
-              <TooltipContent
-                className="border-black  dark:bg-white dark:text-muted"
-                side="left"
-                sideOffset={10}
-              >
+              <TooltipContent side="left" sideOffset={10}>
                 <p className="text-[12px]">Move down</p>
               </TooltipContent>
             </Tooltip>

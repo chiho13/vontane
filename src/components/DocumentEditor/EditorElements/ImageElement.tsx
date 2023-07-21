@@ -157,11 +157,7 @@ export const ImageElement = React.memo(
             </div>
           </>
         ) : (
-          <div
-            tabIndex={-1}
-            className={`flex justify-${align}`}
-            contentEditable={false}
-          >
+          <div className={`flex justify-${align}`} {...attributes}>
             <div className="relative rounded-md bg-gray-200 dark:bg-background">
               <Image
                 src={base64URL}
@@ -170,6 +166,7 @@ export const ImageElement = React.memo(
                 ref={ref}
                 className="rounded-md"
                 alt="alt"
+                tabIndex={-1}
               />
               <div
                 className={`absolute -right-[3px] top-0 flex h-full items-center`}
@@ -210,7 +207,7 @@ export const ImageElement = React.memo(
                   )}
                 </div>
               )}
-              <div className="absolute right-1 top-0 z-10 flex items-center gap-1  ">
+              <div className="absolute right-1 top-1 z-10 flex items-center gap-1  ">
                 {!element.uploading && (
                   <>
                     <BlockAlign element={element} />

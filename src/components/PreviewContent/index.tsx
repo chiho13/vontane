@@ -13,10 +13,17 @@ import { BiSolidQuoteLeft, BiSolidQuoteRight } from "react-icons/bi";
 
 import { CollapsibleAudioPlayer } from "@/components/PreviewContent/PreviewElements/CollapsibleAudio";
 import { MCQ } from "@/components/PreviewContent/PreviewElements/MCQ";
+import { MapBlock } from "@/components/PreviewContent/PreviewElements/Map";
 import { useTheme } from "next-themes";
 
 const renderElement = (
-  node: { type: any; url: any },
+  node: {
+    align: any;
+    height: string | number;
+    width: string | number;
+    type: any;
+    url: any;
+  },
   children:
     | string
     | number
@@ -36,7 +43,20 @@ const renderElement = (
           {children}
         </p>
       );
+    case "image":
+      return (
+        <div className={`flex justify-${node.align}`}>
+          <img
+            src={node.url}
+            width={node.width}
+            height={node.height}
+            className="rounded-md"
+          />
+        </div>
+      );
 
+    case "map":
+      return <MapBlock element={node} />;
     case "block-quote":
       return (
         <blockquote className="text-red  relative mb-3  ml-3 mt-4 border-l-4 border-gray-400 pl-4 text-gray-500 dark:text-gray-300 ">

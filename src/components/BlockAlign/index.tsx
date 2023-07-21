@@ -114,11 +114,7 @@ export function BlockAlign({ element }: any) {
           </DropdownMenu>
         </TooltipTrigger>
         {dropdownOpen ? null : (
-          <TooltipContent
-            className="border-black  dark:bg-white dark:text-muted"
-            side="top"
-            sideOffset={10}
-          >
+          <TooltipContent side="top" sideOffset={10}>
             <p className="text-[12px]">Align</p>
           </TooltipContent>
         )}

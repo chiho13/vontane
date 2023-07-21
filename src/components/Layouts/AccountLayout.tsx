@@ -298,10 +298,7 @@ const Layout: React.FC<LayoutProps> = ({
               )}
             </AnimatedIcon>
           </TooltipTrigger>
-          <TooltipContent
-            className="border-black  dark:bg-white dark:text-muted"
-            side="left"
-          >
+          <TooltipContent side="left">
             <p className="text-[12px]">Lock Sidebar Open</p>
           </TooltipContent>
         </Tooltip>

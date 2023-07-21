@@ -1,24 +1,16 @@
-import { useContext, useEffect, useState, useRef, useCallback } from "react";
-import { EditorContext } from "@/contexts/EditorContext";
-import { ReactEditor, useFocused, useSelected } from "slate-react";
+import { useState } from "react";
 
 import { useTheme } from "next-themes";
 
-import { Map, Marker, Draggable, Point, ZoomControl } from "pigeon-maps";
+import { Map, Marker, ZoomControl } from "pigeon-maps";
 import { maptiler } from "pigeon-maps/providers";
 import { MapPin, Settings, Map as MapIcon } from "lucide-react";
 import Image from "next/image";
-import { Transforms } from "slate";
-import { debounce } from "lodash";
 import { Button } from "@/components/ui/button";
-import { Position, useResizeBlock } from "@/hooks/useResizeBlock";
-import { block } from "million";
-import { BlockAlign } from "@/components/BlockAlign";
+
 import Link from "next/link";
 
 export function MapBlock(props) {
-  const { editor, activePath, setActivePath } = useContext(EditorContext);
-
   const { element } = props;
 
   const { theme } = useTheme();
@@ -51,7 +43,7 @@ export function MapBlock(props) {
           center={element.latLng}
           zoom={zoom}
           attribution={false}
-          onBoundsChanged={({ center, zoom }) => {
+          onBoundsChanged={({ zoom }) => {
             setZoom(zoom);
           }}
         >

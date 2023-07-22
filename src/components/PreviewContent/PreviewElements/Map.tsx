@@ -80,7 +80,7 @@ export function MapBlock(props) {
           >
             <Button
               variant="outline"
-              className="absolute bottom-2 right-2 border bg-accent"
+              className="absolute bottom-2 right-2 h-[32px] w-[32px] border bg-accent p-0 "
               size="xs"
             >
               <MapIcon className="w-5" />

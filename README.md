@@ -42,7 +42,6 @@ currently under development (April)
 - [x] text to speech element wrapper
 - [x] deploy to staging
 - [x] preview content
+- [x] map block
 - [] speech to text - audio timestamp - replace audio player seeking - for quizzes and custom stuff
-
-- [] map block ?
 - [] audio trimmer

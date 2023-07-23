@@ -170,23 +170,23 @@ export const PreviewContent = () => {
     setLocalValue(fromEditor.children);
   }, [fromEditor.children]);
 
-  const isMCQPresent = (children: any[]) => {
-    if (Array.isArray(children)) {
-      for (let child of children) {
-        if (child.node && child.node.type === "mcq") {
-          return true;
-        }
+  // const isMCQPresent = (children: any[]) => {
+  //   if (Array.isArray(children)) {
+  //     for (let child of children) {
+  //       if (child.node && child.node.type === "mcq") {
+  //         return true;
+  //       }
 
-        // If the child has its own children, check them too
-        if (Array.isArray(child.children)) {
-          if (isMCQPresent(child.children)) {
-            return true;
-          }
-        }
-      }
-    }
-    return false;
-  };
+  //       // If the child has its own children, check them too
+  //       if (Array.isArray(child.children)) {
+  //         if (isMCQPresent(child.children)) {
+  //           return true;
+  //         }
+  //       }
+  //     }
+  //   }
+  //   return false;
+  // };
 
   return (
     <div

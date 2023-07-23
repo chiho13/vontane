@@ -182,8 +182,8 @@ const Layout: React.FC<LayoutProps> = ({
   const router = useRouter();
 
   const { updatedWorkspace } = useWorkspaceTitleUpdate();
-  const [isLocked, setIsLocked] = useLocalStorage("isLocked", true);
-  const [isOpen, setIsOpen] = useLocalStorage("isOpen", true);
+  const [isLocked, setIsLocked] = useLocalStorage("isLocked", false);
+  const [isOpen, setIsOpen] = useLocalStorage("isOpen", false);
 
   const desktopbreakpoint = window.screen.width > breakpoints.lg;
 
@@ -313,7 +313,7 @@ const Layout: React.FC<LayoutProps> = ({
           <TooltipTrigger>
             <ChevronsLeft className="text-gray-400 dark:text-muted-foreground dark:group-hover:text-foreground" />
           </TooltipTrigger>
-          <TooltipContent className="dark:bg-white dark:text-muted">
+          <TooltipContent>
             <p className="text-[12px]">Close Sidebar</p>
           </TooltipContent>
         </Tooltip>
@@ -431,7 +431,7 @@ const Layout: React.FC<LayoutProps> = ({
                       width={22}
                     />{" "}
                     <span className="ml-4 text-sm text-darkergray  dark:text-foreground">
-                      Create Workspace
+                      Add Page
                     </span>
                   </button>
                 </SidebarItem>

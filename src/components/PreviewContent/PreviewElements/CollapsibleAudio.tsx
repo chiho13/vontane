@@ -32,6 +32,7 @@ export const CollapsibleAudioPlayer = ({ node, children, index, nodes }) => {
     .findIndex((node) => node.type === "tts");
   const isLastTTS = nodes.length - 1 - lastTTSIndex === nodes.indexOf(node);
   const isNotLastOverall = nodeIndex === nodes.length;
+  console.log("sfsdfsf", node.audioplayer);
   return (
     <div
       className={`mb-3 py-3
@@ -65,7 +66,7 @@ export const CollapsibleAudioPlayer = ({ node, children, index, nodes }) => {
           node.content && node.content.length < 40 ? "ml-[70px]" : ""
         }`}
       >
-        {!node.audioplayer && children}
+        {!JSON.parse(node.audioplayer) && children}
       </div>
     </div>
   );

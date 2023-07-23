@@ -120,7 +120,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
   const containsTtsNode = (nodes) => {
     return nodes.some((node) => {
       // if the node itself is of type "tts"
-      if (node.type === "tts") {
+      if (node.type === "tts" && "url" in node) {
         return true;
       }
 
@@ -193,7 +193,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
         setOpenDropdown={setOpenDropdown}
       />
       <div
-        className="m-w-full mt-2 hidden h-full grow overflow-y-auto rounded-md  border border-gray-300 bg-white  dark:border-accent dark:bg-muted dark:text-lightgray lg:block"
+        className="m-w-full sticky top-[30px] mt-2 hidden h-full grow overflow-y-auto rounded-md  border border-gray-300 bg-white  dark:border-accent dark:bg-muted dark:text-lightgray lg:block"
         style={rightSidebarStyle}
       >
         <div className="flex-grow p-2 pb-3">

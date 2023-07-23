@@ -530,12 +530,12 @@ export const ImageEmbedLink = () => {
         >
           Embed Link
         </TabsTrigger>
-        <TabsTrigger
+        {/* <TabsTrigger
           value="aiimage"
           className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-accent dark:data-[state=active]:text-foreground `}
         >
           AI Image
-        </TabsTrigger>
+        </TabsTrigger> */}
       </TabsList>
 
       <TabsContent value="upload">
@@ -604,7 +604,7 @@ export const ImageEmbedLink = () => {
           </form>
         </Form>
       </TabsContent>
-      <TabsContent value="aiimage">
+      {/* <TabsContent value="aiimage">
         <Form {...aiImageForm}>
           <form
             onSubmit={aiImageForm.handleSubmit(createImage)}
@@ -686,7 +686,7 @@ export const ImageEmbedLink = () => {
               ))}
           </div>
         </Form>
-      </TabsContent>
+      </TabsContent> */}
     </Tabs>
   );
 };

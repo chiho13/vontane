@@ -29,7 +29,7 @@ import scrollIntoView from "scroll-into-view-if-needed";
 import { isEqual } from "lodash";
 import { EditorContext } from "@/contexts/EditorContext";
 import { Slate, Editable, withReact, ReactEditor } from "slate-react";
-import { Plus, Sidebar } from "lucide-react";
+import { Crown, Plus, Sidebar } from "lucide-react";
 import {
   VscLayoutSidebarRightOff,
   VscLayoutSidebarRight,
@@ -52,6 +52,17 @@ import { DraggableCore } from "react-draggable";
 import { Portal } from "react-portal";
 import { Toolbar } from "@/components/Toolbar";
 import { up_animation_props } from "@/config/framer";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/ui/dialog";
 
 import { slightbouncey } from "@/config/framer";
 import {
@@ -100,6 +111,8 @@ import { breakpoints } from "@/utils/breakpoints";
 import { useLocalStorage } from "usehooks-ts";
 import { HOTKEYS } from "@/config/hotkeys";
 import isHotkey from "is-hotkey";
+
+import Upgrade from "@/components/Upgrade";
 
 interface DocumentEditorProps {
   workspaceId: string;
@@ -1751,6 +1764,25 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               transition: "right 0.3s ease-in-out, width 0.3s ease-in-out",
             }}
           >
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="xs"
+                  className="absolute -top-[40px] left-0 mb-2 border border-gray-300"
+                  // onClick={upgradeAccount}
+                >
+                  <span className="mr-4 text-xs text-foreground  dark:text-foreground ">
+                    Shop Add-ons
+                  </span>
+                  <Crown className="w-5 fill-orange-200 text-orange-500 dark:text-foreground" />{" "}
+                </Button>
+              </DialogTrigger>
+
+              <DialogContent className="absolute max-h-[650px]  overflow-y-auto p-0 sm:max-w-[950px]">
+                <Upgrade />
+              </DialogContent>
+            </Dialog>
             <div className="absolute right-3 top-2 z-10 flex items-center gap-2 rounded-md border border-gray-300  bg-gray-200 px-2  py-1 text-xs text-slate-500 dark:border-gray-600 dark:bg-accent dark:text-slate-200">
               {" "}
               {syncStatus === "syncing"
@@ -1805,7 +1837,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                             <Editable
                               className=" relative"
                               style={{
-                                height: "calc(100vh - 170px)",
+                                height: "calc(100vh - 155px)",
                               }}
                               decorate={decorate}
                               renderElement={renderElement as any}

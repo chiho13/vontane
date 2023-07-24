@@ -49,14 +49,10 @@ export const checkoutRouter = createTRPCRouter({
             quantity: 1,
           },
         ],
-        mode: "subscription",
+        mode: "payment",
         allow_promotion_codes: true,
-        subscription_data: {
-          trial_from_plan: false,
-          metadata: {},
-        },
-        success_url: `${getURL()}/account/upgrade?success=true`,
-        cancel_url: `${getURL()}/account/upgrade?canceled=true`,
+        success_url: `${getURL()}`,
+        cancel_url: `${getURL()}`,
       });
 
       return { checkoutUrl: checkoutSession.url };

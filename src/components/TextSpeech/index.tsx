@@ -281,9 +281,7 @@ export const TextSpeech = ({
                     side="top"
                     sideOffset={10}
                   >
-                    <p className="text-[12px]">
-                      Show Full Audio Player in Preview
-                    </p>
+                    <p className="text-[12px]">Show Only Audio Player</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>

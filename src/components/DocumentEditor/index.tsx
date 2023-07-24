@@ -116,6 +116,7 @@ import Upgrade from "@/components/Upgrade";
 
 interface DocumentEditorProps {
   workspaceId: string;
+  credits: Number;
   handleTextChange?: (value: any) => void;
   initialSlateValue?: any;
   setSyncStatus: (value: any) => void;
@@ -216,6 +217,7 @@ import { z } from "zod";
 
 export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   workspaceId,
+  credits,
   setSyncStatus,
   syncStatus,
   handleTextChange,
@@ -224,6 +226,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 }) => {
   const theme = useTheme();
   const router = useRouter();
+
+  const { upgrade, ...rest } = router.query;
   const { isLocked } = useContext(LayoutContext);
   const {
     editor,
@@ -266,6 +270,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const [dropdownTop, setDropdownTop] = useState<number>(0);
   const [dropdownLeft, setDropdownLeft] = useState<number>(0);
 
+  const [openUpgrade, setOpenUpgrade] = useState(false);
+
   const [dropdownEditBlockTop, setDropdownEditBlockTop] = useState<
     number | null
   >(0);
@@ -298,6 +304,36 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     const randomNumber = Math.floor(Math.random() * 1000);
     return `slate-key-${timestamp}-${randomNumber}`;
   };
+
+  const onOpenChangeUpgrade = (value) => {
+    setOpenUpgrade(value);
+
+    if (value) {
+      router.push({
+        pathname: router.pathname,
+        query: { ...router.query, upgrade: "true" },
+      });
+    } else {
+      router.push(
+        {
+          pathname: router.pathname,
+          query: rest,
+        },
+        undefined,
+        { shallow: true }
+      );
+    }
+  };
+
+  useEffect(() => {
+    if (upgrade) {
+      setOpenUpgrade(Boolean(upgrade));
+    } else {
+      // This line will be executed when upgradePop changes to a falsy value
+
+      setOpenUpgrade(false);
+    }
+  }, [upgrade]);
 
   useEffect(() => {
     setValue(initialSlateValue);
@@ -1697,10 +1733,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   const [rightSideBarWidth, setRightSideBarWidth] = useLocalStorage(
     "sidebarWidth",
-    410
+    390
   );
 
-  const minSidebarWidth = 410;
+  const minSidebarWidth = 390;
   const maxSidebarWidth = 570;
   const { elementWidth, handleDrag, isDraggingRightSideBar, handleDragStop } =
     useResizeSidebar(rightSideBarWidth, minSidebarWidth, maxSidebarWidth);
@@ -1714,13 +1750,13 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     if (windowSize.width > breakpoints.xl) {
       setRightSideBarWidth(elementWidth);
     } else {
-      setRightSideBarWidth(410);
+      setRightSideBarWidth(390);
     }
   }, [elementWidth, windowSize]);
 
   return (
     <div
-      className="relative mx-auto mt-[40px] lg:max-w-[1000px] xl:max-w-[1400px]"
+      className="relative mx-auto mt-[70px] lg:max-w-[1000px] xl:max-w-[1400px]"
       style={{
         width:
           windowSize.width > breakpoints.xl
@@ -1760,29 +1796,41 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     ? "50vw"
                     : "100vw"
                   : "95vw",
-              height: "calc(100vh - 120px)",
+              height: "calc(100vh - 150px)",
               transition: "right 0.3s ease-in-out, width 0.3s ease-in-out",
             }}
           >
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="xs"
-                  className="absolute -top-[40px] left-0 mb-2 border border-gray-300"
-                  // onClick={upgradeAccount}
-                >
-                  <span className="mr-4 text-xs text-foreground  dark:text-foreground ">
-                    Shop Add-ons
-                  </span>
-                  <Crown className="w-5 fill-orange-200 text-orange-500 dark:text-foreground" />{" "}
-                </Button>
-              </DialogTrigger>
+            <div className="absolute -top-[40px] left-0">
+              <div className="flex items-center">
+                <Dialog open={openUpgrade} onOpenChange={onOpenChangeUpgrade}>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="xs"
+                      className=" border border-gray-300"
+                      // onClick={upgradeAccount}
+                    >
+                      <span className="mr-4 text-xs text-foreground  dark:text-foreground ">
+                        Shop Add-ons
+                      </span>
+                      <Crown className="w-5 fill-orange-200 text-orange-500 dark:text-orange-300" />{" "}
+                    </Button>
+                  </DialogTrigger>
 
-              <DialogContent className="absolute max-h-[650px]  overflow-y-auto p-0 sm:max-w-[950px]">
-                <Upgrade />
-              </DialogContent>
-            </Dialog>
+                  <DialogContent className="absolute max-h-[650px]  overflow-y-auto p-0 sm:max-w-[950px]">
+                    <Upgrade />
+                  </DialogContent>
+                </Dialog>
+                <span className="ml-4 rounded-md  p-1  px-2 text-sm dark:border-white">
+                  Credits:
+                </span>
+                <span className="text-bold text-sm">
+                  {" "}
+                  {credits && String(credits)}
+                </span>
+              </div>
+            </div>
+
             <div className="absolute right-3 top-2 z-10 flex items-center gap-2 rounded-md border border-gray-300  bg-gray-200 px-2  py-1 text-xs text-slate-500 dark:border-gray-600 dark:bg-accent dark:text-slate-200">
               {" "}
               {syncStatus === "syncing"
@@ -1837,7 +1885,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                             <Editable
                               className=" relative"
                               style={{
-                                height: "calc(100vh - 155px)",
+                                height: "calc(100vh - 185px)",
                               }}
                               decorate={decorate}
                               renderElement={renderElement as any}
@@ -2061,7 +2109,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                   isDraggingRightSideBar && "opacity-100"
                 } flex items-center opacity-0 transition duration-300 xl:pointer-events-auto xl:hover:opacity-100 `}
                 style={{
-                  height: "calc(100vh - 120px)",
+                  height: "calc(100vh - 150px)",
                 }}
               >
                 <div className="mx-auto mt-4 block h-[200px] w-[8px]  cursor-col-resize rounded bg-[#b4b4b4] dark:bg-muted-foreground"></div>

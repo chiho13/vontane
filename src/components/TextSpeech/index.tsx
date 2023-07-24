@@ -19,7 +19,7 @@ import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor, useSelected } from "slate-react";
 import AudioPLayer from "@/components/AudioPlayer";
 import { extractTextValues } from "../DocumentEditor/helpers/extractText";
-import { Info } from "lucide-react";
+import { Crown, Info } from "lucide-react";
 import LoadingSpinner from "@/icons/LoadingSpinner";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -30,6 +30,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { UserContext } from "@/contexts/UserContext";
+import { Button } from "../ui/button";
+import { text } from "stream/consumers";
 
 const useDownloadFile = (url, fileName) => {
   const [file, setFile] = useState<any>(null);
@@ -85,6 +88,8 @@ export const TextSpeech = ({
   const selected = useSelected();
   const { editor } = useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);
+
+  const { profile }: any = useContext(UserContext);
 
   const createTTSAudio = async () => {
     setAudioIsLoading(true);
@@ -183,14 +188,21 @@ export const TextSpeech = ({
     event.preventDefault();
     event.stopPropagation();
 
+    if (profile?.credits < 10 || textSpeech.length > profile?.credits) {
+      router.push({
+        pathname: router.pathname,
+        query: { ...router.query, upgrade: "true" },
+      });
+
+      return;
+    }
+
     let newLoadingState = { ...rightBarAudioIsLoading };
     newLoadingState[element.id] = true;
     setRightBarAudioIsLoading(newLoadingState);
     setShowRightSidebar(true);
     setTab("properties");
     createTTSAudio();
-    console.log("lol", path);
-    console.log(textSpeech);
   }
 
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
@@ -238,6 +250,7 @@ export const TextSpeech = ({
             </Tooltip>
           </TooltipProvider>
         </div>
+
         {selected && (
           <GenerateButton onClick={generateAudio} element={element} />
         )}

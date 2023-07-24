@@ -10,6 +10,7 @@ import {
   handleInvoicePaid,
   handleSubscriptionCanceled,
   handleSubscriptionCreatedOrUpdated,
+  handlePaymentSucceeded,
 } from "@/server/stripe/stripe-webhook-handlers";
 
 import { env } from "@/env.mjs";
@@ -46,6 +47,7 @@ const relevantEvents = new Set([
   "customer.subscription.deleted",
   "payment_intent.succeeded",
   "invoice.payment_succeeded",
+  "charge.succeeded",
 ]);
 
 export default async function handler(
@@ -82,7 +84,12 @@ export default async function handler(
               prisma,
             });
             break;
-
+          case "checkout.session.completed": // handle the successful one-time payment
+            await handlePaymentSucceeded({
+              event,
+              prisma,
+            });
+            break;
           case "customer.subscription.deleted":
             await handleSubscriptionCanceled({
               event,

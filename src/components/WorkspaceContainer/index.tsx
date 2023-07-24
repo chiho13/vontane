@@ -23,6 +23,19 @@ import { RightSideBarProvider } from "@/contexts/TextSpeechContext";
 import { EditorProvider } from "@/contexts/EditorContext";
 import { EditorSkeleton } from "../Skeletons/editor";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useUserContext } from "@/contexts/UserContext";
+
 // import "react-mirt/dist/css/react-mirt.css";
 type WorkspaceProps = {
   workspaceId: string;
@@ -32,10 +45,13 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = ({
   workspaceId,
 }) => {
   const router = useRouter();
+  const paymentSuccess = Boolean(router.query.success);
   const [fetchWorkspaceIsLoading, setFetchWorkspaceIsLoading] = useState(true);
 
   const { setUpdatedWorkspace } = useWorkspaceTitleUpdate();
+  const { profile }: any = useUserContext();
 
+  const [open, setOpen] = useState(true);
   //   const [workspaceId, setWorkSpaceId] = useState(router.query.workspaceId);
 
   const [syncStatus, setSyncStatus] = useState<"idle" | "syncing" | "synced">(
@@ -139,10 +155,31 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = ({
               setSyncStatus={setSyncStatus}
               syncStatus={syncStatus}
               workspaceId={workspaceId}
+              credits={profile?.credits}
               handleTextChange={debounce(handleTextChange, 600)}
               initialSlateValue={initialSlateValue}
               setFetchWorkspaceIsLoading={setFetchWorkspaceIsLoading}
             />
+            <AlertDialog open={open && paymentSuccess}>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Payment Successful!</AlertDialogTitle>
+                  <AlertDialogDescription className="text-md">
+                    New Credit Balance: {profile?.credits}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogAction
+                    onClick={() => {
+                      setOpen(false);
+                      router.push(`/docs/${workspaceId}`);
+                    }}
+                  >
+                    OK
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </RightSideBarProvider>
         </EditorProvider>
       )}

@@ -18,11 +18,13 @@ export const checkoutRouter = createTRPCRouter({
     .input(
       z.object({
         price: z.string(),
+        credits: z.string(),
+        workspaceId: z.string(),
       })
     )
     .mutation(async ({ input, ctx }) => {
       const { stripe, supabaseServerClient, prisma, req } = ctx;
-      const { price } = input;
+      const { price, credits, workspaceId } = input;
 
       const supabase = supabaseServerClient;
       const {
@@ -51,8 +53,11 @@ export const checkoutRouter = createTRPCRouter({
         ],
         mode: "payment",
         allow_promotion_codes: true,
-        success_url: `${getURL()}`,
-        cancel_url: `${getURL()}`,
+        metadata: {
+          credits: credits, // replace "credits" with your desired number of credits
+        },
+        success_url: `${getURL()}/docs/${workspaceId}?success=true`,
+        cancel_url: `${getURL()}/docs/${workspaceId}`,
       });
 
       return { checkoutUrl: checkoutSession.url };

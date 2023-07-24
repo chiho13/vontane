@@ -133,3 +133,25 @@ export const handleSubscriptionCanceled = async ({
     },
   });
 };
+
+export const handlePaymentSucceeded = async ({
+  event,
+  prisma,
+}: {
+  event: Stripe.Event;
+  stripe: Stripe;
+  prisma: PrismaClient;
+}) => {
+  const charge = event.data.object as Stripe.Charge;
+
+  // You might want to use charge.metadata or charge.customer to retrieve
+  // the user associated with this payment, depending on how you've set up your Stripe integration
+
+  // Add the payment amount (converted to credits) to the user's balance.
+  const credits = Number(charge.metadata.credits);
+
+  await prisma.user.update({
+    where: { stripe_id: charge.customer as string },
+    data: { credits: { increment: credits } },
+  });
+};

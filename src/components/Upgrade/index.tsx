@@ -25,7 +25,7 @@ const PricingStyle = styled.section`
     background-image: linear-gradient(to right, #0b89ee, #1371e9);
     transition: all 0.2s ease-in-out;
     display: inline-block;
-    padding: 12px 20px;
+    padding: 10px 20px;
     text-decoration: none;
     border-radius: 4px;
   }
@@ -58,6 +58,8 @@ const Upgrade = () => {
 
   const theme = useTheme();
   const router = useRouter();
+  const workspaceId = router.query.workspaceId as string;
+
   const session = useSession();
   const [loading, setLoading] = useState(null);
 
@@ -80,7 +82,7 @@ const Upgrade = () => {
   const createCheckoutSessionMutation =
     api.checkout.createCheckoutSession.useMutation();
 
-  const createCheckoutSession = async (_price: string) => {
+  const createCheckoutSession = async (_price: string, _credits: string) => {
     if (loading) return;
     try {
       setLoading({
@@ -88,6 +90,8 @@ const Upgrade = () => {
       });
       const { checkoutUrl } = await createCheckoutSessionMutation.mutateAsync({
         price: _price,
+        credits: _credits,
+        workspaceId,
       });
 
       if (checkoutUrl) {
@@ -116,33 +120,54 @@ const Upgrade = () => {
   console.log(profile?.is_subscribed);
   const PriceCards = [
     {
-      credits: "25,000 credits",
+      credits: "25K credits",
+      creditNumber: "25000",
       price: "9",
       audioTime: "~ 30 minutes of Audio",
       checkoutId: "price_1NX6HtGj8eKfeqgl2PoJ7aOd",
     },
     {
-      credits: "7-day Pass",
+      credits: "100K credits",
+      creditNumber: "100000",
       price: "39",
-      audioTime: "Unlimited",
-      checkoutId: "price_1NX6kZGj8eKfeqglc8U3gFRc",
+      audioTime: "~ 2 hours of Audio",
+      checkoutId: "price_1NXOb8Gj8eKfeqgl3aiK5eGN",
     },
     {
-      credits: "30-day Pass",
-      price: "99",
-      audioTime: "Unlimited",
-      checkoutId: "price_1NX6kzGj8eKfeqglERCZRSZf",
-      extra: "Priority Support",
+      credits: "400K credits",
+      creditNumber: "400000",
+      price: "89",
+      audioTime: "~ 8 hours of Audio",
+      checkoutId: "price_1NXOeWGj8eKfeqglQSe5tjDf",
     },
+    // {
+    //   credits: "7-day Access",
+    //   price: "49",
+    //   audioTime: "Unlimited Words",
+    //   checkoutId: "price_1NX6kZGj8eKfeqglc8U3gFRc",
+    // },
+    // {
+    //   credits: "30-day Access",
+    //   price: "199",
+    //   audioTime: "Unlimited Words",
+    //   checkoutId: "price_1NX6kzGj8eKfeqglERCZRSZf",
+    //   extra: "Priority Support",
+    // },
+    // {
+    //   credits: "6-month Access",
+    //   price: "699",
+    //   audioTime: "Unlimited Words",
+    //   checkoutId: "price_1NX6kzGj8eKfeqglERCZRSZf",
+    //   extra: "Priority Support",
+    // },
   ];
 
   const PriceCard = ({
     credits,
+    creditNumber,
     price,
     audioTime,
     checkoutId,
-    extra,
-    loading,
     createCheckoutSession,
   }) => {
     return (
@@ -171,25 +196,15 @@ const Upgrade = () => {
               <Check />
               <span className="pl-2">No subscription</span>
             </p>
-            {extra && (
-              <p className="mt-3 flex items-center text-left  font-semibold  leading-loose text-gray-500 dark:text-gray-400">
-                <Check />
-                <span className="pl-2">{extra}</span>
-              </p>
-            )}
           </div>
         </div>
         <div className="relative h-[50px]">
           <button
-            onClick={() => createCheckoutSession(checkoutId)}
-            className="subscribe-btn flex w-full items-center justify-center rounded-md border p-2 text-center text-base font-semibold text-white transition"
+            onClick={() => createCheckoutSession(checkoutId, creditNumber)}
+            className="subscribe-btn flex h-[50px] w-full items-center justify-center rounded-md border p-2 text-center text-base font-semibold text-white transition"
           >
             <div className="flex items-center justify-center">
-              {loading ? (
-                <LoadingSpinner strokeColor="stroke-white" />
-              ) : (
-                <span className="ml-2 text-lg">Buy</span>
-              )}
+              <span className="ml-2 text-lg">Buy</span>
             </div>
           </button>
         </div>
@@ -210,16 +225,15 @@ const Upgrade = () => {
           </div>
         </div>
         <div className="relative -mx-4 mb-10 flex justify-center px-10">
-          <div className="grid w-full grid-cols-3 gap-2">
+          <div className="grid w-full grid-cols-3 gap-4">
             {PriceCards.map((card, index) => (
               <PriceCard
                 key={index}
                 credits={card.credits}
+                creditNumber={card.creditNumber}
                 price={card.price}
                 audioTime={card.audioTime}
                 checkoutId={card.checkoutId}
-                extra={card.extra}
-                loading={loading}
                 createCheckoutSession={createCheckoutSession}
               />
             ))}

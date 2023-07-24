@@ -92,8 +92,8 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     transform: `translateX(${
       showRightSidebar ? "0px" : `${rightSideBarWidth}px`
     })`,
-    height: "calc(100vh - 120px)",
-    minWidth: "415px",
+    height: "calc(100vh - 150px)",
+    minWidth: "390px",
     maxWidth: "570px",
     flexBasis: `${rightSideBarWidth}px`,
     opacity: showRightSidebar ? "1" : "0",

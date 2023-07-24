@@ -20,16 +20,17 @@ import { createInnerTRPCContext } from "@/server/api/trpc";
 import { GetServerSideProps } from "next";
 import { Button } from "@/components/ui/button";
 import { parseNodes } from "@/components/PreviewContent";
+import { trpc } from "@/utils/trpc";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  const path = context.resolvedUrl;
+  let parts = path.split("-");
+  let workspaceId = parts.slice(1).join("-");
   try {
     const { req, res }: any = context;
     const { prisma } = createInnerTRPCContext({}, req, res);
 
     // get the entire URL path
-    const path = context.resolvedUrl;
-    let parts = path.split("-");
-    let workspaceId = parts.slice(1).join("-");
 
     const workspace = await prisma.workspace.findUnique({
       where: { id: workspaceId },
@@ -46,15 +47,28 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   } catch (error) {
     return {
       props: {
+        workspaceId: workspaceId,
         workspaceData: null,
       },
     };
   }
 };
 
-const PublishedPage = ({ workspaceData }) => {
+const PublishedPage = ({ workspaceId, workspaceData }) => {
   const router = useRouter();
   const [localValue, setLocalValue] = useState(null);
+
+  api.workspace.onWorkspaceUpdate.useSubscription(
+    { id: workspaceId },
+    {
+      onData: (newData) => {
+        if (newData) {
+          const parsedSlateValue = JSON.parse(newData.workspace.slate_value);
+          setLocalValue(parsedSlateValue);
+        }
+      },
+    }
+  );
 
   useEffect(() => {
     if (workspaceData) {

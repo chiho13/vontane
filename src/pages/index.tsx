@@ -32,12 +32,12 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async (
   context
 ) => {
   const { req, res }: any = context;
-  const { supabaseServerClient } = createInnerTRPCContext({}, req, res);
+  const { session } = createInnerTRPCContext({}, req, res);
 
   const {
     data: { user },
     error,
-  } = await supabaseServerClient.auth.getUser();
+  } = await session;
 
   if (error || !user) {
     // If no user, redirect to "/login".

@@ -18,15 +18,16 @@ import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { createTRPCUpstashLimiter } from "@trpc-limiter/upstash";
-
+import { NodeHTTPCreateContextFnOptions } from "@trpc/server/adapters/node-http";
 import { prisma } from "@/server/db";
 import { stripe } from "@/server/stripe/client";
 
 import { TRPCError } from "@trpc/server";
-
+import ws from "ws";
 // import { rateLimiter } from "./middleware";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
+import * as trpcNext from "@trpc/server/adapters/next";
 
 type CreateContextOptions = Record<string, never>;
 
@@ -40,22 +41,39 @@ type CreateContextOptions = Record<string, never>;
  *
  * @see https://create.t3.gg/en/usage/trpc#-servertrpccontextts
  */
+
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseServiceRoleKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+const supabaseServerClient = createClient(supabaseUrl, supabaseServiceRoleKey);
+const session = supabaseServerClient.auth.getUser();
+
 export const createInnerTRPCContext = (
-  _opts: CreateContextOptions,
+  opts:
+    | NodeHTTPCreateContextFnOptions<IncomingMessage, ws>
+    | trpcNext.CreateNextContextOptions,
   req: NextApiRequest,
   res: NextApiResponse
 ) => {
-  const supabaseServerClient = createServerSupabaseClient({
-    req,
-    res,
-  });
-
   return {
     prisma,
     stripe,
-    supabaseServerClient,
+    session,
     req,
     res,
+  };
+};
+
+export const CTXT = (
+  opts:
+    | NodeHTTPCreateContextFnOptions<IncomingMessage, ws>
+    | trpcNext.CreateNextContextOptions
+) => {
+  return {
+    prisma,
+    stripe,
   };
 };
 
@@ -77,6 +95,7 @@ export const createTRPCContext = (_opts: CreateNextContextOptions) => {
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { NextApiRequest, NextApiResponse } from "next/types";
+import { IncomingMessage } from "http";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,

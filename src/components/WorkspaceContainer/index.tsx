@@ -36,6 +36,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useUserContext } from "@/contexts/UserContext";
 import { supabaseClient } from "@/utils/supabaseClient";
+import { Button } from "../ui/button";
+import Layout from "../Layouts/AccountLayout";
 
 // import "react-mirt/dist/css/react-mirt.css";
 type WorkspaceProps = {
@@ -82,17 +84,21 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = ({
   }, [workspaceId, router.isReady]);
 
   const [initialSlateValue, setInitialSlateValue] = useState(null);
+  const [isTrashed, setIsTrashed] = useState(false);
 
   useEffect(() => {
     if (workspaceData) {
       const slateValue = workspaceData.workspace.slate_value;
-
       if (slateValue) {
-        console.log(slateValue);
         const parsedSlateValue = JSON.parse(slateValue);
         setInitialSlateValue(parsedSlateValue);
         setFetchWorkspaceIsLoading(false);
         setSyncStatus("synced");
+        setIsTrashed(false);
+      }
+
+      if (workspaceData.workspace.deleted_at) {
+        setIsTrashed(true);
       }
     }
 
@@ -101,7 +107,6 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = ({
     };
   }, [workspaceData]);
 
-  const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const updateWorkspaceMutation = api.workspace.updateWorkspace.useMutation();
 
   const updateWorkspace = async (newSlateValue: any) => {
@@ -119,7 +124,16 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = ({
   };
 
   if (isLoading) {
-    return <EditorSkeleton />;
+    return (
+      <Layout
+        profile={profile}
+        currentWorkspaceId={workspaceId}
+        refetchWorkspaceData={refetchWorkspaceData}
+        isTrashed={isTrashed}
+      >
+        <EditorSkeleton />;
+      </Layout>
+    );
   }
 
   if (error) {
@@ -143,47 +157,54 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = ({
   }
 
   return (
-    <NewColumnProvider>
-      {!fetchWorkspaceIsLoading && initialSlateValue && workspaceId && (
-        <EditorProvider key={workspaceId}>
-          <RightSideBarProvider
-            key={workspaceId}
-            workspaceData={workspaceData}
-            refetchWorkspaceData={refetchWorkspaceData}
-          >
-            <DocumentEditor
+    <Layout
+      profile={profile}
+      currentWorkspaceId={workspaceId}
+      refetchWorkspaceData={refetchWorkspaceData}
+      isTrashed={isTrashed}
+    >
+      <NewColumnProvider>
+        {!fetchWorkspaceIsLoading && initialSlateValue && workspaceId && (
+          <EditorProvider key={workspaceId}>
+            <RightSideBarProvider
               key={workspaceId}
-              setSyncStatus={setSyncStatus}
-              syncStatus={syncStatus}
-              workspaceId={workspaceId}
-              credits={profile?.credits}
-              handleTextChange={debounce(handleTextChange, 600)}
-              initialSlateValue={initialSlateValue}
-              setFetchWorkspaceIsLoading={setFetchWorkspaceIsLoading}
-            />
-            <AlertDialog open={open && paymentSuccess}>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Payment Successful!</AlertDialogTitle>
-                  <AlertDialogDescription className="text-md">
-                    New Credit Balance: {profile?.credits}
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogAction
-                    onClick={() => {
-                      setOpen(false);
-                      router.push(`/docs/${workspaceId}`);
-                    }}
-                  >
-                    OK
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </RightSideBarProvider>
-        </EditorProvider>
-      )}
-    </NewColumnProvider>
+              workspaceData={workspaceData}
+              refetchWorkspaceData={refetchWorkspaceData}
+            >
+              <DocumentEditor
+                key={workspaceId}
+                setSyncStatus={setSyncStatus}
+                syncStatus={syncStatus}
+                workspaceId={workspaceId}
+                credits={profile?.credits}
+                handleTextChange={debounce(handleTextChange, 600)}
+                initialSlateValue={initialSlateValue}
+                setFetchWorkspaceIsLoading={setFetchWorkspaceIsLoading}
+              />
+              <AlertDialog open={open && paymentSuccess}>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Payment Successful!</AlertDialogTitle>
+                    <AlertDialogDescription className="text-md">
+                      New Credit Balance: {profile?.credits}
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogAction
+                      onClick={() => {
+                        setOpen(false);
+                        router.push(`/docs/${workspaceId}`);
+                      }}
+                    >
+                      OK
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </RightSideBarProvider>
+          </EditorProvider>
+        )}
+      </NewColumnProvider>
+    </Layout>
   );
 };

@@ -14,7 +14,7 @@ type WorkspaceProps = {
 
 const Workspace: NextPage<WorkspaceProps> = ({ session }) => {
   const router = useRouter();
-  const { profile } = useUserContext();
+
   const workspaceId = router.query.workspaceId as string;
   const [loading, setLoading] = useState(true);
 
@@ -29,9 +29,7 @@ const Workspace: NextPage<WorkspaceProps> = ({ session }) => {
   }
 
   return session ? (
-    <Layout profile={profile} currentWorkspaceId={workspaceId}>
-      <WorkspaceContainer workspaceId={workspaceId} />
-    </Layout>
+    <WorkspaceContainer workspaceId={workspaceId} />
   ) : (
     <div></div>
   );

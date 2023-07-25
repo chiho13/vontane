@@ -139,7 +139,6 @@ export const handlePaymentSucceeded = async ({
   prisma,
 }: {
   event: Stripe.Event;
-  stripe: Stripe;
   prisma: PrismaClient;
 }) => {
   const charge = event.data.object as Stripe.Charge;

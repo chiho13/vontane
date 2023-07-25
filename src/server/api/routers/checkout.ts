@@ -56,8 +56,8 @@ export const checkoutRouter = createTRPCRouter({
         metadata: {
           credits: credits, // replace "credits" with your desired number of credits
         },
-        success_url: `${getURL()}/docs/${workspaceId}?success=true`,
-        cancel_url: `${getURL()}/docs/${workspaceId}`,
+        success_url: `${process.env.NEXT_PUBLIC_URL}/docs/${workspaceId}?success=true`,
+        cancel_url: `${process.env.NEXT_PUBLIC_URL}/docs/${workspaceId}`,
       });
 
       return { checkoutUrl: checkoutSession.url };

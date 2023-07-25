@@ -290,9 +290,13 @@ export const TextSpeech = ({
         )}
 
       {selected && element.content && audioData.content !== element.content && (
-        <div className="mr-2 flex h-[34px] rounded bg-yellow-300 p-2 text-sm text-orange-900 shadow-md">
+        <button
+          className="mr-2 flex h-[34px] rounded bg-yellow-300 p-2 text-sm text-orange-900 shadow-md disabled:opacity-50"
+          onClick={generateAudio}
+          disabled={rightBarAudioIsLoading[element.id]}
+        >
           Content Changed. Regenerate Audio
-        </div>
+        </button>
       )}
       {/* {audioURL && <AudioPLayer audioURL={audioURL} fileName={fileName} />} */}
     </div>

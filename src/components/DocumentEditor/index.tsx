@@ -1817,7 +1817,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     </Button>
                   </DialogTrigger>
 
-                  <DialogContent className="absolute max-h-[650px]  overflow-y-auto p-0 sm:max-w-[950px]">
+                  <DialogContent className="absolute max-h-[650px]  overflow-y-auto overflow-x-hidden p-0 sm:max-w-[990px]">
                     <Upgrade />
                   </DialogContent>
                 </Dialog>

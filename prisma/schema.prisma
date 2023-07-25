@@ -29,6 +29,7 @@ model workspace {
   published     Boolean     @default(false)
   published_at  DateTime?
   created_at  DateTime    @default(dbgenerated("now()"))
+  deleted_at  DateTime? 
   author_id   String      @db.Uuid
   author      user        @relation(fields: [author_id], references: [id])
 }

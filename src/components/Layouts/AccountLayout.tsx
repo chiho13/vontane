@@ -43,6 +43,7 @@ import { Sidebar } from "../Sidebar";
 import { useUserContext } from "@/contexts/UserContext";
 import { useWorkspaceTitleUpdate } from "@/contexts/WorkspaceTitleContext";
 import { api } from "@/utils/api";
+import { Button } from "../ui/button";
 
 const SidebarContainer = styled.div`
   position: relative;
@@ -170,6 +171,8 @@ interface LayoutProps {
   children: React.ReactNode;
   profile: any;
   currentWorkspaceId?: string | string[];
+  refetchWorkspaceData: any;
+  isTrashed: Boolean;
 }
 
 export const LayoutContext = createContext({
@@ -181,6 +184,8 @@ const Layout: React.FC<LayoutProps> = ({
   children,
   profile,
   currentWorkspaceId,
+  refetchWorkspaceData,
+  isTrashed,
 }) => {
   const router = useRouter();
 
@@ -203,6 +208,7 @@ const Layout: React.FC<LayoutProps> = ({
   }
 
   const [workspaces, setWorkspaces] = useState<workspace[]>([]);
+  const [trashWorkspace, setTrashWorkspace] = useState<workspace[]>([]);
 
   const { data: workspacesData, refetch: refetchWorkspaces } =
     api.workspace.getWorkspaces.useQuery();
@@ -211,7 +217,9 @@ const Layout: React.FC<LayoutProps> = ({
     if (workspacesData) {
       const response = workspacesData.workspaces;
 
+      const trash = workspacesData.trash;
       setWorkspaces(response);
+      setTrashWorkspace(trash);
     }
   }, [workspacesData]);
 
@@ -219,10 +227,7 @@ const Layout: React.FC<LayoutProps> = ({
   const handleWorkspaceRoute = (workspaceId: string, workspaceName: string) => {
     router.push(`/docs/${workspaceId}`);
     refetchWorkspaces();
-  };
-
-  const upgradeAccount = () => {
-    router.push(`/account/upgrade`);
+    refetchWorkspaceData();
   };
 
   const createWorkspace = async () => {
@@ -230,6 +235,7 @@ const Layout: React.FC<LayoutProps> = ({
       const response = await createWorkspaceMutation.mutateAsync();
       if (response && response.workspace) {
         refetchWorkspaces();
+        refetchWorkspaceData();
         handleWorkspaceRoute(response.workspace.id, "");
       }
     } catch (error) {
@@ -287,6 +293,40 @@ const Layout: React.FC<LayoutProps> = ({
       }
     }
   }, [isLocked, isOpen]);
+
+  const softDeleteMutation = api.workspace.softDeleteWorkspace.useMutation();
+
+  const softDeleteWorkspace = async (id) => {
+    try {
+      const response = await softDeleteMutation.mutateAsync({
+        id,
+      });
+      if (response) {
+        refetchWorkspaces();
+        refetchWorkspaceData();
+        console.log(response);
+      }
+    } catch (error) {
+      console.error("Error Deleting:", error);
+    }
+  };
+
+  const restoreWorkspaceMutation = api.workspace.restoreWorkspace.useMutation();
+
+  const restoreWorkspace = async () => {
+    try {
+      const response = await restoreWorkspaceMutation.mutateAsync({
+        id: currentWorkspaceId as string,
+      });
+      if (response) {
+        refetchWorkspaces();
+        refetchWorkspaceData();
+        console.log(response);
+      }
+    } catch (error) {
+      console.error("Error Deleting:", error);
+    }
+  };
 
   const ChevronRightToMenu = () => {
     return (
@@ -362,7 +402,6 @@ const Layout: React.FC<LayoutProps> = ({
           >
             <AccountLayoutStyle>
               <div className="z-10 flex items-center p-1">
-                `
                 <DropdownProvider>
                   <Dropdown
                     dropdownId="sideBarDropdown"
@@ -441,6 +480,9 @@ const Layout: React.FC<LayoutProps> = ({
                             >
                               <DropdownMenuItem
                                 className={`flex w-full cursor-pointer  items-center  rounded-sm px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:text-gray-900 focus:outline-none dark:text-foreground `}
+                                onClick={() =>
+                                  softDeleteWorkspace(workspace.id)
+                                }
                               >
                                 Move to Bin
                               </DropdownMenuItem>
@@ -484,7 +526,69 @@ const Layout: React.FC<LayoutProps> = ({
                     side="right"
                     className="z-1000 relative bottom-[25px]  h-[200px] w-[300px] rounded-l-none border-l-0 bg-background p-4 shadow-md dark:border-accent dark:bg-muted"
                   >
-                    Empty
+                    {trashWorkspace.length === 0 && "Empty"}
+                    {trashWorkspace &&
+                      trashWorkspace.map((workspace) => {
+                        const parsedSlateValue = JSON.parse(
+                          workspace.slate_value as any
+                        );
+
+                        const workspaceName =
+                          parsedSlateValue[0].children[0].text;
+                        const displayName =
+                          updatedWorkspace &&
+                          updatedWorkspace.id === workspace.id
+                            ? updatedWorkspace.title
+                            : workspaceName;
+
+                        return (
+                          <DropdownMenuItem
+                            key={workspace.id}
+                            className="cursor-pointer"
+                          >
+                            <div
+                              onClick={() =>
+                                handleWorkspaceRoute(workspace.id, "")
+                              }
+                            >
+                              <span
+                                className={`text-sm text-darkergray  dark:text-foreground`}
+                              >
+                                {displayName || "Untitled"}
+                              </span>
+
+                              {/* <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <a
+                                href="#"
+                                role="button"
+                                className="  absolute right-2 flex h-[22px] w-[22px] items-center justify-center rounded-md p-0 opacity-0 outline-none transition  duration-300 hover:bg-gray-200 group-hover:opacity-100 dark:hover:bg-gray-600"
+                              >
+                                <MoreHorizontal
+                                  className="text-darkergray  dark:stroke-foreground"
+                                  width={18}
+                                />{" "}
+                              </a>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent
+                              side="right"
+                              sideOffset={13}
+                              className="z-1000 relative  w-[150px] rounded-l-none border-l-0 bg-background p-2 shadow-md dark:border-accent dark:bg-muted"
+                            >
+                              <DropdownMenuItem
+                                className={`flex w-full cursor-pointer  items-center  rounded-sm px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:text-gray-900 focus:outline-none dark:text-foreground `}
+                                onClick={() =>
+                                  softDeleteWorkspace(workspace.id)
+                                }
+                              >
+                                Move to Bin
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu> */}
+                            </div>
+                          </DropdownMenuItem>
+                        );
+                      })}
                   </DropdownMenuContent>
                 </DropdownMenu>
               </SidebarItem>
@@ -507,6 +611,22 @@ const Layout: React.FC<LayoutProps> = ({
           }}
           data-locked={isLocked}
         >
+          {isTrashed && (
+            <div className="fixed left-0 right-0 top-0 flex justify-center ">
+              <div className="item-center flex w-[300px] justify-center gap-4 bg-red-500 p-2  text-sm">
+                <p className="flex items-center">
+                  This workspace is in the bin
+                </p>
+                <Button
+                  size="xs"
+                  className="border border-white  bg-transparent p-1 px-2 text-sm text-white hover:bg-white/10"
+                  onClick={restoreWorkspace}
+                >
+                  Restore
+                </Button>
+              </div>
+            </div>
+          )}
           {children}
 
           <div className="fixed bottom-4 right-4">

@@ -15,17 +15,31 @@ export const profileRouter = createTRPCRouter({
         where: { id: input.id },
       });
 
-      const workspaces = await ctx.prisma.workspace.findMany({
-        where: { author_id: input.id },
+      const activeWorkspaces = await ctx.prisma.workspace.findMany({
+        where: { author_id: input.id, deleted_at: null },
+        orderBy: { created_at: "desc" },
+      });
+
+      const deletedWorkspaces = await ctx.prisma.workspace.findMany({
+        where: {
+          author_id: input.id,
+          deleted_at: {
+            not: null,
+          },
+        },
         orderBy: { created_at: "desc" },
       });
 
       if (!profile) {
         throw new Error("Profile not found");
       }
-      if (!workspaces) {
+      if (!activeWorkspaces) {
         throw new Error("workspace  not found");
       }
-      return { profile, workspaces };
+      return {
+        profile,
+        workspaces: activeWorkspaces,
+        trash: deletedWorkspaces,
+      };
     }),
 });

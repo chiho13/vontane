@@ -46,11 +46,26 @@ export const workspaceRouter = createTRPCRouter({
       orderBy: { created_at: "asc" },
     });
 
-    if (!workspaces) {
+    const activeWorkspaces = await ctx.prisma.workspace.findMany({
+      where: { author_id: ctx.user.id, deleted_at: null },
+      orderBy: { created_at: "desc" },
+    });
+
+    const deletedWorkspaces = await ctx.prisma.workspace.findMany({
+      where: {
+        author_id: ctx.user.id,
+        deleted_at: {
+          not: null,
+        },
+      },
+      orderBy: { created_at: "desc" },
+    });
+
+    if (!activeWorkspaces) {
       throw new Error("workspace  not found");
     }
 
-    return { workspaces };
+    return { workspaces: activeWorkspaces, trash: deletedWorkspaces };
   }),
   getWorkspace: protectedProcedure
     .input(z.object({ id: z.string() }))
@@ -149,4 +164,66 @@ export const workspaceRouter = createTRPCRouter({
 
     return { workspace };
   }),
+  softDeleteWorkspace: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const { id } = input;
+
+      const workspace = await ctx.prisma.workspace.findUnique({
+        where: { id },
+      });
+
+      if (!workspace) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Workspace not found",
+        });
+      }
+
+      if (ctx.user.id !== workspace.author_id) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Unauthorized access",
+        });
+      }
+
+      // Perform the soft delete
+      const updatedWorkspace = await ctx.prisma.workspace.update({
+        where: { id },
+        data: { deleted_at: new Date() },
+      });
+
+      return { workspace: updatedWorkspace };
+    }),
+  restoreWorkspace: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const { id } = input;
+
+      const workspace = await ctx.prisma.workspace.findUnique({
+        where: { id },
+      });
+
+      if (!workspace) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Workspace not found",
+        });
+      }
+
+      if (ctx.user.id !== workspace.author_id) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Unauthorized access",
+        });
+      }
+
+      // Restore the soft deleted workspace
+      const updatedWorkspace = await ctx.prisma.workspace.update({
+        where: { id },
+        data: { deleted_at: null },
+      });
+
+      return { workspace: updatedWorkspace };
+    }),
 });

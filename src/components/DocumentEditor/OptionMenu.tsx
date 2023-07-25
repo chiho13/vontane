@@ -186,15 +186,7 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
                     <DropdownMenuItem
                       key={index}
                       onClick={item.action}
-                      className={`flex w-full items-center rounded-sm px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:text-gray-900 focus:outline-none dark:text-foreground ${
-                        focusedIndex === index
-                          ? "bg-gray-200 dark:bg-accent"
-                          : ""
-                      }`}
-                      onMouseOver={() => {
-                        if (isKeyboardNav) return;
-                        setFocusedIndex(index);
-                      }}
+                      className={`flex w-full items-center rounded-sm px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:text-gray-900 focus:outline-none dark:text-foreground `}
                     >
                       <span>{item.icon}</span>
                       <span>{item.name}</span>

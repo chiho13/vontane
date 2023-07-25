@@ -7,7 +7,7 @@ import { useRef, useState, useEffect, useMemo, createContext } from "react";
 import { AccountLayoutStyle } from "./style";
 import ChevronDown from "@/icons/ChevronDown";
 import { useRouter } from "next/router";
-import { Plus } from "lucide-react";
+import { Plus, Trash, MoreHorizontal } from "lucide-react";
 import { workspace } from "@prisma/client";
 import { useLocalStorage } from "usehooks-ts";
 import { ModeToggle } from "../mode-toggle";
@@ -19,6 +19,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import {
   ChevronsRight,
@@ -124,10 +131,6 @@ const SidebarItem = styled.li<{ activeWorkspace?: boolean }>`
     border-radius: 4px;
     transition: background-color 300ms ease, transform 300ms;
     overflow: hidden;
-
-    &:active {
-      transform: scale(0.97);
-    }
 
     &:focus {
       outline: none;
@@ -355,10 +358,11 @@ const Layout: React.FC<LayoutProps> = ({
           <SidebarContent
             isLocked={isLocked}
             isOpen={isOpen}
-            className="bg-[#f4f4f4] dark:border-accent dark:bg-muted"
+            className="bg-background dark:border-accent dark:bg-muted"
           >
             <AccountLayoutStyle>
               <div className="z-10 flex items-center p-1">
+                `
                 <DropdownProvider>
                   <Dropdown
                     dropdownId="sideBarDropdown"
@@ -405,7 +409,7 @@ const Layout: React.FC<LayoutProps> = ({
                       <SidebarItem key={workspace.id}>
                         <button
                           onClick={() => handleWorkspaceRoute(workspace.id, "")}
-                          className={` hover:bg-gray-300 dark:hover:bg-accent ${
+                          className={` group relative flex  items-center  hover:bg-gray-300 dark:hover:bg-accent ${
                             currentWorkspaceId === workspace.id
                               ? "bg-gray-300 font-bold dark:bg-accent"
                               : "transparent"
@@ -416,6 +420,32 @@ const Layout: React.FC<LayoutProps> = ({
                           >
                             {displayName || "Untitled"}
                           </span>
+
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <a
+                                href="#"
+                                role="button"
+                                className="  absolute right-2 flex h-[22px] w-[22px] items-center justify-center rounded-md p-0 opacity-0 outline-none transition  duration-300 hover:bg-gray-200 group-hover:opacity-100 dark:hover:bg-gray-600"
+                              >
+                                <MoreHorizontal
+                                  className="text-darkergray  dark:stroke-foreground"
+                                  width={18}
+                                />{" "}
+                              </a>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent
+                              side="right"
+                              sideOffset={13}
+                              className="z-1000 relative  w-[150px] rounded-l-none border-l-0 bg-background p-2 shadow-md dark:border-accent dark:bg-muted"
+                            >
+                              <DropdownMenuItem
+                                className={`flex w-full cursor-pointer  items-center  rounded-sm px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:text-gray-900 focus:outline-none dark:text-foreground `}
+                              >
+                                Move to Bin
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </button>
                       </SidebarItem>
                     );
@@ -431,11 +461,33 @@ const Layout: React.FC<LayoutProps> = ({
                       width={22}
                     />{" "}
                     <span className="ml-4 text-sm text-darkergray  dark:text-foreground">
-                      Add Page
+                      New Workspace
                     </span>
                   </button>
                 </SidebarItem>
               </ul>
+              <SidebarItem className="absolute bottom-5">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="flex h-[36px] items-center  hover:bg-gray-200 dark:hover:bg-accent">
+                      <Trash
+                        className="text-darkergray  dark:text-foreground"
+                        width={18}
+                      />{" "}
+                      <span className="ml-4 text-sm text-darkergray  dark:text-foreground">
+                        Bin
+                      </span>
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    sideOffset={5}
+                    side="right"
+                    className="z-1000 relative bottom-[25px]  h-[200px] w-[300px] rounded-l-none border-l-0 bg-background p-4 shadow-md dark:border-accent dark:bg-muted"
+                  >
+                    Empty
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </SidebarItem>
             </AccountLayoutStyle>
           </SidebarContent>
         </SidebarContainer>

@@ -290,7 +290,8 @@ const Layout: React.FC<LayoutProps> = ({
     }
   };
 
-  const handleMouseLeave = (): void => {
+  const handleMouseLeave = (e): void => {
+    e.stopPropagation();
     if (!isLocked && desktopbreakpoint) {
       setIsOpen(false);
       setShowChevronRight(false);
@@ -623,7 +624,7 @@ const Layout: React.FC<LayoutProps> = ({
               "margin-left 300ms ease-in-out, width 300ms ease-in-out",
           }}
           data-locked={isLocked}
-          onMouseLeave={handleMouseLeave}
+          onMouseEnter={handleMouseLeave}
         >
           {isTrashed && (
             <div className="fixed left-0 right-0 top-0 flex justify-center ">

@@ -179,8 +179,8 @@ interface LayoutProps {
   children: React.ReactNode;
   profile: any;
   currentWorkspaceId?: string | string[];
-  refetchWorkspaceData: any;
-  isTrashed: Boolean;
+  refetchWorkspaceData?: any;
+  isTrashed?: Boolean;
 }
 
 export const LayoutContext = createContext({

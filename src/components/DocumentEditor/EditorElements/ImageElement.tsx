@@ -31,7 +31,7 @@ import { BlockAlign } from "@/components/BlockAlign";
 import { createClient } from "@supabase/supabase-js";
 import { useSession } from "@supabase/auth-helpers-react";
 import { blobToBase64, urlToBlob } from "@/utils/helpers";
-import { env } from "@/env.mjs";
+import { supabaseClient } from "@/utils/supabaseClient";
 
 import {
   Form,
@@ -159,7 +159,7 @@ export const ImageElement = React.memo(
         ) : (
           <div className={`flex justify-${align}`} {...attributes}>
             <div className="relative rounded-md bg-gray-200 dark:bg-background">
-              <Image
+              <img
                 src={base64URL}
                 width={blockWidth}
                 height={imageHeight}
@@ -313,10 +313,10 @@ export const ImageEmbedLink = () => {
 
   const [aiImageResults, setAIImageResults] = useState<Array<{ url: any }>>([]);
 
-  const supabaseClient = createClient(
-    "https://nhntzctfhbydiddzcdqk.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5obnR6Y3RmaGJ5ZGlkZHpjZHFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE2Nzg3MTk2NjMsImV4cCI6MTk5NDI5NTY2M30.vSY659K3BlRLcfhL_FECCATkhfbx5dZTfmQ7lJtwKr0"
-  );
+  // const supabaseClient = createClient(
+  //   "https://nhntzctfhbydiddzcdqk.supabase.co",
+  //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5obnR6Y3RmaGJ5ZGlkZHpjZHFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE2Nzg3MTk2NjMsImV4cCI6MTk5NDI5NTY2M30.vSY659K3BlRLcfhL_FECCATkhfbx5dZTfmQ7lJtwKr0"
+  // );
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const currentElement = Node.get(editor, JSON.parse(activePath));

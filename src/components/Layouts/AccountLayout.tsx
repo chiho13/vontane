@@ -3,7 +3,14 @@ import styled, { keyframes, useTheme } from "styled-components";
 import Dropdown, { DropdownProvider } from "../Dropdown";
 import Head from "next/head";
 
-import { useRef, useState, useEffect, useMemo, createContext } from "react";
+import {
+  useRef,
+  useState,
+  useEffect,
+  useMemo,
+  createContext,
+  use,
+} from "react";
 import { AccountLayoutStyle } from "./style";
 import ChevronDown from "@/icons/ChevronDown";
 import { useRouter } from "next/router";
@@ -44,6 +51,7 @@ import { useUserContext } from "@/contexts/UserContext";
 import { useWorkspaceTitleUpdate } from "@/contexts/WorkspaceTitleContext";
 import { api } from "@/utils/api";
 import { Button } from "../ui/button";
+import { on } from "process";
 
 const SidebarContainer = styled.div`
   position: relative;
@@ -198,6 +206,8 @@ const Layout: React.FC<LayoutProps> = ({
   const [showChevronRight, setShowChevronRight] = useState(false);
 
   const accountDropdownRef = useRef<any>({});
+
+  const binRef = useRef<any>({});
   const supabase = useSupabaseClient();
 
   const theme = useTheme();
@@ -272,7 +282,8 @@ const Layout: React.FC<LayoutProps> = ({
     }
   };
 
-  const handleMouseEnter = (): void => {
+  const handleMouseEnter = (e): void => {
+    e.stopPropagation();
     if (!isLocked && desktopbreakpoint) {
       setIsOpen(true);
       setShowChevronRight(true);
@@ -377,7 +388,7 @@ const Layout: React.FC<LayoutProps> = ({
 
           <link rel="icon" href="/favicon.ico" />
         </Head>
-        <SidebarContainer onMouseLeave={handleMouseLeave}>
+        <SidebarContainer>
           <ToggleButtonWrapper
             style={{
               transform: isLocked ? "translateX(190px)" : "translateX(0)",
@@ -524,7 +535,9 @@ const Layout: React.FC<LayoutProps> = ({
                   <DropdownMenuContent
                     sideOffset={5}
                     side="right"
-                    className="z-1000 relative bottom-[25px]  h-[200px] w-[300px] rounded-l-none border-l-0 bg-background p-4 shadow-md dark:border-accent dark:bg-muted"
+                    className={`z-1000 relative  ${
+                      isLocked && isOpen ? "bottom-[25px]" : "bottom-[57px]"
+                    }  h-[200px] w-[300px] rounded-l-none border-l-0 bg-background p-4 shadow-md dark:border-accent dark:bg-muted`}
                   >
                     {trashWorkspace.length === 0 && "Empty"}
                     {trashWorkspace &&
@@ -610,6 +623,7 @@ const Layout: React.FC<LayoutProps> = ({
               "margin-left 300ms ease-in-out, width 300ms ease-in-out",
           }}
           data-locked={isLocked}
+          onMouseLeave={handleMouseLeave}
         >
           {isTrashed && (
             <div className="fixed left-0 right-0 top-0 flex justify-center ">

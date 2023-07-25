@@ -35,6 +35,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useUserContext } from "@/contexts/UserContext";
+import { supabaseClient } from "@/utils/supabaseClient";
 
 // import "react-mirt/dist/css/react-mirt.css";
 type WorkspaceProps = {

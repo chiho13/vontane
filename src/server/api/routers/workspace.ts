@@ -41,14 +41,9 @@ export const workspaceRouter = createTRPCRouter({
       return updatedWorkspace;
     }),
   getWorkspaces: protectedProcedure.query(async ({ ctx }) => {
-    const workspaces = await ctx.prisma.workspace.findMany({
-      where: { author_id: ctx.user.id },
-      orderBy: { created_at: "asc" },
-    });
-
     const activeWorkspaces = await ctx.prisma.workspace.findMany({
       where: { author_id: ctx.user.id, deleted_at: null },
-      orderBy: { created_at: "desc" },
+      orderBy: { created_at: "asc" },
     });
 
     const deletedWorkspaces = await ctx.prisma.workspace.findMany({
@@ -58,7 +53,7 @@ export const workspaceRouter = createTRPCRouter({
           not: null,
         },
       },
-      orderBy: { created_at: "desc" },
+      orderBy: { created_at: "asc" },
     });
 
     if (!activeWorkspaces) {

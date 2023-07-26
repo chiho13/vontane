@@ -48,7 +48,7 @@ export const GPTRouter = createTRPCRouter({
       });
 
       // Check if user has enough credits
-      if (user?.credits < 50) {
+      if (user?.credits < 250) {
         throw new Error("Not enough credits");
       }
 

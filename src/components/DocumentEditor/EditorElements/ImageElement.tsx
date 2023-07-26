@@ -250,7 +250,7 @@ export const ImageEmbedLink = () => {
 
   const { credits, setCredits }: any = useContext(UserContext);
 
-  const notEnoughCredits = credits < 50;
+  const notEnoughCredits = credits < 250;
   const formSchema = z.object({
     url: z
       .string()
@@ -698,8 +698,8 @@ export const ImageEmbedLink = () => {
                   </FormItem>
                 )}
               />
-              <div className="absolute right-[40px]  top-1 mb-2 flex  h-[30px] w-[45px] items-center justify-center rounded-md border border-accent text-sm">
-                50 cr
+              <div className="absolute right-[40px]  top-1 mb-2 flex  h-[30px] w-[60px] items-center justify-center rounded-md border border-accent text-sm">
+                250 cr
               </div>
 
               <TooltipProvider delayDuration={300}>

@@ -124,7 +124,7 @@ const Upgrade = () => {
       creditNumber: "25000",
       price: "9",
       audioTime: "~ 30 mins of Text to MP3",
-      imageGen: "~ 500 AI Images",
+      imageGen: "~ 100 AI Image Sets",
       checkoutId: "price_1NX6HtGj8eKfeqgl2PoJ7aOd",
     },
     {
@@ -132,7 +132,7 @@ const Upgrade = () => {
       creditNumber: "100000",
       price: "39",
       audioTime: "~ 2 hours of Text to MP3",
-      imageGen: "~ 2000 AI Images",
+      imageGen: "~ 400 AI Image Sets",
       checkoutId: "price_1NXOb8Gj8eKfeqgl3aiK5eGN",
     },
     {
@@ -140,7 +140,7 @@ const Upgrade = () => {
       creditNumber: "400000",
       price: "89",
       audioTime: "~ 8 hours of Text to MP3",
-      imageGen: "~ 2000 AI Images",
+      imageGen: "~ 1600 AI Image Sets",
       checkoutId: "price_1NXOeWGj8eKfeqglQSe5tjDf",
     },
     // {
@@ -226,9 +226,13 @@ const Upgrade = () => {
         <div className="-mx-4 flex flex-wrap">
           <div className="w-full px-4">
             <div className="mx-auto mb-[20px] mt-10 max-w-[510px] text-center lg:mb-5">
-              <h1 className="mb-10 text-3xl font-bold text-dark dark:text-foreground sm:text-4xl ">
+              <h1 className="mb-5 text-3xl font-bold text-dark dark:text-foreground sm:text-4xl ">
                 Unlock AI Content Generation
               </h1>
+              <p className="text-sm">Text to MP3: 1 Character = 1 Credit</p>
+              <p className="text-sm">
+                Text to Image: An Image Set show 3 results = 250 Credits
+              </p>
             </div>
           </div>
         </div>

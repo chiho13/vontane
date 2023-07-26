@@ -10,6 +10,8 @@ export const addMapBlock = (editor, path) => {
     type: "map",
     align: "center",
     width: "100%",
+    height: 250,
+    latLng: [50.879, 4.6997],
     children: [{ text: "" }],
   };
 

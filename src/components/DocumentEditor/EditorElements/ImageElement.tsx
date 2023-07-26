@@ -32,6 +32,8 @@ import { createClient } from "@supabase/supabase-js";
 import { useSession } from "@supabase/auth-helpers-react";
 import { blobToBase64, urlToBlob } from "@/utils/helpers";
 import { supabaseClient } from "@/utils/supabaseClient";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import {
   Form,
@@ -43,12 +45,20 @@ import {
   FormMessage,
 } from "@/components/Form";
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
 import React from "react";
 import { useLocalStorage } from "usehooks-ts";
 import { api } from "@/utils/api";
 import { useRouter } from "next/router";
 import { nanoid } from "nanoid";
 import { useResizeBlock, Position } from "@/hooks/useResizeBlock";
+import { UserContext } from "@/contexts/UserContext";
 
 function generateRandomFilename(file) {
   const extension = file.name.split(".").pop();
@@ -152,7 +162,7 @@ export const ImageElement = React.memo(
 
               {children}
             </div>
-            <div className="absolute  right-2 top-0 z-10 flex opacity-0 group-hover:opacity-100 ">
+            <div className="absolute  right-1 top-1 z-10 flex opacity-0 group-hover:opacity-100 ">
               <OptionMenu element={element} />
             </div>
           </>
@@ -233,7 +243,14 @@ export const ImageElement = React.memo(
 export const ImageEmbedLink = () => {
   const router = useRouter();
   const workspaceId = router.query.workspaceId as string;
+  const errorMessage = () =>
+    toast.error("Something went wrong. Make sure description is safe", {
+      position: toast.POSITION.TOP_CENTER,
+    });
 
+  const { credits, setCredits }: any = useContext(UserContext);
+
+  const notEnoughCredits = credits < 50;
   const formSchema = z.object({
     url: z
       .string()
@@ -311,7 +328,16 @@ export const ImageEmbedLink = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
-  const [aiImageResults, setAIImageResults] = useState<Array<{ url: any }>>([]);
+  const [aiImageResults, setAIImageResults] = useLocalStorage(
+    "AIImageResults",
+    []
+  );
+
+  console.log();
+  const now = new Date();
+  const unixTimestamp = Math.floor(now.getTime() / 1000);
+
+  const [aitimestamp, setAITimestamp] = useLocalStorage("aitimestamp", null);
 
   // const supabaseClient = createClient(
   //   "https://nhntzctfhbydiddzcdqk.supabase.co",
@@ -364,6 +390,15 @@ export const ImageEmbedLink = () => {
   const uploadImageFile = api.gpt.selectImageFromBase64.useMutation();
 
   async function createImage(values: z.infer<typeof aiImageFormSchema>) {
+    if (notEnoughCredits) {
+      router.push({
+        pathname: router.pathname,
+        query: { ...router.query, upgrade: "true" },
+      });
+
+      return;
+    }
+
     if (isGenerating) return;
     setIsGenerating(true);
     setAIImageResults([]);
@@ -373,7 +408,12 @@ export const ImageEmbedLink = () => {
       });
       if (response && response.data) {
         console.log(response.data);
-        setAIImageResults(response.data.map((item) => ({ url: item.url })));
+
+        const res = response.data;
+
+        setCredits(response.credits);
+        setAITimestamp(Math.floor(Date.now() / 1000) + 1800);
+        setAIImageResults(res.data.map((item) => ({ url: item.url })));
         setIsGenerating(false);
 
         // Reset the form after successful submission
@@ -381,6 +421,11 @@ export const ImageEmbedLink = () => {
         setImagePrompt("");
       }
     } catch (error) {
+      errorMessage();
+      setIsGenerating(false);
+
+      aiImageForm.reset();
+      setImagePrompt("");
       console.error("Error creating image:", error);
     }
   }
@@ -512,181 +557,231 @@ export const ImageEmbedLink = () => {
     }
   }
 
+  const [genOpen, setGenOpen] = useState(false);
+
+  const onGenOpen = (value) => {
+    setGenOpen(value);
+  };
+  useEffect(() => {
+    // Get the current Unix timestamp
+    const currentTimestamp = Math.floor(Date.now() / 1000);
+
+    // If the stored timestamp is less than the current timestamp, it means the images have expired
+    if (aitimestamp && aitimestamp < currentTimestamp) {
+      // Clear the image results and the timestamp
+      setAIImageResults([]);
+      setAITimestamp(null);
+    } else if (aitimestamp && aitimestamp >= currentTimestamp) {
+      // If the images haven't expired yet, set a timeout to clear them when they do
+      const timeoutId = setTimeout(() => {
+        setAIImageResults([]);
+        setAITimestamp(null);
+      }, (aitimestamp - currentTimestamp) * 1000);
+
+      // Clear the timeout if the component unmounts or if aitimestamp changes
+      return () => clearTimeout(timeoutId);
+    }
+  }, [aitimestamp, setAIImageResults, setAITimestamp]);
+
   return (
-    <Tabs defaultValue={tab} onValueChange={handleTabChange}>
-      <TabsList
-        className={`ring-gray ring-red mb-3 grid h-10 w-full grid-cols-3 rounded-lg rounded-none bg-lightgray dark:bg-background`}
-      >
-        <TabsTrigger
-          value="upload"
-          className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-accent dark:data-[state=active]:text-foreground `}
+    <>
+      <Tabs defaultValue={tab} onValueChange={handleTabChange}>
+        <TabsList
+          className={`ring-gray ring-red mb-3 grid h-10 w-full grid-cols-3 rounded-lg rounded-none bg-lightgray dark:bg-background`}
         >
-          Upload
-        </TabsTrigger>
-
-        <TabsTrigger
-          value="link"
-          className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-accent dark:data-[state=active]:text-foreground `}
-        >
-          Embed Link
-        </TabsTrigger>
-        {/* <TabsTrigger
-          value="aiimage"
-          className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-accent dark:data-[state=active]:text-foreground `}
-        >
-          AI Image
-        </TabsTrigger> */}
-      </TabsList>
-
-      <TabsContent value="upload">
-        <Form {...uploadForm}>
-          <form className="z-100 relative mx-auto w-[90%] items-center space-y-3 py-2">
-            <FormField
-              control={uploadForm.control}
-              name="file.upload"
-              render={() => (
-                <FormItem>
-                  {/* <FormLabel>Upload Image</FormLabel> */}
-                  <FormControl>
-                    <label className=" flex h-10 cursor-pointer justify-center rounded bg-primary px-4 py-2 text-center text-primary-foreground outline-0 transition duration-300 hover:bg-primary/90">
-                      Upload
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={(event) => {
-                          const file =
-                            event.target.files && event.target.files[0];
-                          if (file) {
-                            const imageURL = URL.createObjectURL(file);
-
-                            handleImageUpload(file, imageURL);
-                          }
-                        }}
-                      />
-                    </label>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </form>
-        </Form>
-      </TabsContent>
-
-      <TabsContent value="link">
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="z-100 space-y-3 pb-2"
+          <TabsTrigger
+            value="upload"
+            className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-accent dark:data-[state=active]:text-foreground `}
           >
-            <FormField
-              control={form.control}
-              name="url"
-              render={() => (
-                <FormItem>
-                  {/* <FormLabel>Embed link</FormLabel> */}
-                  <FormControl>
-                    <Input
-                      placeholder="Paste the image link"
-                      {...form.register("url")}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="flex w-full items-center justify-center">
-              <Button className="h-[36px]" type="submit">
-                Embed Image
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </TabsContent>
-      {/* <TabsContent value="aiimage">
-        <Form {...aiImageForm}>
-          <form
-            onSubmit={aiImageForm.handleSubmit(createImage)}
-            className="z-100 relative  flex flex-row items-center space-x-4 pb-2"
+            Upload
+          </TabsTrigger>
+
+          <TabsTrigger
+            value="link"
+            className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-accent dark:data-[state=active]:text-foreground `}
           >
-            <FormField
-              control={aiImageForm.control}
-              name="prompt"
-              render={() => (
-                <FormItem className="flex-grow">
-                  <FormControl>
-                    <Input
-                      placeholder="Enter Image Description"
-                      // adjust this according to your state management
-                      {...aiImageForm.register("prompt")}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button
-              variant={"outline"}
-              className="absolute right-[10px] top-1 h-[30px] w-[30px] border-0 p-1"
-              type="submit"
+            Embed Link
+          </TabsTrigger>
+          <TabsTrigger
+            value="aiimage"
+            className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-accent dark:data-[state=active]:text-foreground `}
+          >
+            AI Image
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="upload">
+          <Form {...uploadForm}>
+            <form className="z-100 relative mx-auto w-[90%] items-center space-y-3 py-2">
+              <FormField
+                control={uploadForm.control}
+                name="file.upload"
+                render={() => (
+                  <FormItem>
+                    {/* <FormLabel>Upload Image</FormLabel> */}
+                    <FormControl>
+                      <label className=" flex h-10 cursor-pointer justify-center rounded bg-primary px-4 py-2 text-center text-primary-foreground outline-0 transition duration-300 hover:bg-primary/90">
+                        Upload
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(event) => {
+                            const file =
+                              event.target.files && event.target.files[0];
+                            if (file) {
+                              const imageURL = URL.createObjectURL(file);
+
+                              handleImageUpload(file, imageURL);
+                            }
+                          }}
+                        />
+                      </label>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </form>
+          </Form>
+        </TabsContent>
+
+        <TabsContent value="link">
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="z-100 space-y-3 pb-2"
             >
-              {isGenerating ? (
-                <LoadingSpinner strokeColor="stroke-gray-400 dark:stroke-muted-foreground" />
-              ) : (
-                <Send className="dark:stroke-muted-foreground" />
-              )}
-            </Button>
-          </form>
+              <FormField
+                control={form.control}
+                name="url"
+                render={() => (
+                  <FormItem>
+                    {/* <FormLabel>Embed link</FormLabel> */}
+                    <FormControl>
+                      <Input
+                        placeholder="Paste the image link"
+                        {...form.register("url")}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="flex w-full items-center justify-center">
+                <Button className="h-[36px]" type="submit">
+                  Embed Image
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </TabsContent>
+        <TabsContent value="aiimage">
+          <Form {...aiImageForm}>
+            <form
+              onSubmit={aiImageForm.handleSubmit(createImage)}
+              className="z-100  relative flex  w-full flex-row items-center  pb-2"
+            >
+              <FormField
+                control={aiImageForm.control}
+                name="prompt"
+                render={() => (
+                  <FormItem className="flex-grow">
+                    <FormControl>
+                      <Input
+                        placeholder="Enter Image Description"
+                        // adjust this according to your state management
+                        {...aiImageForm.register("prompt")}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="absolute right-[40px]  top-1 mb-2 flex  h-[30px] w-[45px] items-center justify-center rounded-md border border-accent text-sm">
+                50 cr
+              </div>
 
-          <div className="flex gap-2  overflow-auto">
-            {isGenerating && (
-              <div>
-                <div className="flex gap-2">
-                  <div className=" flex h-[154px] w-[154px] items-center justify-center bg-gray-200 dark:bg-accent">
-                    <LoadingSpinner
-                      strokeColor="stroke-gray-400 dark:stroke-muted-foreground"
-                      width={50}
-                      height={50}
-                    />
-                  </div>
-                  <div className=" flex h-[154px] w-[154px] items-center justify-center bg-gray-200 dark:bg-accent">
-                    <LoadingSpinner
-                      strokeColor="stroke-gray-400 dark:stroke-muted-foreground"
-                      width={50}
-                      height={50}
-                    />
-                  </div>
-                  <div className=" flex h-[154px] w-[154px] items-center justify-center bg-gray-200 dark:bg-accent">
-                    <LoadingSpinner
-                      strokeColor="stroke-gray-400 dark:stroke-muted-foreground"
-                      width={50}
-                      height={50}
-                    />
+              <TooltipProvider delayDuration={300}>
+                <Tooltip
+                  open={notEnoughCredits && genOpen}
+                  onOpenChange={onGenOpen}
+                >
+                  <TooltipTrigger>
+                    <Button
+                      variant={"outline"}
+                      className="absolute right-[5px] top-1 h-[30px] w-[30px] border-0 p-1"
+                      type="submit"
+                    >
+                      {isGenerating ? (
+                        <LoadingSpinner strokeColor="stroke-gray-400 dark:stroke-muted-foreground" />
+                      ) : (
+                        <Send className="dark:stroke-muted-foreground" />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+
+                  <TooltipContent
+                    side="top"
+                    sideOffset={20}
+                    className="dark:bg-white dark:text-black"
+                  >
+                    <p className="text-[12px]">Not Enough Credits</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </form>
+
+            <div className="flex gap-2  overflow-auto">
+              {isGenerating && (
+                <div>
+                  <div className="flex gap-2">
+                    <div className=" flex h-[154px] w-[154px] items-center justify-center bg-gray-200 dark:bg-accent">
+                      <LoadingSpinner
+                        strokeColor="stroke-gray-400 dark:stroke-muted-foreground"
+                        width={50}
+                        height={50}
+                      />
+                    </div>
+                    <div className=" flex h-[154px] w-[154px] items-center justify-center bg-gray-200 dark:bg-accent">
+                      <LoadingSpinner
+                        strokeColor="stroke-gray-400 dark:stroke-muted-foreground"
+                        width={50}
+                        height={50}
+                      />
+                    </div>
+                    <div className=" flex h-[154px] w-[154px] items-center justify-center bg-gray-200 dark:bg-accent">
+                      <LoadingSpinner
+                        strokeColor="stroke-gray-400 dark:stroke-muted-foreground"
+                        width={50}
+                        height={50}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
-            {aiImageResults &&
-              aiImageResults.map((el, index) => (
-                <button
-                  className="transition duration-200 hover:opacity-90"
-                  onClick={() => {
-                    if (isUploading) return;
-                    handleImageSelect(el.url);
-                  }}
-                  key={index}
-                >
-                  <LazyLoadImage
-                    src={el.url}
-                    width={154}
-                    effect="blur" // Optional effect
-                  />
-                </button>
-              ))}
-          </div>
-        </Form>
-      </TabsContent> */}
-    </Tabs>
+              )}
+              {aiImageResults &&
+                aiImageResults.map((el, index) => (
+                  <button
+                    className="transition duration-200 hover:opacity-90"
+                    onClick={() => {
+                      if (isUploading) return;
+                      handleImageSelect(el.url);
+                    }}
+                    key={index}
+                  >
+                    <LazyLoadImage
+                      src={el.url}
+                      width={154}
+                      effect="blur" // Optional effect
+                    />
+                  </button>
+                ))}
+            </div>
+          </Form>
+        </TabsContent>
+      </Tabs>
+      <ToastContainer />
+    </>
   );
 };

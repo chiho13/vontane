@@ -18,7 +18,7 @@ type AudioData = {
   audio_url: string;
   file_name: string;
   content: string;
-  transcript: any;
+  transcript?: any;
 };
 interface TextSpeechContextType {
   audioData: AudioData;

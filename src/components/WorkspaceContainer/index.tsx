@@ -52,7 +52,7 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = ({
   const [fetchWorkspaceIsLoading, setFetchWorkspaceIsLoading] = useState(true);
 
   const { setUpdatedWorkspace } = useWorkspaceTitleUpdate();
-  const { profile }: any = useUserContext();
+  const { profile, credits }: any = useUserContext();
 
   const [open, setOpen] = useState(true);
   //   const [workspaceId, setWorkSpaceId] = useState(router.query.workspaceId);
@@ -176,7 +176,7 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = ({
                 setSyncStatus={setSyncStatus}
                 syncStatus={syncStatus}
                 workspaceId={workspaceId}
-                credits={profile?.credits}
+                credits={credits}
                 handleTextChange={debounce(handleTextChange, 600)}
                 initialSlateValue={initialSlateValue}
                 setFetchWorkspaceIsLoading={setFetchWorkspaceIsLoading}

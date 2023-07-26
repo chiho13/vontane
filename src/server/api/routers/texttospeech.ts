@@ -198,20 +198,26 @@ export const texttospeechRouter = createTRPCRouter({
             ); // Remove stop words and words of length 2 or less
         }
 
-        const audioSource = { url: uploadedUrl };
-        const transcription = await deepgram.transcription.preRecorded(
-          audioSource,
-          {
-            language: "en",
-            model: "nova",
-            keywords: extractKeywords(input.content),
-          }
-        );
+        // const audioSource = { url: uploadedUrl };
+        // const transcription = await deepgram.transcription.preRecorded(
+        //   audioSource,
+        //   {
+        //     language: "en",
+        //     model: "nova",
+        //     keywords: extractKeywords(input.content),
+        //   }
+        // );
 
         // Extract the transcript from the response
-        const transcript = transcription?.results?.channels[0]?.alternatives[0];
+        // const transcript = transcription?.results?.channels[0]?.alternatives[0];
 
-        return { url: uploadedUrl, fileName, transcript };
+        const updateCredits = await ctx.prisma.user.update({
+          where: { id: ctx.user.id as string },
+          data: { credits: { decrement: input.content.length } },
+          select: { credits: true },
+        });
+
+        return { url: uploadedUrl, fileName, credits: updateCredits.credits };
       } catch (error) {
         console.error(error);
         throw new TRPCError({

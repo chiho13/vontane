@@ -227,6 +227,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const theme = useTheme();
   const router = useRouter();
 
+  console.log(credits);
+
   const { upgrade, ...rest } = router.query;
   const { isLocked } = useContext(LayoutContext);
   const {

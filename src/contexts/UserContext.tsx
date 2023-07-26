@@ -1,4 +1,10 @@
-import { createContext, useEffect, useState, useContext } from "react";
+import {
+  createContext,
+  useEffect,
+  useState,
+  useContext,
+  Dispatch,
+} from "react";
 import { useSession } from "@supabase/auth-helpers-react";
 
 import { api, RouterOutputs } from "@/utils/api";
@@ -8,6 +14,8 @@ export type UserContextType = {
   workspaces: null | RouterOutputs["profile"]["getProfile"]["workspaces"];
   trash: null | RouterOutputs["profile"]["getProfile"]["workspaces"];
   isLoading: boolean;
+  credits: Number;
+  setCredits: Dispatch<any>;
 };
 
 export const UserContext = createContext<UserContextType>({
@@ -15,6 +23,8 @@ export const UserContext = createContext<UserContextType>({
   workspaces: null,
   trash: null,
   isLoading: false,
+  credits: 0,
+  setCredits: () => {},
 });
 
 export function UserContextProvider({
@@ -27,8 +37,18 @@ export function UserContextProvider({
 
   const { profile, workspaces, trash, isLoading } = useUserProfile(userId);
 
+  const [credits, setCredits] = useState(0);
+
+  useEffect(() => {
+    if (profile) {
+      setCredits(profile?.credits);
+    }
+  }, [profile]);
+
   return (
-    <UserContext.Provider value={{ profile, workspaces, trash, isLoading }}>
+    <UserContext.Provider
+      value={{ profile, workspaces, trash, isLoading, credits, setCredits }}
+    >
       {children}
     </UserContext.Provider>
   );
@@ -37,16 +57,14 @@ export function UserContextProvider({
 export const useUserContext = () => useContext(UserContext);
 
 function useUserProfile(userId: string | undefined) {
-  const queryResult = userId
-    ? api.profile.getProfile.useQuery(
-        { id: userId },
-        {
-          enabled: true,
-          cacheTime: 5 * 60 * 1000, // Cache data for 5 minutes
-          staleTime: 5 * 60 * 1000, // Data is considered fresh for 5 minutes
-        }
-      )
-    : { data: undefined, isLoading: false };
+  const queryResult = api.profile.getProfile.useQuery(
+    { id: userId },
+    {
+      enabled: true,
+      cacheTime: 5 * 60 * 1000, // Cache data for 5 minutes
+      staleTime: 5 * 60 * 1000, // Data is considered fresh for 5 minutes
+    }
+  );
 
   const { data, isLoading } = queryResult;
   const profile: any = data?.profile;

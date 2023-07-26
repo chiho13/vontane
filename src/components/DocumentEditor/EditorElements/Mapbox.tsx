@@ -21,9 +21,13 @@ export function Mapbox(props) {
 
   const { attributes, children, element } = props;
   const path = ReactEditor.findPath(editor, element);
-  const { theme } = useTheme();
+  const { theme, resolvedTheme } = useTheme();
 
-  const isDarkMode = theme === "dark";
+  // Default theme to 'system' and resolve to either 'light' or 'dark' based on system preference
+  let currentTheme = theme === "system" ? resolvedTheme : theme;
+
+  const isDarkMode = currentTheme === "dark";
+
   const selected = useSelected();
   const defaultZoom = 11;
   const MAPTILER_ACCESS_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
@@ -146,7 +150,7 @@ export function Mapbox(props) {
           <Draggable offset={[25, 50]} anchor={anchor} onDragEnd={setLatLng}>
             <MapPin
               size={50}
-              className="fill-white stroke-brand dark:fill-muted dark:stroke-white"
+              className="fill-white stroke-brand dark:fill-brand dark:stroke-white"
               // fill={isDarkMode ? "#191919" : "white"}
               strokeWidth={1.5}
             />

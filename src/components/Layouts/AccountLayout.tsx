@@ -14,7 +14,7 @@ import {
 import { AccountLayoutStyle } from "./style";
 import ChevronDown from "@/icons/ChevronDown";
 import { useRouter } from "next/router";
-import { Plus, Trash, MoreHorizontal } from "lucide-react";
+import { Plus, Trash, MoreHorizontal, Undo2 } from "lucide-react";
 import { workspace } from "@prisma/client";
 import { useLocalStorage } from "usehooks-ts";
 import { ModeToggle } from "../mode-toggle";
@@ -457,12 +457,14 @@ const Layout: React.FC<LayoutProps> = ({
                         : workspaceName;
 
                     return (
-                      <SidebarItem key={workspace.id}>
+                      <SidebarItem
+                        key={workspace.id}
+                        onClick={() => handleWorkspaceRoute(workspace.id, "")}
+                      >
                         <button
-                          onClick={() => handleWorkspaceRoute(workspace.id, "")}
-                          className={` group relative flex  items-center  hover:bg-gray-300 dark:hover:bg-accent ${
+                          className={` group relative flex  items-center  hover:bg-gray-200 dark:hover:bg-accent ${
                             currentWorkspaceId === workspace.id
-                              ? "bg-gray-300 font-bold dark:bg-accent"
+                              ? "bg-gray-200 font-bold dark:bg-accent"
                               : "transparent"
                           }`}
                         >
@@ -477,7 +479,7 @@ const Layout: React.FC<LayoutProps> = ({
                               <a
                                 href="#"
                                 role="button"
-                                className="  absolute right-2 flex h-[22px] w-[22px] items-center justify-center rounded-md p-0 opacity-0 outline-none transition  duration-300 hover:bg-gray-200 group-hover:opacity-100 dark:hover:bg-gray-600"
+                                className="  absolute right-2 flex h-[22px] w-[22px] items-center justify-center rounded-md p-0 opacity-0 outline-none transition  duration-300 hover:bg-gray-100 group-hover:opacity-100 dark:hover:bg-gray-600"
                               >
                                 <MoreHorizontal
                                   className="text-darkergray  dark:stroke-foreground"
@@ -505,11 +507,8 @@ const Layout: React.FC<LayoutProps> = ({
                     );
                   })}
 
-                <SidebarItem>
-                  <button
-                    className="flex h-[36px] items-center hover:bg-gray-200 dark:hover:bg-accent"
-                    onClick={createWorkspace}
-                  >
+                <SidebarItem onClick={createWorkspace}>
+                  <button className="flex h-[36px] items-center hover:bg-gray-200 dark:hover:bg-accent">
                     <Plus
                       className="text-darkergray  dark:text-foreground"
                       width={22}
@@ -538,7 +537,7 @@ const Layout: React.FC<LayoutProps> = ({
                     side="right"
                     className={`z-1000 relative  ${
                       isLocked && isOpen ? "bottom-[25px]" : "bottom-[57px]"
-                    }  h-[200px] w-[300px] rounded-l-none border-l-0 bg-background p-4 shadow-md dark:border-accent dark:bg-muted`}
+                    }  h-[200px] w-[300px] overflow-y-auto rounded-l-none border-l-0 bg-background p-4 shadow-md dark:border-accent dark:bg-muted`}
                   >
                     {trashWorkspace.length === 0 && "Empty"}
                     {trashWorkspace &&
@@ -558,47 +557,36 @@ const Layout: React.FC<LayoutProps> = ({
                         return (
                           <DropdownMenuItem
                             key={workspace.id}
-                            className="cursor-pointer"
+                            className="group relative flex cursor-pointer"
+                            onClick={() =>
+                              handleWorkspaceRoute(workspace.id, "")
+                            }
                           >
-                            <div
-                              onClick={() =>
-                                handleWorkspaceRoute(workspace.id, "")
-                              }
-                            >
+                            <div className="flex w-full items-center justify-between">
                               <span
-                                className={`text-sm text-darkergray  dark:text-foreground`}
+                                className={`grow text-sm  text-darkergray dark:text-foreground`}
                               >
                                 {displayName || "Untitled"}
                               </span>
-
-                              {/* <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <a
-                                href="#"
-                                role="button"
-                                className="  absolute right-2 flex h-[22px] w-[22px] items-center justify-center rounded-md p-0 opacity-0 outline-none transition  duration-300 hover:bg-gray-200 group-hover:opacity-100 dark:hover:bg-gray-600"
-                              >
-                                <MoreHorizontal
-                                  className="text-darkergray  dark:stroke-foreground"
-                                  width={18}
-                                />{" "}
-                              </a>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent
-                              side="right"
-                              sideOffset={13}
-                              className="z-1000 relative  w-[150px] rounded-l-none border-l-0 bg-background p-2 shadow-md dark:border-accent dark:bg-muted"
-                            >
-                              <DropdownMenuItem
-                                className={`flex w-full cursor-pointer  items-center  rounded-sm px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:text-gray-900 focus:outline-none dark:text-foreground `}
-                                onClick={() =>
-                                  softDeleteWorkspace(workspace.id)
-                                }
-                              >
-                                Move to Bin
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu> */}
+                              <TooltipProvider delayDuration={0}>
+                                <Tooltip>
+                                  <TooltipTrigger>
+                                    <a
+                                      href="#"
+                                      role="button"
+                                      className="flex h-[22px] w-[22px] items-center justify-center rounded-md p-0 opacity-0 outline-none transition  duration-300 hover:bg-gray-100 group-hover:opacity-100 dark:hover:bg-gray-600"
+                                    >
+                                      <Undo2
+                                        className="text-darkergray  dark:stroke-foreground"
+                                        width={18}
+                                      />{" "}
+                                    </a>
+                                  </TooltipTrigger>
+                                  <TooltipContent side="bottom">
+                                    <p className="text-[12px]">Restore</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
                             </div>
                           </DropdownMenuItem>
                         );
@@ -628,7 +616,7 @@ const Layout: React.FC<LayoutProps> = ({
         >
           {isTrashed && (
             <div className="fixed left-0 right-0 top-0 flex justify-center ">
-              <div className="item-center flex w-[300px] justify-center gap-4 bg-red-500 p-2  text-sm">
+              <div className="item-center flex w-[300px] justify-center gap-4 bg-[#EB5756] p-2 text-sm  text-white">
                 <p className="flex items-center">
                   This workspace is in the bin
                 </p>

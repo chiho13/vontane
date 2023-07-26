@@ -2,16 +2,19 @@ import { useContext, useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import { BlockMath } from "react-katex";
 import { EditorContext } from "@/contexts/EditorContext";
-import { ReactEditor } from "slate-react";
+import { ReactEditor, useSelected } from "slate-react";
 import { Editor } from "slate";
 import { OptionMenu } from "../OptionMenu";
 
 export function EquationElement(props) {
   const { attributes, children, element } = props;
-  const { editor, showEditBlockPopup, selectedElementID } =
+  const { editor, showEditBlockPopup, selectedElementID, activePath } =
     useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);
 
+  const selected = useSelected();
+
+  console.log("selected", selectedElementID, path);
   return (
     <div
       tabIndex={0}

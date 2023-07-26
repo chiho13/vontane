@@ -123,21 +123,24 @@ const Upgrade = () => {
       credits: "25K credits",
       creditNumber: "25000",
       price: "9",
-      audioTime: "~ 30 minutes of Audio",
+      audioTime: "~ 30 mins of Text to MP3",
+      imageGen: "~ 500 AI Images",
       checkoutId: "price_1NX6HtGj8eKfeqgl2PoJ7aOd",
     },
     {
       credits: "100K credits",
       creditNumber: "100000",
       price: "39",
-      audioTime: "~ 2 hours of Audio",
+      audioTime: "~ 2 hours of Text to MP3",
+      imageGen: "~ 2000 AI Images",
       checkoutId: "price_1NXOb8Gj8eKfeqgl3aiK5eGN",
     },
     {
       credits: "400K credits",
       creditNumber: "400000",
       price: "89",
-      audioTime: "~ 8 hours of Audio",
+      audioTime: "~ 8 hours of Text to MP3",
+      imageGen: "~ 2000 AI Images",
       checkoutId: "price_1NXOeWGj8eKfeqglQSe5tjDf",
     },
     // {
@@ -167,6 +170,7 @@ const Upgrade = () => {
     creditNumber,
     price,
     audioTime,
+    imageGen,
     checkoutId,
     createCheckoutSession,
   }) => {
@@ -186,6 +190,10 @@ const Upgrade = () => {
             <p className="mt-3  flex items-center text-left text-base font-semibold leading-loose text-gray-500 dark:text-gray-400">
               <Check />
               <span className="shrink pl-2 text-brand">{audioTime}</span>
+            </p>
+            <p className="mt-3  flex items-center text-left text-base font-semibold leading-loose text-gray-500 dark:text-gray-400">
+              <Check />
+              <span className="shrink pl-2 text-brand">{imageGen}</span>
             </p>
             <p className="mt-2  flex items-center text-left font-semibold leading-loose text-gray-500  dark:text-gray-400">
               <Check />
@@ -218,8 +226,8 @@ const Upgrade = () => {
         <div className="-mx-4 flex flex-wrap">
           <div className="w-full px-4">
             <div className="mx-auto mb-[20px] mt-10 max-w-[510px] text-center lg:mb-5">
-              <h1 className="mb-4 text-3xl font-bold text-dark dark:text-foreground sm:text-4xl ">
-                Ultra-Realistic Voices
+              <h1 className="mb-10 text-3xl font-bold text-dark dark:text-foreground sm:text-4xl ">
+                Unlock AI Content Generation
               </h1>
             </div>
           </div>
@@ -233,6 +241,7 @@ const Upgrade = () => {
                 creditNumber={card.creditNumber}
                 price={card.price}
                 audioTime={card.audioTime}
+                imageGen={card.imageGen}
                 checkoutId={card.checkoutId}
                 createCheckoutSession={createCheckoutSession}
               />

@@ -4,7 +4,7 @@ import { TRPCError } from "@trpc/server";
 import { Configuration, OpenAIApi } from "openai";
 import { uploadImage, uploadImageBlob } from "@/server/lib/uploadImage";
 import { nanoid } from "nanoid";
-
+import { rateLimiterMiddleware } from "@/server/api/trpc";
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -31,22 +31,51 @@ const base64ToBlob = (base64) => {
 
 export const GPTRouter = createTRPCRouter({
   createimage: protectedProcedure
+    .use(rateLimiterMiddleware)
     .input(
       z.object({
         prompt: z.string(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const { prompt } = input;
+      let response;
 
-      const response = await openai.createImage({
-        prompt: prompt,
-        n: 3,
-        size: "1024x1024",
+      // Fetch the current credits of the user
+      const user = await ctx.prisma.user.findUnique({
+        where: { id: ctx.user.id as string },
+        select: { credits: true },
       });
 
-      return response.data;
+      // Check if user has enough credits
+      if (user?.credits < 50) {
+        throw new Error("Not enough credits");
+      }
+
+      // Perform tasks in a transaction
+      try {
+        // Try to generate the image
+        response = await openai.createImage({
+          prompt: prompt,
+          n: 3,
+          size: "1024x1024",
+        });
+
+        // If successful, decrement the credits
+        const updatedUser = await ctx.prisma.user.update({
+          where: { id: ctx.user.id as string },
+          data: { credits: { decrement: 50 } },
+          select: { credits: true },
+        });
+
+        // Return the updated credits and the response data
+        return { credits: updatedUser.credits, data: response.data };
+      } catch (error) {
+        console.error(`Error: ${error.message}`);
+        throw new Error("An error occurred while processing your request");
+      }
     }),
+
   selectImage: protectedProcedure
     .input(
       z.object({

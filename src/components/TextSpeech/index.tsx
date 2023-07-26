@@ -89,7 +89,7 @@ export const TextSpeech = ({
   const { editor } = useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);
 
-  const { profile }: any = useContext(UserContext);
+  const { credits, setCredits }: any = useContext(UserContext);
 
   const createTTSAudio = async () => {
     setAudioIsLoading(true);
@@ -126,6 +126,7 @@ export const TextSpeech = ({
         workspaceId,
       });
       if (response) {
+        setCredits(response.credits);
         console.log(response);
         setAudioIsLoading(true);
         let newLoadingState = { ...rightBarAudioIsLoading };
@@ -136,7 +137,6 @@ export const TextSpeech = ({
           audio_url: response.url,
           file_name: response.fileName,
           content: textSpeech,
-          transcript: response.transcript,
         });
         // setFileName(response.fileName);
 
@@ -147,21 +147,20 @@ export const TextSpeech = ({
             audio_url: response.url,
             file_name: response.fileName,
             content: textSpeech,
-            transcript: response.transcript,
           }, // New properties
           { at: path } // Location
         );
 
-        let childPath = [...path, 0];
-        Transforms.setNodes(
-          editor,
-          {
-            audio_url: response.url,
-            content: textSpeech,
-            transcript: response.transcript,
-          },
-          { at: childPath }
-        );
+        // let childPath = [...path, 0];
+        // Transforms.setNodes(
+        //   editor,
+        //   {
+        //     audio_url: response.url,
+        //     content: textSpeech,
+        //     transcript: response.transcript,
+        //   },
+        //   { at: childPath }
+        // );
       }
     } catch (error) {
       console.error("Error:", error);
@@ -184,11 +183,12 @@ export const TextSpeech = ({
     }
   }, [selectedVoiceId, textSpeech]);
 
+  const notEnoughCredits = credits < 10 || textSpeech.length > credits;
   async function generateAudio(event) {
     event.preventDefault();
     event.stopPropagation();
 
-    if (profile?.credits < 10 || textSpeech.length > profile?.credits) {
+    if (notEnoughCredits) {
       router.push({
         pathname: router.pathname,
         query: { ...router.query, upgrade: "true" },
@@ -230,6 +230,12 @@ export const TextSpeech = ({
       { at: path } // Location
     );
   };
+
+  const [genOpen, setGenOpen] = useState(false);
+
+  const onGenOpen = (value) => {
+    setGenOpen(value);
+  };
   return (
     <div className="flex w-[95%] justify-between gap-2">
       <div className="relative flex items-center lg:max-w-[980px]">
@@ -252,7 +258,24 @@ export const TextSpeech = ({
         </div>
 
         {selected && (
-          <GenerateButton onClick={generateAudio} element={element} />
+          <TooltipProvider delayDuration={300}>
+            <Tooltip
+              open={notEnoughCredits && genOpen}
+              onOpenChange={onGenOpen}
+            >
+              <TooltipTrigger>
+                <GenerateButton onClick={generateAudio} element={element} />
+              </TooltipTrigger>
+
+              <TooltipContent
+                side="top"
+                sideOffset={10}
+                className="dark:bg-white dark:text-black"
+              >
+                <p className="text-[12px]">Not Enough Credits</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         )}
       </div>
       {!containsMCQ &&

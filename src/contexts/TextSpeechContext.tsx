@@ -42,7 +42,6 @@ const TextSpeechContext = createContext<TextSpeechContextType>({
     audio_url: "",
     file_name: "",
     content: "",
-    transcript: {},
   },
   setAudioData: () => {},
   showRightSidebar: false,
@@ -80,7 +79,6 @@ const RightSideBarProvider = ({
     audio_url: "",
     file_name: "",
     content: "",
-    transcript: {},
   });
   const [showRightSidebar, setShowRightSidebar] = useLocalStorage(
     "showRightSidebar",

@@ -170,6 +170,7 @@ export function Mapbox(props) {
             />
           </a>
         </Map>
+        {children}
       </div>
     </div>
   );

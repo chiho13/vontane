@@ -74,18 +74,18 @@ export function MapBlock(props) {
               alt="map tiler"
             />
           </a>
-          <Link
+          {/* <Link
             href={`https://www.google.com/maps/?q=${element.latLng[0]},${element.latLng[1]}`}
             target="_blank"
+          > */}
+          <Button
+            variant="outline"
+            className="absolute bottom-2 right-2 h-[32px] w-[32px] border bg-accent p-0 "
+            size="xs"
           >
-            <Button
-              variant="outline"
-              className="absolute bottom-2 right-2 h-[32px] w-[32px] border bg-accent p-0 "
-              size="xs"
-            >
-              <MapIcon className="w-5" />
-            </Button>
-          </Link>
+            <MapIcon className="w-5" />
+          </Button>
+          {/* </Link> */}
         </Map>
       </div>
     </div>

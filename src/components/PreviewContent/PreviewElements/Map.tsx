@@ -15,8 +15,8 @@ export function MapBlock(props) {
 
   const { theme, resolvedTheme } = useTheme();
 
-  // Default theme to system settings and fallback to 'light' if undefined.
-  const currentTheme = theme ?? resolvedTheme ?? "light";
+  // Default theme to 'system' and resolve to either 'light' or 'dark' based on system preference
+  let currentTheme = theme === "system" ? resolvedTheme : theme;
 
   const isDarkMode = currentTheme === "dark";
 
@@ -55,7 +55,7 @@ export function MapBlock(props) {
           <Marker offset={[10, 15]} anchor={element.latLng}>
             <MapPin
               size={50}
-              className="fill-white stroke-brand dark:fill-muted dark:stroke-white"
+              className="fill-white stroke-brand dark:fill-brand dark:stroke-white"
               // fill={isDarkMode ? "#191919" : "white"}
               strokeWidth={1.5}
             />

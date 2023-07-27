@@ -38,8 +38,6 @@ export function ParagraphElement(props) {
   const selected = useSelected();
   const paragraphRef = useRef(null);
 
-  const { audioData, setAudioData } = useTextSpeech();
-
   useEffect(() => {
     if (editor && path) {
       const isFirstElement = Path.equals(path, [0]);
@@ -75,8 +73,6 @@ export function ParagraphElement(props) {
   if (isParentMCQ(editor)) {
     shouldShowPlaceholder = isFirstNode && isEmpty;
   }
-
-  console.log(selected && path);
 
   return (
     <ParagraphStyle isParentMCQ={isParentMCQ(editor)} type={type}>

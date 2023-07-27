@@ -31,6 +31,7 @@ import { saveAs } from "file-saver";
 import { PreviewContent } from "../PreviewContent";
 import { PublishButton } from "../PublishButton";
 import { useClipboard } from "@/hooks/useClipboard";
+import { MapSettings } from "../MapSettings";
 
 import {
   Tooltip,
@@ -68,9 +69,12 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     return path.length ? Node.get(editor, path) : null;
   }, [editor, activePath]);
 
+  console.log(rootNode);
+
   const {
     audioData,
     setAudioData,
+    elementData,
     rightBarAudioIsLoading,
     workspaceData,
     refetchWorkspaceData,
@@ -221,6 +225,14 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
             </TabsList>
 
             <TabsContent value="properties" className="flex-grow">
+              {SlateElement.isElement(rootNode) &&
+                rootNode?.type == "map" &&
+                elementData && (
+                  <MapSettings
+                    element={elementData}
+                    path={JSON.parse(activePath)}
+                  />
+                )}
               {SlateElement.isElement(rootNode) &&
                 rootNode?.type == "tts" &&
                 (audioData && audioData.file_name ? (

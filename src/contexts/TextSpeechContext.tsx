@@ -1,13 +1,5 @@
 import { useRouter } from "next/router";
-import {
-  createContext,
-  useContext,
-  useState,
-  ReactNode,
-  SetStateAction,
-  Dispatch,
-  useCallback,
-} from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
 
 import React from "react";
 import { useLocalStorage } from "usehooks-ts";
@@ -20,6 +12,8 @@ type AudioData = {
   content: string;
 };
 interface TextSpeechContextType {
+  elementData: any;
+  setElementData: (value: any) => void;
   audioData: AudioData;
   setAudioData: (value: AudioData) => void;
   showRightSidebar: boolean;
@@ -37,6 +31,8 @@ interface TextSpeechContextType {
 }
 // Create the context with default values
 const TextSpeechContext = createContext<TextSpeechContextType>({
+  elementData: null,
+  setElementData: () => {},
   audioData: {
     audio_url: "",
     file_name: "",
@@ -79,6 +75,9 @@ const RightSideBarProvider = ({
     file_name: "",
     content: "",
   });
+
+  const [elementData, setElementData] = useState(null);
+
   const [showRightSidebar, setShowRightSidebar] = useLocalStorage(
     "showRightSidebar",
     true
@@ -96,6 +95,8 @@ const RightSideBarProvider = ({
   return (
     <TextSpeechContext.Provider
       value={{
+        elementData,
+        setElementData,
         audioData,
         setAudioData,
         showRightSidebar,

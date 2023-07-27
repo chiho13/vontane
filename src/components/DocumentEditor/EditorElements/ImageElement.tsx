@@ -682,10 +682,7 @@ export const ImageEmbedLink = () => {
         </TabsContent>
         <TabsContent value="aiimage">
           <Form {...aiImageForm}>
-            <form
-              onSubmit={aiImageForm.handleSubmit(createImage)}
-              className="z-100  relative flex  w-full flex-row items-center  pb-2"
-            >
+            <form>
               <FormField
                 control={aiImageForm.control}
                 name="prompt"

@@ -15,10 +15,13 @@ import { OptionMenu } from "../OptionMenu";
 import { Position, useResizeBlock } from "@/hooks/useResizeBlock";
 import { block } from "million";
 import { BlockAlign } from "@/components/BlockAlign";
+import { useTextSpeech } from "@/contexts/TextSpeechContext";
 
 export function Mapbox(props) {
   const { editor, activePath, setActivePath } = useContext(EditorContext);
 
+  const { setElementData, setShowRightSidebar, setTab, showRightSidebar } =
+    useTextSpeech();
   const { attributes, children, element } = props;
   const path = ReactEditor.findPath(editor, element);
   const { theme, resolvedTheme } = useTheme();
@@ -56,10 +59,11 @@ export function Mapbox(props) {
   }
 
   useEffect(() => {
-    if (JSON.parse(activePath)[0] === path[0]) {
+    if (selected) {
       console.log("lololol");
+      setElementData(element);
     }
-  }, [activePath]);
+  }, [selected]);
 
   return (
     <div
@@ -129,7 +133,11 @@ export function Mapbox(props) {
             size="xs"
             onClick={(e) => {
               e.stopPropagation();
-              console.log("settings");
+              Transforms.select(editor, path);
+              if (!showRightSidebar) {
+                setShowRightSidebar(true);
+                setTab("properties");
+              }
             }}
             className="group h-[24px] w-[24px] border border-gray-100 bg-white px-0 hover:border-gray-200 hover:bg-gray-200 dark:border-gray-700 dark:bg-muted hover:dark:bg-muted/90"
             style={{
@@ -159,6 +167,7 @@ export function Mapbox(props) {
             // Transforms.setNodes(editor, { zoom }, { at: path });
           }}
           metaWheelZoom={true}
+          animate={true}
         >
           <ZoomControl />
           <Draggable

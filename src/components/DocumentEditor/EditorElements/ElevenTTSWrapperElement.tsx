@@ -94,15 +94,12 @@ const ElevenTTSWrapperBase = (props: {
   useEffect(() => {
     const extractedText = extractTextValues(element.children).join(" ");
 
-    console.log(extractedText);
     if (
       activePath &&
       JSON.parse(activePath)[0] === path[0] &&
       (element?.audio_url !== audioData?.audio_url ||
         audioData?.content !== extractedText)
     ) {
-      console.log(extractedText);
-
       setAudioData({
         audio_url: element.audio_url,
         file_name: element.file_name,

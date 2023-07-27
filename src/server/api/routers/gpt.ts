@@ -223,6 +223,48 @@ export const GPTRouter = createTRPCRouter({
         });
       }
     }),
+  locationSearch: protectedProcedure
+    .use(rateLimiterMiddleware)
+    .input(
+      z.object({
+        location: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { location } = input;
+
+      // Make sure to replace YOUR_MAPTILER_API_KEY with your actual API key
+      const encodedLocation = encodeURIComponent(location);
+      const url = `https://api.maptiler.com/geocoding/${encodedLocation}.json?key=EeJqZWmMwWuKBDTgCto5&language=en`;
+
+      try {
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Internal server error",
+          });
+        }
+
+        const data = await response.json();
+
+        // Get the first result and extract the lat, lng from it
+        return data;
+      } catch (err) {
+        console.error(err);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        });
+      }
+    }),
+
   katextotext: protectedProcedure
     .input(
       z.object({

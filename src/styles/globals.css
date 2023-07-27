@@ -152,3 +152,7 @@ body {
   background: rgba(255, 255, 255, 0.5); /* Optional: to enhance visibility */
   border-top-left-radius: 5px; /* Optional: if you want rounded corners */
 }
+
+.toast_container {
+  position: fixed;
+}

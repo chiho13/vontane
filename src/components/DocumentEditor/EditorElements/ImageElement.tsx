@@ -167,7 +167,11 @@ export const ImageElement = React.memo(
             </div>
           </>
         ) : (
-          <div className={`flex justify-${align}`} {...attributes}>
+          <div
+            className={`flex justify-${align}`}
+            {...attributes}
+            contentEditable={false}
+          >
             <div className="relative rounded-md bg-gray-200 dark:bg-background">
               <img
                 src={base64URL}

@@ -46,15 +46,20 @@ export function Mapbox(props) {
 
   const [align, setAlign] = useState(element.align || "start");
 
-  const mapRef = useRef(null);
   function setLatLng(newLatLng) {
     setAnchor(newLatLng);
 
     // Set new timer
     setTimeout(() => {
       Transforms.setNodes(editor, { latLng: newLatLng, zoom }, { at: path });
-    }, 300);
+    }, 500);
   }
+
+  useEffect(() => {
+    if (JSON.parse(activePath)[0] === path[0]) {
+      console.log("lololol");
+    }
+  }, [activePath]);
 
   return (
     <div

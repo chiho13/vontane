@@ -46,6 +46,7 @@ export function Mapbox(props) {
 
   const [align, setAlign] = useState(element.align || "start");
 
+  const mapRef = useRef(null);
   function setLatLng(newLatLng) {
     setAnchor(newLatLng);
 
@@ -56,10 +57,13 @@ export function Mapbox(props) {
   }
 
   return (
-    <div className={` flex justify-${align}`}>
+    <div
+      className={` flex justify-${align} outline-none`}
+      {...attributes}
+      tabIndex={-1}
+    >
       <div
-        className="group relative  rounded-md"
-        tabIndex={-1}
+        className={`group relative rounded-md`}
         style={{
           overflow: "hidden",
           width: blockWidth,
@@ -69,7 +73,11 @@ export function Mapbox(props) {
         ref={ref}
         data-id={element.id}
         data-path={JSON.stringify(path)}
+        tabIndex={-1}
         contentEditable={false}
+        onMouseDown={() => {
+          ReactEditor.blur(editor);
+        }}
       >
         <div
           className={`absolute -right-[3px] top-0 flex h-full items-center`}
@@ -112,7 +120,7 @@ export function Mapbox(props) {
         </div>
         <div className="absolute  right-2 top-1 z-10 flex items-center gap-1 ">
           <BlockAlign element={element} />
-          {/* <Button
+          <Button
             size="xs"
             onClick={(e) => {
               e.stopPropagation();
@@ -125,7 +133,7 @@ export function Mapbox(props) {
             contentEditable={false}
           >
             <Settings className="w-4 stroke-muted-foreground hover:stroke-muted-foreground dark:stroke-foreground" />
-          </Button> */}
+          </Button>
 
           <OptionMenu element={element} className="bg-white" />
         </div>
@@ -139,6 +147,7 @@ export function Mapbox(props) {
             el.event.stopPropagation();
             console.log(el.latLng);
             setLatLng(el.latLng);
+            Transforms.select(editor, path);
           }}
           onBoundsChanged={({ center, zoom }) => {
             setZoom(zoom);
@@ -147,7 +156,15 @@ export function Mapbox(props) {
           metaWheelZoom={true}
         >
           <ZoomControl />
-          <Draggable offset={[25, 50]} anchor={anchor} onDragEnd={setLatLng}>
+          <Draggable
+            offset={[25, 50]}
+            anchor={anchor}
+            onDragEnd={(value) => {
+              setLatLng(value);
+              console.log("path", path);
+              Transforms.select(editor, path);
+            }}
+          >
             <MapPin
               size={50}
               className="fill-white stroke-brand dark:fill-brand dark:stroke-white"

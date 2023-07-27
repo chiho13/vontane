@@ -125,7 +125,7 @@ const Upgrade = () => {
       price: "9",
       audioTime: "~ 30 mins of Text to MP3",
       imageGen: "~ 100 AI Image Sets",
-      checkoutId: "price_1NX6HtGj8eKfeqgl2PoJ7aOd",
+      checkoutId: "price_1NYZetGj8eKfeqglBABHcdUX",
     },
     {
       credits: "100K credits",
@@ -133,7 +133,7 @@ const Upgrade = () => {
       price: "39",
       audioTime: "~ 2 hours of Text to MP3",
       imageGen: "~ 400 AI Image Sets",
-      checkoutId: "price_1NXOb8Gj8eKfeqgl3aiK5eGN",
+      checkoutId: "price_1NYZf9Gj8eKfeqgllX2ANd5a",
     },
     {
       credits: "400K credits",
@@ -141,7 +141,7 @@ const Upgrade = () => {
       price: "89",
       audioTime: "~ 8 hours of Text to MP3",
       imageGen: "~ 1600 AI Image Sets",
-      checkoutId: "price_1NXOeWGj8eKfeqglQSe5tjDf",
+      checkoutId: "price_1NYZfUGj8eKfeqgleSwh2oMo",
     },
     // {
     //   credits: "7-day Access",
@@ -182,8 +182,8 @@ const Upgrade = () => {
           </span>
 
           <div className="relative">
-            <h2 className=" relative mb-2 mt-3  flex text-[40px] font-bold text-gray-500  dark:text-foreground  ">
-              £<span className="block text-foreground">{price}</span>
+            <h2 className=" relative mb-2 mt-3  flex text-[40px] font-bold text-gray-500  dark:text-muted-foreground  ">
+              $<span className="block text-foreground ">{price}</span>
             </h2>
           </div>
           <div className="relative mb-7 block">

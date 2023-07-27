@@ -147,6 +147,8 @@ type CustomElement = {
   latex?: string; // Add this line for the latex string
   slideNumber?: Number;
   latLng?: any;
+  placeName?: string;
+  address?: string;
   zoom?: Number;
 };
 

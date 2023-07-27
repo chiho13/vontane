@@ -15,17 +15,30 @@ import { Input } from "../ui/input";
 import { api } from "@/utils/api";
 import { ToastContainer, toast } from "react-toastify";
 import { Transforms } from "slate";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { EditorContext } from "@/contexts/EditorContext";
 import LoadingSpinner from "@/icons/LoadingSpinner";
 import { Button } from "../ui/button";
 import { Search } from "lucide-react";
+import { useClipboard } from "@/hooks/useClipboard";
+import { debounce } from "lodash";
 
 export const MapSettings = ({ element, path }) => {
   const { editor, activePath } = useContext(EditorContext);
 
+  const { copied, copyToClipboard } = useClipboard();
+
   const locationSearchMutation = api.gpt.locationSearch.useMutation();
+
   const [isGenerating, setIsGenerating] = useState(false);
+
+  const [address, setAddress] = useState(element.address ?? null);
+
+  useEffect(() => {
+    if (element.address) {
+      setAddress(element.address);
+    }
+  }, [element.address]);
   const locationSearchSchema = z.object({
     prompt: z
       .string()
@@ -53,18 +66,6 @@ export const MapSettings = ({ element, path }) => {
       const latLng = [location[1], location[0]];
       Transforms.setNodes(editor, { latLng, zoom: 12 }, { at: path });
       setIsGenerating(false);
-      //   let regex = /^\[([-]?[0-9]*\.?[0-9]+),\s*([-]?[0-9]*\.?[0-9]+)\]$/;
-
-      //   if (!regex.test(response)) {
-      //     throw new Error("Invalid format. Expected format: [lat, lng]");
-      //   } else {
-      //     Transforms.setNodes(
-      //       editor,
-      //       { latLng: JSON.parse(response) },
-      //       { at: path }
-      //     );
-      //     setIsGenerating(false);
-      //   }
     } catch (error) {
       setIsGenerating(false);
       locationSearchForm.setError("prompt", {
@@ -74,11 +75,37 @@ export const MapSettings = ({ element, path }) => {
     }
   }
 
+  const editAddress = (e) => {
+    setAddress(e.target.value);
+    Transforms.setNodes(editor, { address: e.target.value }, { at: path });
+  };
+
+  //   useEffect(() => {
+  //     if (element.latLng) {
+  //       async function fetchLocation() {
+  //         try {
+  //           const response = await locationNameMutation.mutateAsync({
+  //             lat: element.latLng[0],
+  //             lng: element.latLng[1],
+  //           });
+
+  //           console.log("response", response.features[0].place_name);
+  //           //   const location = response.features[0].geometry.coordinates;
+
+  //           //   const latLng = [location[1], location[0]];
+  //           //   Transforms.setNodes(editor, { latLng, zoom: 12 }, { at: path });
+  //           setIsGenerating(false);
+  //         } catch (error) {
+  //           setIsGenerating(false);
+  //         }
+  //       }
+  //       fetchLocation();
+  //     }
+  //   }, [element.latLng]);
+
   return (
     <div>
       <h2 className="text-md text-bold mb-3">Map Properties</h2>
-      <div> Lat: {element.latLng[0].toFixed(3)}</div>
-      <div> Lng: {element.latLng[1].toFixed(3)}</div>
 
       <Form {...locationSearchForm}>
         <form
@@ -95,6 +122,7 @@ export const MapSettings = ({ element, path }) => {
                     placeholder="Search Location"
                     // adjust this according to your state management
                     {...locationSearchForm.register("prompt")}
+                    className="pr-9 dark:border-gray-400"
                   />
                 </FormControl>
                 <FormMessage />
@@ -115,37 +143,41 @@ export const MapSettings = ({ element, path }) => {
               <Search className=" stroke-muted-foreground " />
             )}
           </Button>
-          {/* <TooltipProvider delayDuration={300}>
-            <Tooltip
-              open={notEnoughCredits && genOpen}
-              onOpenChange={onGenOpen}
-            >
-              <TooltipTrigger>
-                <Button
-                  variant={"outline"}
-                  className="absolute right-[5px] top-1 h-[30px] w-[30px] border-0 p-1"
-                  type="submit"
-                >
-                  {isGenerating ? (
-                    <LoadingSpinner strokeColor="stroke-gray-400 dark:stroke-muted-foreground" />
-                  ) : (
-                    <Send className="dark:stroke-muted-foreground" />
-                  )}
-                </Button>
-              </TooltipTrigger>
-
-              <TooltipContent
-                side="top"
-                sideOffset={20}
-                className="dark:bg-white dark:text-black"
-              >
-                <p className="text-[12px]">Not Enough Credits</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider> */}
         </form>
       </Form>
-      <ToastContainer className="toast_container" />
+
+      <div className="text-sm dark:text-gray-400">
+        {" "}
+        Lat: {element.latLng[0].toFixed(3)}
+      </div>
+      <div className="text-sm dark:text-gray-400">
+        {" "}
+        Lng: {element.latLng[1].toFixed(3)}
+      </div>
+
+      {address && (
+        <>
+          <h3 className="text-bold mb-2 mt-4 text-sm dark:text-gray-400">
+            Address
+          </h3>
+          <div className="relative flex items-center">
+            <input
+              value={address}
+              className=" h-[36px]  w-full rounded-md  rounded-r-none  border border-r-0 border-gray-300  bg-muted  p-2 text-sm  focus:outline-none dark:border-gray-400 dark:text-gray-400"
+              onChange={editAddress}
+            />
+            <Button
+              variant="outline"
+              className=" h-[36px] rounded-l-none border border-gray-300 bg-muted px-2 text-center dark:border-gray-400"
+              onClick={() => copyToClipboard(element.address)}
+            >
+              <p className="flex truncate text-xs ">
+                {copied ? "Copied!" : "Copy"}
+              </p>
+            </Button>
+          </div>
+        </>
+      )}
     </div>
   );
 };

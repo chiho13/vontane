@@ -16,6 +16,7 @@ import { Position, useResizeBlock } from "@/hooks/useResizeBlock";
 import { block } from "million";
 import { BlockAlign } from "@/components/BlockAlign";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
+import { api } from "@/utils/api";
 
 export function Mapbox(props) {
   const { editor, activePath, setActivePath } = useContext(EditorContext);
@@ -40,7 +41,6 @@ export function Mapbox(props) {
     useResizeBlock(element, editor, path);
 
   const maptilerProvider = maptiler(MAPTILER_ACCESS_TOKEN, MAP_ID);
-  const [shouldCenter, setShouldCenter] = useState(false);
 
   const [zoom, setZoom] = useState(element.zoom || 11);
   const [anchor, setAnchor] = useState<Point>(
@@ -51,7 +51,7 @@ export function Mapbox(props) {
 
   function setLatLng(newLatLng) {
     setAnchor(newLatLng);
-
+    getLocationName(newLatLng);
     // Set new timer
     setTimeout(() => {
       Transforms.setNodes(editor, { latLng: newLatLng, zoom }, { at: path });
@@ -60,10 +60,24 @@ export function Mapbox(props) {
 
   useEffect(() => {
     if (selected) {
-      console.log("lololol");
       setElementData(element);
     }
   }, [selected]);
+
+  const locationNameMutation = api.gpt.locationName.useMutation();
+
+  async function getLocationName(latLng) {
+    try {
+      const response = await locationNameMutation.mutateAsync({
+        lat: latLng[0],
+        lng: latLng[1],
+      });
+
+      const address = response.features[0].place_name;
+
+      Transforms.setNodes(editor, { address }, { at: path });
+    } catch (error) {}
+  }
 
   return (
     <div
@@ -158,7 +172,6 @@ export function Mapbox(props) {
           attribution={false}
           onClick={(el) => {
             el.event.stopPropagation();
-            console.log(el.latLng);
             setLatLng(el.latLng);
             Transforms.select(editor, path);
           }}
@@ -175,7 +188,6 @@ export function Mapbox(props) {
             anchor={anchor}
             onDragEnd={(value) => {
               setLatLng(value);
-              console.log("path", path);
               Transforms.select(editor, path);
             }}
           >

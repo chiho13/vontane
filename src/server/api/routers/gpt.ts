@@ -264,6 +264,36 @@ export const GPTRouter = createTRPCRouter({
         });
       }
     }),
+  locationName: protectedProcedure
+    .use(rateLimiterMiddleware)
+    .input(
+      z.object({
+        lat: z.number(),
+        lng: z.number(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { lat, lng } = input;
+
+      const apiKey = "EeJqZWmMwWuKBDTgCto5"; // replace with your actual API key
+
+      const url = `https://api.maptiler.com/geocoding/${lng},${lat}.json?types=address&key=${apiKey}`;
+
+      try {
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            accept: "application/json",
+          },
+        });
+
+        const data = await response.json();
+
+        return data;
+      } catch (error) {
+        throw new Error(`Error: ${error}`);
+      }
+    }),
 
   katextotext: protectedProcedure
     .input(

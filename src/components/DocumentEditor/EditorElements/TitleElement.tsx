@@ -52,7 +52,7 @@ export function TitleElement(props) {
         {...attributes}
         data-id={element.id}
         data-path={JSON.stringify(path)}
-        data-placeholder={shouldShowPlaceholder ? "Enter Workspace Name" : ""}
+        data-placeholder={shouldShowPlaceholder ? "Untitled Workspace" : ""}
       >
         {children}
       </h1>

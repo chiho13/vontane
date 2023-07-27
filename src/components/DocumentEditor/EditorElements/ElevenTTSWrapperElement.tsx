@@ -107,14 +107,12 @@ const ElevenTTSWrapperBase = (props: {
         audio_url: element.audio_url,
         file_name: element.file_name,
         content: extractedText,
-        transcript: element.transcript,
       });
     } else if (element.type !== "tts" && audioData !== null) {
       setAudioData({
         audio_url: "",
         file_name: "",
         content: "",
-        transcript: "",
       });
     }
   }, [activePath, element]);

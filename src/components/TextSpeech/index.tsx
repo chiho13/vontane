@@ -91,7 +91,6 @@ export const TextSpeech = ({
 
   const { credits, setCredits }: any = useContext(UserContext);
 
-  const TextSpeechLength = textSpeech.length > 1000;
   const createTTSAudio = async () => {
     setAudioIsLoading(true);
     // if (element.audio_url) {
@@ -258,7 +257,7 @@ export const TextSpeech = ({
           </TooltipProvider>
         </div>
 
-        {selected && (
+        {selected && textSpeech.length <= 5000 && (
           <TooltipProvider delayDuration={300}>
             <Tooltip
               open={notEnoughCredits && genOpen}
@@ -313,15 +312,18 @@ export const TextSpeech = ({
           </div>
         )}
 
-      {selected && element.content && audioData.content !== element.content && (
-        <button
-          className="mr-2 flex h-[34px] rounded bg-yellow-300 p-2 text-sm text-orange-900 shadow-md disabled:opacity-50"
-          onClick={generateAudio}
-          disabled={rightBarAudioIsLoading[element.id]}
-        >
-          Content Changed. Regenerate Audio
-        </button>
-      )}
+      {selected &&
+        element.content &&
+        audioData.content !== element.content &&
+        textSpeech.length <= 5000 && (
+          <button
+            className="mr-2 flex h-[34px] rounded bg-yellow-300 p-2 text-sm text-orange-900 shadow-md disabled:opacity-50"
+            onClick={generateAudio}
+            disabled={rightBarAudioIsLoading[element.id]}
+          >
+            Content Changed.
+          </button>
+        )}
       {/* {audioURL && <AudioPLayer audioURL={audioURL} fileName={fileName} />} */}
     </div>
   );

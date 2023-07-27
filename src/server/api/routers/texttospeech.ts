@@ -61,7 +61,7 @@ export const texttospeechRouter = createTRPCRouter({
       const { supabaseServerClient } = ctx;
       const requestbody = {
         text: input.content,
-        model_id: "eleven_monolingual_v1",
+        model_id: "eleven_multilingual_v1",
         voice_settings: {
           stability: 0,
           similarity_boost: 0,

@@ -150,9 +150,13 @@ const ElevenTTSWrapperBase = (props: {
       </div>
       {selected && (
         <div
-          className={`absolute bottom-[5px] right-[10px] z-10 text-sm dark:text-muted-foreground`}
+          className={`absolute bottom-[2px] right-[10px] z-10  rounded-md p-[2px] text-xs dark:text-muted-foreground ${
+            extractedText.length > 5000
+              ? "bg-red-300 dark:text-destructive"
+              : ""
+          }`}
         >
-          {extractedText.length} / 1000
+          {extractedText.length} / 5000
         </div>
       )}
       {selected && <MoveBlock editor={editor} path={path} />}

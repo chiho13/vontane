@@ -148,6 +148,13 @@ const ElevenTTSWrapperBase = (props: {
       <div className="absolute right-[10px] top-[5px] z-10">
         <OptionMenu element={element} />
       </div>
+      {selected && (
+        <div
+          className={`absolute bottom-[5px] right-[10px] z-10 text-sm dark:text-muted-foreground`}
+        >
+          {extractedText.length} / 1000
+        </div>
+      )}
       {selected && <MoveBlock editor={editor} path={path} />}
       {selected && (
         <div className="absolute -bottom-[14px] z-10 flex w-full justify-center">

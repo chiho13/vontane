@@ -264,7 +264,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
                       <input
                         value={audioData.audio_url}
-                        className=" h-[36px]  w-full rounded-md  rounded-r-none  border border-r-0 border-gray-300  bg-muted  p-2 pl-[40px] text-sm  focus:outline-none dark:border-accent dark:border-gray-400 dark:text-gray-400"
+                        className=" h-[36px]  w-full rounded-md  rounded-r-none border  border-r-0 border-gray-300 bg-muted  p-2  pl-[40px] text-sm focus:outline-none  focus-visible:outline-none dark:border-accent dark:border-gray-400 dark:text-gray-400"
                         readOnly={true}
                       />
                       <Button

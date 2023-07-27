@@ -91,6 +91,7 @@ export const TextSpeech = ({
 
   const { credits, setCredits }: any = useContext(UserContext);
 
+  const TextSpeechLength = textSpeech.length > 1000;
   const createTTSAudio = async () => {
     setAudioIsLoading(true);
     // if (element.audio_url) {

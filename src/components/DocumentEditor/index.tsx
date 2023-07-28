@@ -241,6 +241,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     setActivePath,
     selectedElementID,
     setSelectedElementID,
+    lastActiveSelection,
+    setLastActiveSelection,
   } = useContext(EditorContext);
 
   const [slatevalue, setValue] = useState(initialSlateValue);
@@ -1573,7 +1575,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   );
   const [dynamicToolbarWidth, setToolbarWidth] = useState(200);
   const [openLink, setOpenLink] = useState(false);
-  const [lastActiveSelection, setLastActiveSelection] = useState<Range>();
 
   useEffect(() => {
     console.log(editor.selection);
@@ -1675,7 +1676,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 const firstRect = rects[0] || { left: 0, top: 0 };
 
                 // Calculate mini toolbar position
-                const toolbarWidth = isParentTTS(editor) ? 370 : 480; // Update this value according to your toolbar width
+                const toolbarWidth = 370; // Update this value according to your toolbar width
                 let initialX = firstRect.left - textEditorLeft;
 
                 const x = Math.max(

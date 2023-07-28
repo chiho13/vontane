@@ -223,6 +223,43 @@ export const GPTRouter = createTRPCRouter({
         });
       }
     }),
+  translate: protectedProcedure
+    .input(
+      z.object({
+        language: z.string(),
+        prompt: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { language, prompt } = input;
+      try {
+        const completion = await openai.createChatCompletion({
+          model: "gpt-4",
+          messages: [
+            {
+              role: "system",
+              content: `You will be given a sentence. Detect the language and translate into ${language}. Return only the translate text.`,
+            },
+            {
+              role: "user",
+              content: prompt,
+            },
+          ],
+          max_tokens: 5000,
+          temperature: 0.8,
+        });
+
+        const data = completion?.data?.choices?.[0]?.message?.content;
+
+        return data;
+      } catch (err) {
+        console.error(err);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        });
+      }
+    }),
   locationSearch: protectedProcedure
     .use(rateLimiterMiddleware)
     .input(

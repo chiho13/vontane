@@ -284,7 +284,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
     // Get the path of the paragraph containing the selection.
     const [match] = Editor.nodes(editor, {
-      match: (n) => n.type === "paragraph",
+      match: (n) => SlateElement.isElement(n) && n.type === "paragraph",
       at: editor.selection,
     });
 

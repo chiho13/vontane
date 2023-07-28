@@ -38,6 +38,8 @@ export function ParagraphElement(props) {
   const selected = useSelected();
   const paragraphRef = useRef(null);
 
+  const { setElementData, showRightSidebar } = useTextSpeech();
+
   useEffect(() => {
     if (editor && path) {
       const isFirstElement = Path.equals(path, [0]);
@@ -74,12 +76,22 @@ export function ParagraphElement(props) {
     shouldShowPlaceholder = isFirstNode && isEmpty;
   }
 
+  useEffect(() => {
+    if (selected) {
+      setElementData(element);
+    }
+  }, [selected, element]);
+
   return (
     <ParagraphStyle isParentMCQ={isParentMCQ(editor)} type={type}>
       <p
         ref={paragraphRef}
-        className={`paragraph-element  ${
-          selectedElementID === element.id ? " bg-[#E0EDFB]" : ""
+        className={`paragraph-element  
+
+        ${
+          selected && showRightSidebar
+            ? "  bg-[#E0EDFB] dark:bg-[#3169a5]/80"
+            : ""
         }
 
         `}

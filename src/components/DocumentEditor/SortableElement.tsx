@@ -108,7 +108,7 @@ export function SortableElement({
         {element.type !== "image" &&
           element.type !== "tts" &&
           element.type !== "map" && (
-            <div className="opacity-0 group-hover:opacity-100">
+            <div className="ml-2 opacity-0 group-hover:opacity-100">
               {optionMenu}
             </div>
           )}

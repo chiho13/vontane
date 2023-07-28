@@ -40,6 +40,13 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 import { Portal } from "react-portal";
 interface RightSideBarProps {
   setRightSideBarWidth: any;
@@ -186,6 +193,89 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     }
   };
 
+  const languages = [
+    "English",
+    "Spanish",
+    "French",
+    "Hindi",
+    "Italian",
+    "German",
+    "Polish",
+    "Portuguese",
+  ];
+  const [selectedLanguage, setSelectedLanguage] = useState(languages[0]);
+
+  const renderText = (node) => {
+    let text = "";
+
+    const extractParagraphs = (node) => {
+      if (SlateElement.isElement(node)) {
+        if (node.type === "paragraph" || node.type === "block-quote") {
+          text +=
+            node.children
+              .map((n) => {
+                if (SlateElement.isElement(n) && n.type === "link") {
+                  // If the node is a link, extract the text from its children
+                  return n.children.map((child) => child.text).join(" ");
+                } else {
+                  // If the node is not a link, just return its text
+                  return n.text;
+                }
+              })
+              .join(" ") + " ";
+        } else {
+          node.children.forEach((child) => extractParagraphs(child));
+        }
+      }
+    };
+
+    extractParagraphs(node);
+
+    return (
+      <div className="mt-10">
+        <input
+          value={text}
+          className=" w-full resize-none truncate rounded-md border border-gray-300 bg-transparent p-2 outline-none dark:border-accent"
+          readOnly={true}
+        />
+
+        <div className="mt-2 flex gap-3">
+          <div className="relative inline-block text-left">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  className="border"
+                  variant="outline"
+                  id="options-menu"
+                  aria-haspopup="true"
+                  aria-expanded="true"
+                >
+                  {selectedLanguage}
+                  <ChevronDown className="w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="start"
+                className="border bg-muted dark:border-gray-500"
+              >
+                {languages.map((language, index) => (
+                  <DropdownMenuItem
+                    key={index}
+                    className="text-foreground"
+                    onClick={() => setSelectedLanguage(language)}
+                  >
+                    {language}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          <Button className="text-md">Translate</Button>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <AudioManagerProvider>
       <PublishButton
@@ -249,9 +339,9 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                       />
                     </div>
 
-                    <div className=" truncate  rounded-md border border-gray-300 p-2 pl-3 dark:border-accent">
+                    {/* <div className=" truncate  rounded-md border border-gray-300 p-2 pl-3 dark:border-accent">
                       {audioData.content}{" "}
-                    </div>
+                    </div> */}
                     {/* {audioData.transcript && (
                       <div className=" truncate  rounded-md border border-gray-300 p-2 pl-3 dark:border-accent">
                         {audioData.transcript?.transcript}{" "}
@@ -283,6 +373,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                     No Audio generated
                   </div>
                 ))}
+              {elementData && <div>{renderText(elementData)}</div>}
             </TabsContent>
             <TabsContent value="preview">
               <div className="flex justify-end gap-3">
@@ -294,43 +385,6 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                     Export as Single Audio File
                   </button>
                 )}
-                {/* <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="mb-2 flex h-[28px] items-center justify-center rounded-md border border-muted-foreground bg-background p-1 text-xs  text-muted-foreground hover:border-accent hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted">
-                    Device
-                    <ChevronDown className="ml-1 w-3" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="start"
-                  className="border border-gray-300  bg-background dark:border-gray-500 dark:bg-secondary"
-                >
-                  <DropdownMenuItem
-                    className="dark:text-foreground hover:dark:bg-muted"
-                    onClick={() => {
-                      setRightSideBarWidth(418);
-                      setViewPort({
-                        width: 390,
-                        height: 692,
-                      });
-                    }}
-                  >
-                    <span className="text-foreground">iPhone 14</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="hover:dark:bg-muted"
-                    onClick={() => {
-                      setRightSideBarWidth(456);
-                      setViewPort({
-                        width: 428,
-                        height: 759,
-                      });
-                    }}
-                  >
-                    <span className="text-foreground"> iPhone 14 Pro Max</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu> */}
               </div>
               <PreviewContent />
             </TabsContent>

@@ -109,6 +109,8 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
   const [published, setPublished] = useState(workspaceData.workspace.published);
 
   const { copied, copyToClipboard: copyLink } = useClipboard();
+  const { copied: translatedCopy, copyToClipboard: copytranslatedCopy } =
+    useClipboard();
 
   const [audioURL, setAudioURL] = useState<string>("");
   const [openDropdown, setOpenDropdown] = useState(false);
@@ -216,7 +218,8 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     "Polish",
     "Portuguese",
   ];
-  const [selectedLanguage, setSelectedLanguage] = useState<string>(
+  const [selectedLanguage, setSelectedLanguage] = useLocalStorage(
+    "languageSelect",
     languages[1]
   );
 
@@ -373,13 +376,24 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
         {translateText && (
           <div>
-            <textarea
-              className="mt-3 h-[140px] w-full resize-none rounded-md  border border-accent bg-transparent p-2 outline-none ring-muted-foreground focus:ring-1"
-              value={translateText}
-              onChange={(e) => {
-                setTranslatedText(e.target.value);
-              }}
-            />
+            <div className="relative">
+              <textarea
+                className="relative mt-3 h-[140px] w-full resize-none rounded-md  border border-accent bg-transparent p-2 outline-none ring-muted-foreground focus:ring-1"
+                value={translateText}
+                onChange={(e) => {
+                  setTranslatedText(e.target.value);
+                }}
+              />
+              <Button
+                variant="outline"
+                className="absolute bottom-4 right-2 border text-xs text-muted-foreground "
+                size="xs"
+                onClick={() => copytranslatedCopy(translateText)}
+              >
+                <Copy className="mr-2 w-4 " />
+                {translatedCopy ? "Copied!" : "Copy"}
+              </Button>
+            </div>
 
             <div className="mt-3 flex gap-2">
               <Button

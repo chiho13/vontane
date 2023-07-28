@@ -224,11 +224,6 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
   const [translateText, setTranslatedText] = useState("");
 
-  useEffect(() => {
-    // Clear translateText whenever editor.selection changes
-    setTranslatedText("");
-  }, [editor.selection]);
-
   const startTranslate = async (value) => {
     setTranslateLoading(true);
 
@@ -284,17 +279,55 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     setLastActiveSelection(newSelection);
   };
 
+  const insertTranslatedTextBelow = () => {
+    if (!editor.selection) return;
+
+    // Get the path of the paragraph containing the selection.
+    const [match] = Editor.nodes(editor, {
+      match: (n) => n.type === "paragraph",
+      at: editor.selection,
+    });
+
+    if (!match) return;
+
+    const [node, path] = match;
+
+    // Calculate the path of the next node.
+    const nextPath = Path.next(path);
+
+    // Insert the translated text as a new paragraph at the next path.
+    Transforms.insertNodes(
+      editor,
+      { type: "paragraph", children: [{ text: translateText }] },
+      { at: nextPath }
+    );
+  };
+
+  const [inputValue, setInputValue] = useState("");
+
+  // Append selected text to input value when editor.selection changes
+  useEffect(() => {
+    if (editor.selection) {
+      const text = getTextFromSelection();
+      setInputValue(text);
+    }
+  }, [editor.selection]);
+
+  const onInputChange = (event) => {
+    setInputValue(event.target.value);
+  };
+
   const renderText = () => {
     if (!editor.selection) return null;
     const text = getTextFromSelection();
 
     return (
       <div className="mt-10">
-        <Label>Selected Text:</Label>
-        <input
-          value={text}
-          className=" mt-2 w-full cursor-not-allowed resize-none truncate rounded-md border border-gray-300 bg-transparent p-2 outline-none dark:border-accent"
-          readOnly={true}
+        <Label>Translate Text:</Label>
+        <textarea
+          value={inputValue}
+          className=" mt-2 h-[120px] w-full resize-none rounded-md border border-gray-300 bg-transparent p-2 outline-none ring-muted-foreground focus:ring-1 dark:border-accent"
+          onChange={onInputChange}
         />
 
         <div className="mt-2 flex gap-3">
@@ -341,7 +374,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
         {translateText && (
           <div>
             <textarea
-              className="mt-3 h-[150px] w-full resize-none rounded-md  border border-accent bg-transparent p-2 outline-none ring-muted-foreground focus:ring-1"
+              className="mt-3 h-[140px] w-full resize-none rounded-md  border border-accent bg-transparent p-2 outline-none ring-muted-foreground focus:ring-1"
               value={translateText}
               onChange={(e) => {
                 setTranslatedText(e.target.value);
@@ -361,6 +394,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                 variant="outline"
                 className="border text-muted-foreground"
                 size="xs"
+                onClick={insertTranslatedTextBelow}
               >
                 <ListEnd className="mr-2 w-5 " /> Insert below
               </Button>

@@ -14,11 +14,20 @@ import { useLocalStorage } from "usehooks-ts";
 import AudioPlayer from "../AudioPlayer";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { EditorContext } from "@/contexts/EditorContext";
-import { Element as SlateElement, Descendant, Editor, Node, Path } from "slate";
+import {
+  Element as SlateElement,
+  Descendant,
+  Editor,
+  Node,
+  Path,
+  Text,
+  Transforms,
+  Range,
+} from "slate";
 import LoadingSpinner from "@/icons/LoadingSpinner";
 import { extractTextValues } from "../DocumentEditor/helpers/extractText";
 import { root } from "postcss";
-import { Info } from "lucide-react";
+import { Check, Info, ListEnd } from "lucide-react";
 import { api } from "@/utils/api";
 import { useRouter } from "next/router";
 import { ChevronDown, Link, Copy } from "lucide-react";
@@ -48,6 +57,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { Portal } from "react-portal";
+import { Label } from "../ui/label";
 interface RightSideBarProps {
   setRightSideBarWidth: any;
   showRightSidebar: boolean;
@@ -67,7 +77,10 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
   const router = useRouter();
   const workspaceId = router.query.workspaceId as string;
 
-  const { editor, activePath } = useContext(EditorContext);
+  const translationMutation = api.gpt.translate.useMutation();
+
+  const { editor, activePath, setLastActiveSelection } =
+    useContext(EditorContext);
   const rootNode = useMemo(() => {
     let path = activePath ? JSON.parse(activePath) : [];
     while (path && path.length > 1) {
@@ -203,39 +216,84 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     "Polish",
     "Portuguese",
   ];
-  const [selectedLanguage, setSelectedLanguage] = useState(languages[0]);
+  const [selectedLanguage, setSelectedLanguage] = useState<string>(
+    languages[1]
+  );
 
-  const renderText = (node) => {
-    let text = "";
+  const [translateLoading, setTranslateLoading] = useState(false);
 
-    const extractParagraphs = (node) => {
-      if (SlateElement.isElement(node)) {
-        if (node.type === "paragraph" || node.type === "block-quote") {
-          text +=
-            node.children
-              .map((n) => {
-                if (SlateElement.isElement(n) && n.type === "link") {
-                  // If the node is a link, extract the text from its children
-                  return n.children.map((child) => child.text).join(" ");
-                } else {
-                  // If the node is not a link, just return its text
-                  return n.text;
-                }
-              })
-              .join(" ") + " ";
-        } else {
-          node.children.forEach((child) => extractParagraphs(child));
-        }
+  const [translateText, setTranslatedText] = useState("");
+
+  useEffect(() => {
+    // Clear translateText whenever editor.selection changes
+    setTranslatedText("");
+  }, [editor.selection]);
+
+  const startTranslate = async (value) => {
+    setTranslateLoading(true);
+
+    try {
+      const response = await translationMutation.mutateAsync({
+        language: selectedLanguage,
+        prompt: value,
+      });
+      if (response) {
+        setTranslateLoading(false);
+
+        console.log(response);
+        setTranslatedText(response);
       }
+    } catch (error) {
+      setTranslateLoading(false);
+      console.error("Error translating:", error);
+    }
+  };
+  const getTextFromSelection = () => {
+    let selectedText = "";
+
+    if (editor.selection) {
+      selectedText = Editor.string(editor, editor.selection);
+    }
+
+    return selectedText;
+  };
+
+  const replaceSelectedText = () => {
+    if (!editor.selection) return;
+
+    // Capture initial path and anchor offset
+    const initialPath = editor.selection.anchor.path;
+    const initialAnchorOffset = editor.selection.anchor.offset;
+
+    // Insert the translated text.
+    Transforms.insertText(editor, translateText, { at: editor.selection });
+
+    // Calculate the new selection range.
+    const newSelection = {
+      anchor: { path: initialPath, offset: initialAnchorOffset },
+      focus: {
+        path: initialPath,
+        offset: initialAnchorOffset + translateText.length,
+      },
     };
 
-    extractParagraphs(node);
+    // Apply the new selection.
+    Transforms.select(editor, newSelection);
+
+    // Update lastActiveSelection to match the new selection
+    setLastActiveSelection(newSelection);
+  };
+
+  const renderText = () => {
+    if (!editor.selection) return null;
+    const text = getTextFromSelection();
 
     return (
       <div className="mt-10">
+        <Label>Selected Text:</Label>
         <input
           value={text}
-          className=" w-full resize-none truncate rounded-md border border-gray-300 bg-transparent p-2 outline-none dark:border-accent"
+          className=" mt-2 w-full cursor-not-allowed resize-none truncate rounded-md border border-gray-300 bg-transparent p-2 outline-none dark:border-accent"
           readOnly={true}
         />
 
@@ -243,13 +301,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
           <div className="relative inline-block text-left">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  className="border"
-                  variant="outline"
-                  id="options-menu"
-                  aria-haspopup="true"
-                  aria-expanded="true"
-                >
+                <Button className="border" variant="outline" size="sm">
                   {selectedLanguage}
                   <ChevronDown className="w-5" />
                 </Button>
@@ -270,8 +322,51 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          <Button className="text-md">Translate</Button>
+          {text.length > 0 && (
+            <Button
+              className="text-sm"
+              size="sm"
+              onClick={() => startTranslate(text)}
+              disabled={translateLoading}
+            >
+              {translateLoading ? (
+                <LoadingSpinner strokeColor="stroke-gray-200 dark:stroke-muted" />
+              ) : (
+                "Translate"
+              )}
+            </Button>
+          )}
         </div>
+
+        {translateText && (
+          <div>
+            <textarea
+              className="mt-3 h-[150px] w-full resize-none rounded-md  border border-accent bg-transparent p-2 outline-none ring-muted-foreground focus:ring-1"
+              value={translateText}
+              onChange={(e) => {
+                setTranslatedText(e.target.value);
+              }}
+            />
+
+            <div className="mt-3 flex gap-2">
+              <Button
+                variant="outline"
+                className="border text-muted-foreground"
+                size="xs"
+                onClick={replaceSelectedText}
+              >
+                <Check className="mr-2 w-5 " /> Replace Selection
+              </Button>
+              <Button
+                variant="outline"
+                className="border text-muted-foreground"
+                size="xs"
+              >
+                <ListEnd className="mr-2 w-5 " /> Insert below
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     );
   };
@@ -339,9 +434,9 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                       />
                     </div>
 
-                    {/* <div className=" truncate  rounded-md border border-gray-300 p-2 pl-3 dark:border-accent">
+                    <div className=" truncate  rounded-md border border-gray-300 p-2 pl-3 dark:border-accent">
                       {audioData.content}{" "}
-                    </div> */}
+                    </div>
                     {/* {audioData.transcript && (
                       <div className=" truncate  rounded-md border border-gray-300 p-2 pl-3 dark:border-accent">
                         {audioData.transcript?.transcript}{" "}
@@ -373,7 +468,18 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                     No Audio generated
                   </div>
                 ))}
-              {elementData && <div>{renderText(elementData)}</div>}
+              <div>{renderText()}</div>
+              {/* {SlateElement.isElement(rootNode) &&
+                rootNode?.type == "tts" &&
+                audioData && (
+                  <textarea
+                    className="mt-3 h-[180px] w-full resize-none rounded-md border border-accent bg-transparent p-2 outline-none ring-muted-foreground focus:ring-1"
+                    value={
+                      audioData.paragraphs && audioData.paragraphs.join("\n")
+                    }
+                    readOnly
+                  />
+                )} */}
             </TabsContent>
             <TabsContent value="preview">
               <div className="flex justify-end gap-3">

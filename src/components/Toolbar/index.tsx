@@ -291,7 +291,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
       </TooltipProvider>
       <div className="h-full w-[1px] bg-gray-200 dark:bg-gray-700"></div>
 
-      {!isParentTTS(editor) && (
+      {/* {!isParentTTS(editor) && (
         <>
           <TooltipProvider delayDuration={300}>
             <Tooltip>
@@ -319,7 +319,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             </Tooltip>
           </TooltipProvider>
         </>
-      )}
+      )} */}
       {!openLink &&
         buttonsList.map((button: any, i) =>
           button.separator ? (

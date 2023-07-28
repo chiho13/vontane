@@ -76,23 +76,13 @@ export function ParagraphElement(props) {
     shouldShowPlaceholder = isFirstNode && isEmpty;
   }
 
-  useEffect(() => {
-    if (selected) {
-      setElementData(element);
-    }
-  }, [selected, element]);
-
   return (
     <ParagraphStyle isParentMCQ={isParentMCQ(editor)} type={type}>
       <p
         ref={paragraphRef}
         className={`paragraph-element  
 
-        ${
-          selected && showRightSidebar
-            ? "  bg-[#E0EDFB] dark:bg-[#3169a5]/80"
-            : ""
-        }
+      
 
         `}
         {...attributes}

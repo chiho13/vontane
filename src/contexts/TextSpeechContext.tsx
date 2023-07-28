@@ -10,6 +10,7 @@ type AudioData = {
   audio_url: string;
   file_name: string;
   content: string;
+  paragraphs: any;
 };
 interface TextSpeechContextType {
   elementData: any;
@@ -37,6 +38,7 @@ const TextSpeechContext = createContext<TextSpeechContextType>({
     audio_url: "",
     file_name: "",
     content: "",
+    paragraphs: "",
   },
   setAudioData: () => {},
   showRightSidebar: false,
@@ -74,6 +76,7 @@ const RightSideBarProvider = ({
     audio_url: "",
     file_name: "",
     content: "",
+    paragraphs: "",
   });
 
   const [elementData, setElementData] = useState(null);

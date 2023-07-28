@@ -23,6 +23,8 @@ const EditorContext = createContext<{
   setSelectedElementID: Dispatch<SetStateAction<string>>;
   tempBase64: any;
   setTempBase64: Dispatch<SetStateAction<any>>;
+  lastActiveSelection: any;
+  setLastActiveSelection: Dispatch<SetStateAction<any>>;
 }>({
   editor: null as any,
   showEditBlockPopup: false,
@@ -33,6 +35,8 @@ const EditorContext = createContext<{
   setSelectedElementID: () => {},
   tempBase64: null as any,
   setTempBase64: () => {},
+  lastActiveSelection: null as any,
+  setLastActiveSelection: () => {},
 });
 
 // Define the EquationProviderProps type
@@ -50,6 +54,7 @@ const EditorProvider: React.FC<EquationProviderProps> = ({ children }) => {
   const [selectedElementID, setSelectedElementID] = useState<string>("");
   const [activePath, setActivePath] = useState<string>("");
   const [tempBase64, setTempBase64] = useState({});
+  const [lastActiveSelection, setLastActiveSelection] = useState<Range>();
   return (
     <EditorContext.Provider
       value={{
@@ -62,6 +67,8 @@ const EditorProvider: React.FC<EquationProviderProps> = ({ children }) => {
         setActivePath,
         tempBase64,
         setTempBase64,
+        lastActiveSelection,
+        setLastActiveSelection,
       }}
     >
       {children}

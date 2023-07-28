@@ -83,6 +83,7 @@ const ElevenTTSWrapperBase = (props: {
 
   const [info, setInfo] = useState(true);
   const {
+    setElementData,
     audioData,
     setAudioData,
     showRightSidebar,
@@ -94,6 +95,10 @@ const ElevenTTSWrapperBase = (props: {
   useEffect(() => {
     const extractedText = extractTextValues(element.children).join(" ");
 
+    const extractedTextNoJoin = extractTextValues(element.children);
+    const paragraphs = extractedTextNoJoin.map((text) => <p>{text}</p>);
+
+    console.log(paragraphs);
     if (
       activePath &&
       JSON.parse(activePath)[0] === path[0] &&
@@ -104,12 +109,16 @@ const ElevenTTSWrapperBase = (props: {
         audio_url: element.audio_url,
         file_name: element.file_name,
         content: extractedText,
+        paragraphs: extractedTextNoJoin,
       });
+
+      setElementData(element);
     } else if (element.type !== "tts" && audioData !== null) {
       setAudioData({
         audio_url: "",
         file_name: "",
         content: "",
+        paragraphs: "",
       });
     }
   }, [activePath, element]);

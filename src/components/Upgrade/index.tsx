@@ -227,7 +227,7 @@ const Upgrade = () => {
           <div className="w-full px-4">
             <div className="mx-auto mb-[20px] mt-10 max-w-[510px] text-center lg:mb-5">
               <h1 className="mb-5 text-3xl font-bold text-dark dark:text-foreground sm:text-4xl ">
-                Unlock AI Content Generation
+                Supercharge your content
               </h1>
               <p className="text-sm">Text to MP3: 1 Character = 1 Credit</p>
               <p className="text-sm">

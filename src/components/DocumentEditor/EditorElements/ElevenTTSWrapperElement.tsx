@@ -109,7 +109,6 @@ const ElevenTTSWrapperBase = (props: {
         audio_url: element.audio_url,
         file_name: element.file_name,
         content: extractedText,
-        paragraphs: extractedTextNoJoin,
       });
 
       setElementData(element);
@@ -118,7 +117,6 @@ const ElevenTTSWrapperBase = (props: {
         audio_url: "",
         file_name: "",
         content: "",
-        paragraphs: "",
       });
     }
   }, [activePath, element]);

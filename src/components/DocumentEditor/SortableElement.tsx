@@ -26,8 +26,10 @@ export function SortableElement({
 
   const theme = useTheme();
 
-  const { creatingNewColumn } = useNewColumn();
+  const { creatingNewColumn, insertDirection } = useNewColumn();
 
+  console.log(creatingNewColumn);
+  console.log("insertDirection", insertDirection);
   const {
     attributes: sortableAttributes,
     listeners,
@@ -98,13 +100,21 @@ export function SortableElement({
               : undefined,
             over?.id === element.id &&
               creatingNewColumn &&
-              classes.createNewColumnRight
+              insertDirection === "right"
+              ? classes.createNewColumnRight
+              : undefined,
+            over?.id === element.id &&
+              creatingNewColumn &&
+              insertDirection === "left"
+              ? classes.createNewColumnLeft
+              : undefined
           )}
         >
           <div {...slideBreakListener}>
             {renderElement({ attributes, children, element })}
           </div>
         </div>
+
         {element.type !== "image" &&
           element.type !== "tts" &&
           element.type !== "map" && (

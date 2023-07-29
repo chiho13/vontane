@@ -285,7 +285,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     number | null
   >(0);
 
-  const { creatingNewColumn, setCreatingNewColumn } = useNewColumn();
+  const {
+    creatingNewColumn,
+    setCreatingNewColumn,
+    insertDirection,
+    setInsertDirection,
+  } = useNewColumn();
 
   const [showFloatingModal, setShowFloatingModal] = useState({
     open: false,
@@ -1236,7 +1241,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     []
   );
 
-  const [insertDirection, setInsertDirection] = useState(null);
+  // const [insertDirection, setInsertDirection] = useState(null);
 
   const [isDragging, setIsDragging] = useState(false);
   const [savedSelection, setSavedSelection] = useState(null);
@@ -1301,16 +1306,20 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       // console.log(isRootLevel, creatingNewColumn);
       if (isRootLevel && creatingNewColumn) {
         // Adjust the over object according to the insertDirection
-        const targetPath =
-          insertDirection === "left"
-            ? toPath.slice(0, -1)
-            : insertDirection === "right"
-            ? toPath
-            : toPath
-                .slice(0, -1)
-                .concat(toPath[toPath.length - 1] + toIndexOffset);
 
-        createColumns(fromPath, { id: over.id, path: targetPath }, editor);
+        console.log(
+          toPath.slice(0, -1).concat(toPath[toPath.length - 1] + toIndexOffset)
+        );
+        const targetPath = toPath
+          .slice(0, -1)
+          .concat(toPath[toPath.length - 1] + toIndexOffset);
+
+        createColumns(
+          fromPath,
+          { id: over.id, path: targetPath },
+          editor,
+          insertDirection
+        );
       } else if (
         SlateElement.isElement(fromParentElement) &&
         SlateElement.isElement(toParentElement) &&
@@ -1404,18 +1413,27 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
             const cursorX = event.delta.x;
 
-            // const isCloseToLeft =
-            //   cursorX < overRect.left + overRect.width * 0.5;
+            const isCloseToLeft =
+              cursorX < overRect.left + overRect.width * 0.3;
             const isCloseToRight =
-              cursorX > overRect.left + overRect.width * 0.4;
+              cursorX > overRect.left + overRect.width * 0.7;
 
-            console.log(cursorX, overRect.left + overRect.width * 0.4);
+            console.log(cursorX, overRect.left, overRect.width * 0.7);
+
+            console.log("cursorX", cursorX);
+            console.log("overRect left", overRect.left);
+
+            console.log("overRect width", overRect.width * 0.7);
 
             if (isCloseToRight) {
               setCreatingNewColumn(true);
-              // setInsertDirection("right");
+              setInsertDirection("right");
+            } else if (isCloseToLeft) {
+              setCreatingNewColumn(true);
+              setInsertDirection("left");
             } else {
               setCreatingNewColumn(false);
+              setInsertDirection(null);
             }
           }
         } else {

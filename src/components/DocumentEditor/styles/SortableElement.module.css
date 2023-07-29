@@ -76,6 +76,16 @@
   background-color: #7bb9ff;
 }
 
+.sortableElement:not(.active) .createNewColumnLeft:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 3px;
+  background-color: #7bb9ff;
+}
+
 .selected {
   background-color: #7bb9ff;
 }

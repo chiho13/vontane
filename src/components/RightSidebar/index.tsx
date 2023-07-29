@@ -275,13 +275,26 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
   };
 
   function slateNodeToHtml(node) {
+    let inNumberedList = false;
+    let numberedListItems = "";
+
     if (SlateElement.isElement(node)) {
       const childrenHtml = node.children.map(slateNodeToHtml).join("");
       switch (node.type) {
         case "paragraph":
           return `<p>${childrenHtml}</p>`;
         case "heading-one":
-          return `<h1>${childrenHtml}</h1>`;
+          return `<h1 class="text-4xl">${childrenHtml}</h1>`;
+        case "heading-two":
+          return `<h2 class="text-3xl">${childrenHtml}</h2>`;
+
+        case "heading-three":
+          return `<h3 class="text-3xl">${childrenHtml}</h3>`;
+
+        case "numbered-list":
+          return childrenHtml;
+        case "bulleted-list":
+          return `<li> ${childrenHtml} </li>`;
         case "block-quote":
           return `<blockquote class="items-center border-l-4 border-gray-400 bg-white pl-3  text-gray-500 dark:bg-muted dark:text-gray-300">${childrenHtml}</blockquote>`;
         // ... handle other element types ...
@@ -314,10 +327,44 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     // Get the fragment (block of text) from the current selection
     const fragment = Editor.fragment(editor, editor.selection);
 
-    // Convert each node in the fragment to HTML
-    const html = fragment.map((node) => slateNodeToHtml(node)).join("");
+    let inNumberedList = false;
+    let numberedListItems = "";
 
-    return html;
+    // Convert each node in the fragment to HTML
+    const htmlParts = fragment.map((node, i) => {
+      let html = slateNodeToHtml(node);
+
+      if (SlateElement.isElement(node) && node.type === "numbered-list") {
+        numberedListItems += `<li class="list-decimal pl-2">${html}</li>`;
+        const nextNode = fragment[i + 1];
+
+        // If it's the last node or the next node is not a numbered-list
+        if (
+          i === fragment.length - 1 ||
+          (SlateElement.isElement(nextNode) &&
+            nextNode.type !== "numbered-list")
+        ) {
+          inNumberedList = false;
+          let olHtml = `<ol class="pl-5 mt-2">${numberedListItems}</ol>`;
+          numberedListItems = "";
+          return olHtml;
+        } else {
+          inNumberedList = true;
+          return null; // Do not add this node to htmlParts yet
+        }
+      } else {
+        if (inNumberedList) {
+          inNumberedList = false;
+          let olHtml = `<ol class="pl-5 mt-2">${numberedListItems}</ol>`;
+          numberedListItems = "";
+          return html;
+        } else {
+          return html;
+        }
+      }
+    });
+
+    return htmlParts.filter((part) => part !== null).join("");
   };
 
   const getHtmlAsText = (html) => {
@@ -397,22 +444,28 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     // Deserialize the parsed HTML to a Slate fragment.
     const fragment = deserialize(parsed.body);
 
+    // Save the current selection.
+    const currentSelection = editor.selection;
+
     // Collapse the selection to the end.
     const selectionEnd = Range.isExpanded(editor.selection)
       ? Range.end(editor.selection)
       : editor.selection.anchor;
     Transforms.collapse(editor, { edge: "end" });
 
-    // Try to move the selection to the next block.
-    try {
-      const nextPath = Path.next(selectionEnd.path);
-      Transforms.select(editor, nextPath);
-    } catch (error) {
-      // If moving to the next block fails, the selection stays at the end of the current block.
-    }
-
     // Insert the fragment at the selection.
     Transforms.insertNodes(editor, fragment);
+
+    // Reset the selection to the previous selection.
+    Transforms.setSelection(editor, currentSelection);
+
+    // Set selection to the inserted node.
+    // const pointBeforeInsert = Editor.start(editor, editor.selection.focus.path);
+    // const pointAfterInsert = Editor.end(editor, editor.selection.focus.path);
+    // Transforms.setSelection(editor, {
+    //   anchor: pointBeforeInsert,
+    //   focus: pointAfterInsert,
+    // });
   };
 
   const [inputValue, setInputValue] = useState("");
@@ -428,7 +481,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     } else {
       setPromptValue(null);
     }
-  }, [editor.selection]);
+  }, [editor.selection, editor.children]);
 
   const onInputChange = (event) => {
     // const convertToHTML = convertMarkdownToHtml(event.target.value);

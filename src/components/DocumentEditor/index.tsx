@@ -131,6 +131,7 @@ type CustomElement = {
   altText?: string;
   align?: string;
   uploading?: boolean;
+  listNumber?: number;
   correctAnswer?: boolean;
   questionNumber?: number;
   voice_id?: string;
@@ -1593,7 +1594,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   useEffect(() => {
     console.log(editor.selection);
-    if (editor.selection != null) setLastActiveSelection(editor.selection);
+    if (editor.selection) setLastActiveSelection(editor.selection);
   }, [editor.selection]);
 
   const decorate = ([node, path]) => {

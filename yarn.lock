@@ -3451,6 +3451,11 @@
   "resolved" "https://registry.npmjs.org/lucide-react/-/lucide-react-0.125.0.tgz"
   "version" "0.125.0"
 
+"marked@^5.1.2":
+  "integrity" "sha512-ahRPGXJpjMjwSOlBoTMZAK7ATXkli5qCPxZ21TG44rx1KEo44bii4ekgTDQPNRQ4Kh7JMb9Ub1PVk1NxRSsorg=="
+  "resolved" "https://registry.npmjs.org/marked/-/marked-5.1.2.tgz"
+  "version" "5.1.2"
+
 "merge-stream@^2.0.0":
   "integrity" "sha512-abv/qOcuPfk3URPfDzmZU1LKmuw8kT+0nIHvKrKgFrwifol/doWcdA4ZqsWQ8ENrFKkd67Mfpo/LovbIUsbt3w=="
   "resolved" "https://registry.npmjs.org/merge-stream/-/merge-stream-2.0.0.tgz"

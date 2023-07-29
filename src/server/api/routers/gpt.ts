@@ -238,7 +238,7 @@ export const GPTRouter = createTRPCRouter({
           messages: [
             {
               role: "system",
-              content: `You will be given a sentence. Detect the language and translate into ${language}. Return the translate text in html format.`,
+              content: `You will be given a sentence. Detect the language and translate into ${language}. Return the translate text in html format. Do not return other text.`,
             },
             {
               role: "user",

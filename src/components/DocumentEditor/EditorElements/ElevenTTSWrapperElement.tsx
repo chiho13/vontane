@@ -98,7 +98,6 @@ const ElevenTTSWrapperBase = (props: {
     const extractedTextNoJoin = extractTextValues(element.children);
     const paragraphs = extractedTextNoJoin.map((text) => <p>{text}</p>);
 
-    console.log(paragraphs);
     if (
       activePath &&
       JSON.parse(activePath)[0] === path[0] &&

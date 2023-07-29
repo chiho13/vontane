@@ -28,8 +28,6 @@ export function SortableElement({
 
   const { creatingNewColumn, insertDirection } = useNewColumn();
 
-  console.log(creatingNewColumn);
-  console.log("insertDirection", insertDirection);
   const {
     attributes: sortableAttributes,
     listeners,

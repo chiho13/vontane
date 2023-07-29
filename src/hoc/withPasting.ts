@@ -59,7 +59,7 @@ const transformListItems = (listItems, listType) => {
 
 const ELEMENT_TAGS = {
   A: (el) => ({ type: "link", url: el.getAttribute("href") }),
-  BLOCKQUOTE: () => ({ type: "quote" }),
+  BLOCKQUOTE: () => ({ type: "block-quote" }),
   H1: () => ({ type: "heading-one" }),
   H2: () => ({ type: "heading-two" }),
   H3: () => ({ type: "heading-three" }),

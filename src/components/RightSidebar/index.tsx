@@ -61,6 +61,7 @@ import {
 
 import { Portal } from "react-portal";
 import { Label } from "../ui/label";
+import { ReactEditor } from "slate-react";
 interface RightSideBarProps {
   setRightSideBarWidth: any;
   showRightSidebar: boolean;
@@ -264,6 +265,8 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
       if (response) {
         setTranslateLoading(false);
         setTranslateTextHTML(response);
+
+        console.log(response);
       }
     } catch (error) {
       setTranslateLoading(false);
@@ -279,6 +282,8 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
           return `<p>${childrenHtml}</p>`;
         case "heading-one":
           return `<h1>${childrenHtml}</h1>`;
+        case "block-quote":
+          return `<blockquote class="items-center border-l-4 border-gray-400 bg-white pl-3  text-gray-500 dark:bg-muted dark:text-gray-300">${childrenHtml}</blockquote>`;
         // ... handle other element types ...
         default:
           return childrenHtml;
@@ -350,20 +355,34 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     return html;
   }
 
-  function pasteHtml(html, editor) {
+  const pasteHtml = (html, editor) => {
     // Parse the HTML.
     const parsed = new DOMParser().parseFromString(html, "text/html");
 
     // Deserialize the parsed HTML to a Slate fragment.
     const fragment = deserialize(parsed.body);
 
+    // Get the point before the insert operation.
+    const pointBeforeInsert = Editor.start(editor, editor.selection.focus.path);
+
     // Insert the fragment into the editor.
     Transforms.insertFragment(editor, fragment);
-  }
+
+    // Get the point after the insert operation.
+    const pointAfterInsert = Editor.end(editor, editor.selection.focus.path);
+
+    // Return the range that covers the inserted fragment.
+    return Editor.range(editor, pointBeforeInsert, pointAfterInsert);
+  };
 
   const replaceSelectedText = () => {
     if (!editor.selection) return;
-    pasteHtml(translatedTextHTML, editor);
+
+    // The pasteHtml function now returns a range.
+    const newRange = pasteHtml(translatedTextHTML, editor);
+
+    // Set the new range as the active selection.
+    Transforms.setSelection(editor, newRange);
   };
 
   const insertTranslatedTextBelow = () => {
@@ -404,20 +423,10 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     if (editor.selection && !Range.isCollapsed(editor.selection)) {
       const html = getHtmlFromSelection();
       const text = getHtmlAsText(html);
-
+      console.log(html);
       setPromptValue(html);
     } else {
-      if (activePath) {
-        const [node] = Editor.node(editor, JSON.parse(activePath));
-        if (SlateElement.isElement(node) && node.type === "paragraph") {
-          const html = slateNodeToHtml(node);
-          setPromptValue(html);
-        } else {
-          setPromptValue(null);
-        }
-      } else {
-        setPromptValue(null);
-      }
+      setPromptValue(null);
     }
   }, [editor.selection]);
 
@@ -488,7 +497,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
           </div>
         )}
 
-        {translateText && (
+        {promptValue && translatedTextHTML && (
           <div>
             <div className="relative">
               {/* <textarea

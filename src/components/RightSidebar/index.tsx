@@ -242,8 +242,6 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
       if (response) {
         setTranslateLoading(false);
         setTranslateTextHTML(response);
-        const text = getHtmlAsText(response);
-        setTranslatedText(text);
       }
     } catch (error) {
       setTranslateLoading(false);
@@ -295,27 +293,22 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     return html;
   };
 
-  // const getHtmlAsText = (html) => {
-  //   // Use DOMParser to convert the HTML string to a document
-  //   const doc = new DOMParser().parseFromString(html, "text/html");
+  const getHtmlAsText = (html) => {
+    // Use DOMParser to convert the HTML string to a document
+    const doc = new DOMParser().parseFromString(html, "text/html");
 
-  //   // Extract the text content of each paragraph, join them with line breaks
-  //   const text = Array.from(doc.querySelectorAll("p"))
-  //     .map((p) => {
-  //       // Replace HTML tags with markdown syntax
-  //       let innerHtml = p.innerHTML;
+    // Extract the text content of each paragraph, join them with line breaks
+    const text = Array.from(doc.querySelectorAll("p"))
+      .map((p) => {
+        // Replace HTML tags with markdown syntax
+        let innerHtml = p.innerHTML;
 
-  //       innerHtml = innerHtml.replace(/<strong>(.*?)<\/strong>/g, "**$1**");
-  //       innerHtml = innerHtml.replace(/<em>(.*?)<\/em>/g, "*$1*");
-  //       innerHtml = innerHtml.replace(/<u>(.*?)<\/u>/g, "__$1__");
-  //       innerHtml = innerHtml.replace(/<del>(.*?)<\/del>/g, "~~$1~~");
+        return innerHtml;
+      })
+      .join("\n");
 
-  //       return innerHtml;
-  //     })
-  //     .join("\n");
-
-  //   return text;
-  // };
+    return text;
+  };
 
   function convertMarkdownToHtml(markdown) {
     let html = markdown;
@@ -386,11 +379,13 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
   // Append selected text to input value when editor.selection changes
   useEffect(() => {
-    if (editor.selection) {
+    if (editor.selection && !Range.isCollapsed(editor.selection)) {
       const html = getHtmlFromSelection();
-      console.log(html);
+      const text = getHtmlAsText(html);
 
       setPromptValue(html);
+    } else {
+      setPromptValue(null);
     }
   }, [editor.selection]);
 
@@ -407,11 +402,16 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
     return (
       <div className="mt-10">
-        <Label>Translate Text:</Label>
-        <div
-          dangerouslySetInnerHTML={{ __html: promptValue }}
-          className=" mt-2 h-[100px] w-full resize-none overflow-y-auto rounded-md border border-gray-300 bg-transparent p-2 outline-none ring-muted-foreground focus:ring-1 dark:border-accent"
-        ></div>
+        {promptValue && (
+          <div>
+            <Label>Selected Text:</Label>
+
+            <div
+              dangerouslySetInnerHTML={{ __html: promptValue }}
+              className=" mt-2 h-[100px] w-full resize-none overflow-y-auto rounded-md border border-gray-300 bg-transparent p-2 outline-none ring-muted-foreground focus:ring-1 dark:border-accent"
+            ></div>
+          </div>
+        )}
 
         <div className="mt-2 flex gap-3">
           <div className="relative inline-block text-left">

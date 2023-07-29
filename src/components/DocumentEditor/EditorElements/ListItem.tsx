@@ -20,7 +20,7 @@ const ListItemStyle = styled.div`
   }
 `;
 
-const findAllNumberedLists = (nodes) => {
+export const findAllNumberedLists = (nodes) => {
   let numberedLists: any[] = [];
   let currentListIndex = 0;
 
@@ -71,7 +71,7 @@ export const ListItem = withListNumbering((props) => {
     selectedElementID,
     setSelectedElementID,
   } = useContext(EditorContext);
-  const { attributes, children, element, listType, listNumber } = props;
+  const { children, element, listType, listNumber, isPreview = false } = props;
   const path = ReactEditor.findPath(editor, element);
   const [isVisible, setIsVisible] = useState(false);
   const focused = useFocused();
@@ -133,11 +133,11 @@ export const ListItem = withListNumbering((props) => {
       duration-200 ease-in-out
         ${isCheckedList && isChecked && "text-muted-foreground line-through"}
         `}
-        {...attributes}
         data-id={element.id}
         data-path={JSON.stringify(path)}
-        data-placeholder={placeholderText}
+        data-placeholder={!isPreview ? placeholderText : ""}
         data-list-type={listType}
+        data-listNumber={listNumber}
       >
         {isNumberedList && (
           <span

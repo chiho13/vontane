@@ -55,12 +55,18 @@ export function ElementSelector(props: {
     case "link":
       return <LinkElement {...props} />;
     case "bulleted-list":
-      return <ListItem {...props} listType="bullet" />;
+      return (
+        <ListItem children={children} element={element} listType="bullet" />
+      );
 
     case "numbered-list":
-      return <ListItem {...props} listType="numbered" />;
+      return (
+        <ListItem children={children} element={element} listType="numbered" />
+      );
     case "checked-list":
-      return <ListItem {...props} listType="checkbox" />;
+      return (
+        <ListItem children={children} element={element} listType="checkbox" />
+      );
 
     case "question-item":
       return <QuestionItem {...props} />;

@@ -16,8 +16,32 @@ import { MCQ } from "@/components/PreviewContent/PreviewElements/MCQ";
 import { MapBlock } from "@/components/PreviewContent/PreviewElements/Map";
 import { useTheme } from "next-themes";
 
+import {
+  findAllNumberedLists,
+  ListItem,
+} from "../DocumentEditor/EditorElements";
+
+const NumberedListItem = ({ node, children, key, index, nodes }) => {
+  const { editor } = useContext(EditorContext);
+  // Find all numbered-list elements within the editor
+  const numberedLists = findAllNumberedLists(editor.children);
+
+  // Find the corresponding list group for this node
+  const listGroup = numberedLists.find((list) => list.id === node.id);
+
+  // Calculate the list number based on its position within the list group
+  const listNumber = listGroup ? listGroup.listIndex + 1 : index + 1;
+
+  return (
+    <ol className="list-inside list-decimal" key={key}>
+      <li>{`${listNumber}. ${children}`}</li>
+    </ol>
+  );
+};
+
 const renderElement = (
   node: {
+    id: string;
     align: any;
     height: string | number;
     width: string | number;
@@ -33,9 +57,11 @@ const renderElement = (
     | null
     | undefined,
   key: React.Key | null | undefined,
-  index: Number,
+  index: number,
   nodes: any
 ) => {
+  const numberedLists = findAllNumberedLists(nodes);
+
   switch (node.type) {
     case "paragraph":
       return (
@@ -65,13 +91,13 @@ const renderElement = (
       );
     case "heading-one":
       return (
-        <h1 className="text-4xl" key={key}>
+        <h1 className="mt-2  text-4xl" key={key}>
           {children}
         </h1>
       );
     case "heading-two":
       return (
-        <h2 className="text-3xl" key={key}>
+        <h2 className="mt-2  text-3xl" key={key}>
           {children}
         </h2>
       );
@@ -88,7 +114,7 @@ const renderElement = (
       );
     case "heading-three":
       return (
-        <h3 className="text-2xl" key={key}>
+        <h3 className="mt-2 text-2xl" key={key}>
           {children}
         </h3>
       );
@@ -108,6 +134,26 @@ const renderElement = (
         <MCQ node={node} key={key}>
           {children}
         </MCQ>
+      );
+    case "bulleted-list":
+      return (
+        <li className="mt-1 list-inside list-disc " key={key}>
+          {children}
+        </li>
+      );
+
+    case "numbered-list":
+      // Find the corresponding list group for this node
+      return (
+        <div className="mt-1 ">
+          <ListItem
+            element={node}
+            children={children}
+            key={key}
+            listType="numbered"
+            isPreview={true}
+          />
+        </div>
       );
 
     default:

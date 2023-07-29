@@ -407,7 +407,17 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
       setPromptValue(html);
     } else {
-      setPromptValue(null);
+      if (activePath) {
+        const [node] = Editor.node(editor, JSON.parse(activePath));
+        if (SlateElement.isElement(node) && node.type === "paragraph") {
+          const html = slateNodeToHtml(node);
+          setPromptValue(html);
+        } else {
+          setPromptValue(null);
+        }
+      } else {
+        setPromptValue(null);
+      }
     }
   }, [editor.selection]);
 

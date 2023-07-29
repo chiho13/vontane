@@ -1179,10 +1179,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         (parentElement.type === "column-cell" || parentElement.type === "tts");
 
       const addButton =
-        (isRoot &&
-          element.type !== "column" &&
-          element.type !== "image" &&
-          element.type !== "title") ||
+        (isRoot && element.type !== "column" && element.type !== "title") ||
         isInsideColumnCell ? (
           <div className="z-1000" contentEditable={false}>
             <button

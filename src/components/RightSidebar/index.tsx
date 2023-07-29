@@ -14,6 +14,9 @@ import { useLocalStorage } from "usehooks-ts";
 import AudioPlayer from "../AudioPlayer";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { EditorContext } from "@/contexts/EditorContext";
+import { jsx } from "slate-hyperscript";
+import ReactDOMServer from "react-dom/server";
+
 import {
   Element as SlateElement,
   Descendant,
@@ -41,6 +44,7 @@ import { PreviewContent } from "../PreviewContent";
 import { PublishButton } from "../PublishButton";
 import { useClipboard } from "@/hooks/useClipboard";
 import { MapSettings } from "../MapSettings";
+import { deserialize } from "@/hoc/withPasting";
 
 import {
   Tooltip,
@@ -226,103 +230,150 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
   const [translateLoading, setTranslateLoading] = useState(false);
 
   const [translateText, setTranslatedText] = useState("");
+  const [translatedTextHTML, setTranslateTextHTML] = useState("");
 
-  const startTranslate = async (value) => {
+  const startTranslate = async () => {
     setTranslateLoading(true);
 
     try {
       const response = await translationMutation.mutateAsync({
         language: selectedLanguage,
-        prompt: value,
+        prompt: promptValue,
       });
       if (response) {
         setTranslateLoading(false);
-
-        console.log(response);
-        setTranslatedText(response);
+        setTranslateTextHTML(response);
+        const text = getHtmlAsText(response);
+        setTranslatedText(text);
       }
     } catch (error) {
       setTranslateLoading(false);
       console.error("Error translating:", error);
     }
   };
-  const getTextFromSelection = () => {
-    let selectedText = "";
 
-    if (editor.selection) {
-      selectedText = Editor.string(editor, editor.selection);
+  const slateNodeToHtml = (node) => {
+    if (SlateElement.isElement(node)) {
+      const children = node.children.map((n) => slateNodeToHtml(n)).join("");
+
+      switch (node.type) {
+        case "paragraph":
+          return `<p>${children}</p>`;
+        case "heading-one":
+          return `<h1>${children}</h1>`;
+        // ...more cases for your other block types...
+        default:
+          return children;
+      }
+    } else {
+      return node.text;
     }
-
-    return selectedText;
   };
+
+  const getHtmlFromSelection = () => {
+    if (!editor.selection) return "";
+
+    // Get the fragment (block of text) from the current selection
+    const fragment = Editor.fragment(editor, editor.selection);
+
+    // Convert each node in the fragment to HTML
+    const html = fragment.map((node) => slateNodeToHtml(node)).join("");
+
+    return html;
+  };
+
+  const getHtmlAsText = (html) => {
+    // Use DOMParser to convert the HTML string to a document
+    const doc = new DOMParser().parseFromString(html, "text/html");
+
+    // Extract the text content of each paragraph, join them with line breaks
+    const text = Array.from(doc.querySelectorAll("p"))
+      .map((p) => p.textContent)
+      .join("\n");
+
+    return text;
+  };
+
+  function convertLineBreaksToParagraphs(text) {
+    // Split the text into lines
+    const lines = text.split("\n");
+
+    // Wrap each line in a <p> tag and join them together
+    const html = lines.map((line) => `<p>${line}</p>`).join("");
+
+    return html;
+  }
+
+  function pasteHtml(html, editor) {
+    // Parse the HTML.
+    const parsed = new DOMParser().parseFromString(html, "text/html");
+
+    // Deserialize the parsed HTML to a Slate fragment.
+    const fragment = deserialize(parsed.body);
+
+    // Insert the fragment into the editor.
+    Transforms.insertFragment(editor, fragment);
+  }
 
   const replaceSelectedText = () => {
     if (!editor.selection) return;
-
-    // Capture initial path and anchor offset
-    const initialPath = editor.selection.anchor.path;
-    const initialAnchorOffset = editor.selection.anchor.offset;
-
-    // Insert the translated text.
-    Transforms.insertText(editor, translateText, { at: editor.selection });
-
-    // Calculate the new selection range.
-    const newSelection = {
-      anchor: { path: initialPath, offset: initialAnchorOffset },
-      focus: {
-        path: initialPath,
-        offset: initialAnchorOffset + translateText.length,
-      },
-    };
-
-    // Apply the new selection.
-    Transforms.select(editor, newSelection);
-
-    // Update lastActiveSelection to match the new selection
-    setLastActiveSelection(newSelection);
+    pasteHtml(translatedTextHTML, editor);
   };
 
   const insertTranslatedTextBelow = () => {
     if (!editor.selection) return;
 
-    // Get the path of the paragraph containing the selection.
-    const [match] = Editor.nodes(editor, {
-      match: (n) => SlateElement.isElement(n) && n.type === "paragraph",
-      at: editor.selection,
-    });
-
-    if (!match) return;
-
-    const [node, path] = match;
-
-    // Calculate the path of the next node.
-    const nextPath = Path.next(path);
-
-    // Insert the translated text as a new paragraph at the next path.
-    Transforms.insertNodes(
-      editor,
-      { type: "paragraph", children: [{ text: translateText }] },
-      { at: nextPath }
+    // Parse the HTML.
+    const parsed = new DOMParser().parseFromString(
+      translatedTextHTML,
+      "text/html"
     );
+
+    // Deserialize the parsed HTML to a Slate fragment.
+    const fragment = deserialize(parsed.body);
+
+    // Collapse the selection to the end.
+    const selectionEnd = Range.isExpanded(editor.selection)
+      ? Range.end(editor.selection)
+      : editor.selection.anchor;
+    Transforms.collapse(editor, { edge: "end" });
+
+    // Try to move the selection to the next block.
+    try {
+      const nextPath = Path.next(selectionEnd.path);
+      Transforms.select(editor, nextPath);
+    } catch (error) {
+      // If moving to the next block fails, the selection stays at the end of the current block.
+    }
+
+    // Insert the fragment at the selection.
+    Transforms.insertNodes(editor, fragment);
   };
 
   const [inputValue, setInputValue] = useState("");
+  const [promptValue, setPromptValue] = useState("");
 
   // Append selected text to input value when editor.selection changes
   useEffect(() => {
     if (editor.selection) {
-      const text = getTextFromSelection();
+      const html = getHtmlFromSelection();
+      const text = getHtmlAsText(html);
       setInputValue(text);
+      setPromptValue(html);
     }
   }, [editor.selection]);
 
   const onInputChange = (event) => {
+    const convertToHTML = convertLineBreaksToParagraphs(event.target.value);
+
+    console.log(convertToHTML);
     setInputValue(event.target.value);
+    setPromptValue(convertToHTML);
   };
 
   const renderText = () => {
     if (!editor.selection) return null;
-    const text = getTextFromSelection();
+    const text = getHtmlFromSelection();
 
     return (
       <div className="mt-10">
@@ -362,7 +413,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
             <Button
               className="text-sm"
               size="sm"
-              onClick={() => startTranslate(text)}
+              onClick={startTranslate}
               disabled={translateLoading}
             >
               {translateLoading ? (
@@ -382,6 +433,11 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                 value={translateText}
                 onChange={(e) => {
                   setTranslatedText(e.target.value);
+                  const convertToHTML = convertLineBreaksToParagraphs(
+                    e.target.value
+                  );
+
+                  setTranslateTextHTML(convertToHTML);
                 }}
               />
               <Button

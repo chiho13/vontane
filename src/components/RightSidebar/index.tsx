@@ -231,6 +231,28 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
   const [translateText, setTranslatedText] = useState("");
   const [translatedTextHTML, setTranslateTextHTML] = useState("");
 
+  const findNodesInSelection = (editor, type) => {
+    const nodes = [];
+
+    if (editor.selection) {
+      for (const [node, path] of Editor.nodes(editor, {
+        at: editor.selection,
+      })) {
+        if (SlateElement.isElement(node) && node.type === type) {
+          nodes.push({ node, path });
+        }
+      }
+    }
+
+    return nodes;
+  };
+
+  const paragraphs = findNodesInSelection(editor, "paragraph");
+
+  const hasParagraphInNodes = (nodes) => {
+    return nodes.some(({ node }) => node.type === "paragraph");
+  };
+
   const startTranslate = async () => {
     setTranslateLoading(true);
 
@@ -413,46 +435,48 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
           </div>
         )}
 
-        <div className="mt-2 flex gap-3">
-          <div className="relative inline-block text-left">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button className="border" variant="outline" size="sm">
-                  {selectedLanguage}
-                  <ChevronDown className="w-5" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="start"
-                className="border bg-muted dark:border-gray-500"
+        {promptValue && (
+          <div className="mt-2 flex gap-3">
+            <div className="relative inline-block text-left">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button className="border" variant="outline" size="xs">
+                    {selectedLanguage}
+                    <ChevronDown className="w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="start"
+                  className="border bg-muted dark:border-gray-500"
+                >
+                  {languages.map((language, index) => (
+                    <DropdownMenuItem
+                      key={index}
+                      className="text-foreground"
+                      onClick={() => setSelectedLanguage(language)}
+                    >
+                      {language}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            {text.length > 0 && (
+              <Button
+                className="text-sm"
+                size="xs"
+                onClick={startTranslate}
+                disabled={translateLoading}
               >
-                {languages.map((language, index) => (
-                  <DropdownMenuItem
-                    key={index}
-                    className="text-foreground"
-                    onClick={() => setSelectedLanguage(language)}
-                  >
-                    {language}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+                {translateLoading ? (
+                  <LoadingSpinner strokeColor="stroke-gray-200 dark:stroke-muted" />
+                ) : (
+                  "Translate"
+                )}
+              </Button>
+            )}
           </div>
-          {text.length > 0 && (
-            <Button
-              className="text-sm"
-              size="sm"
-              onClick={startTranslate}
-              disabled={translateLoading}
-            >
-              {translateLoading ? (
-                <LoadingSpinner strokeColor="stroke-gray-200 dark:stroke-muted" />
-              ) : (
-                "Translate"
-              )}
-            </Button>
-          )}
-        </div>
+        )}
 
         {translateText && (
           <div>
@@ -605,18 +629,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                     No Audio generated
                   </div>
                 ))}
-              <div>{renderText()}</div>
-              {/* {SlateElement.isElement(rootNode) &&
-                rootNode?.type == "tts" &&
-                audioData && (
-                  <textarea
-                    className="mt-3 h-[180px] w-full resize-none rounded-md border border-accent bg-transparent p-2 outline-none ring-muted-foreground focus:ring-1"
-                    value={
-                      audioData.paragraphs && audioData.paragraphs.join("\n")
-                    }
-                    readOnly
-                  />
-                )} */}
+              {hasParagraphInNodes && <div>{renderText()}</div>}
             </TabsContent>
             <TabsContent value="preview">
               <div className="flex justify-end gap-3">

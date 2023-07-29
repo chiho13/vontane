@@ -14,8 +14,7 @@ export const findPathById = (editor, id): Path | null => {
 
   return foundPath;
 };
-
-export const createColumns = (fromPath, over, editor) => {
+export const createColumns = (fromPath, over, editor, insertDirection) => {
   if (Path.equals(fromPath, over.path)) {
     return; // Do nothing if they are the same
   }
@@ -25,14 +24,23 @@ export const createColumns = (fromPath, over, editor) => {
 
   const [droppedNode] = Editor.node(editor, overPath);
 
+  // Determine the order of children in the new column based on insertDirection
+  const children =
+    insertDirection === "left"
+      ? [
+          { id: genNodeId(), type: "column-cell", children: [draggedNode] },
+          { id: genNodeId(), type: "column-cell", children: [droppedNode] },
+        ]
+      : [
+          { id: genNodeId(), type: "column-cell", children: [droppedNode] },
+          { id: genNodeId(), type: "column-cell", children: [draggedNode] },
+        ];
+
   // Create a new column with the dragged node and the target node
   const newColumn = {
     id: genNodeId(),
     type: "column",
-    children: [
-      { id: genNodeId(), type: "column-cell", children: [droppedNode] },
-      { id: genNodeId(), type: "column-cell", children: [draggedNode] },
-    ],
+    children: children,
   };
 
   // Find the target node's path
@@ -45,20 +53,5 @@ export const createColumns = (fromPath, over, editor) => {
   });
 
   Transforms.removeNodes(editor, { at: overPath });
-
   Transforms.removeNodes(editor, { at: fromPath });
-
-  // setTimeout(() => {
-  //   const [_, newColumnPath] = Editor.last(editor, []);
-  //   const lastCell = [...Editor.nodes(editor, { at: newColumnPath })]
-  //     .reverse()
-  //     .find(([node]) => node.type === "column-cell");
-  //   const lastCellId = lastCell[0].id;
-  //   console.log(lastCellId);
-  //   const lastColumnCell = findEquationElementById(lastCellId);
-  //   console.log(lastColumnCell);
-  //   if (lastColumnCell) {
-  //     lastColumnCell.style.backgroundColor = "#e3ecf7";
-  //   }
-  // }, 100);
 };

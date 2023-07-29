@@ -14,8 +14,7 @@ import { useLocalStorage } from "usehooks-ts";
 import AudioPlayer from "../AudioPlayer";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { EditorContext } from "@/contexts/EditorContext";
-import { jsx } from "slate-hyperscript";
-import ReactDOMServer from "react-dom/server";
+import * as marked from "marked";
 
 import {
   Element as SlateElement,
@@ -252,23 +251,37 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     }
   };
 
-  const slateNodeToHtml = (node) => {
+  function slateNodeToHtml(node) {
     if (SlateElement.isElement(node)) {
-      const children = node.children.map((n) => slateNodeToHtml(n)).join("");
-
+      const childrenHtml = node.children.map(slateNodeToHtml).join("");
       switch (node.type) {
         case "paragraph":
-          return `<p>${children}</p>`;
+          return `<p>${childrenHtml}</p>`;
         case "heading-one":
-          return `<h1>${children}</h1>`;
-        // ...more cases for your other block types...
+          return `<h1>${childrenHtml}</h1>`;
+        // ... handle other element types ...
         default:
-          return children;
+          return childrenHtml;
       }
     } else {
-      return node.text;
+      // Text node
+      let textHtml = node.text;
+      if (node.bold) {
+        textHtml = `<strong>${textHtml}</strong>`;
+      }
+      if (node.italic) {
+        textHtml = `<em>${textHtml}</em>`;
+      }
+      if (node.underline) {
+        textHtml = `<u>${textHtml}</u>`;
+      }
+      if (node.strikethrough) {
+        textHtml = `<del>${textHtml}</del>`;
+      }
+      // ... handle other marks ...
+      return textHtml;
     }
-  };
+  }
 
   const getHtmlFromSelection = () => {
     if (!editor.selection) return "";
@@ -282,24 +295,42 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     return html;
   };
 
-  const getHtmlAsText = (html) => {
-    // Use DOMParser to convert the HTML string to a document
-    const doc = new DOMParser().parseFromString(html, "text/html");
+  // const getHtmlAsText = (html) => {
+  //   // Use DOMParser to convert the HTML string to a document
+  //   const doc = new DOMParser().parseFromString(html, "text/html");
 
-    // Extract the text content of each paragraph, join them with line breaks
-    const text = Array.from(doc.querySelectorAll("p"))
-      .map((p) => p.textContent)
-      .join("\n");
+  //   // Extract the text content of each paragraph, join them with line breaks
+  //   const text = Array.from(doc.querySelectorAll("p"))
+  //     .map((p) => {
+  //       // Replace HTML tags with markdown syntax
+  //       let innerHtml = p.innerHTML;
 
-    return text;
-  };
+  //       innerHtml = innerHtml.replace(/<strong>(.*?)<\/strong>/g, "**$1**");
+  //       innerHtml = innerHtml.replace(/<em>(.*?)<\/em>/g, "*$1*");
+  //       innerHtml = innerHtml.replace(/<u>(.*?)<\/u>/g, "__$1__");
+  //       innerHtml = innerHtml.replace(/<del>(.*?)<\/del>/g, "~~$1~~");
 
-  function convertLineBreaksToParagraphs(text) {
-    // Split the text into lines
-    const lines = text.split("\n");
+  //       return innerHtml;
+  //     })
+  //     .join("\n");
 
-    // Wrap each line in a <p> tag and join them together
-    const html = lines.map((line) => `<p>${line}</p>`).join("");
+  //   return text;
+  // };
+
+  function convertMarkdownToHtml(markdown) {
+    let html = markdown;
+
+    // Replace markdown syntax with HTML tags
+    html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>"); // bold
+    html = html.replace(/\*(.*?)\*/g, "<em>$1</em>"); // italic
+    html = html.replace(/__(.*?)__/g, "<u>$1</u>"); // underline
+    html = html.replace(/~~(.*?)~~/g, "<del>$1</del>"); // strikethrough
+
+    // Split the markdown into lines
+    const lines = html.split("\n");
+
+    // Wrap each line in a <p> tag
+    html = lines.map((line) => `<p>${line}</p>`).join("");
 
     return html;
   }
@@ -357,18 +388,17 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
   useEffect(() => {
     if (editor.selection) {
       const html = getHtmlFromSelection();
-      const text = getHtmlAsText(html);
-      setInputValue(text);
+      console.log(html);
+
       setPromptValue(html);
     }
   }, [editor.selection]);
 
   const onInputChange = (event) => {
-    const convertToHTML = convertLineBreaksToParagraphs(event.target.value);
+    // const convertToHTML = convertMarkdownToHtml(event.target.value);
 
-    console.log(convertToHTML);
     setInputValue(event.target.value);
-    setPromptValue(convertToHTML);
+    setPromptValue(event.target.value);
   };
 
   const renderText = () => {
@@ -378,11 +408,10 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     return (
       <div className="mt-10">
         <Label>Translate Text:</Label>
-        <textarea
-          value={inputValue}
-          className=" mt-2 h-[120px] w-full resize-none rounded-md border border-gray-300 bg-transparent p-2 outline-none ring-muted-foreground focus:ring-1 dark:border-accent"
-          onChange={onInputChange}
-        />
+        <div
+          dangerouslySetInnerHTML={{ __html: promptValue }}
+          className=" mt-2 h-[100px] w-full resize-none overflow-y-auto rounded-md border border-gray-300 bg-transparent p-2 outline-none ring-muted-foreground focus:ring-1 dark:border-accent"
+        ></div>
 
         <div className="mt-2 flex gap-3">
           <div className="relative inline-block text-left">
@@ -428,7 +457,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
         {translateText && (
           <div>
             <div className="relative">
-              <textarea
+              {/* <textarea
                 className="relative mt-3 h-[140px] w-full resize-none rounded-md  border border-accent bg-transparent p-2 outline-none ring-muted-foreground focus:ring-1"
                 value={translateText}
                 onChange={(e) => {
@@ -439,10 +468,14 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
                   setTranslateTextHTML(convertToHTML);
                 }}
-              />
+              /> */}
+
+              <div className="mt-3 h-[140px] w-full resize-none  overflow-y-auto rounded-md  border border-accent bg-transparent p-2 outline-none">
+                <div dangerouslySetInnerHTML={{ __html: translatedTextHTML }} />
+              </div>
               <Button
                 variant="outline"
-                className="absolute bottom-4 right-2 border text-xs text-muted-foreground "
+                className="absolute bottom-4 right-2 border bg-white text-xs text-muted-foreground dark:bg-muted "
                 size="xs"
                 onClick={() => copytranslatedCopy(translateText)}
               >

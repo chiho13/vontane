@@ -84,11 +84,7 @@ export function ParagraphElement(props) {
   };
 
   return (
-    <ParagraphStyle
-      isParentMCQ={isParentMCQ(editor)}
-      type={type}
-      align={element.align}
-    >
+    <ParagraphStyle isParentMCQ={isParentMCQ(editor)} type={type}>
       <p
         ref={paragraphRef}
         className={`paragraph-element  text-${

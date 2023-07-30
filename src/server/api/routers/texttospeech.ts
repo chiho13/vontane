@@ -59,8 +59,27 @@ export const texttospeechRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const url = `https://api.elevenlabs.io/v1/text-to-speech/${input.voice_id}`;
       const { supabaseServerClient } = ctx;
+
+      const completion = await openai.createChatCompletion({
+        model: "gpt-4",
+        messages: [
+          {
+            role: "system",
+            content: `Convert numbers and notations to readable text of the same langauge as input.  Return the output as text. `,
+          },
+          {
+            role: "user",
+            content: input.content,
+          },
+        ],
+        max_tokens: 5000,
+        temperature: 0.8,
+      });
+
+      const data = completion?.data?.choices?.[0]?.message?.content;
+
       const requestbody = {
-        text: input.content,
+        text: data,
         model_id: "eleven_multilingual_v1",
         voice_settings: {
           stability: 0,

@@ -286,6 +286,9 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
           return `<p class="text-${
             alignMap[node.align] || node.align
           }">${childrenHtml}</p>`;
+
+        case "link":
+          return `<a class="text-brand underline dark:text-blue-400" href="${node.url}">${childrenHtml}</a>`;
         case "heading-one":
           return `<h1 class="text-4xl">${childrenHtml}</h1>`;
         case "heading-two":
@@ -509,6 +512,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
       const text = getHtmlAsText(html);
       console.log(html);
       setPromptValue(html);
+      setTranslateTextHTML(null);
     } else {
       setPromptValue(null);
     }

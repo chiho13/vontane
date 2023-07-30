@@ -151,6 +151,7 @@ type CustomElement = {
   placeName?: string;
   address?: string;
   zoom?: Number;
+  url?: string | undefined;
 };
 
 type CustomText = {

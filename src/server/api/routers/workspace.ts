@@ -142,6 +142,7 @@ export const workspaceRouter = createTRPCRouter({
       {
         id: nanoid(),
         type: "paragraph",
+        align: "start",
         children: [
           {
             text: "",

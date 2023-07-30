@@ -16,6 +16,7 @@ export const addTTSBlock = (editor: Editor, path: Path) => {
       {
         id: genNodeId(),
         type: "paragraph",
+        align: "start",
         children: [{ text: "" }],
       },
     ],

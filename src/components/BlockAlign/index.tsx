@@ -22,18 +22,39 @@ import { Icons } from "@/components/Icons";
 import { AlignLeft, AlignCenter, AlignRight, ChevronDown } from "lucide-react";
 import { ReactEditor } from "slate-react";
 import { EditorContext } from "../../contexts/EditorContext";
-import { Transforms } from "slate";
+import { Transforms, Element as SlateElement, Editor, Range } from "slate";
+import { cn } from "@/utils/cn";
 
-export function BlockAlign({ element }: any) {
+export function BlockAlign({ element, className }: any) {
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const { editor } = React.useContext(EditorContext);
 
   const path = ReactEditor.findPath(editor, element);
 
   const alignImage = (position: string) => {
-    const newElement = { ...element, align: position };
+    // If selection exists
+    if (editor.selection) {
+      // Loop over all nodes in the selection
+      for (const [node, path] of Editor.nodes(editor, {
+        at: editor.selection,
+      })) {
+        // If the node is an element and not an image or map
+        if (
+          SlateElement.isElement(node) &&
+          node.type !== "image" &&
+          node.type !== "map"
+        ) {
+          const newElement = { ...node, align: position };
+          Transforms.setNodes(editor, newElement, { at: path });
+        }
+      }
+    }
 
-    Transforms.setNodes(editor, newElement, { at: path });
+    // Preserve previous logic for images and maps
+    if (element.type === "image" || element.type === "map") {
+      const newElement = { ...element, align: position };
+      Transforms.setNodes(editor, newElement, { at: path });
+    }
   };
 
   return (
@@ -42,7 +63,12 @@ export function BlockAlign({ element }: any) {
         <TooltipTrigger>
           <DropdownMenu onOpenChange={setDropdownOpen}>
             <DropdownMenuTrigger asChild>
-              <Button className=" flex h-[22px] w-[32px] items-center rounded-md border-0 border-gray-500 bg-white px-1 text-gray-500 hover:bg-gray-200 dark:border-foreground dark:bg-muted dark:text-foreground hover:dark:bg-muted/90 ">
+              <Button
+                className={cn(
+                  `flex h-[22px] w-[32px] items-center rounded-md border-0 border-gray-500 bg-white px-1 text-gray-500 hover:bg-gray-200 dark:border-foreground dark:bg-muted dark:text-foreground hover:dark:bg-muted/90`,
+                  className
+                )}
+              >
                 {element.align === "start" && <AlignLeft className="h-4 w-4" />}
                 {element.align === "center" && (
                   <AlignCenter className="h-4 w-4" />

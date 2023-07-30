@@ -15,6 +15,7 @@ import AudioPlayer from "../AudioPlayer";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { EditorContext } from "@/contexts/EditorContext";
 import * as marked from "marked";
+import { alignMap } from "../DocumentEditor/helpers/toggleBlock";
 
 import {
   Element as SlateElement,
@@ -282,7 +283,9 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
       const childrenHtml = node.children.map(slateNodeToHtml).join("");
       switch (node.type) {
         case "paragraph":
-          return `<p>${childrenHtml}</p>`;
+          return `<p class="text-${
+            alignMap[node.align] || node.align
+          }">${childrenHtml}</p>`;
         case "heading-one":
           return `<h1 class="text-4xl">${childrenHtml}</h1>`;
         case "heading-two":

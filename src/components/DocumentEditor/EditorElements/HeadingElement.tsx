@@ -69,6 +69,12 @@ export function HeadingElement(props) {
 
   const shouldShowPlaceholder = element.children[0].text === "";
 
+  const alignMap = {
+    start: "left",
+    center: "center",
+    end: "right",
+  };
+
   return (
     <HeadingElementStyle data-type={tag} isParentMCQ={isParentMCQ(editor)}>
       <HeadingTag
@@ -76,7 +82,9 @@ export function HeadingElement(props) {
         className={`${
           headingSizeMap[element.type as keyof typeof headingSizeMap] ||
           "text-xl"
-        } ${selectedElementID === element.id ? " bg-[#E0EDFB]" : ""}
+        } 
+        text-${alignMap[element.align] || element.align}
+        ${selectedElementID === element.id ? " bg-[#E0EDFB]" : ""}
         `}
         {...attributes}
         data-id={element.id}

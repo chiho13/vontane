@@ -436,7 +436,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     Transforms.splitNodes(editor);
     Transforms.setNodes(
       editor,
-      { id: genNodeId(), type: "paragraph" },
+      { id: genNodeId(), type: "paragraph", align: "start" },
       { at: newPath }
     );
   }
@@ -546,7 +546,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           }
         }
       }
-
+      if (event.key === "Enter") {
+        console.log(true);
+      }
       if (event.key === "Enter") {
         event.preventDefault();
 
@@ -569,7 +571,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               event.preventDefault();
               Transforms.setNodes(
                 editor,
-                { type: "paragraph" },
+                { type: "paragraph", align: "start" },
                 { at: _currentNodePath }
               );
 
@@ -579,7 +581,13 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
             if (Editor.isEnd(editor, selection.anchor, _currentNodePath)) {
               if (parentNode.type === "block-quote") {
-                insertNewNode(editor, parentPath, "paragraph");
+                if (event.shiftKey) {
+                  console.log("Shift key pressed:", event.shiftKey);
+                  editor.insertText("\n");
+                  return;
+                } else {
+                  insertNewNode(editor, parentPath, "paragraph");
+                }
               } else {
                 insertNewNode(editor, parentPath, parentNode.type);
               }
@@ -601,6 +609,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             parentNode.type === "heading-three"
           ) {
             const newPath = Path.next(parentPath);
+            const parentAlign = parentNode.align || "start";
             if (Editor.isEnd(editor, selection.anchor, _currentNodePath)) {
               // insertNewParagraph(newPath);
               const newPath = Path.next(parentPath);
@@ -609,6 +618,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 {
                   id: genNodeId(),
                   type: "paragraph",
+                  align: parentAlign,
                   children: [{ text: "" }],
                 },
                 { at: newPath }
@@ -625,6 +635,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               // Create a new paragraph with an empty text node and a new ID
               const newParagraph = {
                 type: "paragraph",
+                align: parentAlign,
                 id: genNodeId(),
                 children: [{ text: "" }],
               };
@@ -671,6 +682,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                   {
                     id: genNodeId(),
                     type: "paragraph",
+                    align: "start",
                     children: [{ text: "" }],
                   },
                   { at: newPath }
@@ -692,6 +704,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                   {
                     id: genNodeId(),
                     type: "paragraph",
+                    align: "start",
                     children: [{ text: "" }],
                   },
                   { at: newPath }
@@ -756,6 +769,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           ) {
             let newProperties = {
               type: "paragraph",
+              align: "start",
             };
 
             const backToParagraph =
@@ -1543,6 +1557,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     const newParagraph = {
       id: genNodeId(),
       type: "paragraph",
+      align: "start",
       children: [{ text: "" }],
     };
     const newPath = lastNodePath
@@ -1692,8 +1707,22 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 const firstRect = rects[0] || { left: 0, top: 0 };
 
                 // Calculate mini toolbar position
-                const toolbarWidth = 370; // Update this value according to your toolbar width
                 let initialX = firstRect.left - textEditorLeft;
+                const toolbarWidth = 370; // Your toolbar width
+                // Access the alignment of the current element and adjust initialX based on the alignment
+                if (startNode.align) {
+                  switch (startNode.align) {
+                    case "center":
+                      initialX -= toolbarWidth / 2;
+                      break;
+                    case "end":
+                      initialX -= toolbarWidth;
+                      break;
+                    default:
+                      // do nothing for 'start' as it's already handled by your initial calculation
+                      break;
+                  }
+                }
 
                 const x = Math.max(
                   Math.min(initialX, textEditorWidth - toolbarWidth - 20),
@@ -2080,6 +2109,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                               {
                                 id: genNodeId(),
                                 type: "paragraph",
+                                align: "start",
                                 children: [{ text: note }],
                               },
                               {

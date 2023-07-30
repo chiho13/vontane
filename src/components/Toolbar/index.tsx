@@ -7,6 +7,7 @@ import { MdChecklist } from "react-icons/md";
 import { List, ListOrdered, ListChecks } from "lucide-react";
 import { genNodeId } from "@/hoc/withID";
 import { ChangeBlocks } from "../ChangeBlocks";
+import { BlockAlign } from "../BlockAlign";
 
 import { BsSoundwave } from "react-icons/bs";
 import {
@@ -16,12 +17,14 @@ import {
   toggleFormat,
   wrapWithTTS,
   isParentTTS,
+  isParentList,
 } from "../DocumentEditor/helpers/toggleBlock";
 import {
   Editor,
   Transforms,
   Text,
   Range,
+  Node,
   Element as SlateElement,
 } from "slate";
 import { ReactEditor } from "slate-react";
@@ -35,6 +38,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import classNames from "classnames";
 
 type ToolbarProps = {
   openLink: boolean;
@@ -55,7 +59,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   setOpenLink,
   setShowMiniToolbar,
 }) => {
-  const { editor } = useContext(EditorContext);
+  const { editor, activePath } = useContext(EditorContext);
 
   const { isInline } = editor;
 
@@ -69,6 +73,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 
   const LIST_TYPES = ["numbered-list", "bulleted-list", "checked-list"];
 
+  const element = Node.get(editor, JSON.parse(activePath));
   const getActiveLinkUrl = (editor) => {
     let linkUrl = "";
     for (const [node] of Editor.nodes(editor, {
@@ -290,7 +295,13 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         </Tooltip>
       </TooltipProvider>
       <div className="h-full w-[1px] bg-gray-200 dark:bg-gray-700"></div>
-
+      {!isParentList && (
+        <BlockAlign
+          element={element}
+          className="ml-1 mr-1  h-[28px] hover:bg-gray-200 hover:dark:bg-accent"
+        />
+      )}
+      <div className="h-full w-[1px] bg-gray-200 dark:bg-gray-700"></div>
       {/* {!isParentTTS(editor) && (
         <>
           <TooltipProvider delayDuration={300}>

@@ -16,6 +16,12 @@ export interface MyElement extends SlateBaseElement {
   type: string;
 }
 
+export const alignMap = {
+  start: "left",
+  center: "center",
+  end: "right",
+};
+
 export const isBlockActive = (
   editor: any,
   format: string,
@@ -189,6 +195,7 @@ export function insertNewParagraph(editor: Editor, newPath: Path) {
   const newNode = {
     id: genNodeId(),
     type: "paragraph",
+    align: "start",
     children: [{ text: "" }],
   };
 

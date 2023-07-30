@@ -212,7 +212,7 @@ const Upgrade = () => {
             className="subscribe-btn flex h-[50px] w-full items-center justify-center rounded-md border p-2 text-center text-base font-semibold text-white transition"
           >
             <div className="flex items-center justify-center">
-              <span className="ml-2 text-lg">Buy</span>
+              <span className="ml-2 text-lg">Purchase</span>
             </div>
           </button>
         </div>

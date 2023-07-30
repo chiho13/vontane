@@ -92,6 +92,18 @@ const ELEMENT_TAGS = {
     }
     return { id: genNodeId(), type: "paragraph", align: alignment };
   },
+  LABEL: (el) => {
+    const input = el.querySelector('input[type="checkbox"]');
+    if (input) {
+      return {
+        id: genNodeId(),
+        type: "checked-list",
+        checked: input.checked,
+      };
+    }
+    // Return null or some other default for labels that don't contain a checkbox.
+    return null;
+  },
   PRE: () => ({ type: "code" }),
   // add this to ELEMENT_TAGS
 

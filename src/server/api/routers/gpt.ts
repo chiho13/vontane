@@ -238,7 +238,7 @@ export const GPTRouter = createTRPCRouter({
           messages: [
             {
               role: "system",
-              content: `You will be given a sentence. Detect the language and translate into ${language}. Preserve class names and Return the translate text in html format. Do not return other text.`,
+              content: `You will be given a sentence. Detect the language and translate into ${language}.Do not tell me what language is detected. Preserve class names and Return the translate text in the same html format. Do not return other text.`,
             },
             {
               role: "user",
@@ -246,7 +246,7 @@ export const GPTRouter = createTRPCRouter({
             },
           ],
           max_tokens: 5000,
-          temperature: 0.8,
+          temperature: 0.9,
         });
 
         const data = completion?.data?.choices?.[0]?.message?.content;

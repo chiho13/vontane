@@ -301,9 +301,13 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
           return childrenHtml;
         case "bulleted-list":
           return childrenHtml;
+        case "checked-list":
+          return `<label class="flex items-center gap-3 mt-2"><input class="w-[18px] h-[18px]" type="checkbox" name="option1" value="Option1" ${
+            node.checked ? "checked" : ""
+          } /> ${childrenHtml}</label>`;
+
         case "block-quote":
           return `<blockquote class="items-center border-l-4 border-gray-400 bg-white pl-3  text-gray-500 dark:bg-muted dark:text-gray-300">${childrenHtml}</blockquote>`;
-        // ... handle other element types ...
         default:
           return childrenHtml;
       }

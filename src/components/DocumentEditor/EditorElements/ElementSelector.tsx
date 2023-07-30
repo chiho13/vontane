@@ -45,7 +45,6 @@ export function ElementSelector(props: {
       return <HeadingElement {...props} tag="h1" />;
     case "heading-two":
       return <HeadingElement {...props} tag="h2" />;
-
     case "heading-three":
       return <HeadingElement {...props} tag="h3" />;
     case "block-quote":

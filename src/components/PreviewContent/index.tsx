@@ -20,6 +20,8 @@ import {
   findAllNumberedLists,
   ListItem,
 } from "../DocumentEditor/EditorElements";
+import { Checkbox } from "../ui/checkbox";
+import { alignMap } from "../DocumentEditor/helpers/toggleBlock";
 
 const NumberedListItem = ({ node, children, key, index, nodes }) => {
   const { editor } = useContext(EditorContext);
@@ -47,6 +49,7 @@ const renderElement = (
     width: string | number;
     type: any;
     url: any;
+    checked: boolean;
   },
   children:
     | string
@@ -65,7 +68,7 @@ const renderElement = (
   switch (node.type) {
     case "paragraph":
       return (
-        <p className="mt-1 leading-7" key={key}>
+        <p className="mt-2 leading-7" key={key}>
           {children}
         </p>
       );
@@ -91,17 +94,23 @@ const renderElement = (
       );
     case "heading-one":
       return (
-        <h1 className="mt-2  text-4xl" key={key}>
+        <h1 className="mt-3  text-4xl" key={key}>
           {children}
         </h1>
       );
     case "heading-two":
       return (
-        <h2 className="mt-2  text-3xl" key={key}>
+        <h2 className="mt-3  text-3xl" key={key}>
           {children}
         </h2>
       );
 
+    case "heading-three":
+      return (
+        <h3 className="mt-3  text-2xl" key={key}>
+          {children}
+        </h3>
+      );
     case "link":
       return (
         <a
@@ -137,7 +146,7 @@ const renderElement = (
       );
     case "bulleted-list":
       return (
-        <li className="mt-1 list-inside list-disc " key={key}>
+        <li className="mt-2 list-inside list-disc " key={key}>
           {children}
         </li>
       );
@@ -145,7 +154,7 @@ const renderElement = (
     case "numbered-list":
       // Find the corresponding list group for this node
       return (
-        <div className="mt-1 ">
+        <div className="mt-2 ">
           <ListItem
             element={node}
             children={children}
@@ -153,6 +162,25 @@ const renderElement = (
             listType="numbered"
             isPreview={true}
           />
+        </div>
+      );
+    case "checked-list":
+      // Find the corresponding list group for this node
+      return (
+        <div
+          className={`
+          ml-[21px]
+         mt-2 list-none transition
+      duration-200 ease-in-out
+      text-${alignMap[node.align] || node.align}
+        ${node.checked && "text-muted-foreground line-through"}
+        `}
+        >
+          <Checkbox
+            checked={node.checked}
+            className="absolute  -translate-x-[24px] translate-y-[4px]"
+          />
+          {children}
         </div>
       );
 

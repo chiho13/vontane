@@ -21,9 +21,7 @@ export const BlockQuoteElement = (props: {
       data-path={JSON.stringify(path)}
       className={` items-center border-l-4 border-gray-400 bg-white pl-3 pr-1  text-gray-500 dark:bg-muted dark:text-gray-300 `}
     >
-      <div className="relative py-2">
-        <ParagraphElement {...props} type={element.type} />
-      </div>
+      {children}
     </blockquote>
   );
 };

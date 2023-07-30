@@ -21,6 +21,7 @@ const ParagraphStyle = styled.div<ParagraphElementProps>`
     position: absolute;
     top: ${(props) => (props.isParentMCQ ? "16px" : 0)};
     margin-top: ${(props) => (props.type === "block-quote" ? "8px" : 0)};
+    left: 0;
   }
 `;
 
@@ -76,15 +77,23 @@ export function ParagraphElement(props) {
     shouldShowPlaceholder = isFirstNode && isEmpty;
   }
 
+  const alignMap = {
+    start: "left",
+    center: "center",
+    end: "right",
+  };
+
   return (
-    <ParagraphStyle isParentMCQ={isParentMCQ(editor)} type={type}>
+    <ParagraphStyle
+      isParentMCQ={isParentMCQ(editor)}
+      type={type}
+      align={element.align}
+    >
       <p
         ref={paragraphRef}
-        className={`paragraph-element  
-
-      
-
-        `}
+        className={`paragraph-element  text-${
+          alignMap[element.align] || element.align
+        }`}
         {...attributes}
         {...(type !== "block-quote" && {
           "data-id": element.id,

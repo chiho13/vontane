@@ -11,6 +11,7 @@ export const addMCQBlock = (editor, path) => {
       {
         id: genNodeId(),
         type: "paragraph",
+        align: "start",
         children: [
           {
             text: "",

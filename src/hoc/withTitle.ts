@@ -26,7 +26,11 @@ export const withTitle = (editor) => {
 
     // Ensure other nodes are not of type 'title'
     if (!Path.equals(path, [0]) && node.type === "title") {
-      const paragraphNode = { type: "paragraph", children: [{ text: "" }] };
+      const paragraphNode = {
+        type: "paragraph",
+        align: "start",
+        children: [{ text: "" }],
+      };
       Transforms.setNodes(editor, paragraphNode, { at: path });
       return;
     }
@@ -46,6 +50,7 @@ export const withTitle = (editor) => {
       if (editor.children.length < 2) {
         const paragraph = {
           type: "paragraph",
+          align: "start",
           children: [{ text: "" }],
         };
         Transforms.insertNodes(editor, paragraph, { at: path.concat(1) });

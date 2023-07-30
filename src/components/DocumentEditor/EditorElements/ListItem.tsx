@@ -7,6 +7,7 @@ import { hasSlideElement } from "@/utils/helpers";
 import { RxDotFilled } from "react-icons/rx";
 import { MdCircle } from "react-icons/md";
 import { Checkbox } from "@/components/ui/checkbox";
+import { alignMap } from "../helpers/toggleBlock";
 const ListItemStyle = styled.div`
   position: relative;
   li[data-placeholder]::after {
@@ -129,8 +130,10 @@ export const ListItem = withListNumbering((props) => {
         className={` ${
           selectedElementID === element.id ? " bg-[#E0EDFB]" : "bg-transparent"
         }
+    
          ml-[21px] list-none transition
       duration-200 ease-in-out
+      text-${alignMap[element.align] || element.align}
         ${isCheckedList && isChecked && "text-muted-foreground line-through"}
         `}
         data-id={element.id}

@@ -58,15 +58,40 @@ const transformListItems = (listItems, listType) => {
 };
 
 const ELEMENT_TAGS = {
-  A: (el) => ({ type: "link", url: el.getAttribute("href") }),
+  A: (el) => ({ id: genNodeId(), type: "link", url: el.getAttribute("href") }),
   BLOCKQUOTE: () => ({ type: "block-quote" }),
-  H1: () => ({ type: "heading-one" }),
-  H2: () => ({ type: "heading-two" }),
-  H3: () => ({ type: "heading-three" }),
+  H1: () => ({ id: genNodeId(), type: "heading-one" }),
+  H2: () => ({ id: genNodeId(), type: "heading-two" }),
+  H3: () => ({ id: genNodeId(), type: "heading-three" }),
   IMG: (el) => ({ type: "image", url: el.getAttribute("src") }),
   //   LI: () => ({ type: "list-item" }),
 
-  P: () => ({ id: genNodeId(), type: "paragraph" }),
+  P: (el) => {
+    let alignment = "start"; // default alignment
+    const classAttr = el.getAttribute("class");
+    if (classAttr) {
+      const classList = classAttr.split(/\s+/);
+      const textAlignClass = classList.find((className) =>
+        className.startsWith("text-")
+      );
+
+      if (textAlignClass) {
+        switch (textAlignClass) {
+          case "text-left":
+            alignment = "start";
+            break;
+          case "text-center":
+            alignment = "center";
+            break;
+          case "text-right":
+            alignment = "end";
+            break;
+          // handle more cases if needed
+        }
+      }
+    }
+    return { id: genNodeId(), type: "paragraph", align: alignment };
+  },
   PRE: () => ({ type: "code" }),
   // add this to ELEMENT_TAGS
 
@@ -90,7 +115,7 @@ const TEXT_TAGS = {
   S: () => ({ strikethrough: true }),
   B: () => ({ bold: true }),
   STRONG: () => ({ bold: true }),
-  //   U: () => ({ underline: true }),
+  U: () => ({ underline: true }),
 };
 
 export const deserialize = (el) => {

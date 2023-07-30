@@ -302,6 +302,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         const newNode = {
           id: genNodeId(),
           type: "paragraph",
+          align: "start",
           children: [{ text: "" }],
         };
 

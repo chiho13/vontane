@@ -28,7 +28,9 @@ export const withColumns = (editor: any) => {
             (_, index) => ({
               id: `${genNodeId()}${index}`,
               type: "column-cell",
-              children: [{ type: "paragraph", children: [{ text: "" }] }],
+              children: [
+                { type: "paragraph", align: "start", children: [{ text: "" }] },
+              ],
             })
           );
           Transforms.insertNodes(editor, newRow, {

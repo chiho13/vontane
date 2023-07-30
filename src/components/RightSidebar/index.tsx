@@ -294,7 +294,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
         case "numbered-list":
           return childrenHtml;
         case "bulleted-list":
-          return `<li> ${childrenHtml} </li>`;
+          return childrenHtml;
         case "block-quote":
           return `<blockquote class="items-center border-l-4 border-gray-400 bg-white pl-3  text-gray-500 dark:bg-muted dark:text-gray-300">${childrenHtml}</blockquote>`;
         // ... handle other element types ...
@@ -328,7 +328,9 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     const fragment = Editor.fragment(editor, editor.selection);
 
     let inNumberedList = false;
+    let inBulletedList = false;
     let numberedListItems = "";
+    let bulletedListItems = "";
 
     // Convert each node in the fragment to HTML
     const htmlParts = fragment.map((node, i) => {
@@ -352,12 +354,38 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
           inNumberedList = true;
           return null; // Do not add this node to htmlParts yet
         }
+      } else if (
+        SlateElement.isElement(node) &&
+        node.type === "bulleted-list"
+      ) {
+        bulletedListItems += `<li class="list-disc pl-2">${html}</li>`;
+        const nextNode = fragment[i + 1];
+
+        // If it's the last node or the next node is not a bulleted-list
+        if (
+          i === fragment.length - 1 ||
+          (SlateElement.isElement(nextNode) &&
+            nextNode.type !== "bulleted-list")
+        ) {
+          inBulletedList = false;
+          let ulHtml = `<ul class="pl-5 mt-2">${bulletedListItems}</ul>`;
+          bulletedListItems = "";
+          return ulHtml;
+        } else {
+          inBulletedList = true;
+          return null; // Do not add this node to htmlParts yet
+        }
       } else {
         if (inNumberedList) {
           inNumberedList = false;
           let olHtml = `<ol class="pl-5 mt-2">${numberedListItems}</ol>`;
           numberedListItems = "";
-          return html;
+          return olHtml + html;
+        } else if (inBulletedList) {
+          inBulletedList = false;
+          let ulHtml = `<ul class="pl-5 mt-2">${bulletedListItems}</ul>`;
+          bulletedListItems = "";
+          return ulHtml + html;
         } else {
           return html;
         }
@@ -569,7 +597,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
               </div>
               <Button
                 variant="outline"
-                className="absolute bottom-4 right-2 border bg-white text-xs text-muted-foreground dark:bg-muted "
+                className="absolute bottom-2 right-2 border bg-white text-xs text-muted-foreground dark:bg-muted "
                 size="xs"
                 onClick={() => copytranslatedCopy(translateText)}
               >

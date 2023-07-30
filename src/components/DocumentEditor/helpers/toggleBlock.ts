@@ -191,6 +191,16 @@ export const isParentMCQ = (editor) => {
   return !!parent;
 };
 
+export const isParentList = (editor: Editor) => {
+  const { selection } = editor;
+  if (!selection) return false;
+
+  const [parentNode] = Editor.parent(editor, selection);
+  return (
+    SlateElement.isElement(parentNode) && LIST_TYPES.includes(parentNode.type)
+  );
+};
+
 export function insertNewParagraph(editor: Editor, newPath: Path) {
   const newNode = {
     id: genNodeId(),

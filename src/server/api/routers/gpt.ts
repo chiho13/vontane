@@ -64,7 +64,7 @@ export const GPTRouter = createTRPCRouter({
         // If successful, decrement the credits
         const updatedUser = await ctx.prisma.user.update({
           where: { id: ctx.user.id as string },
-          data: { credits: { decrement: 50 } },
+          data: { credits: { decrement: 250 } },
           select: { credits: true },
         });
 

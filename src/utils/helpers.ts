@@ -1,3 +1,6 @@
+import { alignMap } from "@/components/DocumentEditor/helpers/toggleBlock";
+import { Element as SlateElement } from "slate";
+
 export const getURL = () => {
   let url =
     process?.env?.NEXT_PUBLIC_SITE_URL ?? // Set this to your site URL in production env.
@@ -68,3 +71,59 @@ export function compareTwoStrings(first, second) {
 
   return (2.0 * intersectionSize) / (first.length + second.length - 2);
 }
+
+export const slateNodeToHtml = (node) => {
+  let inNumberedList = false;
+  let numberedListItems = "";
+
+  if (SlateElement.isElement(node)) {
+    const childrenHtml = node.children.map(slateNodeToHtml).join("");
+    switch (node.type) {
+      case "paragraph":
+        return `<p class="text-${
+          alignMap[node.align] || node.align
+        }">${childrenHtml}</p>`;
+
+      case "link":
+        return `<a class="text-brand underline dark:text-blue-400" href="${node.url}">${childrenHtml}</a>`;
+      case "heading-one":
+        return `<h1 class="text-4xl">${childrenHtml}</h1>`;
+      case "heading-two":
+        return `<h2 class="text-3xl">${childrenHtml}</h2>`;
+
+      case "heading-three":
+        return `<h3 class="text-3xl">${childrenHtml}</h3>`;
+
+      case "numbered-list":
+        return childrenHtml;
+      case "bulleted-list":
+        return childrenHtml;
+      case "checked-list":
+        return `<label class="flex items-center gap-3 mt-2"><input class="w-[18px] h-[18px]" type="checkbox" name="option1" value="Option1" ${
+          node.checked ? "checked" : ""
+        } /> ${childrenHtml}</label>`;
+
+      case "block-quote":
+        return `<blockquote class="items-center border-l-4 border-gray-400 bg-white pl-3  text-gray-500 dark:bg-muted dark:text-gray-300">${childrenHtml}</blockquote>`;
+      default:
+        return childrenHtml;
+    }
+  } else {
+    // Text node
+    let textHtml = node.text;
+    if (node.bold) {
+      textHtml = `<strong>${textHtml}</strong>`;
+    }
+    if (node.italic) {
+      textHtml = `<em>${textHtml}</em>`;
+    }
+    if (node.underline) {
+      textHtml = `<u>${textHtml}</u>`;
+    }
+    if (node.strikethrough) {
+      textHtml = `<del>${textHtml}</del>`;
+    }
+    // ... handle other marks ...
+    return textHtml;
+  }
+};

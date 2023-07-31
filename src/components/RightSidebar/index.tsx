@@ -63,6 +63,8 @@ import {
 import { Portal } from "react-portal";
 import { Label } from "../ui/label";
 import { ReactEditor } from "slate-react";
+
+import { slateNodeToHtml } from "@/utils/helpers";
 interface RightSideBarProps {
   setRightSideBarWidth: any;
   showRightSidebar: boolean;
@@ -278,62 +280,6 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     }
   };
 
-  function slateNodeToHtml(node) {
-    let inNumberedList = false;
-    let numberedListItems = "";
-
-    if (SlateElement.isElement(node)) {
-      const childrenHtml = node.children.map(slateNodeToHtml).join("");
-      switch (node.type) {
-        case "paragraph":
-          return `<p class="text-${
-            alignMap[node.align] || node.align
-          }">${childrenHtml}</p>`;
-
-        case "link":
-          return `<a class="text-brand underline dark:text-blue-400" href="${node.url}">${childrenHtml}</a>`;
-        case "heading-one":
-          return `<h1 class="text-4xl">${childrenHtml}</h1>`;
-        case "heading-two":
-          return `<h2 class="text-3xl">${childrenHtml}</h2>`;
-
-        case "heading-three":
-          return `<h3 class="text-3xl">${childrenHtml}</h3>`;
-
-        case "numbered-list":
-          return childrenHtml;
-        case "bulleted-list":
-          return childrenHtml;
-        case "checked-list":
-          return `<label class="flex items-center gap-3 mt-2"><input class="w-[18px] h-[18px]" type="checkbox" name="option1" value="Option1" ${
-            node.checked ? "checked" : ""
-          } /> ${childrenHtml}</label>`;
-
-        case "block-quote":
-          return `<blockquote class="items-center border-l-4 border-gray-400 bg-white pl-3  text-gray-500 dark:bg-muted dark:text-gray-300">${childrenHtml}</blockquote>`;
-        default:
-          return childrenHtml;
-      }
-    } else {
-      // Text node
-      let textHtml = node.text;
-      if (node.bold) {
-        textHtml = `<strong>${textHtml}</strong>`;
-      }
-      if (node.italic) {
-        textHtml = `<em>${textHtml}</em>`;
-      }
-      if (node.underline) {
-        textHtml = `<u>${textHtml}</u>`;
-      }
-      if (node.strikethrough) {
-        textHtml = `<del>${textHtml}</del>`;
-      }
-      // ... handle other marks ...
-      return textHtml;
-    }
-  }
-
   const getHtmlFromSelection = () => {
     if (!editor.selection) return "";
 
@@ -547,7 +493,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
           <div
             dangerouslySetInnerHTML={{ __html: promptValue }}
-            className=" mt-2 h-[100px] w-full resize-none overflow-y-auto rounded-md border border-gray-300 bg-transparent p-2 outline-none ring-muted-foreground focus:ring-1 dark:border-accent"
+            className=" mt-2 h-[130px] w-full resize-none overflow-y-auto rounded-md border border-gray-300 bg-transparent p-2 outline-none ring-muted-foreground focus:ring-1 dark:border-accent"
           ></div>
         </div>
 
@@ -593,10 +539,10 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
             )}
           </div>
         )}
-
-        <div>
-          <div className="relative">
-            {/* <textarea
+        {translatedTextHTML && (
+          <div>
+            <div className="relative">
+              {/* <textarea
                 className="relative mt-3 h-[140px] w-full resize-none rounded-md  border border-accent bg-transparent p-2 outline-none ring-muted-foreground focus:ring-1"
                 value={translateText}
                 onChange={(e) => {
@@ -609,39 +555,40 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                 }}
               /> */}
 
-            <div className="mt-3 h-[140px] w-full resize-none  overflow-y-auto rounded-md  border border-accent bg-transparent p-2 outline-none">
-              <div dangerouslySetInnerHTML={{ __html: translatedTextHTML }} />
+              <div className="mt-3 h-[140px] w-full resize-none  overflow-y-auto rounded-md  border border-accent bg-transparent p-2 outline-none">
+                <div dangerouslySetInnerHTML={{ __html: translatedTextHTML }} />
+              </div>
+              <Button
+                variant="outline"
+                className="absolute bottom-2 right-2 border bg-white text-xs text-muted-foreground dark:bg-muted "
+                size="xs"
+                onClick={() => copyHTML(translatedTextHTML)}
+              >
+                <Copy className="mr-2 w-4 " />
+                {translatedCopy ? "Copied!" : "Copy"}
+              </Button>
             </div>
-            <Button
-              variant="outline"
-              className="absolute bottom-2 right-2 border bg-white text-xs text-muted-foreground dark:bg-muted "
-              size="xs"
-              onClick={() => copyHTML(translatedTextHTML)}
-            >
-              <Copy className="mr-2 w-4 " />
-              {translatedCopy ? "Copied!" : "Copy"}
-            </Button>
-          </div>
 
-          <div className="mt-3 flex gap-2">
-            <Button
-              variant="outline"
-              className="border text-muted-foreground"
-              size="xs"
-              onClick={replaceSelectedText}
-            >
-              <Check className="mr-2 w-5 " /> Replace Selection
-            </Button>
-            <Button
-              variant="outline"
-              className="border text-muted-foreground"
-              size="xs"
-              onClick={insertTranslatedTextBelow}
-            >
-              <ListEnd className="mr-2 w-5 " /> Insert below
-            </Button>
+            <div className="mt-3 flex gap-2">
+              <Button
+                variant="outline"
+                className="border text-muted-foreground"
+                size="xs"
+                onClick={replaceSelectedText}
+              >
+                <Check className="mr-2 w-5 " /> Replace Selection
+              </Button>
+              <Button
+                variant="outline"
+                className="border text-muted-foreground"
+                size="xs"
+                onClick={insertTranslatedTextBelow}
+              >
+                <ListEnd className="mr-2 w-5 " /> Insert below
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     );
   };

@@ -193,6 +193,7 @@ export const withNormalizePasting = (editor) => {
 
   editor.insertData = (data) => {
     const html = data.getData("text/html");
+    console.log("html", html);
 
     if (html) {
       let nodesToInsert = [];

@@ -58,39 +58,48 @@ const transformListItems = (listItems, listType) => {
   });
 };
 
+const getAlignment = (el) => {
+  let alignment = "start";
+  const classAttr = el.getAttribute("data-align");
+
+  if (classAttr) {
+    switch (classAttr) {
+      case "text-left":
+        alignment = "start";
+        break;
+      case "text-center":
+        alignment = "center";
+        break;
+      case "text-right":
+        alignment = "end";
+        break;
+      // handle more cases if needed
+    }
+  }
+
+  return alignment;
+};
+
 const ELEMENT_TAGS = {
   A: (el) => ({ id: genNodeId(), type: "link", url: el.getAttribute("href") }),
   BLOCKQUOTE: () => ({ type: "block-quote" }),
-  H1: () => ({ id: genNodeId(), type: "heading-one" }),
-  H2: () => ({ id: genNodeId(), type: "heading-two" }),
-  H3: () => ({ id: genNodeId(), type: "heading-three" }),
   IMG: (el) => ({ type: "image", url: el.getAttribute("src") }),
   //   LI: () => ({ type: "list-item" }),
 
+  H1: (el) => {
+    const alignment = getAlignment(el); // default alignment
+    return { id: genNodeId(), type: "heading-one", align: alignment };
+  },
+  H2: (el) => {
+    const alignment = getAlignment(el); // default alignment
+    return { id: genNodeId(), type: "heading-two", align: alignment };
+  },
+  H3: (el) => {
+    const alignment = getAlignment(el); // default alignment
+    return { id: genNodeId(), type: "heading-three", align: alignment };
+  },
   P: (el) => {
-    let alignment = "start"; // default alignment
-    const classAttr = el.getAttribute("class");
-    if (classAttr) {
-      const classList = classAttr.split(/\s+/);
-      const textAlignClass = classList.find((className) =>
-        className.startsWith("text-")
-      );
-
-      if (textAlignClass) {
-        switch (textAlignClass) {
-          case "text-left":
-            alignment = "start";
-            break;
-          case "text-center":
-            alignment = "center";
-            break;
-          case "text-right":
-            alignment = "end";
-            break;
-          // handle more cases if needed
-        }
-      }
-    }
+    const alignment = getAlignment(el); // default alignment
     return { id: genNodeId(), type: "paragraph", align: alignment };
   },
   LABEL: (el) => {

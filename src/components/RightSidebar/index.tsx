@@ -64,7 +64,7 @@ import { Portal } from "react-portal";
 import { Label } from "../ui/label";
 import { ReactEditor } from "slate-react";
 
-import { slateNodeToHtml } from "@/utils/helpers";
+import { getHtmlFromSelection } from "@/utils/helpers";
 interface RightSideBarProps {
   setRightSideBarWidth: any;
   showRightSidebar: boolean;
@@ -280,80 +280,6 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     }
   };
 
-  const getHtmlFromSelection = () => {
-    if (!editor.selection) return "";
-
-    // Get the fragment (block of text) from the current selection
-    const fragment = Editor.fragment(editor, editor.selection);
-
-    let inNumberedList = false;
-    let inBulletedList = false;
-    let numberedListItems = "";
-    let bulletedListItems = "";
-
-    // Convert each node in the fragment to HTML
-    const htmlParts = fragment.map((node, i) => {
-      let html = slateNodeToHtml(node);
-
-      if (SlateElement.isElement(node) && node.type === "numbered-list") {
-        numberedListItems += `<li class="list-decimal pl-2">${html}</li>`;
-        const nextNode = fragment[i + 1];
-
-        // If it's the last node or the next node is not a numbered-list
-        if (
-          i === fragment.length - 1 ||
-          (SlateElement.isElement(nextNode) &&
-            nextNode.type !== "numbered-list")
-        ) {
-          inNumberedList = false;
-          let olHtml = `<ol class="pl-5 mt-2">${numberedListItems}</ol>`;
-          numberedListItems = "";
-          return olHtml;
-        } else {
-          inNumberedList = true;
-          return null; // Do not add this node to htmlParts yet
-        }
-      } else if (
-        SlateElement.isElement(node) &&
-        node.type === "bulleted-list"
-      ) {
-        bulletedListItems += `<li class="list-disc pl-2">${html}</li>`;
-        const nextNode = fragment[i + 1];
-
-        // If it's the last node or the next node is not a bulleted-list
-        if (
-          i === fragment.length - 1 ||
-          (SlateElement.isElement(nextNode) &&
-            nextNode.type !== "bulleted-list")
-        ) {
-          inBulletedList = false;
-          let ulHtml = `<ul class="pl-5 mt-2">${bulletedListItems}</ul>`;
-          bulletedListItems = "";
-          return ulHtml;
-        } else {
-          inBulletedList = true;
-          return null; // Do not add this node to htmlParts yet
-        }
-      } else {
-        if (inNumberedList) {
-          inNumberedList = false;
-          let olHtml = `<ol class="pl-5 mt-2">${numberedListItems}</ol>`;
-          numberedListItems = "";
-          return olHtml + html;
-        } else if (inBulletedList) {
-          inBulletedList = false;
-          let ulHtml = `<ul class="pl-5 mt-2">${bulletedListItems}</ul>`;
-          bulletedListItems = "";
-          return ulHtml + html;
-        } else {
-          return html;
-        }
-      }
-    });
-
-    return htmlParts.filter((part) => part !== null).join("");
-  };
-
   const getHtmlAsText = (html) => {
     // Use DOMParser to convert the HTML string to a document
     const doc = new DOMParser().parseFromString(html, "text/html");
@@ -461,11 +387,10 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
   // Append selected text to input value when editor.selection changes
   useEffect(() => {
     if (editor.selection && !Range.isCollapsed(editor.selection)) {
-      const html = getHtmlFromSelection();
+      const html = getHtmlFromSelection(editor);
       const text = getHtmlAsText(html);
       console.log(html);
       setPromptValue(html);
-      setTranslateTextHTML(null);
     } else {
       setPromptValue(null);
     }
@@ -484,7 +409,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
   const renderText = () => {
     if (!editor.selection) return null;
-    const text = getHtmlFromSelection();
+    const text = getHtmlFromSelection(editor);
 
     return (
       <div className="mt-10">

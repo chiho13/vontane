@@ -2,6 +2,7 @@ import { createEditor, Editor, Path, Range, Transforms } from "slate";
 import { genNodeId } from "./withID";
 import { jsx } from "slate-hyperscript";
 import { Element as SlateElement } from "slate";
+import { getHtmlFromSelection } from "@/utils/helpers";
 
 const transformListItems = (listItems, listType) => {
   return listItems.map((li: Node) => {
@@ -181,7 +182,7 @@ export const deserialize = (el) => {
 };
 
 export const withNormalizePasting = (editor) => {
-  const { insertData, isInline, isVoid } = editor;
+  const { insertData, isInline, isVoid, copy, getFragment } = editor;
 
   editor.isInline = (element) => {
     return element.type === "link" ? true : isInline(element);
@@ -205,6 +206,25 @@ export const withNormalizePasting = (editor) => {
     }
 
     insertData(data);
+  };
+
+  editor.copyAsHtml = async () => {
+    if (editor.selection) {
+      // If there is a selection, get the nodes within the selection.
+
+      // Serialize the nodes to HTML and copy the HTML to the clipboard.
+      const html = getHtmlFromSelection(editor); // Implement serialize function based on your requirements
+      const item = new ClipboardItem({
+        "text/html": new Blob([html], { type: "text/html" }),
+      });
+
+      try {
+        await navigator.clipboard.write([item]);
+        console.log("Copied to clipboard successfully!");
+      } catch (err) {
+        console.error("Failed to write to clipboard: ", err);
+      }
+    }
   };
 
   return editor;

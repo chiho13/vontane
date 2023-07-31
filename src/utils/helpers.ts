@@ -1,5 +1,5 @@
 import { alignMap } from "@/components/DocumentEditor/helpers/toggleBlock";
-import { Element as SlateElement } from "slate";
+import { Editor, Element as SlateElement } from "slate";
 
 export const getURL = () => {
   let url =
@@ -73,9 +73,6 @@ export function compareTwoStrings(first, second) {
 }
 
 export const slateNodeToHtml = (node) => {
-  let inNumberedList = false;
-  let numberedListItems = "";
-
   if (SlateElement.isElement(node)) {
     const childrenHtml = node.children.map(slateNodeToHtml).join("");
     switch (node.type) {
@@ -126,4 +123,73 @@ export const slateNodeToHtml = (node) => {
     // ... handle other marks ...
     return textHtml;
   }
+};
+
+export const getHtmlFromSelection = (editor) => {
+  if (!editor.selection) return "";
+
+  // Get the fragment (block of text) from the current selection
+  const fragment = Editor.fragment(editor, editor.selection);
+
+  let inNumberedList = false;
+  let inBulletedList = false;
+  let numberedListItems = "";
+  let bulletedListItems = "";
+
+  // Convert each node in the fragment to HTML
+  const htmlParts = fragment.map((node, i) => {
+    let html = slateNodeToHtml(node);
+
+    if (SlateElement.isElement(node) && node.type === "numbered-list") {
+      numberedListItems += `<li class="list-decimal pl-2">${html}</li>`;
+      const nextNode = fragment[i + 1];
+
+      // If it's the last node or the next node is not a numbered-list
+      if (
+        i === fragment.length - 1 ||
+        (SlateElement.isElement(nextNode) && nextNode.type !== "numbered-list")
+      ) {
+        inNumberedList = false;
+        let olHtml = `<ol class="pl-5 mt-2">${numberedListItems}</ol>`;
+        numberedListItems = "";
+        return olHtml;
+      } else {
+        inNumberedList = true;
+        return null; // Do not add this node to htmlParts yet
+      }
+    } else if (SlateElement.isElement(node) && node.type === "bulleted-list") {
+      bulletedListItems += `<li class="list-disc pl-2">${html}</li>`;
+      const nextNode = fragment[i + 1];
+
+      // If it's the last node or the next node is not a bulleted-list
+      if (
+        i === fragment.length - 1 ||
+        (SlateElement.isElement(nextNode) && nextNode.type !== "bulleted-list")
+      ) {
+        inBulletedList = false;
+        let ulHtml = `<ul class="pl-5 mt-2">${bulletedListItems}</ul>`;
+        bulletedListItems = "";
+        return ulHtml;
+      } else {
+        inBulletedList = true;
+        return null; // Do not add this node to htmlParts yet
+      }
+    } else {
+      if (inNumberedList) {
+        inNumberedList = false;
+        let olHtml = `<ol class="pl-5 mt-2">${numberedListItems}</ol>`;
+        numberedListItems = "";
+        return olHtml + html;
+      } else if (inBulletedList) {
+        inBulletedList = false;
+        let ulHtml = `<ul class="pl-5 mt-2">${bulletedListItems}</ul>`;
+        bulletedListItems = "";
+        return ulHtml + html;
+      } else {
+        return html;
+      }
+    }
+  });
+
+  return htmlParts.filter((part) => part !== null).join("");
 };

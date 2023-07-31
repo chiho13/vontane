@@ -64,7 +64,7 @@ import { Portal } from "react-portal";
 import { Label } from "../ui/label";
 import { ReactEditor } from "slate-react";
 
-import { getHtmlFromSelection } from "@/utils/helpers";
+import { getHtmlFromSelection } from "@/utils/htmlSerialiser";
 interface RightSideBarProps {
   setRightSideBarWidth: any;
   showRightSidebar: boolean;

@@ -2,7 +2,7 @@ import { createEditor, Editor, Path, Range, Transforms } from "slate";
 import { genNodeId } from "./withID";
 import { jsx } from "slate-hyperscript";
 import { Element as SlateElement } from "slate";
-import { getHtmlFromSelection } from "@/utils/helpers";
+import { getHtmlFromSelection } from "@/utils/htmlSerialiser";
 
 const transformListItems = (listItems, listType) => {
   return listItems.map((li: Node) => {
@@ -208,7 +208,7 @@ export const withNormalizePasting = (editor) => {
     insertData(data);
   };
 
-  editor.copyAsHtml = async () => {
+  editor.getFragment = async () => {
     if (editor.selection) {
       // If there is a selection, get the nodes within the selection.
 

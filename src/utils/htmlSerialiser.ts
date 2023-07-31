@@ -11,7 +11,7 @@ export const slateNodeToHtml = (node) => {
         }">${childrenHtml}</p>`;
 
       case "link":
-        return `<a class="text-brand underline dark:text-blue-400" href="${node.url}">${childrenHtml}</a>`;
+        return `<a class="text-brand underline dark:text-blue-400" href="${node.url}" target="_blank">${childrenHtml}</a>`;
       case "heading-one":
         return `<h1 class="text-4xl" data-align="text-${
           alignMap[node.align] || node.align

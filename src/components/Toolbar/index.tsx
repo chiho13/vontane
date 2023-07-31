@@ -4,7 +4,14 @@ import { FaBold } from "react-icons/fa";
 import { FiItalic, FiUnderline } from "react-icons/fi";
 import { ImStrikethrough, ImLink } from "react-icons/im";
 import { MdChecklist } from "react-icons/md";
-import { List, ListOrdered, ListChecks } from "lucide-react";
+import {
+  List,
+  ListOrdered,
+  ListChecks,
+  CornerDownLeft,
+  Unlink,
+  ArrowLeft,
+} from "lucide-react";
 import { genNodeId } from "@/hoc/withID";
 import { ChangeBlocks } from "../ChangeBlocks";
 import { BlockAlign } from "../BlockAlign";
@@ -18,6 +25,7 @@ import {
   wrapWithTTS,
   isParentTTS,
   isParentList,
+  getActiveLinkUrl,
 } from "../DocumentEditor/helpers/toggleBlock";
 import {
   Editor,
@@ -39,6 +47,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import classNames from "classnames";
+import { Input } from "../ui/input";
 
 type ToolbarProps = {
   openLink: boolean;
@@ -46,12 +55,6 @@ type ToolbarProps = {
   setOpenLink: (value: boolean) => void;
   setShowMiniToolbar: (value: boolean) => void;
 };
-
-interface LinkElement extends SlateElement {
-  type: "link";
-  url: string;
-  children: Node[];
-}
 
 export const Toolbar: React.FC<ToolbarProps> = ({
   openLink,
@@ -67,27 +70,14 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     ["link"].includes(element.type) || isInline(element);
 
   const theme = useTheme();
-  const [inputValue, setInputValue] = useState("");
+  const hasURL = getActiveLinkUrl(editor);
+  const [inputValue, setInputValue] = useState(hasURL ?? "");
 
   const urlInputRef = useRef<any>(null);
 
   const LIST_TYPES = ["numbered-list", "bulleted-list", "checked-list"];
 
   const element = Node.get(editor, JSON.parse(activePath));
-  const getActiveLinkUrl = (editor) => {
-    let linkUrl = "";
-    for (const [node] of Editor.nodes(editor, {
-      match: (n) =>
-        !Editor.isEditor(n) && SlateElement.isElement(n) && n.type === "link",
-    })) {
-      const linkNode = node as LinkElement;
-      if (linkNode.url) {
-        linkUrl = linkNode.url;
-        break;
-      }
-    }
-    return linkUrl;
-  };
 
   const toolbarRef = useRef(null);
 
@@ -105,11 +95,25 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     return parent.current ? parent.current.querySelector(query) : null;
   };
 
-  const hasURL = getActiveLinkUrl(editor);
-
   useEffect(() => {
-    if (openLink) {
-      setInputValue(getActiveLinkUrl(editor));
+    if (openLink && hasURL) {
+      // Go through the nodes and find the link node
+      for (const [node, path] of Editor.nodes(editor, {
+        at: editor.selection,
+      })) {
+        if (SlateElement.isElement(node) && node.type === "link") {
+          // Loop through the children of the link node
+          for (const [child, childPath] of Node.children(editor, path)) {
+            if (Text.isText(child)) {
+              // Select the whole text of the link
+              const range = Editor.range(editor, childPath);
+              Transforms.select(editor, range);
+              break;
+            }
+          }
+          break;
+        }
+      }
     }
   }, [openLink, editor]);
 
@@ -274,33 +278,37 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     <div
       className="relative flex h-[36px] items-center focus:ring-2 focus:ring-black"
       style={{
-        minWidth: 340,
+        minWidth: 370,
         transition: "all 0.2s ease-in-out",
       }}
       tabIndex={-1}
       ref={toolbarRef}
     >
-      <TooltipProvider delayDuration={300}>
-        <Tooltip>
-          <TooltipTrigger>
-            <ChangeBlocks openLink={openLink} />
-          </TooltipTrigger>
-          <TooltipContent
-            className="text-bold  border-black text-white  dark:bg-white dark:text-gray-600"
-            side="top"
-            sideOffset={10}
-          >
-            <p className="text-[12px]">Turn Into</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-      <div className="h-full w-[1px] bg-gray-200 dark:bg-gray-700"></div>
+      {!openLink && (
+        <>
+          <TooltipProvider delayDuration={300}>
+            <Tooltip>
+              <TooltipTrigger>
+                <ChangeBlocks openLink={openLink} />
+              </TooltipTrigger>
+              <TooltipContent
+                className="text-bold  border-black text-white  dark:bg-white dark:text-gray-600"
+                side="top"
+                sideOffset={10}
+              >
+                <p className="text-[12px]">Turn Into</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <div className="h-full w-[1px] bg-gray-200 dark:bg-gray-700"></div>
 
-      <BlockAlign
-        element={element}
-        className="ml-1 mr-1  h-[28px] hover:bg-gray-200 hover:dark:bg-accent"
-      />
-      <div className="h-full w-[1px] bg-gray-200 dark:bg-gray-700"></div>
+          <BlockAlign
+            element={element}
+            className="ml-1 mr-1  h-[28px] hover:bg-gray-200 hover:dark:bg-accent"
+          />
+          <div className="h-full w-[1px] bg-gray-200 dark:bg-gray-700"></div>
+        </>
+      )}
       {/* {!isParentTTS(editor) && (
         <>
           <TooltipProvider delayDuration={300}>
@@ -367,30 +375,61 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         )}
 
       {openLink && (
-        <div className=" absolute left-0 flex  w-full items-center p-1 dark:border-gray-700">
-          <form onSubmit={handleSubmit} className="flex w-full">
+        <div className=" fixed absolute left-0 flex w-full items-center rounded-md p-1 dark:border-gray-700">
+          {/* <button>lol</button> */}
+
+          <form
+            onSubmit={handleSubmit}
+            className="relative flex w-full items-center "
+          >
             <input
               ref={urlInputRef}
-              className=" h-[30px] w-[75%] rounded border border-gray-400 px-1 focus:border-[#007AFF] focus:outline-none dark:bg-secondary dark:focus:border-foreground "
+              className=" h-[30px] w-full rounded border border-gray-400 px-1 focus:border-[#007AFF] focus:outline-none dark:bg-secondary dark:focus:border-foreground "
               value={inputValue}
               placeholder="Enter URL"
               onChange={handleInputChange}
-              onBlur={(e) => e.preventDefault()}
             />
-            <button
-              className="grow p-1 text-sm font-semibold text-brand dark:text-foreground"
-              type="submit"
-            >
-              Apply
-            </button>
+
+            <TooltipProvider delayDuration={300}>
+              <Tooltip>
+                <TooltipTrigger>
+                  <button
+                    className="ml-2 flex h-[28px] items-center rounded p-1 text-sm font-semibold text-brand hover:bg-accent dark:text-foreground"
+                    type="submit"
+                  >
+                    <CornerDownLeft className="w-5" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent
+                  className="text-bold  border-black text-white dark:bg-white dark:text-gray-600"
+                  side="top"
+                  sideOffset={10}
+                >
+                  <p className="text-[12px]">Apply</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </form>
           {hasURL && (
-            <button
-              className="grow p-1 pr-2 text-sm font-semibold text-brand dark:text-foreground "
-              onClick={unLink}
-            >
-              Unlink
-            </button>
+            <TooltipProvider delayDuration={300}>
+              <Tooltip>
+                <TooltipTrigger>
+                  <button
+                    className=" ml-2 flex h-[28px] items-center rounded p-1  text-sm font-semibold text-brand  hover:bg-accent dark:text-foreground "
+                    onClick={unLink}
+                  >
+                    <Unlink className="w-5" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent
+                  className="text-bold  border-black text-white dark:bg-white dark:text-gray-600"
+                  side="top"
+                  sideOffset={10}
+                >
+                  <p className="text-[12px]">UnLink</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
         </div>
       )}

@@ -126,7 +126,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
   const [openDropdown, setOpenDropdown] = useState(false);
   const rightSidebarStyle: React.CSSProperties = {
     transform: `translateX(${
-      showRightSidebar ? "0px" : `${rightSideBarWidth}px`
+      showRightSidebar ? "0px" : `${rightSideBarWidth * 0.8}px`
     })`,
     height: "calc(100vh - 150px)",
     minWidth: "390px",

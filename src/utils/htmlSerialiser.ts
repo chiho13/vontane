@@ -6,19 +6,25 @@ export const slateNodeToHtml = (node) => {
     const childrenHtml = node.children.map(slateNodeToHtml).join("");
     switch (node.type) {
       case "paragraph":
-        return `<p class="text-${
+        return `<p data-align="text-${
           alignMap[node.align] || node.align
         }">${childrenHtml}</p>`;
 
       case "link":
         return `<a class="text-brand underline dark:text-blue-400" href="${node.url}">${childrenHtml}</a>`;
       case "heading-one":
-        return `<h1 class="text-4xl">${childrenHtml}</h1>`;
+        return `<h1 class="text-4xl" data-align="text-${
+          alignMap[node.align] || node.align
+        }">${childrenHtml}</h1>`;
       case "heading-two":
-        return `<h2 class="text-3xl">${childrenHtml}</h2>`;
+        return `<h2 class="text-3xl" data-align="text-${
+          alignMap[node.align] || node.align
+        }">${childrenHtml}</h2>`;
 
       case "heading-three":
-        return `<h3 class="text-3xl">${childrenHtml}</h3>`;
+        return `<h3 class="text-2xl" data-align="text-${
+          alignMap[node.align] || node.align
+        }">${childrenHtml}</h3>`;
 
       case "numbered-list":
         return childrenHtml;

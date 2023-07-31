@@ -15,5 +15,21 @@ export const useClipboard = () => {
     }
   };
 
-  return { copied, copyToClipboard };
+  const copyHTML = async (html) => {
+    const item = new ClipboardItem({
+      "text/html": new Blob([html], { type: "text/html" }),
+    });
+
+    try {
+      await navigator.clipboard.write([item]);
+      setCopied(true);
+      setTimeout(() => {
+        setCopied(false);
+      }, 2000);
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+    }
+  };
+
+  return { copied, copyToClipboard, copyHTML };
 };

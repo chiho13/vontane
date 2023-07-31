@@ -195,10 +195,16 @@ export const isParentList = (editor: Editor) => {
   const { selection } = editor;
   if (!selection) return false;
 
-  const [parentNode] = Editor.parent(editor, selection);
-  return (
-    SlateElement.isElement(parentNode) && LIST_TYPES.includes(parentNode.type)
-  );
+  const parent = Editor.above(editor, {
+    match: (n) =>
+      (SlateElement.isElement(n) &&
+        "type" in n &&
+        (n as MyElement).type === "checked-list") ||
+      (n as MyElement).type === "numbered-list" ||
+      (n as MyElement).type === "bulleted-list",
+  });
+
+  return !!parent;
 };
 
 export function insertNewParagraph(editor: Editor, newPath: Path) {

@@ -114,8 +114,11 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
   const [published, setPublished] = useState(workspaceData.workspace.published);
 
   const { copied, copyToClipboard: copyLink } = useClipboard();
-  const { copied: translatedCopy, copyToClipboard: copytranslatedCopy } =
-    useClipboard();
+  const {
+    copied: translatedCopy,
+    copyToClipboard: copytranslatedCopy,
+    copyHTML: copyTranslatedHTML,
+  } = useClipboard();
 
   const [audioURL, setAudioURL] = useState<string>("");
   const [openDropdown, setOpenDropdown] = useState(false);
@@ -529,6 +532,10 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     setPromptValue(event.target.value);
   };
 
+  const copyHTML = (htmlString) => {
+    copyTranslatedHTML(htmlString);
+  };
+
   const renderText = () => {
     if (!editor.selection) return null;
     const text = getHtmlFromSelection();
@@ -587,10 +594,9 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
           </div>
         )}
 
-        {promptValue && translatedTextHTML && (
-          <div>
-            <div className="relative">
-              {/* <textarea
+        <div>
+          <div className="relative">
+            {/* <textarea
                 className="relative mt-3 h-[140px] w-full resize-none rounded-md  border border-accent bg-transparent p-2 outline-none ring-muted-foreground focus:ring-1"
                 value={translateText}
                 onChange={(e) => {
@@ -603,40 +609,39 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                 }}
               /> */}
 
-              <div className="mt-3 h-[140px] w-full resize-none  overflow-y-auto rounded-md  border border-accent bg-transparent p-2 outline-none">
-                <div dangerouslySetInnerHTML={{ __html: translatedTextHTML }} />
-              </div>
-              <Button
-                variant="outline"
-                className="absolute bottom-2 right-2 border bg-white text-xs text-muted-foreground dark:bg-muted "
-                size="xs"
-                onClick={() => copytranslatedCopy(translateText)}
-              >
-                <Copy className="mr-2 w-4 " />
-                {translatedCopy ? "Copied!" : "Copy"}
-              </Button>
+            <div className="mt-3 h-[140px] w-full resize-none  overflow-y-auto rounded-md  border border-accent bg-transparent p-2 outline-none">
+              <div dangerouslySetInnerHTML={{ __html: translatedTextHTML }} />
             </div>
-
-            <div className="mt-3 flex gap-2">
-              <Button
-                variant="outline"
-                className="border text-muted-foreground"
-                size="xs"
-                onClick={replaceSelectedText}
-              >
-                <Check className="mr-2 w-5 " /> Replace Selection
-              </Button>
-              <Button
-                variant="outline"
-                className="border text-muted-foreground"
-                size="xs"
-                onClick={insertTranslatedTextBelow}
-              >
-                <ListEnd className="mr-2 w-5 " /> Insert below
-              </Button>
-            </div>
+            <Button
+              variant="outline"
+              className="absolute bottom-2 right-2 border bg-white text-xs text-muted-foreground dark:bg-muted "
+              size="xs"
+              onClick={() => copyHTML(translatedTextHTML)}
+            >
+              <Copy className="mr-2 w-4 " />
+              {translatedCopy ? "Copied!" : "Copy"}
+            </Button>
           </div>
-        )}
+
+          <div className="mt-3 flex gap-2">
+            <Button
+              variant="outline"
+              className="border text-muted-foreground"
+              size="xs"
+              onClick={replaceSelectedText}
+            >
+              <Check className="mr-2 w-5 " /> Replace Selection
+            </Button>
+            <Button
+              variant="outline"
+              className="border text-muted-foreground"
+              size="xs"
+              onClick={insertTranslatedTextBelow}
+            >
+              <ListEnd className="mr-2 w-5 " /> Insert below
+            </Button>
+          </div>
+        </div>
       </div>
     );
   };

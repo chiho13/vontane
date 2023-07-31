@@ -218,3 +218,24 @@ export function insertNewParagraph(editor: Editor, newPath: Path) {
   Transforms.insertNodes(editor, newNode, { at: newPath });
   Transforms.select(editor, Editor.start(editor, newPath));
 }
+
+interface LinkElement extends SlateElement {
+  type: "link";
+  url: string;
+  children: Node[];
+}
+
+export const getActiveLinkUrl = (editor) => {
+  let linkUrl = "";
+  for (const [node] of Editor.nodes(editor, {
+    match: (n) =>
+      !Editor.isEditor(n) && SlateElement.isElement(n) && n.type === "link",
+  })) {
+    const linkNode = node as LinkElement;
+    if (linkNode.url) {
+      linkUrl = linkNode.url;
+      break;
+    }
+  }
+  return linkUrl;
+};

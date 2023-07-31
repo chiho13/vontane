@@ -70,6 +70,7 @@ import {
   toggleFormat,
   isParentTTS,
   insertNewParagraph,
+  getActiveLinkUrl,
 } from "./helpers/toggleBlock";
 
 import {
@@ -1742,6 +1743,15 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     60 +
                     scrollTop,
                 });
+
+                const isActiveLink = getActiveLinkUrl(editor);
+
+                if (isActiveLink) {
+                  setOpenLink(true);
+                } else {
+                  setOpenLink(false);
+                }
+
                 setShowMiniToolbar(true);
 
                 const selectedText = Editor.string(editor, selection);

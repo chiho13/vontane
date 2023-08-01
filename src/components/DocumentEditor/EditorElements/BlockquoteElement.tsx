@@ -1,6 +1,7 @@
 import { EditorContext } from "@/contexts/EditorContext";
 import React, { useContext, useState } from "react";
 import { ReactEditor, useSelected } from "slate-react";
+import { alignMap } from "../helpers/toggleBlock";
 
 import { ParagraphElement } from "./ParagraphElement";
 
@@ -19,7 +20,10 @@ export const BlockQuoteElement = (props: {
       {...attributes}
       data-id={element.id}
       data-path={JSON.stringify(path)}
-      className={` items-center border-l-4 border-gray-400 bg-white pl-3 pr-1  text-gray-500 dark:bg-muted dark:text-gray-300 `}
+      className={` items-center border-l-4 border-gray-400 bg-white pl-3 pr-1  text-gray-500 dark:bg-muted dark:text-gray-300
+      
+      text-${alignMap[element.align] || element.align}
+      `}
     >
       {children}
     </blockquote>

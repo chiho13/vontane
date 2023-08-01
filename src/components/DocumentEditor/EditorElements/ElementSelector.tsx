@@ -11,7 +11,6 @@ import {
   ColumnCellElement,
   MCQElement,
   OptionList,
-  OptionListItem,
   QuestionItem,
   TitleElement,
   ImageElement,

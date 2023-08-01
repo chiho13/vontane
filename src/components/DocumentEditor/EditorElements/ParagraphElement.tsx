@@ -5,7 +5,7 @@ import { Editor, Path, Node, Transforms, Range } from "slate";
 import styled from "styled-components";
 import { hasSlideElement } from "@/utils/helpers";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
-import { isParentMCQ } from "../helpers/toggleBlock";
+import { alignMap, isParentMCQ } from "../helpers/toggleBlock";
 
 interface ParagraphElementProps {
   isParentMCQ: boolean;
@@ -76,12 +76,6 @@ export function ParagraphElement(props) {
   if (isParentMCQ(editor)) {
     shouldShowPlaceholder = isFirstNode && isEmpty;
   }
-
-  const alignMap = {
-    start: "left",
-    center: "center",
-    end: "right",
-  };
 
   return (
     <ParagraphStyle isParentMCQ={isParentMCQ(editor)} type={type}>

@@ -158,8 +158,13 @@ export const ChangeBlocks = ({ openLink }: any) => {
                 {TextBlockIcon}
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="z-100 w-[200px] border-black dark:bg-secondary">
-              <div className="p-2" role="none" tabIndex={-1}>
+            <DropdownMenuContent
+              className="z-100 w-[200px] border-black dark:border-accent dark:bg-secondary"
+              align="start"
+              sideOffset={5}
+              alignOffset={-5}
+            >
+              <div className="p-1" role="none" tabIndex={-1}>
                 {changeBlockElements.map((element, index) => (
                   <DropdownMenuItem
                     key={index}

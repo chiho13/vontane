@@ -9,6 +9,9 @@ import {
   Heading1,
   Heading2,
   Heading3,
+  ListOrdered,
+  ListChecks,
+  LayoutList,
 } from "lucide-react";
 import { EditorContext } from "@/contexts/EditorContext";
 import { Element as SlateElement, Editor, Path, Transforms } from "slate";
@@ -25,6 +28,7 @@ import { BsSoundwave } from "react-icons/bs";
 import { addTTSBlock } from "./helpers/addTTSBlock";
 import { TbBlockquote } from "react-icons/tb";
 import { TfiMapAlt } from "react-icons/tfi";
+import { MdChecklist } from "react-icons/md";
 
 interface MiniDropdownProps {
   isOpen: boolean;
@@ -83,11 +87,41 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
       },
       {
         name: "Text to MP3",
-        description: "AI Text to Audio",
+        description: "Ultra-realistic AI Text to Speech",
         action: addTTSHandler,
         icon: (
           <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
             <BsSoundwave className="h-[30px] w-[30px] text-darkergray dark:text-darkergray" />
+          </div>
+        ),
+      },
+      {
+        name: "Heading 1",
+        description: "Big Section heading",
+        action: () => addBlock("heading-one"),
+        icon: (
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
+            <Heading1 className="stroke-darkergray" />
+          </div>
+        ),
+      },
+      {
+        name: "Heading 2",
+        description: "Medium Section heading",
+        action: () => addBlock("heading-two"),
+        icon: (
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
+            <Heading2 className="stroke-darkergray" />
+          </div>
+        ),
+      },
+      {
+        name: "Heading 3",
+        description: "Small Section heading",
+        action: () => addBlock("heading-three"),
+        icon: (
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
+            <Heading3 className="stroke-darkergray" />
           </div>
         ),
       },
@@ -126,41 +160,47 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
           </div>
         ),
       },
-      // {
-      //   name: "Add Quiz Block",
-      //   description: "Set a multiple choice question",
-      //   action: addMCQBlock,
-      //   icon: (
-      //     <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
-      //       <CheckCircle className="stroke-darkergray" />
-      //     </div>
-      //   ),
-      // },
-      // {
-      //   name: "English MCQ",
-      //   description: "English multiple choice question",
-      //   action: () => genBlock("english"),
-      //   icon: (
-      //     <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border  border-gray-300 p-1">
-      //       <List color={theme.colors.darkergray} />
-      //       <FileQuestion color={theme.colors.darkergray} />
-      //     </div>
-      //   ),
-      // },
-      // {
-      //   name: "Math Questions",
-      //   description: "Math question with equation block",
-      //   action: () => genBlock("math"),
-      //   image: (
-      //     <Image
-      //       src="/images/math.png"
-      //       alt="add latex block equation"
-      //       width={44}
-      //       height={44}
-      //       className="rounded-md border border-gray-300 p-1"
-      //     />
-      //   ),
-      // },
+      {
+        name: "Bullet Points",
+        description: "Create bullet point list",
+        action: () => addBlock("bulleted-list"),
+        icon: (
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
+            <List className="stroke-darkergray" />
+          </div>
+        ),
+      },
+      {
+        name: "Numbered List",
+        description: "Create an ordered list with numbering",
+        action: () => addBlock("numbered-list"),
+        icon: (
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
+            <ListOrdered className="stroke-darkergray" />
+          </div>
+        ),
+      },
+      {
+        name: "To do List",
+        description: "Keep track of tasks",
+        action: () => addBlock("checked-list"),
+        icon: (
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
+            <ListChecks className="stroke-darkergray" />
+          </div>
+        ),
+      },
+
+      {
+        name: "Multiple Choice",
+        description: "Set a multiple choice answer",
+        action: () => addBlock("option-list-item"),
+        icon: (
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
+            <LayoutList className=" rotate-180 stroke-darkergray" />
+          </div>
+        ),
+      },
       {
         name: "Add Block Equation",
         description: "Display standalone equation block",
@@ -175,36 +215,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
           />
         ),
       },
-      {
-        name: "Heading 1",
-        description: "Big Section heading",
-        action: () => addBlock("heading-one"),
-        icon: (
-          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
-            <Heading1 className="stroke-darkergray" />
-          </div>
-        ),
-      },
-      {
-        name: "Heading 2",
-        description: "Medium Section heading",
-        action: () => addBlock("heading-two"),
-        icon: (
-          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
-            <Heading2 className="stroke-darkergray" />
-          </div>
-        ),
-      },
-      {
-        name: "Heading 3",
-        description: "Small Section heading",
-        action: () => addBlock("heading-three"),
-        icon: (
-          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
-            <Heading3 className="stroke-darkergray" />
-          </div>
-        ),
-      },
+
       {
         name: "Quote",
         description: "Capture a quote",
@@ -230,15 +241,6 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
       ) {
         return false;
       }
-
-      if (
-        SlateElement.isElement(parent) &&
-        parent.type == "mcq" &&
-        el.name === "Add Quiz Block"
-      ) {
-        return false;
-      }
-
       return true;
     });
 

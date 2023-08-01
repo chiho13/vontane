@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, useRef } from "react";
+import { useContext, useEffect, useState, useRef, useMemo } from "react";
 import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor, useFocused, useSelected } from "slate-react";
 import { Editor, Path, Node, Transforms } from "slate";
@@ -8,6 +8,14 @@ import { RxDotFilled } from "react-icons/rx";
 import { MdCircle } from "react-icons/md";
 import { Checkbox } from "@/components/ui/checkbox";
 import { alignMap } from "../helpers/toggleBlock";
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
 const ListItemStyle = styled.div`
   position: relative;
   li[data-placeholder]::after {
@@ -19,6 +27,10 @@ const ListItemStyle = styled.div`
     top: 0;
     left: 21px;
   }
+
+  li[data-list-type="options"][data-placeholder]::after {
+    left: 51px;
+  }
 `;
 
 export const findAllNumberedLists = (nodes) => {
@@ -26,7 +38,7 @@ export const findAllNumberedLists = (nodes) => {
   let currentListIndex = 0;
 
   nodes.forEach((node) => {
-    if (node.type !== "numbered-list") {
+    if (node.type !== "numbered-list" && node.type !== "option-list-item") {
       currentListIndex++; // Increment list index when a non-numbered-list node is encountered
     } else {
       numberedLists.push({
@@ -81,6 +93,9 @@ export const ListItem = withListNumbering((props) => {
 
   const [isChecked, setChecked] = useState(element.checked || false);
 
+  const [isCheckedCorrect, setCheckedCorrect] = useState(
+    element.correctAnswer || false
+  );
   useEffect(() => {
     if (editor && path) {
       const isFirstElement = Path.equals(path, [0]);
@@ -101,6 +116,7 @@ export const ListItem = withListNumbering((props) => {
   const isNumberedList = listType === "numbered";
   const isCheckedList = listType === "checkbox";
   const isBulletList = listType === "bullet";
+  const isOptionList = listType === "options";
 
   let placeholderText = "";
   if (element.children[0].text === "") {
@@ -109,6 +125,12 @@ export const ListItem = withListNumbering((props) => {
       : isCheckedList
       ? "To-do"
       : "List";
+
+    if (isOptionList) {
+      placeholderText = element.correctAnswer
+        ? "Edit Correct Answer"
+        : "Enter Option";
+    }
   }
 
   const handleCheck = (checked) => {
@@ -123,19 +145,39 @@ export const ListItem = withListNumbering((props) => {
     );
   };
 
+  const handleOptionCheck = (checked) => {
+    setCheckedCorrect(checked);
+    ReactEditor.focus(editor);
+    Transforms.select(editor, Editor.end(editor, path));
+
+    // Toggle the correctAnswer state based on the checkbox state
+    Transforms.setNodes(editor, { correctAnswer: checked }, { at: path });
+  };
+
+  const listItemClass = useMemo(
+    () =>
+      `${selectedElementID === element.id ? " bg-[#E0EDFB]" : "bg-transparent"}
+    list-none transition
+    duration-200 ease-in-out
+    text-${alignMap[element.align] || element.align}
+    ${isCheckedList && isChecked && "text-muted-foreground line-through"}
+    ${isOptionList ? " ml-[51px]" : " ml-[21px]"}
+    `,
+    [
+      selectedElementID,
+      element.id,
+      alignMap,
+      element.align,
+      isCheckedList,
+      isChecked,
+    ]
+  );
+
   return (
     <ListItemStyle>
       <li
         ref={listItemRef}
-        className={` ${
-          selectedElementID === element.id ? " bg-[#E0EDFB]" : "bg-transparent"
-        }
-    
-         ml-[21px] list-none transition
-      duration-200 ease-in-out
-      text-${alignMap[element.align] || element.align}
-        ${isCheckedList && isChecked && "text-muted-foreground line-through"}
-        `}
+        className={listItemClass}
         data-id={element.id}
         data-path={JSON.stringify(path)}
         data-placeholder={!isPreview ? placeholderText : ""}
@@ -151,12 +193,44 @@ export const ListItem = withListNumbering((props) => {
           </span>
         )}
 
+        {isOptionList && (
+          <span
+            contentEditable={false}
+            className="absolute mr-[5px] -translate-x-[21px] "
+          >
+            {String.fromCharCode(64 + listNumber)}.{" "}
+          </span>
+        )}
+
         {isCheckedList && (
           <Checkbox
             checked={isChecked}
             onCheckedChange={handleCheck}
             className="absolute  -translate-x-[24px] translate-y-[4px]"
           />
+        )}
+
+        {isOptionList && (
+          <TooltipProvider delayDuration={0}>
+            <Tooltip>
+              <TooltipTrigger className="absolute  -translate-x-[51px]">
+                <Checkbox
+                  checked={isCheckedCorrect}
+                  onCheckedChange={handleOptionCheck}
+                />
+              </TooltipTrigger>
+
+              {!isCheckedCorrect && (
+                <TooltipContent
+                  className="border-black  dark:bg-white dark:text-muted"
+                  side="top"
+                  sideOffset={10}
+                >
+                  <p className="text-[12px]">Set as Correct Answer</p>
+                </TooltipContent>
+              )}
+            </Tooltip>
+          </TooltipProvider>
         )}
         {isBulletList && (
           <MdCircle className="absolute w-[8px] -translate-x-[24px] translate-y-[4px]" />

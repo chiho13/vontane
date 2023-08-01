@@ -766,6 +766,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               "numbered-list",
               "bulleted-list",
               "checked-list",
+              "option-list-item",
               "block-quote",
             ].includes(currentNode.type)
           ) {
@@ -1674,6 +1675,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 (startNode.type === "paragraph" ||
                   startNode.type === "link" ||
                   startNode.type === "block-quote" ||
+                  startNode.type === "option-list-item" ||
                   startNode.type === "bulleted-list" ||
                   startNode.type === "numbered-list" ||
                   startNode.type === "checked-list" ||
@@ -2015,7 +2017,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                         <AnimatePresence>
                           {showMiniToolbar && (
                             <StyledMiniToolbar
-                              className=" rounded-lg border bg-white shadow-md shadow-gray-500 dark:border-gray-500 dark:bg-secondary dark:shadow-background"
+                              className=" rounded-lg border bg-white shadow-md shadow-gray-500 dark:border-accent dark:bg-secondary dark:shadow-background"
                               ref={toolbarRef}
                               {...up_animation_props}
                               exit={{ opacity: 0 }}

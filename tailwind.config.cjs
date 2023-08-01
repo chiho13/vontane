@@ -4,6 +4,9 @@ const config = {
   darkMode: ["class"],
   theme: {
     extend: {
+      listStyleType: {
+        alpha: "upper-alpha", // or 'lower-alpha' for lowercase
+      },
       screens: {
         xl: "1200px",
       },

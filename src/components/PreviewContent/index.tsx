@@ -22,6 +22,7 @@ import {
 } from "../DocumentEditor/EditorElements";
 import { Checkbox } from "../ui/checkbox";
 import { alignMap } from "../DocumentEditor/helpers/toggleBlock";
+import { getHtmlFromSelection } from "@/utils/htmlSerialiser";
 
 const NumberedListItem = ({ node, children, key, index, nodes }) => {
   const { editor } = useContext(EditorContext);
@@ -164,6 +165,19 @@ const renderElement = (
           />
         </div>
       );
+    case "option-list-item":
+      // Find the corresponding list group for this node
+      return (
+        <div className="mt-2 ">
+          <ListItem
+            element={node}
+            children={children}
+            key={key}
+            listType="options"
+            isPreview={true}
+          />
+        </div>
+      );
     case "checked-list":
       // Find the corresponding list group for this node
       return (
@@ -178,7 +192,7 @@ const renderElement = (
         >
           <Checkbox
             checked={node.checked}
-            className="absolute  -translate-x-[24px] translate-y-[4px]"
+            className="absolute  -translate-x-[24px] translate-y-[4px] cursor-auto"
           />
           {children}
         </div>
@@ -243,24 +257,6 @@ export const PreviewContent = () => {
   useEffect(() => {
     setLocalValue(fromEditor.children);
   }, [fromEditor.children]);
-
-  // const isMCQPresent = (children: any[]) => {
-  //   if (Array.isArray(children)) {
-  //     for (let child of children) {
-  //       if (child.node && child.node.type === "mcq") {
-  //         return true;
-  //       }
-
-  //       // If the child has its own children, check them too
-  //       if (Array.isArray(child.children)) {
-  //         if (isMCQPresent(child.children)) {
-  //           return true;
-  //         }
-  //       }
-  //     }
-  //   }
-  //   return false;
-  // };
 
   return (
     <div

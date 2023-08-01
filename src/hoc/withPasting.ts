@@ -25,10 +25,13 @@ const transformListItems = (listItems, listType, alignment) => {
           } else if (element.tagName === "LABEL") {
             const labelText = element.childNodes[0].textContent.trim(); // Extract the text node
             const checkbox = element.querySelector('input[type="checkbox"]'); // Get checkbox element
-            return {
-              text: labelText,
-              checked: checkbox.checked,
-            };
+
+            if (checkbox) {
+              return {
+                text: labelText,
+                checked: checkbox.checked,
+              };
+            }
           } else if (element.tagName === "P") {
             return Array.from(element.childNodes)
               .map((childNode: any) => {

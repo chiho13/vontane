@@ -3,6 +3,7 @@ import React, {
   useState,
   FunctionComponent,
   useEffect,
+  SetStateAction,
 } from "react";
 
 type Transcript = string;
@@ -16,6 +17,8 @@ type AudioContextType = {
   setTimestamps: (value: SearchWordTimestamp) => void;
   transcript: Transcript;
   setTranscript: (value: Transcript) => void;
+  selectedOption: any;
+  setSelectedOption: any;
 };
 
 const defaultAudioContext: AudioContextType = {
@@ -25,6 +28,8 @@ const defaultAudioContext: AudioContextType = {
   setTimestamps: () => {},
   transcript: "", // default value for transcript
   setTranscript: () => {}, // adjust setter
+  selectedOption: false,
+  setSelectedOption: () => {},
 };
 
 export const AudioManagerContext =
@@ -42,7 +47,7 @@ export const AudioManagerProvider: FunctionComponent<
   );
   const [timestamps, setTimestamps] = useState<SearchWordTimestamp>([]);
   const [transcript, setTranscript] = useState<Transcript>(""); // adjust useState
-
+  const [selectedOption, setSelectedOption] = useState(false);
   const playAudio = (audio: HTMLAudioElement) => {
     if (currentAudio && currentAudio !== audio) {
       currentAudio.pause();
@@ -82,6 +87,8 @@ export const AudioManagerProvider: FunctionComponent<
         pauseAudio,
         transcript,
         setTranscript,
+        selectedOption,
+        setSelectedOption,
       }}
     >
       {children}

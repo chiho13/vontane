@@ -443,13 +443,18 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     );
   }
 
-  const insertNewNode = (editor, parentPath, nodeType) => {
+  const insertNewNode = (editor, parentPath, nodeType, node) => {
     const newPath = Path.next(parentPath);
+
+    const currentAlign = node?.align || "start"; // use some default alignment if there is no previous node or it has no alignment
+
     const newNode = {
       id: genNodeId(),
       type: nodeType,
+      align: currentAlign, // apply the alignment of the previous node to the new node
       children: [{ text: "" }],
     };
+
     Transforms.insertNodes(editor, newNode, { at: newPath });
     Transforms.select(editor, newPath);
   };
@@ -533,24 +538,59 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
           if (selection) {
             event.preventDefault();
-            // Unwrap any existing list items
 
             if (
               SlateElement.isElement(parentNode) &&
-              parentNode.type === "paragraph"
+              (parentNode.type === "paragraph" ||
+                parentNode.type === "heading-one" ||
+                parentNode.type === "heading-two" ||
+                parentNode.type === "heading-three")
             ) {
               toggleBlock(editor, "bulleted-list");
               Transforms.delete(editor, { unit: "character", reverse: true });
-              // Transforms.move(editor, { distance: 1, unit: "character" });
-              // const start = Editor.start(editor, selection.focus.path);
-              // Transforms.select(editor, start);
+            }
+          }
+        } else if (currentText.startsWith("1.")) {
+          const { selection } = editor;
+          if (selection) {
+            event.preventDefault();
+            if (
+              SlateElement.isElement(parentNode) &&
+              (parentNode.type === "paragraph" ||
+                parentNode.type === "heading-one" ||
+                parentNode.type === "heading-two" ||
+                parentNode.type === "heading-three")
+            ) {
+              toggleBlock(editor, "numbered-list");
+              Transforms.delete(editor, {
+                unit: "character",
+                distance: 2,
+                reverse: true,
+              });
+            }
+          }
+        } else if (currentText.startsWith("[]")) {
+          const { selection } = editor;
+          if (selection) {
+            event.preventDefault();
+            if (
+              SlateElement.isElement(parentNode) &&
+              (parentNode.type === "paragraph" ||
+                parentNode.type === "heading-one" ||
+                parentNode.type === "heading-two" ||
+                parentNode.type === "heading-three")
+            ) {
+              toggleBlock(editor, "checked-list");
+              Transforms.delete(editor, {
+                unit: "character",
+                distance: 2,
+                reverse: true,
+              });
             }
           }
         }
       }
-      if (event.key === "Enter") {
-        console.log(true);
-      }
+
       if (event.key === "Enter") {
         event.preventDefault();
 
@@ -565,7 +605,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             ].includes(parentNode.type)
           ) {
             const newPath = Path.next(parentPath);
-
+            const currentAlign = parentNode?.align || "start";
             if (
               Node.string(parentNode) === "" &&
               parentNode.type !== "option-list-item"
@@ -573,7 +613,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               event.preventDefault();
               Transforms.setNodes(
                 editor,
-                { type: "paragraph", align: "start" },
+                { type: "paragraph", align: currentAlign },
                 { at: _currentNodePath }
               );
 
@@ -588,17 +628,22 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                   editor.insertText("\n");
                   return;
                 } else {
-                  insertNewNode(editor, parentPath, "paragraph");
+                  insertNewNode(editor, parentPath, "paragraph", parentNode);
                 }
               } else {
-                insertNewNode(editor, parentPath, parentNode.type);
+                insertNewNode(editor, parentPath, parentNode.type, parentNode);
               }
             }
 
             if (
               Editor.isStart(editor, editor.selection.anchor, _currentNodePath)
             ) {
-              insertNewNode(editor, _currentNodePath, parentNode.type);
+              insertNewNode(
+                editor,
+                _currentNodePath,
+                parentNode.type,
+                parentNode
+              );
             } else {
               splitNodeAndSetNewId(editor, newPath);
             }

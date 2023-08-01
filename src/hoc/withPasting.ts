@@ -22,6 +22,13 @@ const transformListItems = (listItems, listType, alignment) => {
               text: element.textContent.trim(),
               url: element.getAttribute("href"),
             };
+          } else if (element.tagName === "LABEL") {
+            const labelText = element.childNodes[0].textContent.trim(); // Extract the text node
+            const checkbox = element.querySelector('input[type="checkbox"]'); // Get checkbox element
+            return {
+              text: labelText,
+              checked: checkbox.checked,
+            };
           } else if (element.tagName === "P") {
             return Array.from(element.childNodes)
               .map((childNode: any) => {
@@ -127,7 +134,14 @@ const ELEMENT_TAGS = {
   OL: (el) => {
     const alignment = getAlignment(el);
     const listItems = Array.from(el.children);
-    return transformListItems(listItems, "numbered-list", alignment);
+    const dataType = el.getAttribute("data-type"); // Extract data-type attribute
+
+    if (dataType === "quiz") {
+      // Check if data-type is "quiz"
+      return transformListItems(listItems, "option-list-item", alignment);
+    } else {
+      return transformListItems(listItems, "numbered-list", alignment);
+    }
   },
 
   UL: (el) => {

@@ -7,7 +7,6 @@ export * from "./ColumnElement";
 export * from "./ColumnCellElement";
 export * from "./MCQElement";
 export * from "./OptionList";
-export * from "./OptionListItem";
 export * from "./QuestionItem";
 export * from "./TitleElement";
 export * from "./SlideBreak";

@@ -11,6 +11,8 @@ import {
   CornerDownLeft,
   Unlink,
   ArrowLeft,
+  CheckSquare,
+  LayoutList,
 } from "lucide-react";
 import { genNodeId } from "@/hoc/withID";
 import { ChangeBlocks } from "../ChangeBlocks";
@@ -95,8 +97,34 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     return parent.current ? parent.current.querySelector(query) : null;
   };
 
-  useEffect(() => {
-    if (openLink && hasURL) {
+  // useEffect(() => {
+  //   if (openLink && hasURL) {
+  //     // Go through the nodes and find the link node
+  //     for (const [node, path] of Editor.nodes(editor, {
+  //       at: editor.selection,
+  //     })) {
+  //       if (SlateElement.isElement(node) && node.type === "link") {
+  //         // Loop through the children of the link node
+  //         for (const [child, childPath] of Node.children(editor, path)) {
+  //           if (Text.isText(child)) {
+  //             // Select the whole text of the link
+  //             const range = Editor.range(editor, childPath);
+  //             Transforms.select(editor, range);
+  //             break;
+  //           }
+  //         }
+  //         break;
+  //       }
+  //     }
+  //   }
+  // }, [openLink, editor]);
+
+  const handleOpenLink = (e) => {
+    e.preventDefault();
+
+    const _activeURL = getActiveLinkUrl(editor);
+    setOpenLink(true);
+    if (_activeURL) {
       // Go through the nodes and find the link node
       for (const [node, path] of Editor.nodes(editor, {
         at: editor.selection,
@@ -115,7 +143,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         }
       }
     }
-  }, [openLink, editor]);
+  };
 
   useEffect(() => {
     if (openLink) {
@@ -230,7 +258,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     },
     {
       name: "Link",
-      action: () => setOpenLink(true),
+      action: handleOpenLink,
       icon: <ImLink />,
       isActive: hasURL,
       additionalClass:
@@ -267,8 +295,19 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         e.preventDefault();
         toggleBlock(editor, "checked-list");
       },
-      icon: <ListChecks width={20} height={20} />,
+      icon: <CheckSquare width={20} height={20} />,
       isActive: isBlockActive(editor, "checked-list", "type"),
+      additionalClass:
+        "rounded-lg p-[4px] mr-1 transition duration-300 hover:bg-gray-200 hover:dark:bg-accent",
+    },
+    {
+      name: "Quiz Option",
+      action: (e) => {
+        e.preventDefault();
+        toggleBlock(editor, "option-list-item");
+      },
+      icon: <LayoutList width={20} height={20} />,
+      isActive: isBlockActive(editor, "option-list-item", "type"),
       additionalClass:
         "rounded-lg p-[4px] mr-1 transition duration-300 hover:bg-gray-200 hover:dark:bg-accent",
     },
@@ -278,7 +317,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     <div
       className="relative flex h-[36px] items-center focus:ring-2 focus:ring-black"
       style={{
-        minWidth: 370,
+        minWidth: 416,
         transition: "all 0.2s ease-in-out",
       }}
       tabIndex={-1}

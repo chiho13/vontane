@@ -606,10 +606,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           ) {
             const newPath = Path.next(parentPath);
             const currentAlign = parentNode?.align || "start";
-            if (
-              Node.string(parentNode) === "" &&
-              parentNode.type !== "option-list-item"
-            ) {
+            if (Node.string(parentNode) === "") {
               event.preventDefault();
               Transforms.setNodes(
                 editor,
@@ -1757,7 +1754,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
                 // Calculate mini toolbar position
                 let initialX = firstRect.left - textEditorLeft;
-                const toolbarWidth = 370; // Your toolbar width
+                const toolbarWidth = 416; // Your toolbar width
                 // Access the alignment of the current element and adjust initialX based on the alignment
                 if (startNode.align) {
                   switch (startNode.align) {
@@ -1791,13 +1788,13 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     scrollTop,
                 });
 
-                const isActiveLink = getActiveLinkUrl(editor);
+                // const isActiveLink = getActiveLinkUrl(editor);
 
-                if (isActiveLink) {
-                  setOpenLink(true);
-                } else {
-                  setOpenLink(false);
-                }
+                // if (isActiveLink) {
+                //   setOpenLink(true);
+                // } else {
+                //   setOpenLink(false);
+                // }
 
                 setShowMiniToolbar(true);
 

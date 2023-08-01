@@ -413,14 +413,16 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
     return (
       <div className="mt-10">
-        <div>
-          <Label>Selected Text:</Label>
+        {promptValue && (
+          <div>
+            <Label>Selected Text:</Label>
 
-          <div
-            dangerouslySetInnerHTML={{ __html: promptValue }}
-            className=" mt-2 h-[130px] w-full resize-none overflow-y-auto rounded-md border border-gray-300 bg-transparent p-2 outline-none ring-muted-foreground focus:ring-1 dark:border-accent"
-          ></div>
-        </div>
+            <div
+              dangerouslySetInnerHTML={{ __html: promptValue }}
+              className=" mt-2 h-[130px] w-full resize-none overflow-y-auto rounded-md border border-gray-300 bg-transparent p-2 outline-none ring-muted-foreground focus:ring-1 dark:border-accent"
+            ></div>
+          </div>
+        )}
 
         {promptValue && (
           <div className="mt-2 flex gap-3">

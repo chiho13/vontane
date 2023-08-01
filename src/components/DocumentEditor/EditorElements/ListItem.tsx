@@ -1,4 +1,11 @@
-import { useContext, useEffect, useState, useRef, useMemo } from "react";
+import {
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+  useMemo,
+  useCallback,
+} from "react";
 import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor, useFocused, useSelected } from "slate-react";
 import { Editor, Path, Node, Transforms } from "slate";
@@ -15,6 +22,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { debounce } from "lodash";
+import { AudioManagerContext } from "@/contexts/PreviewAudioContext";
+import { cn } from "@/utils/cn";
 
 const ListItemStyle = styled.div`
   position: relative;
@@ -36,14 +46,23 @@ const ListItemStyle = styled.div`
 export const findAllNumberedLists = (nodes) => {
   let numberedLists: any[] = [];
   let currentListIndex = 0;
+  let groupCounter = 0;
 
-  nodes.forEach((node) => {
+  nodes.forEach((node, index) => {
     if (node.type !== "numbered-list" && node.type !== "option-list-item") {
-      currentListIndex++; // Increment list index when a non-numbered-list node is encountered
+      currentListIndex++;
+      if (
+        index > 0 &&
+        (nodes[index - 1].type === "numbered-list" ||
+          nodes[index - 1].type === "option-list-item")
+      ) {
+        groupCounter++;
+      }
     } else {
       numberedLists.push({
         ...node,
         listIndex: currentListIndex,
+        groupIndex: groupCounter,
       });
     }
   });
@@ -73,7 +92,15 @@ const withListNumbering = (Component) => {
       return num;
     }, 0);
 
-    return <Component {...props} listNumber={listNumber} />;
+    // Get the group number of current list item
+    const currentListItem = numberedLists.find(
+      (list) => list.id === element.id
+    );
+    const groupNumber = currentListItem ? currentListItem.groupIndex : null;
+
+    return (
+      <Component {...props} listNumber={listNumber} groupNumber={groupNumber} />
+    );
   };
 };
 
@@ -84,8 +111,17 @@ export const ListItem = withListNumbering((props) => {
     selectedElementID,
     setSelectedElementID,
   } = useContext(EditorContext);
-  const { children, element, listType, listNumber, isPreview = false } = props;
+  const {
+    children,
+    element,
+    listType,
+    listNumber,
+    groupNumber,
+    isPreview = false,
+  } = props;
   const path = ReactEditor.findPath(editor, element);
+
+  const { selectedOption, setSelectedOption } = useContext(AudioManagerContext);
   const [isVisible, setIsVisible] = useState(false);
   const focused = useFocused();
   const selected = useSelected();
@@ -133,27 +169,41 @@ export const ListItem = withListNumbering((props) => {
     }
   }
 
-  const handleCheck = (checked) => {
-    setChecked(checked);
+  const handleCheck = useCallback(
+    (checked) => {
+      if (isPreview) return;
+      setChecked(checked);
 
-    ReactEditor.focus(editor);
-    Transforms.select(editor, Editor.end(editor, path));
-    Transforms.setNodes(
-      editor,
-      { checked }, // New properties
-      { at: path } // Location
-    );
-  };
+      ReactEditor.focus(editor);
+      Transforms.select(editor, Editor.end(editor, path));
 
-  const handleOptionCheck = (checked) => {
-    setCheckedCorrect(checked);
-    ReactEditor.focus(editor);
-    Transforms.select(editor, Editor.end(editor, path));
+      Transforms.setNodes(editor, { checked }, { at: path });
+    },
+    [editor, path]
+  ); // Add all dependencies here
 
-    // Toggle the correctAnswer state based on the checkbox state
-    Transforms.setNodes(editor, { correctAnswer: checked }, { at: path });
-  };
+  const handleOptionCheck = useCallback(
+    (checked) => {
+      if (isPreview) return;
+      setCheckedCorrect(checked);
+      ReactEditor.focus(editor);
+      Transforms.select(editor, Editor.end(editor, path));
 
+      // Toggle the correctAnswer state based on the checkbox state
+      Transforms.setNodes(editor, { correctAnswer: checked }, { at: path });
+    },
+    [editor, path]
+  ); // Add all dependencies here
+
+  const handleOptionPreviewChange = useCallback(
+    (e) => {
+      setSelectedOption((prevOptions) => ({
+        ...prevOptions,
+        [groupNumber]: e.target.value,
+      }));
+    },
+    [groupNumber]
+  );
   const listItemClass = useMemo(
     () =>
       `${selectedElementID === element.id ? " bg-[#E0EDFB]" : "bg-transparent"}
@@ -161,7 +211,10 @@ export const ListItem = withListNumbering((props) => {
     duration-200 ease-in-out
     text-${alignMap[element.align] || element.align}
     ${isCheckedList && isChecked && "text-muted-foreground line-through"}
-    ${isOptionList ? " ml-[51px]" : " ml-[21px]"}
+    ${isOptionList && !isPreview ? " ml-[51px]" : " ml-[21px]"}
+
+    ${isOptionList && isPreview && "flex items-center ml-[40px]"}
+   
     `,
     [
       selectedElementID,
@@ -173,8 +226,13 @@ export const ListItem = withListNumbering((props) => {
     ]
   );
 
+  console.log(selectedOption[groupNumber] === element.id);
+
   return (
-    <ListItemStyle>
+    <ListItemStyle
+      className={` ${isOptionList && isPreview ? " rounded-md p-2" : ""}
+      `}
+    >
       <li
         ref={listItemRef}
         className={listItemClass}
@@ -192,8 +250,7 @@ export const ListItem = withListNumbering((props) => {
             {listNumber}.{" "}
           </span>
         )}
-
-        {isOptionList && (
+        {isOptionList && !isPreview && (
           <span
             contentEditable={false}
             className="absolute mr-[5px] -translate-x-[21px] "
@@ -202,15 +259,56 @@ export const ListItem = withListNumbering((props) => {
           </span>
         )}
 
+        {isOptionList && isPreview && (
+          <span
+            contentEditable={false}
+            className="absolute mr-3  mr-[5px] flex h-[28px] w-[28px] -translate-x-[41px] items-center justify-center rounded-md  border border-gray-400 dark:border-gray-700 "
+          >
+            {String.fromCharCode(64 + listNumber)}
+          </span>
+        )}
+
+        {isOptionList && isPreview && (
+          <label
+            htmlFor={element.id}
+            tabIndex={-1}
+            className={cn(`absolute left-0 top-0 flex h-[40px] w-full cursor-pointer items-center justify-end rounded-md border border-gray-400  hover:border-gray-500 dark:border-gray-700 
+            ${
+              selectedOption[groupNumber] === element.id &&
+              "border-brand dark:border-muted-foreground"
+            }`)}
+          >
+            <input
+              type="radio"
+              id={element.id}
+              value={element.id}
+              name={`quiz-${groupNumber}`}
+              onChange={handleOptionPreviewChange}
+              // disabled={answerChecked}
+              className="right-0 ml-1 mr-2 hidden h-6 w-6 "
+            />
+            <div
+              className={cn(
+                `absolute right-2 flex h-[24px] w-[24px] items-center justify-center rounded-full border border-gray-400  dark:border-gray-700   ${
+                  selectedOption[groupNumber] === element.id &&
+                  "border-brand dark:border-muted-foreground"
+                }`
+              )}
+            >
+              {selectedOption[groupNumber] === element.id && (
+                <div className="h-[16px] w-[16px] rounded-full bg-brand dark:bg-muted-foreground"></div>
+              )}
+            </div>
+          </label>
+        )}
         {isCheckedList && (
           <Checkbox
             checked={isChecked}
             onCheckedChange={handleCheck}
-            className="absolute  -translate-x-[24px] translate-y-[4px]"
+            className={`absolute  -translate-x-[24px] translate-y-[4px]`}
           />
         )}
-
-        {isOptionList && (
+        {isOptionList && !isPreview && (
           <TooltipProvider delayDuration={0}>
             <Tooltip>
               <TooltipTrigger className="absolute  -translate-x-[51px]">

@@ -12,6 +12,7 @@ import {
   ListOrdered,
   ListChecks,
   LayoutList,
+  CheckSquare,
 } from "lucide-react";
 import { EditorContext } from "@/contexts/EditorContext";
 import { Element as SlateElement, Editor, Path, Transforms } from "slate";
@@ -186,18 +187,18 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         action: () => addBlock("checked-list"),
         icon: (
           <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
-            <ListChecks className="stroke-darkergray" />
+            <CheckSquare className="stroke-darkergray" />
           </div>
         ),
       },
 
       {
-        name: "Multiple Choice",
+        name: "Multiple Choice Quiz",
         description: "Set a multiple choice answer",
         action: () => addBlock("option-list-item"),
         icon: (
           <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
-            <LayoutList className=" rotate-180 stroke-darkergray" />
+            <LayoutList className=" stroke-darkergray" />
           </div>
         ),
       },

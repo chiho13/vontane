@@ -1,5 +1,5 @@
 import { EditorContext } from "@/contexts/EditorContext";
-import React, { useContext } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import { ReactEditor } from "slate-react";
 import {
   LinkElement,
@@ -30,6 +30,12 @@ export function ElementSelector(props: {
   const { element, attributes, children } = props;
   const { editor } = useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);
+  const [selectedOption, setSelectedOption] = useState(null);
+
+  const handleOptionPreviewChange = useCallback((id) => {
+    setSelectedOption(id);
+  }, []);
+
   switch (element.type) {
     case "title":
       return <TitleElement {...props} />;

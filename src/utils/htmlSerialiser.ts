@@ -31,9 +31,14 @@ export const slateNodeToHtml = (node) => {
       case "bulleted-list":
         return childrenHtml;
       case "checked-list":
-        return `<label class="flex items-center gap-3 mt-2"><input class="w-[18px] h-[18px]" type="checkbox" name="option1" value="Option1" ${
+        return `<label data-align="text-${
+          alignMap[node.align] || node.align
+        }" class="flex items-center gap-3 mt-2"><input class="w-[18px] h-[18px]" type="checkbox" name="option1" value="Option1" ${
           node.checked ? "checked" : ""
-        } /> ${childrenHtml}</label>`;
+        } />${childrenHtml}</label>`;
+
+      case "option-list-item":
+        return childrenHtml;
 
       case "block-quote":
         return `<blockquote class="items-center border-l-4 border-gray-400 bg-white pl-3  text-gray-500 dark:bg-muted dark:text-gray-300">${childrenHtml}</blockquote>`;
@@ -71,6 +76,10 @@ export const getHtmlFromSelection = (editor) => {
   let numberedListItems = "";
   let bulletedListItems = "";
 
+  let quizOptions = "";
+  let inQuiz = false;
+  let optionCounter = 0;
+
   // Convert each node in the fragment to HTML
   const htmlParts = fragment.map((node, i) => {
     let html = slateNodeToHtml(node);
@@ -85,7 +94,9 @@ export const getHtmlFromSelection = (editor) => {
         (SlateElement.isElement(nextNode) && nextNode.type !== "numbered-list")
       ) {
         inNumberedList = false;
-        let olHtml = `<ol class="pl-5 mt-2">${numberedListItems}</ol>`;
+        let olHtml = `<ol data-align="text-${
+          alignMap[node.align] || node.align
+        }" class="pl-5 mt-2">${numberedListItems}</ol>`;
         numberedListItems = "";
         return olHtml;
       } else {
@@ -102,24 +113,57 @@ export const getHtmlFromSelection = (editor) => {
         (SlateElement.isElement(nextNode) && nextNode.type !== "bulleted-list")
       ) {
         inBulletedList = false;
-        let ulHtml = `<ul class="pl-5 mt-2">${bulletedListItems}</ul>`;
+        let ulHtml = `<ul data-align="text-${
+          alignMap[node.align] || node.align
+        }" class="pl-5 mt-2">${bulletedListItems}</ul>`;
         bulletedListItems = "";
         return ulHtml;
       } else {
         inBulletedList = true;
         return null; // Do not add this node to htmlParts yet
       }
+    } else if (
+      SlateElement.isElement(node) &&
+      node.type === "option-list-item"
+    ) {
+      quizOptions += `<li class="pl-2" style="list-style-type: upper-alpha;"><label  class="flex items-center gap-3 mt-2">${html}<input class="w-[18px] h-[18px]" type="checkbox" name="option1" value="Option1"  /></label></li>`;
+      const nextNode = fragment[i + 1];
+
+      // If it's the last node or the next node is not a numbered-list
+      if (
+        i === fragment.length - 1 ||
+        (SlateElement.isElement(nextNode) &&
+          nextNode.type !== "option-list-item")
+      ) {
+        inQuiz = false;
+        let olHtml = `<ol data-type="quiz" type="A" class="pl-5 mt-2">${quizOptions}</ol>`;
+        quizOptions = "";
+        return olHtml;
+      } else {
+        inQuiz = true;
+        return null; // Do not add this node to htmlParts yet
+      }
     } else {
-      if (inNumberedList) {
+      if (SlateElement.isElement(node) && inNumberedList) {
         inNumberedList = false;
-        let olHtml = `<ol class="pl-5 mt-2">${numberedListItems}</ol>`;
+        let olHtml = `<ol data-align="text-${
+          alignMap[node.align] || node.align
+        }" class="pl-5 mt-2">${numberedListItems}</ol>`;
         numberedListItems = "";
         return olHtml + html;
-      } else if (inBulletedList) {
+      } else if (SlateElement.isElement(node) && inBulletedList) {
         inBulletedList = false;
-        let ulHtml = `<ul class="pl-5 mt-2">${bulletedListItems}</ul>`;
+        let ulHtml = `<ul  data-align="text-${
+          alignMap[node.align] || node.align
+        }" class="pl-5 mt-2">${bulletedListItems}</ul>`;
         bulletedListItems = "";
         return ulHtml + html;
+      } else if (SlateElement.isElement(node) && inQuiz) {
+        inQuiz = false;
+        let divHtml = `<ol data-type="quiz" type="A">${quizOptions}</ol>`;
+        quizOptions = "";
+        optionCounter = 0; // Reset the counter
+        return divHtml + html;
       } else {
         return html;
       }

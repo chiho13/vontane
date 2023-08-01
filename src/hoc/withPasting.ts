@@ -4,7 +4,7 @@ import { jsx } from "slate-hyperscript";
 import { Element as SlateElement } from "slate";
 import { getHtmlFromSelection } from "@/utils/htmlSerialiser";
 
-const transformListItems = (listItems, listType) => {
+const transformListItems = (listItems, listType, alignment) => {
   return listItems.map((li: Node) => {
     const children = Array.from(li.childNodes)
       .map((node: Node) => {
@@ -54,7 +54,12 @@ const transformListItems = (listItems, listType) => {
       children.push({ text: "" });
     }
 
-    return { id: genNodeId(), type: listType, children: children };
+    return {
+      id: genNodeId(),
+      type: listType,
+      align: alignment,
+      children: children,
+    };
   });
 };
 
@@ -103,11 +108,13 @@ const ELEMENT_TAGS = {
     return { id: genNodeId(), type: "paragraph", align: alignment };
   },
   LABEL: (el) => {
+    const alignment = getAlignment(el);
     const input = el.querySelector('input[type="checkbox"]');
     if (input) {
       return {
         id: genNodeId(),
         type: "checked-list",
+        align: alignment,
         checked: input.checked,
       };
     }
@@ -118,13 +125,15 @@ const ELEMENT_TAGS = {
   // add this to ELEMENT_TAGS
 
   OL: (el) => {
+    const alignment = getAlignment(el);
     const listItems = Array.from(el.children);
-    return transformListItems(listItems, "numbered-list");
+    return transformListItems(listItems, "numbered-list", alignment);
   },
 
   UL: (el) => {
+    const alignment = getAlignment(el);
     const listItems = Array.from(el.children);
-    return transformListItems(listItems, "bulleted-list");
+    return transformListItems(listItems, "bulleted-list", alignment);
   },
 };
 

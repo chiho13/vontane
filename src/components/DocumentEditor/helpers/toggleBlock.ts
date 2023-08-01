@@ -11,7 +11,12 @@ import {
 import { ReactEditor } from "slate-react";
 import { genNodeId } from "@/hoc/withID";
 
-const LIST_TYPES = ["numbered-list", "bulleted-list", "checked-list"];
+const LIST_TYPES = [
+  "numbered-list",
+  "bulleted-list",
+  "checked-list",
+  "option-list-item",
+];
 export interface MyElement extends SlateBaseElement {
   type: string;
 }
@@ -66,6 +71,10 @@ export const toggleBlock = (editor: any, format: string) => {
     newProperties = {
       type: format,
     };
+  }
+
+  if (!newProperties.hasOwnProperty("align")) {
+    newProperties.align = "start";
   }
 
   Transforms.setNodes<SlateElement>(editor, newProperties);

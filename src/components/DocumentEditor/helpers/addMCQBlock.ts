@@ -6,39 +6,13 @@ import { genNodeId } from "@/hoc/withID";
 export const addMCQBlock = (editor, path) => {
   const mcqNode = {
     id: genNodeId(),
-    type: "mcq",
+    type: "option-list-item",
     children: [
       {
-        id: genNodeId(),
-        type: "paragraph",
-        align: "start",
-        children: [
-          {
-            text: "",
-          },
-        ],
-      },
-      {
-        id: genNodeId(),
-        type: "option-list-item",
-        children: [
-          {
-            text: "",
-          },
-        ],
-        correctAnswer: false,
-      },
-      {
-        id: genNodeId(),
-        type: "option-list-item",
-        children: [
-          {
-            text: "",
-          },
-        ],
-        correctAnswer: true,
+        text: "",
       },
     ],
+    correctAnswer: false,
   };
 
   const [currentNode] = Editor.node(editor, path);

@@ -37,7 +37,7 @@ const StyledOptionListItem = styled.li`
   }
 `;
 
-const findAllNumberedLists = (nodes) => {
+export const findAllNumberedLists = (nodes) => {
   let numberedLists: any[] = [];
   let currentListIndex = 0;
 
@@ -55,57 +55,22 @@ const findAllNumberedLists = (nodes) => {
   return numberedLists;
 };
 
-const findParentMcq = (nodes, itemId) => {
-  let parentMcq = null;
-
-  // Define a recursive function to traverse the tree structure
-  const traverse = (nodes) => {
-    for (let i = 0; i < nodes.length; i++) {
-      const node = nodes[i];
-
-      if (
-        node.type === "mcq" &&
-        node.children.some((child) => child.id === itemId)
-      ) {
-        // This is the parent MCQ we are looking for
-        parentMcq = node;
-        break;
-      } else if (node.children) {
-        // Recurse down the tree
-        traverse(node.children);
-      }
-    }
-  };
-
-  // Start the traversal
-  traverse(nodes);
-
-  return parentMcq;
-};
-
 const withListNumbering = (Component) => {
   return (props) => {
     const { element } = props;
     const { editor } = useContext(EditorContext);
 
     if (!editor) {
-      return <Component {...props} />;
+      return <Component {...props} questionNumber={null} />;
     }
 
-    // First, find the parent MCQ of the current option-list-item element
-    const parentMcq: any = findParentMcq(editor.children, element.id);
+    // Find all numbered-list elements within the editor
+    const numberedLists = findAllNumberedLists(editor.children);
 
-    if (!parentMcq) {
-      return <Component {...props} />;
-    }
-
-    // Then, find all option-list-item elements within the parent MCQ
-    const optionListItems: any[] = findAllNumberedLists(parentMcq.children);
-
-    // Assign number to each option based on its position in the array
-    const listNumber = optionListItems.reduce((num, list, index) => {
+    // Assign number to each numbered list based on its position in the array
+    const listNumber = numberedLists.reduce((num, list, index) => {
       if (list.id === element.id) {
-        return optionListItems
+        return numberedLists
           .slice(0, index + 1)
           .filter((el) => el.listIndex === list.listIndex).length;
       }
@@ -131,50 +96,14 @@ export const OptionListItem = withListNumbering(
 
     const shouldShowPlaceholder = isEmpty;
 
-    useEffect(() => {
-      // Update the local checked state whenever element.correctAnswer changes
-      setChecked(element.correctAnswer || false);
-    }, [element.correctAnswer]);
-
-    const handleChange = () => {
+    const handleChange = (checked) => {
+      setChecked(checked);
       const path = ReactEditor.findPath(editor, element);
-
-      if (checked) {
-        return;
-      }
       ReactEditor.focus(editor);
       Transforms.select(editor, Editor.end(editor, path));
-      if (checked) {
-        // If the option is currently checked, uncheck all options
-        const parentPath = Path.parent(path);
-        const [parentNode] = Editor.node(editor, parentPath);
 
-        SlateElement.isElement(parentNode) &&
-          parentNode.children.forEach((child, index) => {
-            if (child.correctAnswer) {
-              Transforms.setNodes(
-                editor,
-                { correctAnswer: false },
-                { at: [...parentPath, index] }
-              );
-            }
-          });
-      } else {
-        // If the option is currently unchecked, check it and uncheck all other options
-        const parentPath = Path.parent(path);
-        const [parentNode] = Editor.node(editor, parentPath);
-
-        SlateElement.isElement(parentNode) &&
-          parentNode.children.forEach((child, index) => {
-            const isCorrectAnswer = Path.equals(path, [...parentPath, index]);
-
-            Transforms.setNodes(
-              editor,
-              { correctAnswer: isCorrectAnswer },
-              { at: [...parentPath, index] }
-            );
-          });
-      }
+      // Toggle the correctAnswer state based on the checkbox state
+      Transforms.setNodes(editor, { correctAnswer: checked }, { at: path });
     };
 
     return (
@@ -203,7 +132,7 @@ export const OptionListItem = withListNumbering(
           </span>
           {children}
         </span>
-        <div className=" absolute top-0 right-2 flex h-full items-center">
+        <div className=" absolute right-2 top-0 flex h-full items-center">
           <TooltipProvider delayDuration={0}>
             <Tooltip>
               <TooltipTrigger>

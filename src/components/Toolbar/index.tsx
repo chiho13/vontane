@@ -240,7 +240,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
       separator: true,
     },
     {
-      name: "Bulleted List",
+      name: "Bullet Points",
       action: (e) => {
         e.preventDefault();
         toggleBlock(editor, "bulleted-list");
@@ -251,7 +251,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         "rounded-lg p-[4px] ml-1 transition duration-300 hover:bg-gray-200 hover:dark:bg-accent",
     },
     {
-      name: "Ordered List",
+      name: "Numbered List",
       action: (e) => {
         e.preventDefault();
         toggleBlock(editor, "numbered-list");
@@ -267,7 +267,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         e.preventDefault();
         toggleBlock(editor, "checked-list");
       },
-      icon: <MdChecklist width={20} height={20} />,
+      icon: <ListChecks width={20} height={20} />,
       isActive: isBlockActive(editor, "checked-list", "type"),
       additionalClass:
         "rounded-lg p-[4px] mr-1 transition duration-300 hover:bg-gray-200 hover:dark:bg-accent",
@@ -346,8 +346,8 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               className="h-full w-[1px] bg-gray-200 dark:bg-gray-700"
             ></div>
           ) : (
-            <TooltipProvider delayDuration={300}>
-              <Tooltip key={i}>
+            <TooltipProvider delayDuration={300} key={i}>
+              <Tooltip>
                 <TooltipTrigger>
                   <button
                     className={`flex h-[28px] w-[28px] items-center ${button.additionalClass}`}

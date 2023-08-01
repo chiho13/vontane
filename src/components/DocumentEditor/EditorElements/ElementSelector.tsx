@@ -80,7 +80,9 @@ export function ElementSelector(props: {
     case "ol":
       return <OptionList {...props} />;
     case "option-list-item":
-      return <OptionListItem {...props}>{children}</OptionListItem>;
+      return (
+        <ListItem children={children} element={element} listType="options" />
+      );
     default:
       return <DefaultElement {...props} />;
   }

@@ -136,7 +136,7 @@ export const getHtmlFromSelection = (editor) => {
           nextNode.type !== "option-list-item")
       ) {
         inQuiz = false;
-        let olHtml = `<ol data-type="quiz" type="A" class="pl-5 mt-2">${quizOptions}</ol>`;
+        let olHtml = `<ol data-type="quiz" class="pl-5 mt-2">${quizOptions}</ol>`;
         quizOptions = "";
         return olHtml;
       } else {

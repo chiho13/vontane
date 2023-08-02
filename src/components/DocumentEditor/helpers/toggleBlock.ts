@@ -7,6 +7,7 @@ import {
   BaseElement as SlateBaseElement,
   BaseEditor,
   Path,
+  Node,
 } from "slate";
 import { ReactEditor } from "slate-react";
 import { genNodeId } from "@/hoc/withID";
@@ -52,14 +53,6 @@ export const toggleBlock = (editor: any, format: string) => {
   const isActive = isBlockActive(editor, format, "type");
   const isList = LIST_TYPES.includes(format);
 
-  // Transforms.unwrapNodes(editor, {
-  //   match: (n) =>
-  //     !Editor.isEditor(n) &&
-  //     SlateElement.isElement(n) &&
-  //     n.type === "column-cell",
-  //   split: true,
-  // });
-
   let newProperties: Partial<SlateElement>;
 
   if (isActive && isList) {
@@ -78,11 +71,6 @@ export const toggleBlock = (editor: any, format: string) => {
   }
 
   Transforms.setNodes<SlateElement>(editor, newProperties);
-
-  // if (!isActive && isList) {
-  //   const block = { type: format, children: [] };
-  //   Transforms.wrapNodes(editor, block);
-  // }
 };
 
 export const isFormatActive = (editor: any, format: string) => {
@@ -247,4 +235,32 @@ export const getActiveLinkUrl = (editor) => {
     }
   }
   return linkUrl;
+};
+
+export const insertInlineBlock = (editor, type) => {
+  const { selection } = editor;
+  const isCollapsed = selection && Range.isCollapsed(selection);
+
+  let selectedText = "";
+
+  // Only get the selected text if there's a selection
+  if (selection) {
+    selectedText = Editor.string(editor, selection); // Get the selected text
+  }
+
+  const inlineEq = {
+    id: genNodeId(),
+    type,
+    latex: selectedText,
+    children: [{ text: "" }],
+  };
+
+  if (isCollapsed) {
+    Transforms.insertNodes(editor, inlineEq, {
+      at: editor.selection.anchor.path,
+    });
+  } else {
+    Transforms.delete(editor); // Delete selected nodes
+    Transforms.insertNodes(editor, inlineEq); // Insert new node
+  }
 };

@@ -7,6 +7,7 @@ import {
   ParagraphElement,
   DefaultElement,
   EquationElement,
+  InlineEquation,
   ColumnElement,
   ColumnCellElement,
   MCQElement,
@@ -76,6 +77,8 @@ export function ElementSelector(props: {
       return <QuestionItem {...props} />;
     case "equation":
       return <EquationElement {...props} />;
+    case "inline-equation":
+      return <InlineEquation {...props} />;
     case "column":
       return <ColumnElement {...props} />;
     case "column-cell":

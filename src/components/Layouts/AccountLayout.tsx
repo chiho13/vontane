@@ -453,8 +453,12 @@ const Layout: React.FC<LayoutProps> = ({
                     const workspaceName = parsedSlateValue[0].children[0].text;
                     const displayName =
                       updatedWorkspace && updatedWorkspace.id === workspace.id
-                        ? updatedWorkspace.title
-                        : workspaceName;
+                        ? updatedWorkspace.title.trimStart() !== ""
+                          ? updatedWorkspace.title
+                          : "Untitled"
+                        : workspaceName.trimStart() !== ""
+                        ? workspaceName
+                        : "Untitled";
 
                     return (
                       <SidebarItem
@@ -471,7 +475,7 @@ const Layout: React.FC<LayoutProps> = ({
                           <span
                             className={`text-sm text-darkergray  dark:text-foreground`}
                           >
-                            {displayName || "Untitled"}
+                            {displayName}
                           </span>
 
                           <DropdownMenu>
@@ -575,6 +579,7 @@ const Layout: React.FC<LayoutProps> = ({
                                       href="#"
                                       role="button"
                                       className="flex h-[22px] w-[22px] items-center justify-center rounded-md p-0 opacity-0 outline-none transition  duration-300 hover:bg-gray-100 group-hover:opacity-100 dark:hover:bg-gray-600"
+                                      onClick={restoreWorkspace}
                                     >
                                       <Undo2
                                         className="text-darkergray  dark:stroke-foreground"

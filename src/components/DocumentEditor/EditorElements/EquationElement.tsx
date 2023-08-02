@@ -20,9 +20,10 @@ export function EquationElement(props) {
       tabIndex={0}
       data-path={JSON.stringify(path)}
       data-id={element.id}
-      className={` equation-element relative mr-4  flex w-[95%]  items-center rounded-md p-2 transition  hover:bg-gray-100 dark:hover:bg-background 
+      className={`equation-element relative mr-4  flex   items-center rounded-md p-2 py-1 transition  hover:bg-gray-100 dark:hover:bg-background 
       ${
-        showEditBlockPopup.open || element.latex?.trim() === ""
+        showEditBlockPopup.path === JSON.stringify(path) ||
+        element.latex?.trim() === ""
           ? " bg-[#E0EDFB] dark:bg-background"
           : "bg-transparent"
       }

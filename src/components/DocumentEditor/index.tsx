@@ -1094,10 +1094,15 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     [editor]
   );
 
-  const handleEditLatex = (value: string, altText: string, path: Path) => {
+  const handleEditLatex = (
+    value: string,
+    altText: string,
+    path: Path,
+    type
+  ) => {
     const latex = value;
     const equationNode = {
-      type: "equation",
+      type,
       latex,
       altText,
       children: [{ text: "" }],
@@ -1119,7 +1124,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const openEditBlockPopup = (
     _element: HTMLElement,
     event: React.MouseEvent,
-    path: Path
+    path: Path,
+    type
   ) => {
     event.stopPropagation();
     const targetRect = _element.getBoundingClientRect();
@@ -1134,10 +1140,13 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     setSelectedElementID(currentNode.id);
     console.log(currentNode.id);
 
+    console.log("open path", path);
     // setSelectedElementID();
+    ReactEditor.blur(editor);
     setShowEditBlockPopup({
       open: true,
-      element: "equation",
+      element: type,
+      path: JSON.stringify(path),
     });
     // let topOffset;
     // let showDropdownAbove = false;
@@ -1209,7 +1218,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         setDropdownEditBlockTop(
           showDropdownAbove ? targetRect.top + topOffset : targetRect.bottom - 5
         );
-        setDropdownEditBlockLeft(targetRect.left);
+        let targetCenter = targetRect.left + targetRect.width / 2;
+
+        // Adjust for the popup width (which is 350px)
+        let popupLeft = targetCenter - 350 / 2;
+
+        setDropdownEditBlockLeft(popupLeft);
 
         console.log(targetRect.left);
       }
@@ -1556,12 +1570,34 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       event.target,
       "equation-element"
     );
+
+    const inlineEquationElement = findAncestorWithClass(
+      event.target,
+      "inline-equation-element"
+    );
+
+    console.log(equationElement);
     if (equationElement) {
       const pathString = equationElement.getAttribute("data-path");
       if (pathString) {
         const path = JSON.parse(pathString);
         // setActivePath(pathString);
-        openEditBlockPopup(equationElement, event, path);
+        openEditBlockPopup(equationElement, event, path, "equation");
+        return;
+      }
+    }
+
+    if (inlineEquationElement) {
+      const pathString = inlineEquationElement.getAttribute("data-path");
+      if (pathString) {
+        const path = JSON.parse(pathString);
+        // setActivePath(pathString);
+        openEditBlockPopup(
+          inlineEquationElement,
+          event,
+          path,
+          "inline-equation"
+        );
         return;
       }
     }
@@ -1759,7 +1795,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
                 // Calculate mini toolbar position
                 let initialX = firstRect.left - textEditorLeft;
-                const toolbarWidth = 416; // Your toolbar width
+                const toolbarWidth = 450; // Your toolbar width
                 // Access the alignment of the current element and adjust initialX based on the alignment
                 if (startNode.align) {
                   switch (startNode.align) {
@@ -1941,7 +1977,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               </div>
             </div>
 
-            <div className="absolute right-3 top-2 z-10 flex items-center gap-2 rounded-md border border-gray-300  bg-gray-200 px-2  py-1 text-xs text-slate-500 dark:border-gray-600 dark:bg-accent dark:text-slate-200">
+            <div className="absolute right-3 top-2 z-10 flex items-center gap-2 rounded-md border border-gray-300  bg-gray-100 px-2  py-1 text-xs text-slate-500 dark:border-gray-600 dark:bg-accent dark:text-slate-200">
               <div
                 className={`h-2 w-2 rounded-full transition duration-200 
                 ${syncStatus === "syncing" ? "bg-yellow-500" : "bg-green-500"}
@@ -2143,14 +2179,15 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                         left: `${dropdownEditBlockLeft}px`,
                       }}
                     >
-                      {showEditBlockPopup.element === "equation" ? (
+                      {showEditBlockPopup.element === "equation" && (
                         <EditBlockPopup
                           ref={editBlockDropdownRef}
                           onChange={(latex, altText) =>
                             handleEditLatex(
                               latex,
                               altText,
-                              JSON.parse(activePath)
+                              JSON.parse(activePath),
+                              "equation"
                             )
                           }
                           latexValue={getCurrentLatex}
@@ -2170,7 +2207,38 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                             );
                           }}
                         />
-                      ) : (
+                      )}
+
+                      {showEditBlockPopup.element === "inline-equation" && (
+                        <EditBlockPopup
+                          ref={editBlockDropdownRef}
+                          onChange={(latex, altText) =>
+                            handleEditLatex(
+                              latex,
+                              altText,
+                              JSON.parse(activePath),
+                              "inline-equation"
+                            )
+                          }
+                          latexValue={getCurrentLatex}
+                          onClick={closeEditableDropdown}
+                          insertText={(note) => {
+                            Transforms.insertNodes(
+                              editor,
+                              {
+                                id: genNodeId(),
+                                type: "paragraph",
+                                align: "start",
+                                children: [{ text: note }],
+                              },
+                              {
+                                at: Path.next(JSON.parse(activePath)),
+                              }
+                            );
+                          }}
+                        />
+                      )}
+                      {showEditBlockPopup.element === "image" && (
                         <div
                           ref={editBlockDropdownRef}
                           className="z-100 h-[270px] rounded-lg border border-gray-400 bg-muted p-2 dark:border-accent  dark:border-accent dark:bg-muted dark:text-foreground lg:w-[400px]  lg:w-[500px]"

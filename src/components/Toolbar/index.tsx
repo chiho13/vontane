@@ -28,6 +28,7 @@ import {
   isParentTTS,
   isParentList,
   getActiveLinkUrl,
+  insertInlineBlock,
 } from "../DocumentEditor/helpers/toggleBlock";
 import {
   Editor,
@@ -50,6 +51,7 @@ import {
 } from "@/components/ui/tooltip";
 import classNames from "classnames";
 import { Input } from "../ui/input";
+import { TbMathFunction } from "react-icons/tb";
 
 type ToolbarProps = {
   openLink: boolean;
@@ -64,7 +66,8 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   setOpenLink,
   setShowMiniToolbar,
 }) => {
-  const { editor, activePath } = useContext(EditorContext);
+  const { editor, activePath, setShowEditBlockPopup } =
+    useContext(EditorContext);
 
   const { isInline } = editor;
 
@@ -200,6 +203,22 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     setShowMiniToolbar(false);
   };
 
+  const insertInlineEquation = (e) => {
+    e.preventDefault();
+    // if (isLinkActive(editor)) {
+    //   unwrapLink(editor);
+    // }
+
+    insertInlineBlock(editor, "inline-equation");
+
+    setShowMiniToolbar(false);
+
+    setShowEditBlockPopup({
+      open: true,
+      element: "inline-equation",
+    });
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault(); // Prevent page reload
 
@@ -263,6 +282,17 @@ export const Toolbar: React.FC<ToolbarProps> = ({
       isActive: hasURL,
       additionalClass:
         "rounded-lg p-[5px] mr-1 transition duration-300 hover:bg-gray-200 hover:dark:bg-accent",
+    },
+    {
+      separator: true,
+    },
+    {
+      name: "Inline Equation",
+      action: insertInlineEquation,
+      icon: <TbMathFunction />,
+      isActive: isBlockActive(editor, "inline-equation", "type"),
+      additionalClass:
+        "rounded-lg p-[5px] ml-1 mr-1 transition duration-300 hover:bg-gray-200 hover:dark:bg-accent",
     },
     {
       separator: true,

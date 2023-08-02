@@ -181,6 +181,16 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     return !!link;
   };
 
+  const isInlineEqActive = (editor) => {
+    const [inlineEq] = Editor.nodes(editor, {
+      match: (n) =>
+        !Editor.isEditor(n) &&
+        SlateElement.isElement(n) &&
+        (n.type === "inline-equation" || n.type === "equation"),
+    });
+    return !!inlineEq;
+  };
+
   const unLink = () => {
     unwrapLink(editor);
     setShowMiniToolbar(false);
@@ -212,6 +222,43 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 
   const insertInlineEquation = (e) => {
     e.preventDefault();
+
+    if (isInlineEqActive(editor)) {
+      let foundNode;
+      let foundPath;
+
+      for (const [node, path] of Editor.nodes(editor, {
+        at: editor.selection,
+      })) {
+        if (
+          SlateElement.isElement(node) &&
+          (node.type === "inline-equation" || node.type === "equation")
+        ) {
+          foundNode = node;
+          foundPath = path;
+          break;
+        }
+      }
+
+      if (foundNode && foundPath) {
+        // Loop through the children of the inline-equation node
+
+        // Cast to any because Slate's types are not exhaustive
+
+        // Select the whole text of the link
+        setShowMiniToolbar(false);
+        ReactEditor.blur(editor);
+        setLastActiveSelection(null);
+        setShowEditBlockPopup({
+          open: true,
+          element: "inline-equation",
+          path: JSON.stringify(foundPath),
+          latex: foundNode.latex,
+        });
+      }
+
+      return;
+    }
 
     const { id, latex } = insertInlineBlock(editor, "inline-equation");
 

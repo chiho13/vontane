@@ -1,6 +1,7 @@
 import { alignMap } from "@/components/DocumentEditor/helpers/toggleBlock";
 import { genNodeId } from "@/hoc/withID";
 import { Editor, Element as SlateElement } from "slate";
+import katex from "katex";
 
 export const slateNodeToHtml = (node) => {
   if (SlateElement.isElement(node)) {
@@ -43,6 +44,11 @@ export const slateNodeToHtml = (node) => {
 
       case "block-quote":
         return `<blockquote class="items-center border-l-4 border-gray-400 bg-white pl-3  text-gray-500 dark:bg-muted dark:text-gray-300">${childrenHtml}</blockquote>`;
+      case "equation":
+        return `<div data-type="equation" data-latex="${node.latex}"></div>`;
+
+      case "inline-equation":
+        return `<div data-type="inline-equation" data-latex="${node.latex}"></div>`;
       default:
         return childrenHtml;
     }
@@ -192,6 +198,78 @@ export const getHtmlFromSelection = (editor) => {
   return htmlParts.filter((part) => part !== null).join("");
 };
 
+export const exportSlateNodeToHtml = (node) => {
+  if (SlateElement.isElement(node)) {
+    const childrenHtml = node.children.map(slateNodeToHtml).join("");
+    switch (node.type) {
+      case "paragraph":
+        return `<p data-align="text-${
+          alignMap[node.align] || node.align
+        }">${childrenHtml}</p>`;
+
+      case "link":
+        return `<a class="text-brand underline dark:text-blue-400" href="${node.url}" target="_blank">${childrenHtml}</a>`;
+      case "heading-one":
+        return `<h1 class="text-4xl" data-align="text-${
+          alignMap[node.align] || node.align
+        }">${childrenHtml}</h1>`;
+      case "heading-two":
+        return `<h2 class="text-3xl" data-align="text-${
+          alignMap[node.align] || node.align
+        }">${childrenHtml}</h2>`;
+
+      case "heading-three":
+        return `<h3 class="text-2xl" data-align="text-${
+          alignMap[node.align] || node.align
+        }">${childrenHtml}</h3>`;
+
+      case "numbered-list":
+        return childrenHtml;
+      case "bulleted-list":
+        return childrenHtml;
+      case "checked-list":
+        return `<label data-align="text-${
+          alignMap[node.align] || node.align
+        }" class="flex items-center gap-3 mt-2"><input class="w-[18px] h-[18px]" type="checkbox" name="option1" value="Option1" ${
+          node.checked ? "checked" : ""
+        } />${childrenHtml}</label>`;
+
+      case "option-list-item":
+        return childrenHtml;
+
+      case "block-quote":
+        return `<blockquote class="items-center border-l-4 border-gray-400 bg-white pl-3  text-gray-500 dark:bg-muted dark:text-gray-300">${childrenHtml}</blockquote>`;
+      case "equation":
+        const renderedEquation = katex.renderToString(node.latex);
+        return `<div class="katex block text-[10px] mt-4">${renderedEquation}</div>`;
+
+      case "inline-equation":
+        const renderedInlineEquation = katex.renderToString(node.latex);
+        return `<span class="katex inline text-xs ">${renderedInlineEquation}</span>`;
+
+      default:
+        return childrenHtml;
+    }
+  } else {
+    // Text node
+    let textHtml = node.text;
+    if (node.bold) {
+      textHtml = `<strong>${textHtml}</strong>`;
+    }
+    if (node.italic) {
+      textHtml = `<em>${textHtml}</em>`;
+    }
+    if (node.underline) {
+      textHtml = `<u>${textHtml}</u>`;
+    }
+    if (node.strikethrough) {
+      textHtml = `<del>${textHtml}</del>`;
+    }
+    // ... handle other marks ...
+    return textHtml;
+  }
+};
+
 export const exportToHTML = (editor) => {
   if (!editor.selection) return "";
 
@@ -212,7 +290,7 @@ export const exportToHTML = (editor) => {
 
   // Convert each node in the fragment to HTML
   const htmlParts = fragment.map((node, i) => {
-    let html = slateNodeToHtml(node);
+    let html = exportSlateNodeToHtml(node);
 
     let uniqueInputId;
 

@@ -52,6 +52,7 @@ import {
 import classNames from "classnames";
 import { Input } from "../ui/input";
 import { TbMathFunction } from "react-icons/tb";
+import { findPathById } from "../DocumentEditor/helpers/createColumns";
 
 type ToolbarProps = {
   openLink: boolean;
@@ -66,8 +67,14 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   setOpenLink,
   setShowMiniToolbar,
 }) => {
-  const { editor, activePath, setShowEditBlockPopup } =
-    useContext(EditorContext);
+  const {
+    editor,
+    activePath,
+    setShowEditBlockPopup,
+    setSelectedElementID,
+    setActivePath,
+    setLastActiveSelection,
+  } = useContext(EditorContext);
 
   const { isInline } = editor;
 
@@ -205,18 +212,21 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 
   const insertInlineEquation = (e) => {
     e.preventDefault();
-    // if (isLinkActive(editor)) {
-    //   unwrapLink(editor);
-    // }
 
-    insertInlineBlock(editor, "inline-equation");
+    const { id, latex } = insertInlineBlock(editor, "inline-equation");
 
-    setShowMiniToolbar(false);
-
-    setShowEditBlockPopup({
-      open: true,
-      element: "inline-equation",
-    });
+    setTimeout(() => {
+      const path = findPathById(editor, id);
+      setShowMiniToolbar(false);
+      ReactEditor.blur(editor);
+      setLastActiveSelection(null);
+      setShowEditBlockPopup({
+        open: true,
+        element: "inline-equation",
+        path: JSON.stringify(path),
+        latex,
+      });
+    }, 0);
   };
 
   const handleSubmit = (event) => {

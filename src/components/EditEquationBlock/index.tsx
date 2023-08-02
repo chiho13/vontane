@@ -88,12 +88,13 @@ export const EditBlockPopup = React.forwardRef<
   HTMLDivElement,
   EditBlockPopupProps
 >(({ onChange, onClick, insertText, latexValue }, ref) => {
-  const [value, setValue] = useState(latexValue);
+  const { setShowEditBlockPopup, showEditBlockPopup } =
+    useContext(EditorContext);
+  const [value, setValue] = useState(showEditBlockPopup.latex);
   const [altText, setAltText] = useState("");
   const [findEquation, setFindEquation] = useState("");
   const theme = useTheme();
   const [isLoading, setIsLoading] = useState(false);
-  const { setShowEditBlockPopup } = useContext(EditorContext);
   const [noteResults, setNoteResults] = useState(null);
   const [noteInserted, setNoteInserted] = useState(false);
 

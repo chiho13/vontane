@@ -61,7 +61,7 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
         name: "Text to MP3",
         action: () => wrapElementWithTTS(editor, element),
         icon: (
-          <BsSoundwave className="mr-4 w-5  stroke-darkergray dark:stroke-foreground" />
+          <BsSoundwave className="mr-4 h-5 w-4  stroke-darkergray dark:stroke-foreground" />
         ),
       },
       {

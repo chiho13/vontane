@@ -4,7 +4,7 @@ import { ReactEditor, useFocused, useSelected } from "slate-react";
 import { Editor, Path, Node, Range } from "slate";
 import styled from "styled-components";
 import { hasSlideElement } from "@/utils/helpers";
-import { isParentMCQ } from "../helpers/toggleBlock";
+import { alignMap, isParentMCQ } from "../helpers/toggleBlock";
 
 interface HeadingElementProps {
   isParentMCQ: boolean;
@@ -68,12 +68,6 @@ export function HeadingElement(props) {
   }, [focused, selected]);
 
   const shouldShowPlaceholder = element.children[0].text === "";
-
-  const alignMap = {
-    start: "left",
-    center: "center",
-    end: "right",
-  };
 
   return (
     <HeadingElementStyle data-type={tag} isParentMCQ={isParentMCQ(editor)}>

@@ -244,7 +244,7 @@ export const EditBlockPopup = React.forwardRef<
     <>
       <EditBlockPopupStyle
         ref={ref}
-        className="block rounded-md border border-gray-200 bg-gray-100 p-2 shadow-md dark:border-accent dark:bg-secondary"
+        className=" z-10 block w-[350px] rounded-md border border-gray-200  bg-gray-100 p-2 shadow-md dark:border-accent dark:bg-secondary"
       >
         {/* <div className="flex">
           <form
@@ -281,20 +281,30 @@ export const EditBlockPopup = React.forwardRef<
           </form>
         </div> */}
 
-        <div className="relative flex h-[130px] justify-between ">
+        <div className="relative  flex h-[100px] items-start justify-between gap-2  ">
           <textarea
             ref={textAreaRef}
             aria-label={altText}
             aria-live="off"
             value={value}
             autoFocus
-            className="w-full resize-none rounded-md border border-gray-200 bg-transparent p-2 focus:border-[#007AFF] focus:outline-none dark:border-accent"
+            className="h-full w-full  resize-none rounded-md border border-gray-200 bg-transparent p-2 focus:border-[#007AFF] focus:outline-none dark:border-accent"
             onChange={onEquationChange}
             placeholder="TEX code"
           />
           {/* <div className=" absolute bottom-1 left-1 rounded-md bg-gray-200 px-2 text-sm text-gray-700">
           <span className="text-bold mr-1">alt:</span>
         </div> */}
+          <button
+            className=" flex  items-center rounded-md bg-[#007AFF] px-2 py-px  text-sm text-white shadow-sm transition duration-300 hover:bg-[#006EE6] dark:bg-foreground dark:text-background "
+            onClick={onClick}
+          >
+            <span className="mr-1">Done</span>
+            <CornerDownLeft
+              className="stroke-white dark:stroke-background"
+              width={16}
+            />
+          </button>
         </div>
         {noteResults && (
           <div className="relative mt-2">
@@ -314,18 +324,6 @@ export const EditBlockPopup = React.forwardRef<
             </div>
           </div>
         )}
-        <div className="mt-3 flex justify-end">
-          <button
-            className="flex items-center rounded-md bg-[#007AFF] px-2 py-1  text-sm text-white shadow-sm transition duration-300 hover:bg-[#006EE6] dark:bg-foreground dark:text-background "
-            onClick={onClick}
-          >
-            <span className="mr-1">Done</span>
-            <CornerDownLeft
-              className="stroke-white dark:stroke-background"
-              width={16}
-            />
-          </button>
-        </div>
       </EditBlockPopupStyle>
     </>
   );

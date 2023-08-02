@@ -3,6 +3,8 @@
 import * as React from "react";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 import { Check, ChevronRight, Circle } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { y_animation_props } from "../Dropdown";
 
 import { cn } from "@/utils/cn";
 

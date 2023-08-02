@@ -220,7 +220,9 @@ export const withNormalizePasting = (editor) => {
   const { insertData, isInline, isVoid, copy, getFragment } = editor;
 
   editor.isInline = (element) => {
-    return element.type === "link" ? true : isInline(element);
+    return element.type === "link" || element.type === "inline-equation"
+      ? true
+      : isInline(element);
   };
 
   editor.isVoid = (element) => {

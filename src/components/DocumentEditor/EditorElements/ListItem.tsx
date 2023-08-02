@@ -311,7 +311,7 @@ export const ListItem = withListNumbering((props) => {
         {isOptionList && !isPreview && (
           <TooltipProvider delayDuration={0}>
             <Tooltip>
-              <TooltipTrigger className="absolute  -translate-x-[51px]">
+              <TooltipTrigger className="absolute  -translate-x-[54px]">
                 <Checkbox
                   checked={isCheckedCorrect}
                   onCheckedChange={handleOptionCheck}

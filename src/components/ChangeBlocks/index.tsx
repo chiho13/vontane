@@ -159,7 +159,7 @@ export const ChangeBlocks = ({ openLink }: any) => {
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
-              className="z-100 w-[200px] border-black dark:border-accent dark:bg-secondary"
+              className="z-100 w-[200px] border-gray-200  dark:border-accent dark:bg-secondary"
               align="start"
               sideOffset={5}
               alignOffset={-5}

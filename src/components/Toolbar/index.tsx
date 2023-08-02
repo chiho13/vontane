@@ -343,7 +343,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 
           <BlockAlign
             element={element}
-            className="ml-1 mr-1  h-[28px] hover:bg-gray-200 hover:dark:bg-accent"
+            className="ml-1 mr-1  h-[28px] text-darkblue hover:bg-gray-200 hover:dark:bg-accent"
           />
           <div className="h-full w-[1px] bg-gray-200 dark:bg-gray-700"></div>
         </>

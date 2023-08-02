@@ -603,7 +603,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                       />
                       <Button
                         variant="outline"
-                        className=" h-[36px] rounded-l-none border border-gray-300 bg-muted px-2 text-center dark:border-gray-400"
+                        className=" h-[36px] rounded-l-none border border-gray-300 bg-background px-2 text-center dark:border-gray-400"
                         onClick={() => copyLink(audioData.audio_url)}
                       >
                         <p className="flex truncate text-xs ">

@@ -156,3 +156,7 @@ body {
 .toast_container {
   position: fixed;
 }
+
+.katex {
+  font-size: 1.2rem !important;
+}

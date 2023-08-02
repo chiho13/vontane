@@ -152,6 +152,17 @@ const ELEMENT_TAGS = {
     const listItems = Array.from(el.children);
     return transformListItems(listItems, "bulleted-list", alignment);
   },
+  DIV: (el) => {
+    const dataType = el.getAttribute("data-type"); // Extract data-type attribute
+    const latex = el.getAttribute("data-latex");
+    if (dataType === "equation" || dataType === "inline-equation") {
+      return {
+        id: genNodeId(),
+        type: dataType,
+        latex,
+      };
+    }
+  },
 };
 
 // COMPAT: `B` is omitted here because Google Docs uses `<b>` in weird ways.

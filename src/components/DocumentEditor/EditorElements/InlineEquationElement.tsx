@@ -34,9 +34,7 @@ export const InlineEquation = (props: {
       {...attributes}
       data-id={element.id}
       data-path={JSON.stringify(path)}
-      className={`inline-equation-element inline cursor-pointer px-1 py-1  dark:text-blue-400 ${
-        selected && "ring-1 ring-gray-300"
-      }
+      className={`inline-equation-element inline cursor-pointer px-1 py-1  dark:text-blue-400 
       ${
         showEditBlockPopup.path === JSON.stringify(path) &&
         element.latex?.trim() !== ""
@@ -53,7 +51,7 @@ export const InlineEquation = (props: {
       {element.latex?.trim() === "" && (
         <span className="bg-gray-300 p-1 text-gray-800 opacity-60">
           {" "}
-          New Equation{" "}
+          Equation{" "}
         </span>
       )}
       <InlineChromiumBugfix />

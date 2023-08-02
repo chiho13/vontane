@@ -10,7 +10,7 @@ import React, {
 } from "react";
 import { Path, Text, Node } from "slate";
 import { BiSolidQuoteLeft, BiSolidQuoteRight } from "react-icons/bi";
-
+import { BlockMath, InlineMath } from "react-katex";
 import { CollapsibleAudioPlayer } from "@/components/PreviewContent/PreviewElements/CollapsibleAudio";
 import { MCQ } from "@/components/PreviewContent/PreviewElements/MCQ";
 import { MapBlock } from "@/components/PreviewContent/PreviewElements/Map";
@@ -51,6 +51,7 @@ const renderElement = (
     type: any;
     url: any;
     checked: boolean;
+    latex: any;
   },
   children:
     | string
@@ -72,6 +73,20 @@ const renderElement = (
         <p className="mt-2 leading-7" key={key}>
           {children}
         </p>
+      );
+
+    case "inline-equation":
+      return (
+        <span className="px-1" key={key}>
+          <InlineMath math={node.latex} />
+        </span>
+      );
+
+    case "equation":
+      return (
+        <div className="mb-1 mt-1 flex justify-center" key={key}>
+          <BlockMath math={node.latex} />
+        </div>
       );
     case "image":
       return (

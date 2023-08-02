@@ -24,6 +24,8 @@ import { ReactEditor } from "slate-react";
 import { EditorContext } from "../../contexts/EditorContext";
 import { Transforms, Element as SlateElement, Editor, Range } from "slate";
 import { cn } from "@/utils/cn";
+import { BiCaretDown } from "react-icons/bi";
+import { FaCaretDown } from "react-icons/fa";
 
 export function BlockAlign({ element, className }: any) {
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
@@ -69,12 +71,12 @@ export function BlockAlign({ element, className }: any) {
                   className
                 )}
               >
-                {element.align === "start" && <AlignLeft className="h-4 w-4" />}
+                {element.align === "start" && <AlignLeft className="h-5 w-6" />}
                 {element.align === "center" && (
-                  <AlignCenter className="h-4 w-4" />
+                  <AlignCenter className="h-5 w-6" />
                 )}
-                {element.align === "end" && <AlignRight className="h-4 w-4" />}
-                <ChevronDown className="h-3 w-3" />
+                {element.align === "end" && <AlignRight className="h-5 w-6" />}
+                <FaCaretDown className="h-4 w-2" />
                 <span className="sr-only">Toggle Align</span>
               </Button>
             </DropdownMenuTrigger>

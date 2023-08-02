@@ -47,7 +47,9 @@ export const AudioManagerProvider: FunctionComponent<
   );
   const [timestamps, setTimestamps] = useState<SearchWordTimestamp>([]);
   const [transcript, setTranscript] = useState<Transcript>(""); // adjust useState
-  const [selectedOption, setSelectedOption] = useState(false);
+  const [selectedOption, setSelectedOption] = useState({
+    0: "dsfsgsdgsf",
+  });
   const playAudio = (audio: HTMLAudioElement) => {
     if (currentAudio && currentAudio !== audio) {
       currentAudio.pause();

@@ -127,7 +127,7 @@ const ElevenTTSWrapperBase = (props: {
       data-path={JSON.stringify(path)}
       className={` relative  ${
         isFirstInGroup ? "border-t" : ""
-      } border-b border-muted-foreground p-1 pb-3 pl-0 dark:border-muted-foreground ${
+      } border-b border-gray-300 p-1 pb-3 pl-0 dark:border-accent ${
         selected ? " bg-brand/20 dark:bg-brand/20" : "bg-white dark:bg-muted"
       }`}
       onClick={() => {
@@ -170,7 +170,7 @@ const ElevenTTSWrapperBase = (props: {
         <div className="absolute -bottom-[14px] z-10 flex w-full justify-center">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex  h-[28px] w-[28px] items-center justify-center rounded-md border-2 border-foreground bg-background p-1 text-xs text-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted">
+              <button className="flex  h-[28px] w-[28px] items-center justify-center rounded-md border border-gray-400 bg-background p-1 text-xs text-muted-foreground hover:border-gray-700 hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted">
                 <Plus width={20} />
               </button>
             </DropdownMenuTrigger>

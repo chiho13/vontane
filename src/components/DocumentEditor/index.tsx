@@ -1584,8 +1584,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   function handleEditorMouseUp(
     event: React.MouseEvent<globalThis.Element, MouseEvent>,
-    editor: ReactEditor
+    editor: any
   ) {
+    setShowMiniToolbar(false);
+
     const equationElement = findAncestorWithClass(
       event.target,
       "equation-element"
@@ -1601,7 +1603,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       const pathString = equationElement.getAttribute("data-path");
       if (pathString) {
         const path = JSON.parse(pathString);
-
         // setActivePath(pathString);
         openEditBlockPopup(equationElement, event, path, "equation");
         return;

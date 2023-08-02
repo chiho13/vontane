@@ -239,7 +239,7 @@ export const EditBlockPopup = React.forwardRef<
       textArea.selectionStart = textArea.value.length;
       textArea.selectionEnd = textArea.value.length;
     }
-  }, [value]);
+  }, []);
 
   return (
     <>

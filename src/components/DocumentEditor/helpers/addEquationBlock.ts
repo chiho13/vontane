@@ -9,6 +9,7 @@ export const addEditableEquationBlock = (latex: string, editor, path: Path) => {
     type: "equation",
     altText: "",
     latex,
+    align: "start",
     children: [{ text: " " }],
   };
 

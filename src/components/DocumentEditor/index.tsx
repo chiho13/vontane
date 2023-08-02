@@ -49,6 +49,7 @@ import { MathQuestionGenerator } from "../QuestionGenerator/Math";
 import { extractTextValues } from "@/components/DocumentEditor/helpers/extractText";
 import { useRouter } from "next/router";
 import { DraggableCore } from "react-draggable";
+import Draggable from "react-draggable";
 import { Portal } from "react-portal";
 import { Toolbar } from "@/components/Toolbar";
 import { up_animation_props } from "@/config/framer";
@@ -359,7 +360,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     setFetchWorkspaceIsLoading(false);
     // setGhostValue(initialSlateValue);
     setCurrentSlateKey(generateKey());
-    console.log(editor.children);
   }, [initialSlateValue, workspaceId]);
 
   const [searchBarPosition, setSearchBarPosition] = useState(false);
@@ -1134,10 +1134,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     const currentPathString = JSON.stringify(path);
     setActivePath(currentPathString);
     const spaceBelowTarget = window.innerHeight - targetRect.top;
-    const currentNode = Editor.node(editor, path)[0] as any;
+    const [currentNode] = Editor.node(editor, path) as any;
 
-    setCurrentLatex(currentNode.latex);
-    setSelectedElementID(currentNode.id);
+    console.log(currentNode.latex);
+    // setCurrentLatex(currentNode.latex);
     console.log(currentNode.id);
 
     console.log("open path", path);
@@ -1147,6 +1147,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       open: true,
       element: type,
       path: JSON.stringify(path),
+      latex: currentNode.latex,
     });
     // let topOffset;
     // let showDropdownAbove = false;
@@ -1182,12 +1183,14 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       setShowEditBlockPopup({
         open: true,
         element: "equation",
+        path: JSON.stringify(newPath),
+        latex: "",
       });
       setActivePath(JSON.stringify(newPath));
 
       // const { id } = insertedEquationNode[0] as CustomElement;
       // console.log(id);
-      setSelectedElementID(id);
+      // setSelectedElementID(id);
 
       setCurrentLatex("");
     },
@@ -1195,9 +1198,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   );
 
   useLayoutEffect(() => {
-    if (showEditBlockPopup.open && activePath) {
+    if (showEditBlockPopup.open && showEditBlockPopup.path) {
       const currentElement = document.querySelector(
-        `[data-id="${selectedElementID}"]`
+        `[data-path="${showEditBlockPopup.path}"]`
       );
       console.log(currentElement);
       if (currentElement) {
@@ -1214,7 +1217,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           showDropdownAbove = true;
         }
         setSearchBarPosition(spaceBelowTarget < dropdownHeight);
-
+        ReactEditor.blur(editor);
+        setLastActiveSelection(null);
         setDropdownEditBlockTop(
           showDropdownAbove ? targetRect.top + topOffset : targetRect.bottom - 5
         );
@@ -1222,6 +1226,15 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
         // Adjust for the popup width (which is 350px)
         let popupLeft = targetCenter - 350 / 2;
+
+        const [currentNode] = Editor.node(
+          editor,
+          JSON.parse(showEditBlockPopup.path)
+        ) as any;
+
+        if (currentNode.type === "image") {
+          popupLeft = targetCenter - 500 / 2;
+        }
 
         setDropdownEditBlockLeft(popupLeft);
 
@@ -1489,10 +1502,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
             const cursorX = event.delta.x;
 
-            const isCloseToLeft =
-              cursorX < overRect.left + overRect.width * 0.3;
-            const isCloseToRight =
-              cursorX > overRect.left + overRect.width * 0.7;
+            const isCloseToLeft = cursorX < overRect.width * -0.05;
+            const isCloseToRight = cursorX > overRect.width * 0.8;
 
             console.log(cursorX, overRect.left, overRect.width * 0.7);
 
@@ -1502,12 +1513,17 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             console.log("overRect width", overRect.width * 0.7);
 
             if (isCloseToRight) {
+              console.log("Setting creatingNewColumn to true, direction right");
               setCreatingNewColumn(true);
               setInsertDirection("right");
             } else if (isCloseToLeft) {
+              console.log("Setting creatingNewColumn to true, direction left");
               setCreatingNewColumn(true);
               setInsertDirection("left");
             } else {
+              console.log(
+                "Setting creatingNewColumn and insertDirection to null"
+              );
               setCreatingNewColumn(false);
               setInsertDirection(null);
             }
@@ -1546,6 +1562,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         setShowEditBlockPopup({
           open: false,
           element: null,
+          path: "",
+          latex: "",
         });
       }
     },
@@ -1557,6 +1575,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       setShowEditBlockPopup({
         open: false,
         element: null,
+        path: "",
+        latex: "",
       });
       setactiveEditEquationPath(null);
     }
@@ -1581,6 +1601,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       const pathString = equationElement.getAttribute("data-path");
       if (pathString) {
         const path = JSON.parse(pathString);
+
         // setActivePath(pathString);
         openEditBlockPopup(equationElement, event, path, "equation");
         return;
@@ -1694,7 +1715,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const [openLink, setOpenLink] = useState(false);
 
   useEffect(() => {
-    console.log(editor.selection);
     if (editor.selection) setLastActiveSelection(editor.selection);
   }, [editor.selection]);
 
@@ -2089,6 +2109,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                             />
                           </Droppable>
                         </Slate>
+
                         <AnimatePresence>
                           {showMiniToolbar && (
                             <StyledMiniToolbar
@@ -2190,7 +2211,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                               "equation"
                             )
                           }
-                          latexValue={getCurrentLatex}
+                          latexValue={showEditBlockPopup.latex}
                           onClick={closeEditableDropdown}
                           insertText={(note) => {
                             Transforms.insertNodes(
@@ -2216,7 +2237,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                             handleEditLatex(
                               latex,
                               altText,
-                              JSON.parse(activePath),
+                              JSON.parse(showEditBlockPopup.path),
                               "inline-equation"
                             )
                           }

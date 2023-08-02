@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState, useRef } from "react";
 import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor, useFocused, useSelected } from "slate-react";
-import { Editor, Path, Node, Transforms, Range } from "slate";
+import { Editor, Path, Node, Transforms, Range, Text } from "slate";
 import styled from "styled-components";
 import { hasSlideElement } from "@/utils/helpers";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
@@ -62,7 +62,10 @@ export function ParagraphElement(props) {
     (isVisible && (!focused || (focused && editor.children.length === 1))) ||
     (focused &&
       selected &&
-      element.children[0].text === "" &&
+      element.children.every((child) => {
+        // Checks if the child is a text node and if it's empty
+        return Text.isText(child) && child.text === "";
+      }) &&
       editor.selection &&
       Range.isCollapsed(editor.selection));
 

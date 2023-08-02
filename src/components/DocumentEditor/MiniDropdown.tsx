@@ -333,6 +333,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
       setShowEditBlockPopup({
         open: true,
         element: "image",
+        path: JSON.stringify(addedPath),
       });
       setActivePath(JSON.stringify(addedPath));
     }

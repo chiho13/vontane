@@ -242,14 +242,14 @@ export const insertInlineBlock = (editor, type) => {
   const isCollapsed = selection && Range.isCollapsed(selection);
 
   let selectedText = "";
-
+  const id = genNodeId();
   // Only get the selected text if there's a selection
   if (selection) {
     selectedText = Editor.string(editor, selection); // Get the selected text
   }
 
   const inlineEq = {
-    id: genNodeId(),
+    id,
     type,
     latex: selectedText,
     children: [{ text: "" }],
@@ -263,4 +263,6 @@ export const insertInlineBlock = (editor, type) => {
     Transforms.delete(editor); // Delete selected nodes
     Transforms.insertNodes(editor, inlineEq); // Insert new node
   }
+
+  return { id, latex: selectedText };
 };

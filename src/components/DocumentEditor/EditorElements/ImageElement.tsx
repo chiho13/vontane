@@ -134,6 +134,7 @@ export const ImageElement = React.memo(
                 setShowEditBlockPopup({
                   open: true,
                   element: "image",
+                  path: JSON.stringify(path),
                 });
                 setActivePath(JSON.stringify(path));
                 setSelectedElementID(element.id);
@@ -454,6 +455,7 @@ export const ImageEmbedLink = () => {
     setShowEditBlockPopup({
       open: false,
       element: null,
+      path: "",
     });
     setIsUploading(true);
 
@@ -531,6 +533,7 @@ export const ImageEmbedLink = () => {
     setShowEditBlockPopup({
       open: false,
       element: null,
+      path: "",
     });
     setIsUploading(true);
     try {

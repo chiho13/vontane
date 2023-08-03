@@ -58,22 +58,48 @@ const DropdownMenuSubContent = React.forwardRef<
 DropdownMenuSubContent.displayName =
   DropdownMenuPrimitive.SubContent.displayName;
 
+const animations = {
+  top: {
+    animate: { opacity: [0, 1, 1], y: [0, -10, -10] },
+    transition: { duration: 0.4 },
+  },
+  bottom: {
+    animate: { opacity: [0, 1, 1], y: [0, 10, 10] },
+    transition: { duration: 0.4 },
+  },
+  left: {
+    animate: { opacity: [0, 1, 1], x: [0, 10, 10] },
+    transition: { duration: 0.4 },
+  },
+  right: {
+    animate: { opacity: [0, 1, 1], x: [0, 10, 10] },
+    transition: { duration: 0.4 },
+  },
+};
+
 const DropdownMenuContent = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content>
->(({ className, sideOffset = 4, ...props }, ref) => (
-  <DropdownMenuPrimitive.Portal>
-    <DropdownMenuPrimitive.Content
-      ref={ref}
-      sideOffset={sideOffset}
-      className={cn(
-        "animate-in data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 left-0 z-50 min-w-[8rem] overflow-hidden rounded-md border bg-white p-1 text-gray-500 shadow-md",
-        className
-      )}
-      {...props}
-    />
-  </DropdownMenuPrimitive.Portal>
-));
+>(({ className, sideOffset = 4, ...props }, ref) => {
+  const animationProps = animations[props.side] || animations["bottom"];
+  return (
+    <DropdownMenuPrimitive.Portal>
+      <AnimatePresence>
+        <motion.div {...animationProps}>
+          <DropdownMenuPrimitive.Content
+            ref={ref}
+            sideOffset={sideOffset}
+            className={cn(
+              "animate-in data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 left-0 z-50 min-w-[8rem] overflow-hidden rounded-md border bg-white p-1 text-gray-500 shadow-md",
+              className
+            )}
+            {...props}
+          />
+        </motion.div>
+      </AnimatePresence>
+    </DropdownMenuPrimitive.Portal>
+  );
+});
 DropdownMenuContent.displayName = DropdownMenuPrimitive.Content.displayName;
 
 const DropdownMenuItem = React.forwardRef<

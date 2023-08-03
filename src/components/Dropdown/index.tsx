@@ -68,35 +68,11 @@ export interface DropdownRef {
 
 export const y_animation_props = {
   animate: {
-    opacity: 1,
-    y: 0,
-  },
-  initial: {
-    opacity: 0,
-    y: "-10px",
+    opacity: [0, 1, 1],
+    y: [0, 10, 10],
   },
   transition: {
-    duration: 0.2,
-  },
-  enter: {
-    opacity: 1,
-    display: "block",
-    transition: {
-      duration: 0.6,
-    },
-    transitionEnd: {
-      display: "none",
-    },
-  },
-  exit: {
-    opacity: 0,
-    y: "-10px",
-    transition: {
-      duration: 0.2,
-    },
-    transitionEnd: {
-      display: "none",
-    },
+    duration: 0.4,
   },
 };
 

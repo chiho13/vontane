@@ -539,8 +539,8 @@ const Layout: React.FC<LayoutProps> = ({
                   <DropdownMenuContent
                     sideOffset={5}
                     side="right"
-                    className={`z-1000 relative  ${
-                      isLocked && isOpen ? "bottom-[25px]" : "bottom-[57px]"
+                    className={`z-1000 relative  -left-[10px] ${
+                      isLocked && isOpen ? "bottom-[25px]" : "bottom-[65px]"
                     }  h-[200px] w-[300px] overflow-y-auto rounded-l-none border-l-0 bg-background p-4 shadow-md dark:border-accent dark:bg-muted`}
                   >
                     {trashWorkspace.length === 0 && "Empty"}

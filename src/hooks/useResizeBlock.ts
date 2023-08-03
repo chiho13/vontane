@@ -55,7 +55,7 @@ export const useResizeBlock = (
               ? (ref.current?.getBoundingClientRect().right || 0) - e.clientX
               : e.clientX - (ref.current?.getBoundingClientRect().left || 0);
 
-          setWidth(Math.max(newWidth, 250));
+          setWidth(Math.max(newWidth, 120));
         }
       }
     },

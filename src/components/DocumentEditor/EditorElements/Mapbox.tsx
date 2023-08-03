@@ -81,7 +81,7 @@ export function Mapbox(props) {
 
   return (
     <div
-      className={` flex justify-${align} outline-none`}
+      className={` group flex justify-${align} outline-none`}
       {...attributes}
       tabIndex={-1}
     >
@@ -141,7 +141,7 @@ export function Mapbox(props) {
             <div className="mx-auto block h-[6px] w-[60px]  cursor-row-resize rounded-lg border border-white bg-[#191919] opacity-70 dark:bg-background"></div>
           </div>
         </div>
-        <div className="absolute  right-2 top-1 z-10 flex items-center gap-1 ">
+        <div className="absolute  right-2 top-1 z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100 ">
           <BlockAlign element={element} />
           <Button
             size="xs"

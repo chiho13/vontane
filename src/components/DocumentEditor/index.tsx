@@ -2048,76 +2048,73 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                             }
                           }}
                         >
-                          <Droppable>
-                            <Editable
-                              className=" relative"
-                              style={{
-                                height: "calc(100vh - 205px)",
-                              }}
-                              decorate={decorate}
-                              renderElement={renderElement as any}
-                              renderLeaf={Leaf as any}
-                              onMouseUp={(event) => {
-                                handleEditorMouseUp(event, editor);
-                                handleSelectedText(event, editor);
-                              }}
-                              spellCheck={false}
-                              onKeyDown={handleKeyDown}
-                              onKeyUp={(event) => {
-                                handleSelectedText(event, editor);
-                                debouncedSetIsTyping("");
+                          {/* <Droppable> */}
+                          <Editable
+                            className=" relative"
+                            style={{
+                              height: "calc(100vh - 205px)",
+                            }}
+                            decorate={decorate}
+                            renderElement={renderElement as any}
+                            renderLeaf={Leaf as any}
+                            onMouseUp={(event) => {
+                              handleEditorMouseUp(event, editor);
+                              handleSelectedText(event, editor);
+                            }}
+                            spellCheck={false}
+                            onKeyDown={handleKeyDown}
+                            onKeyUp={(event) => {
+                              handleSelectedText(event, editor);
+                              debouncedSetIsTyping("");
 
+                              const { selection } = editor;
+                              if (!selection) return;
+                              const _currentNodePath =
+                                selection.anchor.path.slice(0, -1);
+                              setusingCommandLine(false);
+                              const currentNode = Node.get(
+                                editor,
+                                _currentNodePath
+                              );
+
+                              if (event.key === "Backspace") {
                                 const { selection } = editor;
-                                if (!selection) return;
-                                const _currentNodePath =
-                                  selection.anchor.path.slice(0, -1);
-                                setusingCommandLine(false);
-                                const currentNode = Node.get(
-                                  editor,
-                                  _currentNodePath
-                                );
 
-                                if (event.key === "Backspace") {
-                                  const { selection } = editor;
+                                if (selection && Range.isCollapsed(selection)) {
+                                  const _currentNodePath =
+                                    selection.anchor.path.slice(0, -1);
+                                  const _stringcurrentNode = Editor.node(
+                                    editor,
+                                    _currentNodePath
+                                  );
+                                  const currentText = Node.string(
+                                    _stringcurrentNode[0]
+                                  );
+                                  // Check if currentNode is an equation
 
-                                  if (
-                                    selection &&
-                                    Range.isCollapsed(selection)
-                                  ) {
-                                    const _currentNodePath =
-                                      selection.anchor.path.slice(0, -1);
-                                    const _stringcurrentNode = Editor.node(
-                                      editor,
-                                      _currentNodePath
-                                    );
-                                    const currentText = Node.string(
-                                      _stringcurrentNode[0]
-                                    );
-                                    // Check if currentNode is an equation
-
-                                    if (currentText.endsWith("/")) {
-                                      // setShowDropdown(false);
-                                      setSearchMinidropdownText("");
+                                  if (currentText.endsWith("/")) {
+                                    // setShowDropdown(false);
+                                    setSearchMinidropdownText("");
+                                  } else {
+                                    const slashIndex =
+                                      currentText.lastIndexOf("/");
+                                    if (slashIndex !== -1) {
+                                      // Extract the text after the last "/" in the currentText
+                                      const searchText = currentText.slice(
+                                        slashIndex + 1
+                                      );
+                                      setSearchMinidropdownText(searchText);
                                     } else {
-                                      const slashIndex =
-                                        currentText.lastIndexOf("/");
-                                      if (slashIndex !== -1) {
-                                        // Extract the text after the last "/" in the currentText
-                                        const searchText = currentText.slice(
-                                          slashIndex + 1
-                                        );
-                                        setSearchMinidropdownText(searchText);
-                                      } else {
-                                        setSearchMinidropdownText("");
-                                        setusingCommandLine(false);
-                                        setShowDropdown(false); // Close the mini-dropdown if there's no "/"
-                                      }
+                                      setSearchMinidropdownText("");
+                                      setusingCommandLine(false);
+                                      setShowDropdown(false); // Close the mini-dropdown if there's no "/"
                                     }
                                   }
                                 }
-                              }}
-                            />
-                          </Droppable>
+                              }
+                            }}
+                          />
+                          {/* </Droppable> */}
                         </Slate>
 
                         <AnimatePresence>

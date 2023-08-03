@@ -167,7 +167,7 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
         >
           <DropdownMenu>
             <DropdownMenuTrigger>
-              <Button className="flex h-[22px] w-[22px] items-center justify-center rounded-md bg-white p-0 hover:bg-gray-200 dark:bg-muted dark:hover:bg-accent">
+              <Button className="flex h-[22px] w-[22px] items-center justify-center rounded-md bg-white p-0 outline-none hover:bg-gray-200 dark:bg-muted dark:hover:bg-accent">
                 <MoreHorizontal className="option-menu w-[18px] w-[18px] text-darkergray dark:text-foreground" />
               </Button>
             </DropdownMenuTrigger>

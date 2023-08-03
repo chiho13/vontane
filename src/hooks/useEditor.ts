@@ -14,10 +14,10 @@ import {
 import { withID } from "@/hoc/withID";
 import { withHistory, HistoryEditor } from "slate-history";
 import { withColumns } from "@/hoc/withColumns";
-import { withTitle, withCustomDelete } from "@/hoc/withTitle";
+import { withNormalise, withCustomDelete } from "@/hoc/withNormalise";
 import { genNodeId } from "@/hoc/withID";
 import isUrl from "is-url";
-import { withNormalizePasting } from "@/hoc/withPasting";
+import { withPasting } from "@/hoc/withPasting";
 import { withImages } from "@/hoc/withImages";
 interface CustomEditor extends ReactEditor {
   undo: () => void;
@@ -31,8 +31,10 @@ export function useEditor() {
   const editor = useMemo(
     () =>
       withImages(
-        withNormalizePasting(
-          withCustomDelete(withTitle(withHistory(withReact(createEditor()))))
+        withPasting(
+          withCustomDelete(
+            withNormalise(withHistory(withReact(createEditor())))
+          )
         )
       ) as CustomEditor,
     []

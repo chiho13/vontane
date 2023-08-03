@@ -159,20 +159,19 @@ export const GPTRouter = createTRPCRouter({
         const expiresIn = 60 * 60 * 24 * 7;
         const fullFilePath = `${ctx.user.id}/${workspaceId}/${fileName}`;
         console.log(fullFilePath);
-        const { data: signedURL, error: signedURLError } =
-          await ctx.supabaseServerClient.storage
-            .from("dalle")
-            .createSignedUrl(fullFilePath, expiresIn);
+        const { data: publicURL } = ctx.supabaseServerClient.storage
+          .from("dalle")
+          .getPublicUrl(fullFilePath);
 
-        if (signedURLError) {
-          console.error(`Error creating signed URL: ${signedURLError.message}`);
-          throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Failed to create signed URL",
-          });
-        }
+        // if (signedURLError) {
+        //   console.error(`Error creating signed URL: ${signedURLError.message}`);
+        //   throw new TRPCError({
+        //     code: "INTERNAL_SERVER_ERROR",
+        //     message: "Failed to create signed URL",
+        //   });
+        // }
 
-        return { signedURL: signedURL.signedUrl, fileName };
+        return { signedURL: publicURL, fileName };
       } catch (error) {
         console.error(error);
         throw new TRPCError({

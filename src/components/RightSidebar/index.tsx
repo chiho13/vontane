@@ -407,6 +407,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     copyTranslatedHTML(htmlString);
   };
 
+  console.log(audioData.content);
   const renderText = () => {
     if (!editor.selection) return null;
     const text = getHtmlFromSelection(editor);

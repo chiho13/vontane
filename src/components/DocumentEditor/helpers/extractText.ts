@@ -36,6 +36,10 @@ export function extractTextValues(data) {
       item.children.forEach((child) => {
         if (child.type === "link") {
           paragraphText += child.children[0].text;
+        } else {
+          // Check for two or more underscores and replace with 'BLANK'
+          const text = child.text;
+          paragraphText += text;
         }
       });
 

@@ -95,6 +95,7 @@ const ElevenTTSWrapperBase = (props: {
   useEffect(() => {
     const extractedText = extractTextValues(element.children).join(" ");
 
+    console.log(extractedText);
     const extractedTextNoJoin = extractTextValues(element.children);
     const paragraphs = extractedTextNoJoin.map((text) => <p>{text}</p>);
 

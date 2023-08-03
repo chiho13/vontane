@@ -91,6 +91,7 @@ export const TextSpeech = ({
 
   const { credits, setCredits }: any = useContext(UserContext);
 
+  console.log(textSpeech);
   const createTTSAudio = async () => {
     setAudioIsLoading(true);
     // if (element.audio_url) {
@@ -312,7 +313,7 @@ export const TextSpeech = ({
           </div>
         )}
 
-      {selected &&
+      {/* {selected &&
         element.content &&
         audioData.content !== element.content &&
         textSpeech.length <= 5000 && (
@@ -323,7 +324,7 @@ export const TextSpeech = ({
           >
             Content Changed.
           </button>
-        )}
+        )} */}
       {/* {audioURL && <AudioPLayer audioURL={audioURL} fileName={fileName} />} */}
     </div>
   );

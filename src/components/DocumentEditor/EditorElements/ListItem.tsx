@@ -230,8 +230,6 @@ export const ListItem = withListNumbering((props) => {
     ]
   );
 
-  console.log(selectedOption[groupNumber] === element.id);
-
   return (
     <ListItemStyle
       className={`text-gray-800 dark:text-gray-300 ${

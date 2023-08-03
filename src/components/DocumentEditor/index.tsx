@@ -611,7 +611,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           ) {
             const newPath = Path.next(parentPath);
             const currentAlign = parentNode?.align || "start";
-            if (Node.string(parentNode) === "") {
+            if (
+              currentNode.children.every((child) => {
+                return Text.isText(child) && child.text === "";
+              })
+            ) {
               event.preventDefault();
               Transforms.setNodes(
                 editor,
@@ -823,7 +827,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             };
 
             const backToParagraph =
-              currentNode.children[0].text === "" ||
+              currentNode.children.every((child) => {
+                return Text.isText(child) && child.text === "";
+              }) &&
               Editor.isStart(editor, editor.selection.anchor, _currentNodePath);
 
             if (backToParagraph) {
@@ -855,8 +861,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               if (
                 SlateElement.isElement(_prevNode) &&
                 ((_prevNode.type === "mcq" && isStart) ||
-                  (_prevNode.type === "slide" && isStart) ||
-                  (_prevNode.type === "equation" && isStart))
+                  (_prevNode.type === "slide" && isStart))
               ) {
                 event.preventDefault();
                 const nextParagraph = Editor.previous(editor, {

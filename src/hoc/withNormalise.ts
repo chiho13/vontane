@@ -10,8 +10,8 @@ import {
   Text,
 } from "slate";
 
-export const withTitle = (editor) => {
-  const { normalizeNode } = editor;
+export const withNormalise = (editor) => {
+  const { normalizeNode, insertText } = editor;
   const originalDeleteBackward = editor.deleteBackward;
 
   editor.normalizeNode = (entry) => {
@@ -82,6 +82,35 @@ export const withTitle = (editor) => {
 
     // Fall back to the original `normalizeNode`
     normalizeNode(entry);
+  };
+
+  // Override the default insertText behavior
+  editor.insertText = (text) => {
+    const { selection } = editor;
+
+    if (
+      selection &&
+      Range.isCollapsed(selection) &&
+      Editor.above(editor, {
+        match: (n) => Element.isElement(n) && n.type === "inline-equation",
+        at: selection,
+        mode: "highest",
+      }) &&
+      Editor.isEnd(editor, selection.anchor, selection.anchor.path)
+    ) {
+      // Move the selection to just after the inline-equation
+      const point = Editor.after(editor, selection.anchor);
+
+      if (point) {
+        Transforms.setSelection(editor, { anchor: point, focus: point });
+      }
+
+      // Insert the new text
+      return insertText(editor, text);
+    }
+
+    // Fall back to the original insertText
+    return insertText(text);
   };
 
   return editor;

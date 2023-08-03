@@ -28,7 +28,6 @@ export const InlineEquation = (props: {
   const { editor, showEditBlockPopup, selectedElementID, activePath } =
     useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);
-  const renderedEquation = katex.renderToString(element.latex);
   return (
     <span
       {...attributes}

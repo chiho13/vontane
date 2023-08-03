@@ -227,7 +227,7 @@ export const deserialize = (el) => {
   return children;
 };
 
-export const withNormalizePasting = (editor) => {
+export const withPasting = (editor) => {
   const { insertData, isInline, isVoid, copy, getFragment } = editor;
 
   editor.isInline = (element) => {

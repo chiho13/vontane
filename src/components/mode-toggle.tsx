@@ -31,7 +31,6 @@ export function ModeToggle() {
       <DropdownMenuContent
         align="end"
         side="top"
-        sideOffset={0}
         className="z-100 border-2  border-gray-400 bg-background dark:border-muted-foreground"
       >
         <DropdownMenuItem onClick={() => setTheme("light")}>

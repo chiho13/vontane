@@ -234,7 +234,9 @@ export const ListItem = withListNumbering((props) => {
 
   return (
     <ListItemStyle
-      className={` ${isOptionList && isPreview ? " rounded-md p-2" : ""}
+      className={`text-gray-800 dark:text-gray-300 ${
+        isOptionList && isPreview ? " rounded-md p-2" : ""
+      }
       `}
     >
       <li
@@ -266,7 +268,12 @@ export const ListItem = withListNumbering((props) => {
         {isOptionList && isPreview && (
           <span
             contentEditable={false}
-            className="absolute mr-3  mr-[5px] flex h-[28px] w-[28px] -translate-x-[41px] items-center justify-center rounded-md  border border-gray-400 dark:border-gray-700 "
+            className={`absolute mr-3  mr-[5px] flex h-[28px] w-[28px] -translate-x-[41px] items-center justify-center rounded-md  border border-gray-400 dark:border-gray-700
+            ${
+              selectedOption[groupNumber] === element.id &&
+              "border-brand dark:border-gray-300"
+            }
+            `}
           >
             {String.fromCharCode(64 + listNumber)}
           </span>
@@ -276,10 +283,10 @@ export const ListItem = withListNumbering((props) => {
           <label
             htmlFor={element.id}
             tabIndex={-1}
-            className={cn(`absolute left-0 top-0 flex h-[40px] w-full cursor-pointer items-center justify-end rounded-md border border-gray-400  hover:border-gray-500 dark:border-gray-700 
+            className={cn(`absolute left-0 top-0 flex h-full w-full cursor-pointer items-center justify-end rounded-md border border-gray-400  hover:border-gray-500 dark:border-gray-700 
             ${
               selectedOption[groupNumber] === element.id &&
-              "border-brand dark:border-muted-foreground"
+              "border-brand dark:border-gray-300"
             }`)}
           >
             <input
@@ -295,12 +302,12 @@ export const ListItem = withListNumbering((props) => {
               className={cn(
                 `absolute right-2 flex h-[24px] w-[24px] items-center justify-center rounded-full border border-gray-400  dark:border-gray-700   ${
                   selectedOption[groupNumber] === element.id &&
-                  "border-brand dark:border-muted-foreground"
+                  "border-brand dark:border-gray-300"
                 }`
               )}
             >
               {selectedOption[groupNumber] === element.id && (
-                <div className="h-[16px] w-[16px] rounded-full bg-brand dark:bg-muted-foreground"></div>
+                <div className="h-[16px] w-[16px] rounded-full bg-brand dark:bg-gray-300"></div>
               )}
             </div>
           </label>

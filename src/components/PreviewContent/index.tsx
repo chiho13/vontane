@@ -77,7 +77,7 @@ const renderElement = (
 
     case "inline-equation":
       return (
-        <span className="px-1" key={key}>
+        <span className="pointer-events-none px-1" key={key}>
           <InlineMath math={node.latex} />
         </span>
       );

@@ -20,11 +20,11 @@ export function EquationElement(props) {
       tabIndex={0}
       data-path={JSON.stringify(path)}
       data-id={element.id}
-      className={`equation-element relative mr-4  flex items-center   justify-center rounded-md p-2 py-1 transition  hover:bg-gray-100 dark:hover:bg-background 
+      className={`equation-element relative mr-4  flex items-center   justify-center rounded-md p-2 py-1 text-gray-800 transition  hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-[#2c2f33]
       ${
         showEditBlockPopup.path === JSON.stringify(path) ||
         element.latex?.trim() === ""
-          ? " bg-[#E0EDFB] dark:bg-background"
+          ? " bg-[#E0EDFB] dark:bg-gray-800"
           : "bg-transparent"
       }
       cursor-pointer`}

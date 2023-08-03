@@ -34,11 +34,11 @@ export const InlineEquation = (props: {
       {...attributes}
       data-id={element.id}
       data-path={JSON.stringify(path)}
-      className={`inline-equation-element inline-block cursor-pointer px-1 py-px  dark:text-blue-400 
+      className={`inline-equation-element inline-block cursor-pointer rounded-md px-1 py-1 text-gray-800 hover:bg-gray-100  dark:text-gray-300 dark:hover:bg-[#2c2f33] 
       ${
         showEditBlockPopup.path === JSON.stringify(path) &&
         element.latex?.trim() !== ""
-          ? " bg-[#E0EDFB] dark:bg-background"
+          ? " bg-[#E0EDFB] dark:bg-gray-800"
           : "bg-transparent"
       }
       `}

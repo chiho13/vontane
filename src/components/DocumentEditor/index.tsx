@@ -2052,7 +2052,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                             <Editable
                               className=" relative"
                               style={{
-                                height: "calc(100vh - 185px)",
+                                height: "calc(100vh - 205px)",
                               }}
                               decorate={decorate}
                               renderElement={renderElement as any}

@@ -8,7 +8,7 @@ import {
 } from "react";
 import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor, useFocused, useSelected } from "slate-react";
-import { Editor, Path, Node, Transforms } from "slate";
+import { Editor, Path, Node, Transforms, Text } from "slate";
 import styled from "styled-components";
 import { hasSlideElement } from "@/utils/helpers";
 import { RxDotFilled } from "react-icons/rx";
@@ -132,12 +132,15 @@ export const ListItem = withListNumbering((props) => {
   const [isCheckedCorrect, setCheckedCorrect] = useState(
     element.correctAnswer || false
   );
+
+  const isEmpty = element.children.every((child) => {
+    // Checks if the child is a text node and if it's empty
+    return Text.isText(child) && child.text === "";
+  });
   useEffect(() => {
     if (editor && path) {
       const isFirstElement = Path.equals(path, [0]);
       const hasSingleElement = editor.children.length === 1;
-      const isEmpty =
-        element.children.length === 1 && element.children[0].text === "";
 
       setIsVisible(isFirstElement && hasSingleElement && isEmpty);
     }
@@ -155,7 +158,8 @@ export const ListItem = withListNumbering((props) => {
   const isOptionList = listType === "options";
 
   let placeholderText = "";
-  if (element.children[0].text === "") {
+
+  if (isEmpty) {
     placeholderText = selected
       ? "Press '/' for commands"
       : isCheckedList

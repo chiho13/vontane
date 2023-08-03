@@ -1210,10 +1210,14 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         let topOffset;
         let showDropdownAbove = false;
         console.log(spaceBelowTarget);
-        const dropdownHeight =
+        let dropdownHeight =
           showEditBlockPopup.element === "equation" ? 280 : 360;
+
+        if (showEditBlockPopup.element === "inline-equation") {
+          dropdownHeight = 190;
+        }
         if (spaceBelowTarget < dropdownHeight) {
-          topOffset = -(dropdownHeight - targetRect.height) + 10;
+          topOffset = -(dropdownHeight - targetRect.height) + 30;
           showDropdownAbove = true;
         }
         setSearchBarPosition(spaceBelowTarget < dropdownHeight);

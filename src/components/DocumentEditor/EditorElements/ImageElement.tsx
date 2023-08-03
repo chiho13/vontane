@@ -102,22 +102,23 @@ export const ImageElement = React.memo(
 
     const [tempURL, setTempURL] = useState(element.tempURL);
 
-    api.gpt.getAIImage.useQuery(
-      { fileName: element.file_name, workspaceId },
-      {
-        enabled: !!element.file_name && !hasFetched && !tempBase64,
-        onSuccess: async (data) => {
-          const currentElement = Node.get(editor, path);
-          const blob = await urlToBlob(data.signedURL);
-          const base64Image = await blobToBase64(blob);
-          setBase64URL(base64Image);
-          console.log("get ai image");
-          setHasFetched(true); // set hasFetched to true after the first successful fetch
-        },
-        cacheTime: 5 * 60 * 1000,
-        staleTime: 5 * 60 * 1000,
-      }
-    );
+    // api.gpt.getAIImage.useQuery(
+    //   { fileName: element.file_name, workspaceId },
+    //   {
+    //     enabled: true,
+    //     onSuccess: async (data) => {
+    //       const currentElement = Node.get(editor, path);
+    //       const blob = await urlToBlob(data.signedURL);
+    //       const base64Image = await blobToBase64(blob);
+    //       setBase64URL(base64Image);
+    //       console.log("get ai image");
+
+    //       setHasFetched(true); // set hasFetched to true after the first successful fetch
+    //     },
+    //     cacheTime: 5 * 60 * 1000,
+    //     staleTime: 5 * 60 * 1000,
+    //   }
+    // );
     return (
       <div data-id={element.id} data-path={JSON.stringify(path)}>
         {!element.file_name ? (

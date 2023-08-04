@@ -5,6 +5,7 @@ import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor, useSelected } from "slate-react";
 import { Editor } from "slate";
 import { OptionMenu } from "../OptionMenu";
+import { cn } from "@/utils/cn";
 
 export function EquationElement(props) {
   const { attributes, children, element } = props;
@@ -20,14 +21,16 @@ export function EquationElement(props) {
       tabIndex={0}
       data-path={JSON.stringify(path)}
       data-id={element.id}
-      className={`equation-element relative mr-4  flex items-center   justify-center rounded-md p-2 py-1 text-gray-800 transition  hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-[#2c2f33]
+      className={cn(`equation-element relative mr-4 flex items-center justify-center   rounded-md p-2 py-1 text-gray-800 transition  hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-[#2c2f33]
       ${
         showEditBlockPopup.path === JSON.stringify(path) ||
         element.latex?.trim() === ""
           ? " bg-[#E0EDFB] dark:bg-gray-800"
-          : "bg-transparent"
+          : " bg-transparent"
       }
-      cursor-pointer`}
+
+      ${element.latex?.trim() === "" && "justify-start py-2"}
+      cursor-pointer`)}
       contentEditable={false}
     >
       <BlockMath math={element.latex || ""} />

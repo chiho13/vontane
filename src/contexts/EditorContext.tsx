@@ -8,7 +8,7 @@ import React, {
   ReactNode,
 } from "react";
 import { MouseEvent } from "react";
-import { BaseEditor, Path, ReactEditor } from "slate";
+import { BaseEditor, Path } from "slate";
 import { Editor } from "slate";
 import { useEditor } from "@/hooks/useEditor";
 

@@ -1215,11 +1215,19 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         let topOffset;
         let showDropdownAbove = false;
         console.log(spaceBelowTarget);
-        let dropdownHeight =
-          showEditBlockPopup.element === "equation" ? 280 : 360;
+        let dropdownHeight = 200;
+        //   showEditBlockPopup.element === "equation" ? 280 : 360;
 
         if (showEditBlockPopup.element === "inline-equation") {
           dropdownHeight = 190;
+        }
+
+        if (showEditBlockPopup.element === "equation") {
+          dropdownHeight = 235;
+        }
+
+        if (showEditBlockPopup.element === "image") {
+          dropdownHeight = 380;
         }
         if (spaceBelowTarget < dropdownHeight) {
           topOffset = -(dropdownHeight - targetRect.height) + 30;
@@ -1229,7 +1237,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         ReactEditor.blur(editor);
         setLastActiveSelection(null);
         setDropdownEditBlockTop(
-          showDropdownAbove ? targetRect.top + topOffset : targetRect.bottom - 5
+          showDropdownAbove
+            ? targetRect.top + topOffset
+            : targetRect.bottom - 15
         );
         let targetCenter = targetRect.left + targetRect.width / 2;
 

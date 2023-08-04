@@ -125,7 +125,7 @@ export const ImageElement = React.memo(
           <>
             <div
               tabIndex={-1}
-              className={`hover:bg-gray-muted relative mr-2  flex cursor-pointer items-center rounded-md bg-gray-100 p-2 transition dark:bg-secondary dark:hover:bg-background/70 
+              className={`hover:bg-gray-muted relative  flex  cursor-pointer items-center rounded-md bg-gray-100 p-2 transition dark:bg-secondary dark:hover:bg-background/70 
       hover:dark:bg-accent
       `}
               contentEditable={false}

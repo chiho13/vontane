@@ -340,9 +340,9 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
     // The pasteHtml function now returns a range.
     const newRange = pasteHtml(translatedTextHTML, editor);
-
+    const currentSelection = editor.selection;
     // Set the new range as the active selection.
-    Transforms.setSelection(editor, newRange);
+    Transforms.setSelection(editor, currentSelection);
   };
 
   const insertTranslatedTextBelow = () => {

@@ -21,7 +21,7 @@ export function ModeToggle() {
         <Button
           variant="secondary"
           size="sm"
-          className="h-8 w-8 border-gray-500 px-0 text-gray-500 dark:border-muted-foreground dark:text-foreground"
+          className="h-8 w-8 border border-gray-400 px-0 text-gray-500 dark:border-gray-700 dark:text-foreground"
         >
           <Icons.sun className="rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
           <Icons.moon className="absolute rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
@@ -31,7 +31,7 @@ export function ModeToggle() {
       <DropdownMenuContent
         align="end"
         side="top"
-        className="z-100 border-2  border-gray-400 bg-background dark:border-muted-foreground"
+        className="z-100 border border-gray-400  bg-background  dark:border-gray-700 "
       >
         <DropdownMenuItem onClick={() => setTheme("light")}>
           <Icons.sun className="mr-2 h-4 w-4 text-foreground" />

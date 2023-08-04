@@ -126,7 +126,7 @@ interface DocumentEditorProps {
   setFetchWorkspaceIsLoading: (value: any) => void;
 }
 
-type CustomElement = {
+export type CustomElement = {
   id?: string;
   type: string;
   children: any[];

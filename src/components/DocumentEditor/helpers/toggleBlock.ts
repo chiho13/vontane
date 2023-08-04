@@ -11,6 +11,7 @@ import {
 } from "slate";
 import { ReactEditor } from "slate-react";
 import { genNodeId } from "@/hoc/withID";
+import { CustomElement } from "@/components/DocumentEditor";
 
 const LIST_TYPES = [
   "numbered-list",
@@ -49,6 +50,10 @@ export const isBlockActive = (
   return !!match;
 };
 
+interface CustomNode extends CustomElement {
+  align?: string; // This property is optional
+}
+
 export const toggleBlock = (editor: any, format: string) => {
   const isActive = isBlockActive(editor, format, "type");
   const isList = LIST_TYPES.includes(format);
@@ -66,8 +71,19 @@ export const toggleBlock = (editor: any, format: string) => {
     };
   }
 
-  if (!newProperties.hasOwnProperty("align")) {
-    newProperties.align = "start";
+  if (editor.selection) {
+    const [match]: any = Editor.nodes(editor, {
+      at: editor.selection,
+      match: (n) => SlateElement.isElement(n) && n.type === format,
+    });
+
+    // If the selected node doesn't have an 'align' property
+    if (match && !match[0].hasOwnProperty("align")) {
+      newProperties.align = "start";
+    } else if (match && match[0].hasOwnProperty("align")) {
+      // Maintain the current alignment if it exists
+      newProperties.align = match[0].align;
+    }
   }
 
   Transforms.setNodes<SlateElement>(editor, newProperties);

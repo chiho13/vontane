@@ -62,9 +62,14 @@ export const MapSettings = ({ element, path }) => {
 
       console.log("response", response);
       const location = response.features[0].geometry.coordinates;
-
+      console.log(location);
       const latLng = [location[1], location[0]];
-      Transforms.setNodes(editor, { latLng, zoom: 12 }, { at: path });
+      Transforms.setNodes(
+        editor,
+        { address: response.features[0].place_name_en, latLng, zoom: 12 },
+        { at: path }
+      );
+
       setIsGenerating(false);
     } catch (error) {
       setIsGenerating(false);

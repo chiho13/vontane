@@ -177,7 +177,7 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = ({
                 syncStatus={syncStatus}
                 workspaceId={workspaceId}
                 credits={credits}
-                handleTextChange={debounce(handleTextChange, 200)}
+                handleTextChange={debounce(handleTextChange, 600)}
                 initialSlateValue={initialSlateValue}
                 setFetchWorkspaceIsLoading={setFetchWorkspaceIsLoading}
               />

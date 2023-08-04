@@ -91,7 +91,6 @@ export const TextSpeech = ({
 
   const { credits, setCredits }: any = useContext(UserContext);
 
-  console.log(textSpeech);
   const createTTSAudio = async () => {
     setAudioIsLoading(true);
     // if (element.audio_url) {

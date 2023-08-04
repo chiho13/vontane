@@ -271,7 +271,7 @@ export const GPTRouter = createTRPCRouter({
 
       // Make sure to replace YOUR_MAPTILER_API_KEY with your actual API key
       const encodedLocation = encodeURIComponent(location);
-      const url = `https://api.maptiler.com/geocoding/${encodedLocation}.json?key=EeJqZWmMwWuKBDTgCto5&language=en`;
+      const url = `https://api.maptiler.com/geocoding/${encodedLocation}.json?key=EeJqZWmMwWuKBDTgCto5&language=en&type=address`;
 
       try {
         const response = await fetch(url, {

@@ -1219,7 +1219,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         //   showEditBlockPopup.element === "equation" ? 280 : 360;
 
         if (showEditBlockPopup.element === "inline-equation") {
-          dropdownHeight = 190;
+          dropdownHeight = 200;
         }
 
         if (showEditBlockPopup.element === "equation") {
@@ -2045,7 +2045,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                       <div
                         ref={textEditorRef}
                         tabIndex={0}
-                        className="editable-scrollbar relative z-0 mx-auto block overflow-y-auto  overflow-x-hidden rounded-md pb-4 pr-1 pt-4 focus:outline-none  focus-visible:border-gray-300"
+                        className="editable-scrollbar relative z-0 mx-auto block overflow-y-auto  overflow-x-hidden rounded-md pb-4  pt-4 focus:outline-none  focus-visible:border-gray-300"
                       >
                         <Slate
                           key={currentSlateKey}
@@ -2282,7 +2282,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                       {showEditBlockPopup.element === "image" && (
                         <div
                           ref={editBlockDropdownRef}
-                          className="z-100 h-[270px] rounded-lg border border-gray-400 bg-muted p-2 dark:border-accent  dark:border-accent dark:bg-muted dark:text-foreground lg:w-[400px]  lg:w-[500px]"
+                          className="z-100 h-[270px] rounded-lg border border-gray-400 bg-background p-2 shadow-md dark:border-accent  dark:border-accent dark:bg-muted dark:text-foreground lg:w-[400px]  lg:w-[500px]"
                         >
                           <ImageEmbedLink />
                         </div>

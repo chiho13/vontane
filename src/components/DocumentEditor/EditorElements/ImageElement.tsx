@@ -125,7 +125,7 @@ export const ImageElement = React.memo(
           <>
             <div
               tabIndex={-1}
-              className={`hover:bg-gray-muted relative flex  cursor-pointer items-center rounded-md bg-gray-100 p-2 transition dark:bg-secondary dark:hover:bg-background/70 
+              className={`hover:bg-gray-muted relative mr-2  flex cursor-pointer items-center rounded-md bg-gray-100 p-2 transition dark:bg-secondary dark:hover:bg-background/70 
       hover:dark:bg-accent
       `}
               contentEditable={false}
@@ -170,7 +170,7 @@ export const ImageElement = React.memo(
           </>
         ) : (
           <div
-            className={`group flex justify-${align}`}
+            className={`group mr-1 flex justify-${align}`}
             {...attributes}
             contentEditable={false}
           >
@@ -595,24 +595,24 @@ export const ImageEmbedLink = () => {
     <>
       <Tabs defaultValue={tab} onValueChange={handleTabChange}>
         <TabsList
-          className={`ring-gray ring-red mb-3 grid h-10 w-full grid-cols-3 rounded-lg rounded-none bg-lightgray dark:bg-background`}
+          className={`ring-gray ring-red mb-3 grid h-10 w-full grid-cols-3 rounded-md bg-lightgray dark:bg-accent`}
         >
           <TabsTrigger
             value="upload"
-            className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-accent dark:data-[state=active]:text-foreground `}
+            className={` data-[state=active]:bg-brand  data-[state=active]:text-white  dark:text-muted-foreground dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background  `}
           >
             Upload
           </TabsTrigger>
 
           <TabsTrigger
             value="link"
-            className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-accent dark:data-[state=active]:text-foreground `}
+            className={` data-[state=active]:bg-brand  data-[state=active]:text-white  dark:text-muted-foreground dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background  `}
           >
             Embed Link
           </TabsTrigger>
           <TabsTrigger
             value="aiimage"
-            className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-accent dark:data-[state=active]:text-foreground `}
+            className={` data-[state=active]:bg-brand  data-[state=active]:text-white  dark:text-muted-foreground dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background  `}
           >
             AI Image
           </TabsTrigger>
@@ -628,7 +628,7 @@ export const ImageEmbedLink = () => {
                   <FormItem>
                     {/* <FormLabel>Upload Image</FormLabel> */}
                     <FormControl>
-                      <label className=" flex h-10 cursor-pointer justify-center rounded bg-primary px-4 py-2 text-center text-primary-foreground outline-0 transition duration-300 hover:bg-primary/90">
+                      <label className=" flex h-10 cursor-pointer justify-center rounded border bg-white px-4 py-2 text-center text-foreground outline-0 transition duration-300 hover:bg-white/80 dark:text-background">
                         Upload
                         <input
                           type="file"
@@ -677,7 +677,11 @@ export const ImageEmbedLink = () => {
                 )}
               />
               <div className="flex w-full items-center justify-center">
-                <Button className="h-[36px]" type="submit">
+                <Button
+                  variant="outline"
+                  className="h-[36px] border border-gray-300 bg-white dark:text-background dark:hover:bg-foreground/90"
+                  type="submit"
+                >
                   Embed Image
                 </Button>
               </div>

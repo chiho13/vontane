@@ -289,7 +289,7 @@ export const EditBlockPopup = React.forwardRef<
             aria-live="off"
             value={value}
             autoFocus
-            className="h-full w-full  resize-none rounded-md border border-gray-200 bg-transparent p-2 focus:border-[#007AFF] focus:outline-none dark:border-accent"
+            className="h-full w-full  resize-none rounded-md border border-gray-200 bg-transparent p-2 font-mono  text-sm text-brand focus:border-[#007AFF] focus:outline-none dark:border-accent dark:text-lime-400"
             onChange={onEquationChange}
             placeholder="TEX code"
           />

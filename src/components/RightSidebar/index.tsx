@@ -67,7 +67,7 @@ import { ReactEditor } from "slate-react";
 import { getHtmlFromSelection } from "@/utils/htmlSerialiser";
 import { cn } from "@/utils/cn";
 import { UserContext } from "@/contexts/UserContext";
-import { AIAssist, AIAssit } from "../AIAssist";
+import { AIAssist } from "../AIAssist";
 interface RightSideBarProps {
   setRightSideBarWidth: any;
   showRightSidebar: boolean;

@@ -160,3 +160,22 @@ body {
 .katex {
   font-size: 1.3em !important;
 }
+
+.scrollbar::-webkit-scrollbar {
+  width: 5px;
+  border-radius: 3px;
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 3px;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  background: #cccccc;
+  border-radius: 3px;
+}
+
+.dark .scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(208, 10%, 25%);
+}

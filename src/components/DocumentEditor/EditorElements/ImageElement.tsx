@@ -628,7 +628,7 @@ export const ImageEmbedLink = () => {
                   <FormItem>
                     {/* <FormLabel>Upload Image</FormLabel> */}
                     <FormControl>
-                      <label className=" flex h-10 cursor-pointer justify-center rounded border bg-white px-4 py-2 text-center text-foreground outline-0 transition duration-300 hover:bg-white/80 dark:text-background">
+                      <label className=" flex h-10 cursor-pointer justify-center rounded border border-gray-400 bg-white px-4 py-2 text-center text-foreground outline-0 transition duration-300 hover:bg-white/80 dark:border-gray-700 dark:text-background">
                         Upload
                         <input
                           type="file"

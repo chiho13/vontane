@@ -123,7 +123,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     transform: `translateX(${
       showRightSidebar ? "0px" : `${rightSideBarWidth * 0.8}px`
     })`,
-    height: `calc(100vh - ${openChat ? "495" : "207"}px)`,
+    height: `calc(100vh - ${openChat ? "515" : "207"}px)`,
     minWidth: "390px",
     maxWidth: "570px",
     flexBasis: `${rightSideBarWidth}px`,
@@ -132,7 +132,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     flexShrink: 0,
     pointerEvents: showRightSidebar ? "auto" : "none",
     transition:
-      "width 0.3s ease-in-out, opacity 0.4s ease-in-out, transform 0.3s ease-in-out, height 0.1s ease-in-out",
+      "width 0.3s ease-in-out, opacity 0.4s ease-in-out, transform 0.3s ease-in-out",
   };
   useEffect(() => {
     setPublished(workspaceData.workspace.published);

@@ -173,9 +173,8 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
 
     // The pasteHtml function now returns a range.
     const newRange = pasteHtml(translatedTextHTML, editor);
-    const currentSelection = editor.selection;
     // Set the new range as the active selection.
-    Transforms.setSelection(editor, currentSelection);
+    Transforms.setSelection(editor, newRange);
   };
 
   const insertTranslatedTextBelow = () => {
@@ -232,7 +231,7 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
                         placeholder="Ask AI"
                         // adjust this according to your state management
                         {...aiAssistForm.register("prompt")}
-                        className="w-full pr-[100px]"
+                        className="w-full pr-[90px] dark:bg-secondary/70"
                       />
                     </FormControl>
                     <FormMessage />
@@ -240,7 +239,7 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
                 )}
               />
               <div className="absolute right-[40px]  top-[5px] mb-2 flex  h-[30px] w-[50px] items-center justify-center rounded-md border border-accent text-sm">
-                20 cr
+                50 cr
               </div>
 
               <TooltipProvider delayDuration={300}>
@@ -400,8 +399,8 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
   return (
     <div
       className={cn(
-        `transition-height relative mt-4 w-full overflow-hidden rounded-md border border-gray-300  bg-white dark:border-accent dark:bg-muted dark:text-lightgray  lg:block ${
-          openChat ? "h-[330px] duration-100" : "h-[42px] duration-0"
+        `relative mt-4 w-full overflow-hidden rounded-md border border-gray-300 bg-white   dark:border-accent dark:bg-muted dark:text-lightgray  lg:block ${
+          openChat ? "h-[350px]" : "h-[42px]"
         }`
       )}
     >

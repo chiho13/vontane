@@ -90,7 +90,7 @@ export function Mapbox(props) {
         style={{
           overflow: "hidden",
           width: blockWidth,
-          maxWidth: 710,
+          maxWidth: 680,
           height: blockHeight,
         }}
         ref={ref}

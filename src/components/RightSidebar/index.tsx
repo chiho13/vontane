@@ -30,7 +30,7 @@ import {
 import LoadingSpinner from "@/icons/LoadingSpinner";
 import { extractTextValues } from "../DocumentEditor/helpers/extractText";
 import { root } from "postcss";
-import { Check, Info, ListEnd } from "lucide-react";
+import { Check, ChevronUp, Info, ListEnd, Send } from "lucide-react";
 import { api } from "@/utils/api";
 import { useRouter } from "next/router";
 import { ChevronDown, Link, Copy } from "lucide-react";
@@ -65,6 +65,9 @@ import { Label } from "../ui/label";
 import { ReactEditor } from "slate-react";
 
 import { getHtmlFromSelection } from "@/utils/htmlSerialiser";
+import { cn } from "@/utils/cn";
+import { UserContext } from "@/contexts/UserContext";
+import { AIAssist, AIAssit } from "../AIAssist";
 interface RightSideBarProps {
   setRightSideBarWidth: any;
   showRightSidebar: boolean;
@@ -84,10 +87,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
   const router = useRouter();
   const workspaceId = router.query.workspaceId as string;
 
-  const translationMutation = api.gpt.translate.useMutation();
-
-  const { editor, activePath, setLastActiveSelection } =
-    useContext(EditorContext);
+  const { editor, activePath } = useContext(EditorContext);
   const rootNode = useMemo(() => {
     let path = activePath ? JSON.parse(activePath) : [];
     while (path && path.length > 1) {
@@ -114,13 +114,8 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
   });
 
   const [published, setPublished] = useState(workspaceData.workspace.published);
-
+  const [openChat, setOpenChat] = useLocalStorage("openChat", false);
   const { copied, copyToClipboard: copyLink } = useClipboard();
-  const {
-    copied: translatedCopy,
-    copyToClipboard: copytranslatedCopy,
-    copyHTML: copyTranslatedHTML,
-  } = useClipboard();
 
   const [audioURL, setAudioURL] = useState<string>("");
   const [openDropdown, setOpenDropdown] = useState(false);
@@ -128,7 +123,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     transform: `translateX(${
       showRightSidebar ? "0px" : `${rightSideBarWidth * 0.8}px`
     })`,
-    height: "calc(100vh - 150px)",
+    height: `calc(100vh - ${openChat ? "495" : "207"}px)`,
     minWidth: "390px",
     maxWidth: "570px",
     flexBasis: `${rightSideBarWidth}px`,
@@ -137,7 +132,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     flexShrink: 0,
     pointerEvents: showRightSidebar ? "auto" : "none",
     transition:
-      "width 0.3s ease-in-out, opacity 0.4s ease-in-out, transform 0.3s ease-in-out",
+      "width 0.3s ease-in-out, opacity 0.4s ease-in-out, transform 0.3s ease-in-out, height 0.1s ease-in-out",
   };
   useEffect(() => {
     setPublished(workspaceData.workspace.published);
@@ -218,309 +213,6 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     }
   };
 
-  const languages = [
-    "English",
-    "Spanish",
-    "French",
-    "Hindi",
-    "Italian",
-    "German",
-    "Polish",
-    "Portuguese",
-  ];
-  const [selectedLanguage, setSelectedLanguage] = useLocalStorage(
-    "languageSelect",
-    languages[1]
-  );
-
-  const [translateLoading, setTranslateLoading] = useState(false);
-
-  const [translateText, setTranslatedText] = useState("");
-  const [translatedTextHTML, setTranslateTextHTML] = useState("");
-
-  const findNodesInSelection = (editor, type) => {
-    const nodes = [];
-
-    if (editor.selection) {
-      for (const [node, path] of Editor.nodes(editor, {
-        at: editor.selection,
-      })) {
-        if (SlateElement.isElement(node) && node.type === type) {
-          nodes.push({ node, path });
-        }
-      }
-    }
-
-    return nodes;
-  };
-
-  const paragraphs = findNodesInSelection(editor, "paragraph");
-
-  const hasParagraphInNodes = (nodes) => {
-    return nodes.some(({ node }) => node.type === "paragraph");
-  };
-
-  const startTranslate = async () => {
-    setTranslateLoading(true);
-
-    try {
-      const response = await translationMutation.mutateAsync({
-        language: selectedLanguage,
-        prompt: promptValue,
-      });
-      if (response) {
-        setTranslateLoading(false);
-        setTranslateTextHTML(response);
-
-        console.log(response);
-      }
-    } catch (error) {
-      setTranslateLoading(false);
-      console.error("Error translating:", error);
-    }
-  };
-
-  const getHtmlAsText = (html) => {
-    // Use DOMParser to convert the HTML string to a document
-    const doc = new DOMParser().parseFromString(html, "text/html");
-
-    // Extract the text content of each paragraph, join them with line breaks
-    const text = Array.from(doc.querySelectorAll("p"))
-      .map((p) => {
-        // Replace HTML tags with markdown syntax
-        let innerHtml = p.innerHTML;
-
-        return innerHtml;
-      })
-      .join("\n");
-
-    return text;
-  };
-
-  function convertMarkdownToHtml(markdown) {
-    let html = markdown;
-
-    // Replace markdown syntax with HTML tags
-    html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>"); // bold
-    html = html.replace(/\*(.*?)\*/g, "<em>$1</em>"); // italic
-    html = html.replace(/__(.*?)__/g, "<u>$1</u>"); // underline
-    html = html.replace(/~~(.*?)~~/g, "<del>$1</del>"); // strikethrough
-
-    // Split the markdown into lines
-    const lines = html.split("\n");
-
-    // Wrap each line in a <p> tag
-    html = lines.map((line) => `<p>${line}</p>`).join("");
-
-    return html;
-  }
-
-  const pasteHtml = (html, editor) => {
-    // Parse the HTML.
-    const parsed = new DOMParser().parseFromString(html, "text/html");
-
-    // Deserialize the parsed HTML to a Slate fragment.
-    const fragment = deserialize(parsed.body);
-
-    // Get the point before the insert operation.
-    const pointBeforeInsert = Editor.start(editor, editor.selection.focus.path);
-
-    // Insert the fragment into the editor.
-    Transforms.insertFragment(editor, fragment);
-
-    // Get the point after the insert operation.
-    const pointAfterInsert = Editor.end(editor, editor.selection.focus.path);
-
-    // Return the range that covers the inserted fragment.
-    return Editor.range(editor, pointBeforeInsert, pointAfterInsert);
-  };
-
-  const replaceSelectedText = () => {
-    if (!editor.selection) return;
-
-    // The pasteHtml function now returns a range.
-    const newRange = pasteHtml(translatedTextHTML, editor);
-    const currentSelection = editor.selection;
-    // Set the new range as the active selection.
-    Transforms.setSelection(editor, currentSelection);
-  };
-
-  const insertTranslatedTextBelow = () => {
-    if (!editor.selection) return;
-
-    // Parse the HTML.
-    const parsed = new DOMParser().parseFromString(
-      translatedTextHTML,
-      "text/html"
-    );
-
-    // Deserialize the parsed HTML to a Slate fragment.
-    const fragment = deserialize(parsed.body);
-
-    // Save the current selection.
-    const currentSelection = editor.selection;
-
-    // Collapse the selection to the end.
-    const selectionEnd = Range.isExpanded(editor.selection)
-      ? Range.end(editor.selection)
-      : editor.selection.anchor;
-    Transforms.collapse(editor, { edge: "end" });
-
-    // Insert the fragment at the selection.
-    Transforms.insertNodes(editor, fragment);
-
-    // Reset the selection to the previous selection.
-    Transforms.setSelection(editor, currentSelection);
-
-    // Set selection to the inserted node.
-    // const pointBeforeInsert = Editor.start(editor, editor.selection.focus.path);
-    // const pointAfterInsert = Editor.end(editor, editor.selection.focus.path);
-    // Transforms.setSelection(editor, {
-    //   anchor: pointBeforeInsert,
-    //   focus: pointAfterInsert,
-    // });
-  };
-
-  const [inputValue, setInputValue] = useState("");
-  const [promptValue, setPromptValue] = useState("");
-
-  // Append selected text to input value when editor.selection changes
-  useEffect(() => {
-    if (editor.selection && !Range.isCollapsed(editor.selection)) {
-      const html = getHtmlFromSelection(editor);
-      const text = getHtmlAsText(html);
-      console.log(html);
-      setPromptValue(html);
-    } else {
-      setPromptValue(null);
-    }
-  }, [editor.selection, editor.children]);
-
-  const onInputChange = (event) => {
-    // const convertToHTML = convertMarkdownToHtml(event.target.value);
-
-    setInputValue(event.target.value);
-    setPromptValue(event.target.value);
-  };
-
-  const copyHTML = (htmlString) => {
-    copyTranslatedHTML(htmlString);
-  };
-
-  console.log(audioData.content);
-  const renderText = () => {
-    if (!editor.selection) return null;
-    const text = getHtmlFromSelection(editor);
-
-    return (
-      <div className="mt-10">
-        {promptValue && (
-          <div>
-            <Label>Selected Text:</Label>
-
-            <div
-              dangerouslySetInnerHTML={{ __html: promptValue }}
-              className=" mt-2 h-[130px] w-full resize-none overflow-y-auto rounded-md border border-gray-300 bg-transparent p-2 outline-none ring-muted-foreground focus:ring-1 dark:border-accent"
-            ></div>
-          </div>
-        )}
-
-        {promptValue && (
-          <div className="mt-2 flex gap-3">
-            <div className="relative inline-block text-left">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button className="border" variant="outline" size="xs">
-                    {selectedLanguage}
-                    <ChevronDown className="w-5" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="start"
-                  className="border bg-muted dark:border-gray-500"
-                >
-                  {languages.map((language, index) => (
-                    <DropdownMenuItem
-                      key={index}
-                      className="text-foreground"
-                      onClick={() => setSelectedLanguage(language)}
-                    >
-                      {language}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-            {promptValue && (
-              <Button
-                className="text-sm"
-                size="xs"
-                onClick={startTranslate}
-                disabled={translateLoading}
-              >
-                {translateLoading ? (
-                  <LoadingSpinner strokeColor="stroke-gray-200 dark:stroke-muted" />
-                ) : (
-                  "Translate"
-                )}
-              </Button>
-            )}
-          </div>
-        )}
-        {translatedTextHTML && (
-          <div>
-            <div className="relative">
-              {/* <textarea
-                className="relative mt-3 h-[140px] w-full resize-none rounded-md  border border-accent bg-transparent p-2 outline-none ring-muted-foreground focus:ring-1"
-                value={translateText}
-                onChange={(e) => {
-                  setTranslatedText(e.target.value);
-                  const convertToHTML = convertLineBreaksToParagraphs(
-                    e.target.value
-                  );
-
-                  setTranslateTextHTML(convertToHTML);
-                }}
-              /> */}
-
-              <div className="mt-3 h-[140px] w-full resize-none  overflow-y-auto rounded-md  border border-accent bg-transparent p-2 outline-none">
-                <div dangerouslySetInnerHTML={{ __html: translatedTextHTML }} />
-              </div>
-              <Button
-                variant="outline"
-                className="absolute bottom-2 right-2 border bg-white text-xs text-muted-foreground dark:bg-muted "
-                size="xs"
-                onClick={() => copyHTML(translatedTextHTML)}
-              >
-                <Copy className="mr-2 w-4 " />
-                {translatedCopy ? "Copied!" : "Copy"}
-              </Button>
-            </div>
-
-            <div className="mt-3 flex gap-2">
-              <Button
-                variant="outline"
-                className="border text-muted-foreground"
-                size="xs"
-                onClick={replaceSelectedText}
-              >
-                <Check className="mr-2 w-5 " /> Replace Selection
-              </Button>
-              <Button
-                variant="outline"
-                className="border text-muted-foreground"
-                size="xs"
-                onClick={insertTranslatedTextBelow}
-              >
-                <ListEnd className="mr-2 w-5 " /> Insert below
-              </Button>
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  };
-
   return (
     <AudioManagerProvider>
       <PublishButton
@@ -532,10 +224,10 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
         setOpenDropdown={setOpenDropdown}
       />
       <div
-        className="m-w-full sticky top-[30px] mt-2 hidden h-full grow overflow-y-auto rounded-md  border border-gray-300 bg-white  dark:border-accent dark:bg-muted dark:text-lightgray lg:block"
+        className="m-w-full sticky top-[30px] mt-2 flex hidden grow flex-col rounded-md  border border-gray-300 bg-white  dark:border-accent dark:bg-muted dark:text-lightgray lg:block"
         style={rightSidebarStyle}
       >
-        <div className="flex-grow p-2 pb-3">
+        <div className="scrollbar h-full flex-grow  overflow-y-auto  p-2 pb-3 ">
           <Tabs
             value={tab}
             onValueChange={handleTabChange}
@@ -548,7 +240,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                 value="properties"
                 className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
               >
-                Tools
+                Properties
               </TabsTrigger>
 
               <TabsTrigger
@@ -618,7 +310,6 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                     No Audio generated
                   </div>
                 ))}
-              {hasParagraphInNodes && <div>{renderText()}</div>}
             </TabsContent>
             <TabsContent value="preview">
               <div className="flex justify-end gap-3">
@@ -635,6 +326,8 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
             </TabsContent>
           </Tabs>
         </div>
+
+        <AIAssist openChat={openChat} setOpenChat={setOpenChat} />
       </div>
     </AudioManagerProvider>
   );

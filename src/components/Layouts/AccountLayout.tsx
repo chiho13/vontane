@@ -494,7 +494,7 @@ const Layout: React.FC<LayoutProps> = ({
                             <DropdownMenuContent
                               side="right"
                               sideOffset={13}
-                              className="z-1000 relative  w-[150px] rounded-l-none border-l-0 bg-background p-2 shadow-md dark:border-accent dark:bg-muted"
+                              className="z-1000  relative -left-[10px]  w-[150px] rounded-l-none border-l-0 bg-background p-2 shadow-md dark:border-accent dark:bg-muted"
                             >
                               <DropdownMenuItem
                                 className={`flex w-full cursor-pointer  items-center  rounded-md px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:text-gray-900 focus:outline-none dark:text-foreground `}

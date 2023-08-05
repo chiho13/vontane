@@ -711,7 +711,7 @@ export const ImageEmbedLink = () => {
                   </FormItem>
                 )}
               />
-              <div className="absolute right-[40px]  top-1 mb-2 flex  h-[30px] w-[60px] items-center justify-center rounded-md border border-accent text-sm">
+              <div className="absolute right-[40px]  top-[5px] mb-2 flex  h-[30px] w-[60px] items-center justify-center rounded-md border border-accent text-sm">
                 250 cr
               </div>
 
@@ -723,7 +723,7 @@ export const ImageEmbedLink = () => {
                   <TooltipTrigger>
                     <Button
                       variant={"outline"}
-                      className="absolute right-[5px] top-1 h-[30px] w-[30px] border-0 p-1"
+                      className="absolute right-[5px] top-[5px] h-[30px] w-[30px] border-0 p-1"
                       type="submit"
                     >
                       {isGenerating ? (

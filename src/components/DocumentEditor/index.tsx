@@ -1967,7 +1967,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       <div className="flex  lg:justify-center xl:px-4">
         <div className="mx-auto block">
           <div
-            className="relative  z-0  mt-2 rounded-md  border border-gray-300  bg-white px-2 dark:border-accent dark:bg-muted dark:text-foreground lg:min-w-[600px] lg:px-0 xl:min-w-[770px]"
+            className="relative  z-0  mt-2 rounded-md  border border-gray-300  bg-white px-2 dark:border-accent dark:bg-muted dark:text-foreground lg:min-w-[600px] lg:px-0 xl:min-w-[740px]"
             style={{
               right:
                 windowSize.width > breakpoints.lg
@@ -1975,7 +1975,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     ? -(rightSideBarWidth / 2)
                     : 0
                   : 0,
-              maxWidth: "770px",
+              maxWidth: "740px",
               width:
                 windowSize.width > breakpoints.lg
                   ? showRightSidebar
@@ -2024,9 +2024,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             `}
               ></div>
               {syncStatus === "syncing"
-                ? "Syncing"
+                ? "Saving"
                 : syncStatus === "synced"
-                ? "Synced"
+                ? "Saved"
                 : ""}
             </div>
 
@@ -2130,8 +2130,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                           </Droppable>
                         </Slate>
 
-                        <AnimatePresence>
-                          {showMiniToolbar && (
+                        {showMiniToolbar && (
+                          <AnimatePresence>
                             <StyledMiniToolbar
                               className=" rounded-lg border bg-white shadow-md shadow-gray-500 dark:border-accent dark:bg-secondary dark:shadow-background"
                               ref={toolbarRef}
@@ -2154,8 +2154,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                               />
                               {/* <TextSpeech key="selectedText" isSelected={true} /> */}
                             </StyledMiniToolbar>
-                          )}
-                        </AnimatePresence>
+                          </AnimatePresence>
+                        )}
                       </div>
                     </EditableStyle>
                   </ActiveElementProvider>

@@ -130,22 +130,6 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
 
   const startGenerateContent = async (value) => {
     setTranslateLoading(true);
-
-    // try {
-    //   const response = await translationMutation.mutateAsync({
-    //     language: lang,
-    //     prompt: promptValue,
-    //   });
-    //   if (response) {
-    //     setTranslateLoading(false);
-    //     setTranslateTextHTML(response);
-
-    //     console.log(response);
-    //   }
-    // } catch (error) {
-    //   setTranslateLoading(false);
-    //   console.error("Error translating:", error);
-    // }
   };
 
   const pasteHtml = (html, editor) => {
@@ -209,12 +193,7 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
     const text = getHtmlFromSelection(editor);
 
     return (
-      <div
-        className="h-full w-full items-end overflow-y-auto px-2 pb-[62px] "
-        // style={{
-        //   height: "calc(100vh - 42px)",
-        // }}
-      >
+      <div className="h-full w-full items-end overflow-y-auto px-2 pb-[62px] ">
         <div className="sticky top-0 z-10 block flex items-center bg-white pb-2  pt-2 dark:bg-muted">
           <Form {...aiAssistForm}>
             <form
@@ -306,27 +285,6 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
-
-              {/* {translateLoading && (
-                <div className="absolute right-6">
-                  <LoadingSpinner strokeColor="stroke-gray-200 dark:stroke-muted-foreground" />
-                </div>
-              )} */}
-
-              {/* {promptValue && (
-                <Button
-                  className="text-sm"
-                  size="xs"
-                  onClick={startTranslate}
-                  disabled={translateLoading}
-                >
-                  {translateLoading ? (
-                    <LoadingSpinner strokeColor="stroke-gray-200 dark:stroke-muted" />
-                  ) : (
-                    "Translate"
-                  )}
-                </Button>
-              )} */}
             </div>
             <div className="relative">
               <Label className="absolute -top-2 right-3 bg-white px-2 text-xs text-muted-foreground dark:bg-muted ">

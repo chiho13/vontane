@@ -185,7 +185,7 @@ export const getHtmlFromSelection = (editor) => {
         return ulHtml + html;
       } else if (SlateElement.isElement(node) && inQuiz) {
         inQuiz = false;
-        let divHtml = `<ol data-type="quiz" type="A">${quizOptions}</ol>`;
+        let divHtml = `<ol data-type="quiz">${quizOptions}</ol>`;
         quizOptions = "";
         optionCounter = 0; // Reset the counter
         return divHtml + html;

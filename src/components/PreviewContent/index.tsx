@@ -117,20 +117,20 @@ const renderElement = (
       );
     case "heading-one":
       return (
-        <h1 className="mt-3  text-4xl" key={key}>
+        <h1 className="mt-3  text-4xl font-bold " key={key}>
           {children}
         </h1>
       );
     case "heading-two":
       return (
-        <h2 className="mt-3  text-3xl" key={key}>
+        <h2 className="mt-3  text-3xl font-bold" key={key}>
           {children}
         </h2>
       );
 
     case "heading-three":
       return (
-        <h3 className="mt-3  text-2xl" key={key}>
+        <h3 className="mt-3 text-2xl  font-bold" key={key}>
           {children}
         </h3>
       );

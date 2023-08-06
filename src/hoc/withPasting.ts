@@ -177,13 +177,25 @@ const TEXT_TAGS = {
   U: () => ({ underline: true }),
 };
 
+const isTextBlockComponent = (el) =>
+  el.getAttribute("data-component") === "text-block";
+
 export const deserialize = (el) => {
+  console.log(el);
   if (el.nodeType === 3) {
     return el.textContent;
   } else if (el.nodeType !== 1) {
     return null;
   } else if (el.nodeName === "BR") {
     return "\n";
+  }
+
+  //bbc news
+  if (isTextBlockComponent(el)) {
+    const pElement = el.querySelector("p");
+    if (pElement) {
+      return deserialize(pElement); // delegate to the logic you already have for paragraphs
+    }
   }
 
   const { nodeName } = el;

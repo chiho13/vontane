@@ -238,7 +238,81 @@ export const GPTRouter = createTRPCRouter({
           messages: [
             {
               role: "system",
-              content: `You will be given a sentence. Detect the language and translate into ${language}.Do not tell me what language is detected. Preserve class names and Return the translate text in the same html format. Do not return other text.`,
+              content: `You are given text.  Detect the language and translate into ${language}.Do not tell me what language is detected. Preserve class names and Return the translate text in the same html format. Do not return other text.`,
+            },
+            {
+              role: "user",
+              content: prompt,
+            },
+          ],
+          max_tokens: 5000,
+          temperature: 0.9,
+        });
+
+        const data = completion?.data?.choices?.[0]?.message?.content;
+
+        return data;
+      } catch (err) {
+        console.error(err);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        });
+      }
+    }),
+  summarise: protectedProcedure
+    .use(rateLimiterMiddleware)
+    .input(
+      z.object({
+        prompt: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { prompt } = input;
+      try {
+        const completion = await openai.createChatCompletion({
+          model: "gpt-4",
+          messages: [
+            {
+              role: "system",
+              content: `You are given text. Summarise it.  Return summary in html format. Do not return other text. If user prompt is too short, return <p>No Content</p> `,
+            },
+            {
+              role: "user",
+              content: prompt,
+            },
+          ],
+          max_tokens: 5000,
+          temperature: 0.9,
+        });
+
+        const data = completion?.data?.choices?.[0]?.message?.content;
+
+        return data;
+      } catch (err) {
+        console.error(err);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        });
+      }
+    }),
+  keypoints: protectedProcedure
+    .use(rateLimiterMiddleware)
+    .input(
+      z.object({
+        prompt: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { prompt } = input;
+      try {
+        const completion = await openai.createChatCompletion({
+          model: "gpt-4",
+          messages: [
+            {
+              role: "system",
+              content: `You are given text. Extract key points.  Return key points as unordered list in html format <ul style="list-style-type: disc; padding-left: 2em;"><li></li></ul>. Do not return other text. If user prompt is too short, return <p>No Content</p> `,
             },
             {
               role: "user",

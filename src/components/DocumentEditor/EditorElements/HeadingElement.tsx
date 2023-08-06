@@ -78,6 +78,7 @@ export function HeadingElement(props) {
           "text-xl"
         } 
         text-${alignMap[element.align] || element.align}
+        font-bold
         ${selectedElementID === element.id ? " bg-[#E0EDFB]" : ""}
         `}
         {...attributes}

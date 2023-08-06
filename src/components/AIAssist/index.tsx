@@ -17,7 +17,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { EditorContext } from "@/contexts/EditorContext";
 import { UserContext } from "@/contexts/UserContext";
 
-import { Editor, Range, Transforms } from "slate";
+import { Editor, Path, Range, Transforms } from "slate";
 import { getHtmlFromSelection } from "@/utils/htmlSerialiser";
 
 import {
@@ -81,6 +81,8 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
   const keypointsMutation = api.gpt.keypoints.useMutation();
 
   const doSomethingMutation = api.gpt.dosomething.useMutation();
+
+  const justAskMutation = api.gpt.justask.useMutation();
 
   const [gptLoading, setgptLoading] = useState(false);
   const [translatedTextHTML, setTranslateTextHTML] = useState("");
@@ -208,13 +210,28 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
     if (value.prompt.length === 0) return;
     // setgptLoading(true);
 
+    setgptLoading(true);
     if (promptValue) {
-      setgptLoading(true);
-
       try {
         const response = await doSomethingMutation.mutateAsync({
           userInput: value.prompt,
           prompt: promptValue,
+        });
+        if (response) {
+          setSelectedTextTooltip(false);
+          setgptLoading(false);
+          setTranslateTextHTML(response);
+
+          console.log(response);
+        }
+      } catch (error) {
+        setgptLoading(false);
+        console.error("Error getting keyp points:", error);
+      }
+    } else {
+      try {
+        const response = await justAskMutation.mutateAsync({
+          userInput: value.prompt,
         });
         if (response) {
           setSelectedTextTooltip(false);

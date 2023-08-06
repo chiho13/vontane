@@ -66,6 +66,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
     const theme = useTheme();
     const [search, setSearch] = useState("");
     const searchInputRef: any = useRef(null);
+    const searchBottomInputRef: any = useRef(null);
 
     const {
       editor,
@@ -246,10 +247,10 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
     });
 
     useEffect(() => {
-      if (isOpen) {
+      if (isOpen && searchInputRef.current) {
         searchInputRef.current.focus();
       }
-    }, [isOpen]);
+    }, [isOpen, searchBarPosition]);
 
     const filterList = (list, searchText) => {
       if (!searchText || searchText.length === 0) {

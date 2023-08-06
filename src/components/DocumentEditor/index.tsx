@@ -2030,6 +2030,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                         editor={editor}
                         value={slatevalue}
                         onChange={(newValue) => {
+                          console.log(newValue);
                           if (!isEqual(slatevalue, newValue)) {
                             setSyncStatus("syncing");
                             debouncedSetSlateValue(newValue);

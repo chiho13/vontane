@@ -125,7 +125,7 @@ const ELEMENT_TAGS = {
         id: genNodeId(),
         type: "checked-list",
         align: alignment,
-        checked: input.checked,
+        checked: false,
       };
     }
     // Return null or some other default for labels that don't contain a checkbox.

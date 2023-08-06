@@ -218,7 +218,7 @@ export const ImageElement = React.memo(
                     </div>
                   ) : (
                     <div className="rounded-md bg-black  bg-opacity-50 p-[4px]">
-                      <FileCheck className="text-gray-400 dark:text-white" />
+                      <FileCheck className="text-gray-200 dark:text-white" />
                     </div>
                   )}
                 </div>

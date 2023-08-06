@@ -63,12 +63,14 @@ import { cn } from "@/utils/cn";
 import { BiCaretUp } from "react-icons/bi";
 import { AnimatePresence, motion } from "framer-motion";
 import { y_animation_props } from "../Dropdown";
+import { useRouter } from "next/router";
 
 export const AIAssist = ({ openChat, setOpenChat }) => {
   const { editor, setLastActiveSelection } = useContext(EditorContext);
   const { credits, setCredits }: any = useContext(UserContext);
 
-  const notEnoughCredits = credits < 250;
+  const router = useRouter();
+  const notEnoughCredits = credits < 100;
 
   const [promptValue, setPromptValue] = useState("");
 
@@ -146,6 +148,15 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
   };
 
   const startTranslate = async (lang) => {
+    if (notEnoughCredits) {
+      router.push({
+        pathname: router.pathname,
+        query: { ...router.query, upgrade: "true" },
+      });
+
+      return;
+    }
+
     setgptLoading(true);
 
     try {
@@ -156,7 +167,8 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
       if (response) {
         setSelectedTextTooltip(false);
         setgptLoading(false);
-        setTranslateTextHTML(response);
+        setTranslateTextHTML(response.data);
+        setCredits(response.credits);
 
         console.log(response);
       }
@@ -167,6 +179,14 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
   };
 
   const startSummarise = async () => {
+    if (notEnoughCredits) {
+      router.push({
+        pathname: router.pathname,
+        query: { ...router.query, upgrade: "true" },
+      });
+
+      return;
+    }
     setgptLoading(true);
 
     try {
@@ -176,7 +196,8 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
       if (response) {
         setSelectedTextTooltip(false);
         setgptLoading(false);
-        setTranslateTextHTML(response);
+        setTranslateTextHTML(response.data);
+        setCredits(response.credits);
 
         console.log(response);
       }
@@ -187,6 +208,15 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
   };
 
   const startKeyPoints = async () => {
+    if (notEnoughCredits) {
+      router.push({
+        pathname: router.pathname,
+        query: { ...router.query, upgrade: "true" },
+      });
+
+      return;
+    }
+
     setgptLoading(true);
 
     try {
@@ -196,7 +226,8 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
       if (response) {
         setSelectedTextTooltip(false);
         setgptLoading(false);
-        setTranslateTextHTML(response);
+        setTranslateTextHTML(response.data);
+        setCredits(response.credits);
 
         console.log(response);
       }
@@ -210,6 +241,15 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
     if (value.prompt.length === 0) return;
     // setgptLoading(true);
 
+    if (notEnoughCredits) {
+      router.push({
+        pathname: router.pathname,
+        query: { ...router.query, upgrade: "true" },
+      });
+
+      return;
+    }
+
     setgptLoading(true);
     if (promptValue) {
       try {
@@ -220,8 +260,8 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
         if (response) {
           setSelectedTextTooltip(false);
           setgptLoading(false);
-          setTranslateTextHTML(response);
-
+          setTranslateTextHTML(response.data);
+          setCredits(response.credits);
           console.log(response);
         }
       } catch (error) {
@@ -236,8 +276,8 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
         if (response) {
           setSelectedTextTooltip(false);
           setgptLoading(false);
-          setTranslateTextHTML(response);
-
+          setTranslateTextHTML(response.data);
+          setCredits(response.credits);
           console.log(response);
         }
       } catch (error) {
@@ -310,22 +350,7 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
     const text = getHtmlFromSelection(editor);
 
     return (
-      <div
-        className="h-full w-full items-end  px-2 pb-[62px]"
-        // onMouseDown={() => {
-        //   if (!promptValue) return;
-        //   if (
-        //     askAIRef.current &&
-        //     !askAIRef.current.contains(event.target) &&
-        //     openTooltipRef.current &&
-        //     !openTooltipRef.current.contains(event.target) &&
-        //     selectedContent.current &&
-        //     !selectedContent.current.contains(event.target)
-        //   ) {
-        //     setSelectedTextTooltip(false);
-        //   }
-        // }}
-      >
+      <div className="h-full w-full items-end  px-2 pb-[62px]">
         <div className="sticky top-0 z-10 block flex items-center bg-white   pt-2 dark:bg-muted">
           <Form {...aiAssistForm}>
             <form
@@ -410,58 +435,66 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
                 Selected Text
               </div> */}
 
-              <div className="flex items-center justify-between gap-3 ">
-                <div className="relative flex gap-1 text-left">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild disabled={gptLoading}>
-                      <Button
-                        className="border border-gray-400 text-xs text-foreground dark:border-gray-500"
-                        variant="outline"
-                        size="xs"
-                      >
-                        <Languages className="mr-1 w-4" />
-                        Translate
-                        {/* {selectedLanguage} */}
-                        <ChevronDown className="ml-1 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                      align="start"
-                      className="border bg-muted dark:border-gray-700"
-                      side="top"
-                    >
-                      {languages.map((language, index) => (
-                        <DropdownMenuItem
-                          key={index}
-                          className="text-foreground"
-                          onClick={() => startTranslate(language)}
+              <div
+                className={cn(
+                  `flex items-center justify-between gap-3 ${
+                    notEnoughCredits && "justify-end"
+                  }`
+                )}
+              >
+                {!notEnoughCredits && (
+                  <div className="relative flex gap-1 text-left">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild disabled={gptLoading}>
+                        <Button
+                          className="border border-gray-400 text-xs text-foreground dark:border-gray-500"
+                          variant="outline"
+                          size="xs"
                         >
-                          {language}
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                  <Button
-                    className="border border-gray-400 text-xs text-foreground dark:border-gray-500"
-                    variant="outline"
-                    size="xs"
-                    onClick={startSummarise}
-                    disabled={gptLoading}
-                  >
-                    <Quote className="mr-1 w-3" />
-                    Summarise
-                  </Button>
-                  <Button
-                    className=" border border-gray-400  text-xs text-foreground dark:border-gray-500"
-                    variant="outline"
-                    size="xs"
-                    onClick={startKeyPoints}
-                    disabled={gptLoading}
-                  >
-                    <List className="mr-1 w-4" />
-                    Key Points
-                  </Button>
-                </div>
+                          <Languages className="mr-1 w-4" />
+                          Translate
+                          {/* {selectedLanguage} */}
+                          <ChevronDown className="ml-1 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="start"
+                        className="border bg-muted dark:border-gray-700"
+                        side="top"
+                      >
+                        {languages.map((language, index) => (
+                          <DropdownMenuItem
+                            key={index}
+                            className="text-foreground"
+                            onClick={() => startTranslate(language)}
+                          >
+                            {language}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                    <Button
+                      className="border border-gray-400 text-xs text-foreground dark:border-gray-500"
+                      variant="outline"
+                      size="xs"
+                      onClick={startSummarise}
+                      disabled={gptLoading}
+                    >
+                      <Quote className="mr-1 w-3" />
+                      Summarise
+                    </Button>
+                    <Button
+                      className=" border border-gray-400  text-xs text-foreground dark:border-gray-500"
+                      variant="outline"
+                      size="xs"
+                      onClick={startKeyPoints}
+                      disabled={gptLoading}
+                    >
+                      <List className="mr-1 w-4" />
+                      Key Points
+                    </Button>
+                  </div>
+                )}
                 <Button
                   variant="outline"
                   className=" flex h-[20px] w-[20px] justify-center rounded-full border bg-muted p-0  text-xs dark:border-gray-500 dark:bg-accent/50 dark:hover:bg-muted "
@@ -476,20 +509,6 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
               </div>
 
               <div className="relative">
-                {/* <div className="absolute -top-[9px] right-3 flex items-center gap-2 bg-white px-2 text-xs font-semibold text-muted-foreground dark:bg-muted ">
-                  <Button
-                    variant="outline"
-                    className=" flex h-[20px] w-[20px] justify-center rounded-full border bg-muted p-0 text-xs "
-                    size="xs"
-                    onClick={() => {
-                      Transforms.deselect(editor);
-                      setLastActiveSelection(null);
-                    }}
-                  >
-                    <X className=" h-5 w-5 rounded-full p-[2px] " />
-                  </Button>
-                </div> */}
-
                 <div className=" mt-1 rounded-md  border border-gray-400 dark:border-gray-500">
                   <div
                     dangerouslySetInnerHTML={{ __html: promptValue }}
@@ -503,19 +522,6 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
         {translatedTextHTML && (
           <div>
             <div className="relative">
-              {/* <textarea
-                className="relative mt-3 h-[140px] w-full resize-none rounded-md  border border-accent bg-transparent p-2 outline-none ring-muted-foreground focus:ring-1"
-                value={translateText}
-                onChange={(e) => {
-                  setTranslatedText(e.target.value);
-                  const convertToHTML = convertLineBreaksToParagraphs(
-                    e.target.value
-                  );
-
-                  setTranslateTextHTML(convertToHTML);
-                }}
-              /> */}
-
               <div className=" mt-3 h-[140px] w-full resize-none  overflow-y-auto rounded-md  border border-accent bg-transparent p-2 outline-none">
                 <div dangerouslySetInnerHTML={{ __html: translatedTextHTML }} />
               </div>

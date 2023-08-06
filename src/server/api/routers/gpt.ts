@@ -230,8 +230,20 @@ export const GPTRouter = createTRPCRouter({
         prompt: z.string(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const { language, prompt } = input;
+
+      // Fetch the current credits of the user
+      const user = await ctx.prisma.user.findUnique({
+        where: { id: ctx.user.id as string },
+        select: { credits: true },
+      });
+
+      // Check if user has enough credits
+      if (user?.credits < 100) {
+        throw new Error("Not enough credits");
+      }
+
       try {
         const completion = await openai.createChatCompletion({
           model: "gpt-4",
@@ -251,7 +263,15 @@ export const GPTRouter = createTRPCRouter({
 
         const data = completion?.data?.choices?.[0]?.message?.content;
 
-        return data;
+        // If successful, decrement the credits
+        const updatedUser = await ctx.prisma.user.update({
+          where: { id: ctx.user.id as string },
+          data: { credits: { decrement: 50 } },
+          select: { credits: true },
+        });
+
+        // Return the updated credits and the response data
+        return { credits: updatedUser.credits, data: data };
       } catch (err) {
         console.error(err);
         throw new TRPCError({
@@ -267,8 +287,20 @@ export const GPTRouter = createTRPCRouter({
         prompt: z.string(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const { prompt } = input;
+
+      // Fetch the current credits of the user
+      const user = await ctx.prisma.user.findUnique({
+        where: { id: ctx.user.id as string },
+        select: { credits: true },
+      });
+
+      // Check if user has enough credits
+      if (user?.credits < 100) {
+        throw new Error("Not enough credits");
+      }
+
       try {
         const completion = await openai.createChatCompletion({
           model: "gpt-4",
@@ -288,7 +320,15 @@ export const GPTRouter = createTRPCRouter({
 
         const data = completion?.data?.choices?.[0]?.message?.content;
 
-        return data;
+        // If successful, decrement the credits
+        const updatedUser = await ctx.prisma.user.update({
+          where: { id: ctx.user.id as string },
+          data: { credits: { decrement: 50 } },
+          select: { credits: true },
+        });
+
+        // Return the updated credits and the response data
+        return { credits: updatedUser.credits, data: data };
       } catch (err) {
         console.error(err);
         throw new TRPCError({
@@ -305,8 +345,20 @@ export const GPTRouter = createTRPCRouter({
         prompt: z.string(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const { prompt, userInput } = input;
+
+      // Fetch the current credits of the user
+      const user = await ctx.prisma.user.findUnique({
+        where: { id: ctx.user.id as string },
+        select: { credits: true },
+      });
+
+      // Check if user has enough credits
+      if (user?.credits < 100) {
+        throw new Error("Not enough credits");
+      }
+
       try {
         const completion = await openai.createChatCompletion({
           model: "gpt-4",
@@ -333,7 +385,15 @@ export const GPTRouter = createTRPCRouter({
 
         const data = completion?.data?.choices?.[0]?.message?.content;
 
-        return data;
+        // If successful, decrement the credits
+        const updatedUser = await ctx.prisma.user.update({
+          where: { id: ctx.user.id as string },
+          data: { credits: { decrement: 50 } },
+          select: { credits: true },
+        });
+
+        // Return the updated credits and the response data
+        return { credits: updatedUser.credits, data: data };
       } catch (err) {
         console.error(err);
         throw new TRPCError({
@@ -349,8 +409,20 @@ export const GPTRouter = createTRPCRouter({
         userInput: z.string(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const { userInput } = input;
+
+      // Fetch the current credits of the user
+      const user = await ctx.prisma.user.findUnique({
+        where: { id: ctx.user.id as string },
+        select: { credits: true },
+      });
+
+      // Check if user has enough credits
+      if (user?.credits < 100) {
+        throw new Error("Not enough credits");
+      }
+
       try {
         const completion = await openai.createChatCompletion({
           model: "gpt-4",
@@ -377,7 +449,15 @@ export const GPTRouter = createTRPCRouter({
 
         const data = completion?.data?.choices?.[0]?.message?.content;
 
-        return data;
+        // If successful, decrement the credits
+        const updatedUser = await ctx.prisma.user.update({
+          where: { id: ctx.user.id as string },
+          data: { credits: { decrement: 50 } },
+          select: { credits: true },
+        });
+
+        // Return the updated credits and the response data
+        return { credits: updatedUser.credits, data: data };
       } catch (err) {
         console.error(err);
         throw new TRPCError({
@@ -393,8 +473,20 @@ export const GPTRouter = createTRPCRouter({
         prompt: z.string(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const { prompt } = input;
+
+      // Fetch the current credits of the user
+      const user = await ctx.prisma.user.findUnique({
+        where: { id: ctx.user.id as string },
+        select: { credits: true },
+      });
+
+      // Check if user has enough credits
+      if (user?.credits < 100) {
+        throw new Error("Not enough credits");
+      }
+
       try {
         const completion = await openai.createChatCompletion({
           model: "gpt-4",
@@ -414,7 +506,15 @@ export const GPTRouter = createTRPCRouter({
 
         const data = completion?.data?.choices?.[0]?.message?.content;
 
-        return data;
+        // If successful, decrement the credits
+        const updatedUser = await ctx.prisma.user.update({
+          where: { id: ctx.user.id as string },
+          data: { credits: { decrement: 50 } },
+          select: { credits: true },
+        });
+
+        // Return the updated credits and the response data
+        return { credits: updatedUser.credits, data: data };
       } catch (err) {
         console.error(err);
         throw new TRPCError({

@@ -223,6 +223,7 @@ export const GPTRouter = createTRPCRouter({
       }
     }),
   translate: protectedProcedure
+    .use(rateLimiterMiddleware)
     .input(
       z.object({
         language: z.string(),

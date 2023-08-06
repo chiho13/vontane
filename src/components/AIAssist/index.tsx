@@ -20,7 +20,19 @@ import { UserContext } from "@/contexts/UserContext";
 import { Editor, Range, Transforms } from "slate";
 import { getHtmlFromSelection } from "@/utils/htmlSerialiser";
 
-import { Check, ChevronUp, Cross, Info, ListEnd, Send, X } from "lucide-react";
+import {
+  Check,
+  ChevronUp,
+  Cross,
+  HelpCircle,
+  Info,
+  Languages,
+  ListEnd,
+  Quote,
+  Send,
+  TextSelection,
+  X,
+} from "lucide-react";
 
 import { ChevronDown, Link, Copy } from "lucide-react";
 
@@ -48,7 +60,7 @@ import { useLocalStorage } from "usehooks-ts";
 import { cn } from "@/utils/cn";
 import { BiCaretUp } from "react-icons/bi";
 import { AnimatePresence, motion } from "framer-motion";
-import { slightbouncey, y_animation_props } from "../Dropdown";
+import { y_animation_props } from "../Dropdown";
 
 export const AIAssist = ({ openChat, setOpenChat }) => {
   const { editor, setLastActiveSelection } = useContext(EditorContext);
@@ -58,7 +70,7 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
   const [promptValue, setPromptValue] = useState("");
   const translationMutation = api.gpt.translate.useMutation();
 
-  const [translateLoading, setTranslateLoading] = useState(false);
+  const [gptLoading, setgptLoading] = useState(false);
   const [translatedTextHTML, setTranslateTextHTML] = useState("");
 
   const {
@@ -120,7 +132,7 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
   };
 
   const startTranslate = async (lang) => {
-    setTranslateLoading(true);
+    setgptLoading(true);
 
     try {
       const response = await translationMutation.mutateAsync({
@@ -128,20 +140,20 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
         prompt: promptValue,
       });
       if (response) {
-        setTranslateLoading(false);
+        setgptLoading(false);
         setTranslateTextHTML(response);
 
         console.log(response);
       }
     } catch (error) {
-      setTranslateLoading(false);
+      setgptLoading(false);
       console.error("Error translating:", error);
     }
   };
 
   const startGenerateContent = async (value) => {
     if (value.prompt.length === 0) return;
-    setTranslateLoading(true);
+    setgptLoading(true);
   };
 
   const pasteHtml = (html, editor) => {
@@ -201,18 +213,10 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
     Transforms.setSelection(editor, currentSelection);
   };
 
-  useEffect(() => {
-    if (!openChat) {
-      setSelectedTextTooltip(false);
-    } else {
-      if (promptValue) {
-        setSelectedTextTooltip(true);
-      }
-    }
-  }, [openChat]);
-
   const askAIRef = useRef({}) as any;
   const openTooltipRef = useRef({}) as any;
+  const selectedContent = useRef({}) as any;
+
   const renderAIAssist = () => {
     const text = getHtmlFromSelection(editor);
 
@@ -224,7 +228,9 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
             askAIRef.current &&
             !askAIRef.current.contains(event.target) &&
             openTooltipRef.current &&
-            !openTooltipRef.current.contains(event.target)
+            !openTooltipRef.current.contains(event.target) &&
+            selectedContent.current &&
+            !selectedContent.current.contains(event.target)
           ) {
             setSelectedTextTooltip(false);
           }
@@ -243,7 +249,9 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
                   <FormItem className="flex-grow">
                     <FormControl>
                       <Input
-                        placeholder="Ask AI"
+                        placeholder={`${
+                          promptValue ? "Do Something with Text" : "Ask AI"
+                        }`}
                         // adjust this according to your state management
                         {...aiAssistForm.register("prompt")}
                         className="w-full pr-[90px] dark:bg-secondary/70"
@@ -257,26 +265,17 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
               />
               {promptValue && (
                 <a
-                  className=" absolute right-[100px] top-[8px] flex h-[24px] items-center rounded-md bg-accent px-2 text-xs "
+                  className=" absolute right-[40px] top-[8px] flex h-[24px] items-center rounded-md bg-accent px-2 text-xs "
                   onClick={() => {
                     setSelectedTextTooltip(!selectedTextTooltip);
                   }}
                   href="#"
                   ref={openTooltipRef}
                 >
-                  Selected Text
-                  <X
-                    className="ml-1 h-4 w-4 rounded-full p-[2px] hover:bg-secondary "
-                    onClick={() => {
-                      Transforms.deselect(editor);
-                      setLastActiveSelection(null);
-                    }}
-                  />
+                  <TextSelection className="w-4" />
+                  <span className="ml-1"> Text</span>
                 </a>
               )}
-              <div className="absolute right-[40px] top-[5px] mb-2 flex h-[30px]  w-[50px] items-center justify-center rounded-md border border-accent text-sm text-xs">
-                50 cr
-              </div>
 
               <TooltipProvider delayDuration={300}>
                 <Tooltip
@@ -289,7 +288,7 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
                       className="absolute right-[5px] top-[5px] h-[30px] w-[30px] border-0 p-1"
                       type="submit"
                     >
-                      {translateLoading ? (
+                      {gptLoading ? (
                         <LoadingSpinner strokeColor="stroke-gray-400 dark:stroke-muted-foreground" />
                       ) : (
                         <Send className="dark:stroke-muted-foreground" />
@@ -313,20 +312,26 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
           {promptValue && selectedTextTooltip && (
             <motion.div
               {...y_animation_props}
-              className=" w-full rounded-md border border-gray-300 p-2 dark:border-gray-500"
+              className=" absolute right-[10px] w-[369px] rounded-md border border-gray-300 p-2 dark:border-gray-500"
+              ref={selectedContent}
             >
-              <div className="flex items-center gap-3 ">
-                <div className="relative inline-block text-left">
+              <div className="absolute -top-2 right-4  flex items-center gap-2 bg-white px-2  py-0 text-xs font-semibold text-muted-foreground dark:bg-muted ">
+                Selected Text
+              </div>
+
+              <div className="flex items-center justify-between gap-3 ">
+                <div className="relative flex gap-1 text-left">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
-                        className="border border-gray-300 text-xs text-muted-foreground dark:border-accent"
+                        className="border border-gray-300 text-xs text-foreground dark:border-accent"
                         variant="outline"
                         size="xs"
                       >
+                        <Languages className="mr-1 w-4" />
                         Translate
                         {/* {selectedLanguage} */}
-                        <ChevronDown className="w-5" />
+                        <ChevronDown className="ml-1 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
@@ -345,17 +350,55 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
                       ))}
                     </DropdownMenuContent>
                   </DropdownMenu>
+                  <Button
+                    className="border border-gray-300 text-xs text-foreground dark:border-accent"
+                    variant="outline"
+                    size="xs"
+                  >
+                    <Quote className="mr-1 w-3" />
+                    Summarise
+                  </Button>
+                  <Button
+                    className=" border border-gray-300 text-xs text-foreground dark:border-accent"
+                    variant="outline"
+                    size="xs"
+                  >
+                    <HelpCircle className="mr-1 w-4" />
+                    Explain
+                  </Button>
                 </div>
+                <Button
+                  variant="outline"
+                  className=" flex h-[20px] w-[20px] justify-center rounded-full border bg-muted p-0  text-xs dark:border-gray-500 "
+                  size="xs"
+                  onClick={() => {
+                    Transforms.deselect(editor);
+                    setLastActiveSelection(null);
+                  }}
+                >
+                  <X className=" h-4 w-4  p-px  " />
+                </Button>
               </div>
+
               <div className="relative">
-                <Label className="absolute -top-2 right-3 bg-white px-2 text-xs text-muted-foreground dark:bg-muted ">
-                  Selected Text
-                </Label>
+                {/* <div className="absolute -top-[9px] right-3 flex items-center gap-2 bg-white px-2 text-xs font-semibold text-muted-foreground dark:bg-muted ">
+                  <Button
+                    variant="outline"
+                    className=" flex h-[20px] w-[20px] justify-center rounded-full border bg-muted p-0 text-xs "
+                    size="xs"
+                    onClick={() => {
+                      Transforms.deselect(editor);
+                      setLastActiveSelection(null);
+                    }}
+                  >
+                    <X className=" h-5 w-5 rounded-full p-[2px] " />
+                  </Button>
+                </div> */}
 
                 <div className=" mt-1 rounded-md  border border-gray-300 dark:border-accent">
                   <div
                     dangerouslySetInnerHTML={{ __html: promptValue }}
-                    className=" scrollbar h-[100px] w-full resize-none overflow-y-auto  bg-transparent p-2 p-2 outline-none ring-muted-foreground focus:ring-1 "
+                    className=" scrollbar h-[100px] w-full resize-none overflow-y-auto  bg-transparent p-2 p-2 text-sm outline-none ring-muted-foreground focus:ring-1 "
                   ></div>
                 </div>
               </div>
@@ -420,15 +463,18 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
     <div
       className={cn(
         `relative mt-4 w-full overflow-hidden rounded-md border border-gray-300 bg-white   dark:border-accent dark:bg-muted dark:text-lightgray  lg:block ${
-          openChat ? "h-[350px]" : "h-[42px]"
+          openChat ? "h-[300px]" : "h-[42px]"
         }`
       )}
     >
       <button
-        className="flex w-full  justify-between  border-b border-gray-300 p-2 px-3 text-muted-foreground dark:border-accent"
+        className="relative flex w-full justify-between  border-b border-gray-300 p-2 px-3 text-muted-foreground dark:border-accent"
         onClick={openAIAssist}
       >
         AI Assist {openChat ? <ChevronDown /> : <ChevronUp />}
+        <div className=" absolute bottom-0 right-[50px]  top-[5px] mb-2 flex h-[30px] w-[40px]  items-center justify-center rounded-md border border-accent  text-xs">
+          50 cr
+        </div>
       </button>
 
       {renderAIAssist()}

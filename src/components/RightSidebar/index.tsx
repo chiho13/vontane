@@ -123,7 +123,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     transform: `translateX(${
       showRightSidebar ? "0px" : `${rightSideBarWidth * 0.8}px`
     })`,
-    height: `calc(100vh - ${openChat ? "515" : "207"}px)`,
+    height: `calc(100vh - ${openChat ? "465" : "207"}px)`,
     minWidth: "390px",
     maxWidth: "570px",
     flexBasis: `${rightSideBarWidth}px`,

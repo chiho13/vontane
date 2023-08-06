@@ -372,6 +372,19 @@ export const GPTRouter = createTRPCRouter({
               Any thing to do with tracking tasks and todo use this html format <label data-align="start" class="flex items-center gap-3 mt-2"><input class="w-[18px] h-[18px]" type="checkbox" name="option1" value="Option1" 
               } />text/label>
 
+              Anything to do with maths and physics return katex equation in html format: <div data-type="equation" data-latex="katex"></div>
+
+              Use <p></p> for step-by-step solutions. When writing mathematical symbols and notations within a sentence, use <span data-type="inline-equation" data-latex="katex"></span>. 
+              For example, when explaining something with an equation in the same sentence, the inline-equation format should be used. Here's an example: <p>Solve <span data-type="inline-equation" data-latex="\\int_{-\\infty}^{\\infty} e^{-x^2} dx"></span>:</p>
+              
+              Chemical equations should use  <div data-type="equation" data-latex="katex"></div>
+
+              Easy maths questions should use <div data-type="inline-equation" data-latex="katex"></div>
+              difficult maths questions should use <div data-type="equation" data-latex="katex"></div>
+
+
+              when asked a name of formula or equation, use <div data-type="equation" data-latex="katex"></div>
+
               Do not return other text. If user prompt is harmful or inappropriate , return <p>Your request seems to contain content that might not be suitable for all audiences.</p> `,
             },
             {
@@ -433,8 +446,23 @@ export const GPTRouter = createTRPCRouter({
               
               if user asks for quiz, the html format is  <p>Question #</p><ol data-type="quiz" class="mb-8 pl-5"><li class="pl-2 " style="list-style-type: upper-alpha;"> Option </li> </ol> 
               
-              Any thing to do with tracking tasks and todo use this html format <label data-align="start" class="flex items-center gap-3 mt-2"><input class="w-[18px] h-[18px]" type="checkbox" name="option1" value="Option1" 
+              Anything to do with tracking tasks and todo use this html format <label data-align="start" class="flex items-center gap-3 mt-2"><input class="w-[18px] h-[18px]" type="checkbox" name="option1" value="Option1" 
               } />text</label>
+
+              For long katex code use this html format: <div data-type="equation" data-latex="katex"></div>
+
+              Use <p></p> for step-by-step solutions. When writing mathematical symbols and notations within a sentence, use <span data-type="inline-equation" data-latex="katex"></span>. 
+              For example, when explaining something with an equation in the same sentence, the inline-equation format should be used. Here's an example: <p>Solve <span data-type="inline-equation" data-latex="\\int_{-\\infty}^{\\infty} e^{-x^2} dx"></span>:</p>
+              Display solution using <p> <span data-type="inline-equation" data-latex="katex"></span> </p>
+
+              chemical equations should use  <div data-type="equation" data-latex="katex"></div>
+              easy maths questions should use <div data-type="inline-equation" data-latex="katex"></div>
+              difficult maths questions should use <div data-type="equation" data-latex="katex"></div>
+
+              sometimes a-level questions start with "Given that" <equation> \\n "find" "solve"
+              look into how ocr, aqa, edexcel format their questions. 
+
+              when asked a name of formula or equation, use <div data-type="equation" data-latex="katex"></div>
               
               Do not return other text. If user prompt is harmful or inappropriate , return <p>Your request seems to contain content that might not be suitable for all audiences.</p> `,
             },

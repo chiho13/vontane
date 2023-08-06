@@ -155,7 +155,18 @@ const ELEMENT_TAGS = {
   DIV: (el) => {
     const dataType = el.getAttribute("data-type"); // Extract data-type attribute
     const latex = el.getAttribute("data-latex");
-    if (dataType === "equation" || dataType === "inline-equation") {
+    if (dataType === "equation") {
+      return {
+        id: genNodeId(),
+        type: dataType,
+        latex,
+      };
+    }
+  },
+  SPAN: (el) => {
+    const dataType = el.getAttribute("data-type"); // Extract data-type attribute
+    const latex = el.getAttribute("data-latex");
+    if (dataType === "inline-equation") {
       return {
         id: genNodeId(),
         type: dataType,

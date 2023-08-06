@@ -65,6 +65,47 @@ import { AnimatePresence, motion } from "framer-motion";
 import { y_animation_props } from "../Dropdown";
 import { useRouter } from "next/router";
 
+import katex from "katex";
+import "katex/dist/katex.min.css"; // Import the KaTeX CSS
+
+const renderMathInHtmlString = (htmlString) => {
+  // Parse the HTML string into a DOM object
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(htmlString, "text/html");
+
+  const blockEquations = doc.querySelectorAll('div[data-type="equation"]');
+  const inlineEquations = doc.querySelectorAll(
+    'span[data-type="inline-equation"]'
+  );
+
+  // If no equations are found, return the original string
+  if (blockEquations.length === 0 && inlineEquations.length === 0) {
+    return htmlString;
+  }
+
+  // Function to render equations
+  const renderEquations = (element, displayMode) => {
+    const latex = element.getAttribute("data-latex");
+    if (latex) {
+      const renderedLatex = katex.renderToString(latex, { displayMode });
+      element.innerHTML = renderedLatex;
+    }
+  };
+
+  // Render block equations
+  blockEquations.forEach((element) => {
+    renderEquations(element, true);
+  });
+
+  // Render inline equations
+  inlineEquations.forEach((element) => {
+    renderEquations(element, false);
+  });
+
+  // Serialize the modified DOM object back into a string
+  return doc.body.innerHTML;
+};
+
 export const AIAssist = ({ openChat, setOpenChat }) => {
   const { editor, setLastActiveSelection } = useContext(EditorContext);
   const { credits, setCredits }: any = useContext(UserContext);
@@ -88,6 +129,8 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
 
   const [gptLoading, setgptLoading] = useState(false);
   const [translatedTextHTML, setTranslateTextHTML] = useState("");
+
+  const [displayResultHTML, setDisplayResultHTML] = useState("");
 
   const {
     copied: translatedCopy,
@@ -169,8 +212,11 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
         setgptLoading(false);
         setTranslateTextHTML(response.data);
         setCredits(response.credits);
+        const displayHTML = renderMathInHtmlString(response.data);
 
-        console.log(response);
+        console.log(displayHTML);
+        setDisplayResultHTML(displayHTML);
+        console.log(response.data);
       }
     } catch (error) {
       setgptLoading(false);
@@ -262,7 +308,11 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
           setgptLoading(false);
           setTranslateTextHTML(response.data);
           setCredits(response.credits);
-          console.log(response);
+          console.log(response.data);
+          const displayHTML = renderMathInHtmlString(response.data);
+
+          console.log(displayHTML);
+          setDisplayResultHTML(displayHTML);
         }
       } catch (error) {
         setgptLoading(false);
@@ -278,7 +328,12 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
           setgptLoading(false);
           setTranslateTextHTML(response.data);
           setCredits(response.credits);
-          console.log(response);
+          console.log(response.data);
+
+          const displayHTML = renderMathInHtmlString(response.data);
+
+          console.log(displayHTML);
+          setDisplayResultHTML(displayHTML);
         }
       } catch (error) {
         setgptLoading(false);
@@ -447,7 +502,7 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild disabled={gptLoading}>
                         <Button
-                          className="border border-gray-400 text-xs text-foreground dark:border-gray-500"
+                          className="border border-gray-300 bg-gray-100 text-xs text-foreground dark:border-gray-500 dark:bg-accent"
                           variant="outline"
                           size="xs"
                         >
@@ -474,7 +529,7 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
                       </DropdownMenuContent>
                     </DropdownMenu>
                     <Button
-                      className="border border-gray-400 text-xs text-foreground dark:border-gray-500"
+                      className="border border-gray-300 bg-gray-100 text-xs text-foreground dark:border-gray-500 dark:bg-accent"
                       variant="outline"
                       size="xs"
                       onClick={startSummarise}
@@ -484,7 +539,7 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
                       Summarise
                     </Button>
                     <Button
-                      className=" border border-gray-400  text-xs text-foreground dark:border-gray-500"
+                      className=" border border-gray-300  bg-gray-100 text-xs text-foreground dark:border-gray-500 dark:bg-accent"
                       variant="outline"
                       size="xs"
                       onClick={startKeyPoints}
@@ -509,7 +564,7 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
               </div>
 
               <div className="relative">
-                <div className=" mt-1 rounded-md  border border-gray-400 dark:border-gray-500">
+                <div className=" mt-1 rounded-md border  border-gray-300 dark:border-gray-500 ">
                   <div
                     dangerouslySetInnerHTML={{ __html: promptValue }}
                     className=" scrollbar h-[80px] w-full resize-none overflow-y-auto  bg-transparent p-2 p-2 text-sm outline-none ring-muted-foreground focus:ring-1 "
@@ -522,8 +577,8 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
         {translatedTextHTML && (
           <div>
             <div className="relative">
-              <div className=" mt-3 h-[140px] w-full resize-none  overflow-y-auto rounded-md  border border-accent bg-transparent p-2 outline-none">
-                <div dangerouslySetInnerHTML={{ __html: translatedTextHTML }} />
+              <div className=" mt-3 h-[140px] w-full resize-none  overflow-y-auto rounded-md  border border-input bg-transparent p-2 outline-none">
+                <div dangerouslySetInnerHTML={{ __html: displayResultHTML }} />
               </div>
               <Button
                 variant="outline"

@@ -63,7 +63,6 @@ export function ParagraphElement(props) {
     (focused &&
       selected &&
       element.children.every((child) => {
-        // Checks if the child is a text node and if it's empty
         return Text.isText(child) && child.text === "";
       }) &&
       editor.selection &&

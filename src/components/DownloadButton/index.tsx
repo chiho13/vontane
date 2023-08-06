@@ -43,7 +43,7 @@ export function DownloadButton({
           <button
             onClick={handleDownload}
             className={cn(
-              "group flex h-[24px] w-[24px] items-center justify-center rounded-full border border-muted-foreground bg-white px-1 py-2 text-sm font-medium text-gray-700 outline-none transition duration-200  focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50 dark:border-white dark:bg-white dark:text-foreground",
+              "group flex h-[24px] w-[24px] items-center justify-center rounded-full border border-muted-foreground bg-white px-1 py-2 text-sm font-medium text-gray-700 outline-none transition duration-200  hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50 dark:border-white dark:bg-white dark:text-foreground",
               className
             )}
           >

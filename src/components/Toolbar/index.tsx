@@ -85,13 +85,20 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   const hasURL = getActiveLinkUrl(editor);
   const [inputValue, setInputValue] = useState(hasURL ?? "");
 
+  const [nodeElement, setNodeElement] = useState(null);
   const urlInputRef = useRef<any>(null);
 
   const LIST_TYPES = ["numbered-list", "bulleted-list", "checked-list"];
 
-  const element = Node.get(editor, JSON.parse(activePath));
-
   const toolbarRef = useRef(null);
+
+  useEffect(() => {
+    if (editor.selection && !Range.isCollapsed(editor.selection)) {
+      const element = Node.get(editor, JSON.parse(activePath));
+
+      setNodeElement(element);
+    }
+  }, [editor.selection]);
 
   const findFirstFocusableElement = (parent) => {
     const focusableElements = [
@@ -428,10 +435,12 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           </TooltipProvider>
           <div className="h-full w-[1px] bg-gray-200 dark:bg-gray-700"></div>
 
-          <BlockAlign
-            element={element}
-            className="ml-1 mr-1  h-[28px] text-darkblue hover:bg-gray-200 hover:dark:bg-accent"
-          />
+          {nodeElement && (
+            <BlockAlign
+              element={nodeElement}
+              className="ml-1 mr-1  h-[28px] text-darkblue hover:bg-gray-200 hover:dark:bg-accent"
+            />
+          )}
           <div className="h-full w-[1px] bg-gray-200 dark:bg-gray-700"></div>
         </>
       )}

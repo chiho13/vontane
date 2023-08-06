@@ -244,7 +244,6 @@ export const ListItem = withListNumbering((props) => {
         data-path={JSON.stringify(path)}
         data-placeholder={!isPreview ? placeholderText : ""}
         data-list-type={listType}
-        data-listNumber={listNumber}
       >
         {isNumberedList && (
           <span

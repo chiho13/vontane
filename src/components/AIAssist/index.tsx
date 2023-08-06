@@ -69,12 +69,18 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
   const { credits, setCredits }: any = useContext(UserContext);
 
   const notEnoughCredits = credits < 250;
+
   const [promptValue, setPromptValue] = useState("");
+
+  // const [inputValue, setInputValue] = useState("");
+
   const translationMutation = api.gpt.translate.useMutation();
 
   const summariseMutation = api.gpt.summarise.useMutation();
 
   const keypointsMutation = api.gpt.keypoints.useMutation();
+
+  const doSomethingMutation = api.gpt.dosomething.useMutation();
 
   const [gptLoading, setgptLoading] = useState(false);
   const [translatedTextHTML, setTranslateTextHTML] = useState("");
@@ -198,9 +204,30 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
     }
   };
 
-  const startGenerateContent = async (value) => {
+  const startDoSomething = async (value) => {
     if (value.prompt.length === 0) return;
-    setgptLoading(true);
+    // setgptLoading(true);
+
+    if (promptValue) {
+      setgptLoading(true);
+
+      try {
+        const response = await doSomethingMutation.mutateAsync({
+          userInput: value.prompt,
+          prompt: promptValue,
+        });
+        if (response) {
+          setSelectedTextTooltip(false);
+          setgptLoading(false);
+          setTranslateTextHTML(response);
+
+          console.log(response);
+        }
+      } catch (error) {
+        setgptLoading(false);
+        console.error("Error getting keyp points:", error);
+      }
+    }
   };
 
   const pasteHtml = (html, editor) => {
@@ -285,7 +312,7 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
         <div className="sticky top-0 z-10 block flex items-center bg-white   pt-2 dark:bg-muted">
           <Form {...aiAssistForm}>
             <form
-              onSubmit={aiAssistForm.handleSubmit(startGenerateContent)}
+              onSubmit={aiAssistForm.handleSubmit(startDoSomething)}
               className="z-100 relative flex  w-full flex-row items-center"
             >
               <FormField
@@ -300,9 +327,10 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
                         }`}
                         // adjust this according to your state management
                         {...aiAssistForm.register("prompt")}
-                        className="w-full pr-[90px] dark:bg-secondary/70"
+                        className={cn(`w-full  dark:bg-secondary/70
+                          ${promptValue ? "pr-[135px]" : "pr-[40px]"}
+                        `)}
                         autoComplete="off"
-                        ref={askAIRef}
                       />
                     </FormControl>
                     <FormMessage />
@@ -368,7 +396,7 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
               <div className="flex items-center justify-between gap-3 ">
                 <div className="relative flex gap-1 text-left">
                   <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
+                    <DropdownMenuTrigger asChild disabled={gptLoading}>
                       <Button
                         className="border border-gray-400 text-xs text-foreground dark:border-gray-500"
                         variant="outline"
@@ -401,6 +429,7 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
                     variant="outline"
                     size="xs"
                     onClick={startSummarise}
+                    disabled={gptLoading}
                   >
                     <Quote className="mr-1 w-3" />
                     Summarise
@@ -410,6 +439,7 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
                     variant="outline"
                     size="xs"
                     onClick={startKeyPoints}
+                    disabled={gptLoading}
                   >
                     <List className="mr-1 w-4" />
                     Key Points

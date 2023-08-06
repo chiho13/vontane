@@ -29,7 +29,7 @@ import { FaCaretDown } from "react-icons/fa";
 
 export function BlockAlign({ element, className }: any) {
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
-  const { editor } = React.useContext(EditorContext);
+  const { editor, activePath } = React.useContext(EditorContext);
 
   const path = ReactEditor.findPath(editor, element);
 

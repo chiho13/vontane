@@ -297,6 +297,48 @@ export const GPTRouter = createTRPCRouter({
         });
       }
     }),
+  dosomething: protectedProcedure
+    .use(rateLimiterMiddleware)
+    .input(
+      z.object({
+        userInput: z.string(),
+        prompt: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { prompt, userInput } = input;
+      try {
+        const completion = await openai.createChatCompletion({
+          model: "gpt-4",
+          messages: [
+            {
+              role: "system",
+              content: `You are given text: ${prompt}. Follow user's instructions.  Return results in html format. 
+              
+              if user asks for quiz, the html format is  <p>Question</p><ol data-type="quiz" class="mb-8 pl-5"><li class="pl-2 " style="list-style-type: upper-alpha;"> Option </li> </ol>
+
+              Do not return other text. If user prompt is harmful or inappropriate , return <p>Your request seems to contain content that might not be suitable for all audiences.</p> `,
+            },
+            {
+              role: "user",
+              content: `Instructions: ${userInput}.`,
+            },
+          ],
+          max_tokens: 5000,
+          temperature: 0.9,
+        });
+
+        const data = completion?.data?.choices?.[0]?.message?.content;
+
+        return data;
+      } catch (err) {
+        console.error(err);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        });
+      }
+    }),
   keypoints: protectedProcedure
     .use(rateLimiterMiddleware)
     .input(

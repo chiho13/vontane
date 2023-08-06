@@ -88,6 +88,12 @@ export const withNormalise = (editor) => {
   editor.insertText = (text) => {
     const { selection } = editor;
 
+    // Handle Range Selection Across Multiple Nodes
+    if (selection && !Range.isCollapsed(selection)) {
+      Transforms.delete(editor);
+      return;
+    }
+
     if (
       selection &&
       Range.isCollapsed(selection) &&

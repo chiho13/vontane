@@ -131,12 +131,6 @@ const ElevenTTSWrapperBase = (props: {
       } border-b border-gray-300 p-1 pb-3 pl-0 dark:border-accent ${
         selected ? " bg-brand/20 dark:bg-brand/20" : "bg-white dark:bg-muted"
       }`}
-      onClick={() => {
-        if (!showRightSidebar) {
-          setShowRightSidebar(true);
-          setTab("properties");
-        }
-      }}
     >
       <div className="mb-5 ml-[49px] mt-4" contentEditable={false}>
         <TextSpeech

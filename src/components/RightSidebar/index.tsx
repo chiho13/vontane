@@ -224,17 +224,17 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
         setOpenDropdown={setOpenDropdown}
       />
       <div
-        className="m-w-full sticky top-[30px] flex hidden grow flex-col rounded-md  border border-gray-300 bg-white  dark:border-accent dark:bg-muted dark:text-lightgray lg:block"
+        className="m-w-full  flex hidden grow flex-col rounded-md  border border-gray-300 bg-white  dark:border-accent dark:bg-muted dark:text-lightgray lg:block"
         style={rightSidebarStyle}
       >
-        <div className="scrollbar h-full flex-grow  overflow-y-auto  p-2 pb-3 ">
+        <div className="scrollbar  h-full flex-grow  overflow-y-auto  ">
           <Tabs
             value={tab}
             onValueChange={handleTabChange}
-            className="z-10 flex flex-grow flex-col "
+            className=" z-10 flex flex-grow flex-col   "
           >
             <TabsList
-              className={`ring-gray ring-red  grid h-10 w-full grid-cols-2  bg-lightgray dark:bg-accent`}
+              className={`ring-gray ring-red sticky top-0 z-10  grid h-10 w-full grid-cols-2  rounded-none bg-lightgray dark:bg-accent`}
             >
               <TabsTrigger
                 value="properties"
@@ -312,7 +312,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                 ))}
             </TabsContent>
             <TabsContent value="preview">
-              <div className="flex justify-end gap-3">
+              <div className="flex justify-end gap-3 border-0">
                 {containsTtsNode(editor.children) && (
                   <button
                     className="mb-2 flex h-[28px] items-center justify-center rounded-md border border-muted-foreground bg-background p-1 text-xs  text-muted-foreground hover:border-accent hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted"

@@ -16,31 +16,10 @@ import { MCQ } from "@/components/PreviewContent/PreviewElements/MCQ";
 import { MapBlock } from "@/components/PreviewContent/PreviewElements/Map";
 import { useTheme } from "next-themes";
 
-import {
-  findAllNumberedLists,
-  ListItem,
-} from "../DocumentEditor/EditorElements";
+import { ListItem } from "./PreviewElements/ListItem";
 import { Checkbox } from "../ui/checkbox";
 import { alignMap } from "../DocumentEditor/helpers/toggleBlock";
 import { getHtmlFromSelection } from "@/utils/htmlSerialiser";
-
-const NumberedListItem = ({ node, children, key, index, nodes }) => {
-  const { editor } = useContext(EditorContext);
-  // Find all numbered-list elements within the editor
-  const numberedLists = findAllNumberedLists(editor.children);
-
-  // Find the corresponding list group for this node
-  const listGroup = numberedLists.find((list) => list.id === node.id);
-
-  // Calculate the list number based on its position within the list group
-  const listNumber = listGroup ? listGroup.listIndex + 1 : index + 1;
-
-  return (
-    <ol className="list-inside list-decimal" key={key}>
-      <li>{`${listNumber}. ${children}`}</li>
-    </ol>
-  );
-};
 
 const renderElement = (
   node: {
@@ -65,8 +44,6 @@ const renderElement = (
   index: number,
   nodes: any
 ) => {
-  const numberedLists = findAllNumberedLists(nodes);
-
   switch (node.type) {
     case "paragraph":
       return (
@@ -179,6 +156,7 @@ const renderElement = (
       return (
         <div className="mt-2 ">
           <ListItem
+            nodes={nodes}
             element={node}
             children={children}
             key={key}
@@ -192,6 +170,7 @@ const renderElement = (
       return (
         <div className="mt-2 ">
           <ListItem
+            nodes={nodes}
             element={node}
             children={children}
             key={key}

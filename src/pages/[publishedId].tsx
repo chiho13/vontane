@@ -1,4 +1,4 @@
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, EditorProvider } from "@/contexts/EditorContext";
 import React, {
   useContext,
   useEffect,
@@ -103,18 +103,20 @@ const PublishedPage = ({ workspaceId, workspaceData }) => {
 
   return (
     localValue && (
-      <AudioManagerProvider>
-        <div
-          className={`relative  h-[100vh] overflow-y-auto rounded-md bg-white p-4 dark:bg-[#191919] `}
-        >
-          <div className="relative mx-auto max-w-[700px] xl:mt-[100px]">
-            {parseNodes(localValue)}
+      <EditorProvider key={workspaceId}>
+        <AudioManagerProvider>
+          <div
+            className={`relative  h-[100vh] overflow-y-auto rounded-md bg-white p-4 dark:bg-[#191919] `}
+          >
+            <div className="relative mx-auto max-w-[700px] xl:mt-[100px]">
+              {parseNodes(localValue)}
+            </div>
           </div>
-        </div>
-        <div className="fixed bottom-4 right-4 hidden xl:block">
-          <ModeToggle />
-        </div>
-      </AudioManagerProvider>
+          <div className="fixed bottom-4 right-4 hidden xl:block">
+            <ModeToggle />
+          </div>
+        </AudioManagerProvider>
+      </EditorProvider>
     )
   );
 };

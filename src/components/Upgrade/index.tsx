@@ -194,19 +194,19 @@ const Upgrade = () => {
           <div className="relative mb-7 block ">
             <p className="mt-3 flex items-center text-left text-base text-sm font-semibold leading-loose text-gray-500 dark:text-gray-400">
               <Check />
-              <span className="mr-6 shrink bg-gradient-to-r from-blue-500 to-sky-400   bg-clip-text pl-2 text-transparent">
+              <span className="mr-6 shrink bg-gradient-to-r from-blue-500 to-sky-500   bg-clip-text pl-2 text-transparent">
                 {audioTime}
               </span>
             </p>
             <p className="mt-3 flex  items-center text-left text-base text-sm font-semibold leading-loose text-gray-500 dark:text-gray-400">
               <Check />
-              <span className="mr-6 shrink bg-gradient-to-r from-blue-500 to-sky-400   bg-clip-text pl-2 text-transparent">
+              <span className="mr-6 shrink bg-gradient-to-r from-blue-500 to-sky-500   bg-clip-text pl-2 text-transparent">
                 {imageGen}
               </span>
             </p>
             <p className="mt-3 flex  items-center text-left text-base text-sm font-semibold leading-loose text-gray-500 dark:text-gray-400">
               <Check />
-              <span className="mr-6 shrink bg-gradient-to-r from-blue-500 to-sky-400   bg-clip-text pl-2 text-transparent">
+              <span className="mr-6 shrink bg-gradient-to-r from-blue-500 to-sky-500   bg-clip-text pl-2 text-transparent">
                 {aiGen}
               </span>
             </p>

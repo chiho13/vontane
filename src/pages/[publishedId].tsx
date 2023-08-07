@@ -103,20 +103,18 @@ const PublishedPage = ({ workspaceId, workspaceData }) => {
 
   return (
     localValue && (
-      <EditorProvider key={workspaceId}>
-        <AudioManagerProvider>
-          <div
-            className={`relative  h-[100vh] overflow-y-auto rounded-md bg-white p-4 dark:bg-[#191919] `}
-          >
-            <div className="relative mx-auto max-w-[700px] xl:mt-[100px]">
-              {parseNodes(localValue)}
-            </div>
+      <AudioManagerProvider>
+        <div
+          className={`relative  h-[100vh] overflow-y-auto rounded-md bg-white p-4 dark:bg-[#191919] `}
+        >
+          <div className="relative mx-auto max-w-[700px] xl:mt-[100px]">
+            {parseNodes(localValue)}
           </div>
-          <div className="fixed bottom-4 right-4 hidden xl:block">
-            <ModeToggle />
-          </div>
-        </AudioManagerProvider>
-      </EditorProvider>
+        </div>
+        <div className="fixed bottom-4 right-4 hidden xl:block">
+          <ModeToggle />
+        </div>
+      </AudioManagerProvider>
     )
   );
 };

@@ -68,3 +68,25 @@ export function compareTwoStrings(first, second) {
 
   return (2.0 * intersectionSize) / (first.length + second.length - 2);
 }
+
+export function formatDate(date: Date): string {
+  const day = String(date.getDate()).padStart(2, "0");
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const month = months[date.getMonth()];
+  const year = date.getFullYear();
+
+  return `${day} ${month} ${year}`;
+}

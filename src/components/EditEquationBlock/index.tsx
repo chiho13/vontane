@@ -298,7 +298,7 @@ export const EditBlockPopup = React.forwardRef<
           <span className="text-bold mr-1">alt:</span>
         </div> */}
           <button
-            className=" flex  items-center rounded-md bg-[#007AFF] px-2 py-px  text-sm text-white shadow-sm transition duration-300 hover:bg-[#006EE6] dark:bg-foreground dark:text-background "
+            className=" flex  items-center rounded-md bg-brand px-2 py-px  text-sm text-white shadow-sm transition duration-300 hover:bg-brand/90 dark:bg-foreground dark:text-background "
             onClick={onClick}
           >
             <span className="mr-1">Done</span>

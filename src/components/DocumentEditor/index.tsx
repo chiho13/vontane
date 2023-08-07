@@ -1202,7 +1202,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         }
 
         if (showEditBlockPopup.element === "equation") {
-          dropdownHeight = 235;
+          dropdownHeight = 255;
         }
 
         if (showEditBlockPopup.element === "image") {

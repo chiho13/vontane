@@ -123,7 +123,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     transform: `translateX(${
       showRightSidebar ? "0px" : `${rightSideBarWidth * 0.8}px`
     })`,
-    height: `calc(100vh - ${openChat ? "465" : "207"}px)`,
+    height: `calc(100vh - ${openChat ? "415" : "157"}px)`,
     minWidth: "390px",
     maxWidth: "570px",
     flexBasis: `${rightSideBarWidth}px`,
@@ -224,7 +224,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
         setOpenDropdown={setOpenDropdown}
       />
       <div
-        className="m-w-full sticky top-[30px] mt-2 flex hidden grow flex-col rounded-md  border border-gray-300 bg-white  dark:border-accent dark:bg-muted dark:text-lightgray lg:block"
+        className="m-w-full sticky top-[30px] flex hidden grow flex-col rounded-md  border border-gray-300 bg-white  dark:border-accent dark:bg-muted dark:text-lightgray lg:block"
         style={rightSidebarStyle}
       >
         <div className="scrollbar h-full flex-grow  overflow-y-auto  p-2 pb-3 ">

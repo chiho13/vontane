@@ -1921,7 +1921,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   return (
     <div
-      className="relative mx-auto mt-[70px] lg:max-w-[1000px] xl:max-w-[1400px]"
+      className="relative mx-auto mt-[50px] lg:max-w-[1000px] xl:max-w-[1400px]"
       style={{
         width:
           windowSize.width > breakpoints.xl
@@ -1946,7 +1946,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       <div className="flex  lg:justify-center xl:px-4">
         <div className="mx-auto block">
           <div
-            className="relative  z-0  mt-2 rounded-md  border border-gray-300  bg-white px-2 dark:border-accent dark:bg-muted dark:text-foreground lg:min-w-[600px] lg:px-0 xl:min-w-[740px]"
+            className="relative  z-0   rounded-md  border border-gray-300  bg-white px-2 dark:border-accent dark:bg-muted dark:text-foreground lg:min-w-[600px] lg:px-0 xl:min-w-[740px]"
             style={{
               right:
                 windowSize.width > breakpoints.lg
@@ -1961,7 +1961,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     ? "50vw"
                     : "100vw"
                   : "95vw",
-              height: "calc(100vh - 150px)",
+              height: "calc(100vh - 100px)",
               transition: "right 0.3s ease-in-out, width 0.3s ease-in-out",
             }}
           >
@@ -1976,7 +1976,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                       // onClick={upgradeAccount}
                     >
                       <span className="mr-4 text-xs text-foreground  dark:text-foreground ">
-                        Shop Add-ons
+                        Shop Credits
                       </span>
                       <Crown className="w-5 fill-orange-200 text-orange-500 dark:text-orange-300" />{" "}
                     </Button>
@@ -2041,7 +2041,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                           <Editable
                             className=" relative"
                             style={{
-                              height: "calc(100vh - 205px)",
+                              height: "calc(100vh - 140px)",
                             }}
                             decorate={decorate}
                             renderElement={renderElement as any}

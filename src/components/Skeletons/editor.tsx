@@ -24,7 +24,7 @@ export const EditorSkeleton = () => {
     setShowRightSidebar(sidebar);
   }, []);
   return (
-    <div className="max-[1400px] relative mx-auto mt-[70px] px-4" style={{}}>
+    <div className="max-[1400px] relative mx-auto mt-[50px] px-4" style={{}}>
       <Portal>
         <button className="group fixed right-[30px] top-[30px] z-0 hidden rounded  border-gray-300 p-1 transition duration-300 hover:border-brand dark:border-accent dark:hover:border-foreground dark:hover:bg-muted xl:block">
           {!showRightSidebar ? (
@@ -38,9 +38,9 @@ export const EditorSkeleton = () => {
       <div className="flex justify-center">
         <div className="block">
           <div
-            className="relative z-0  mt-2 block w-[90vw] rounded-md  border border-gray-300 bg-white  px-2 dark:border-accent  dark:bg-muted/70 lg:max-w-[800px] lg:px-0 xl:w-[780px]"
+            className="relative z-0  block w-[90vw] rounded-md  border border-gray-300 bg-white  px-2 dark:border-accent  dark:bg-muted/70 lg:max-w-[800px] lg:px-0 xl:w-[780px]"
             style={{
-              height: "calc(100vh - 150px)",
+              height: "calc(100vh - 100px)",
               right: !showRightSidebar ? -rightSideBarWidth / 2 : 0,
               // width: "1190px",
               width:
@@ -74,9 +74,9 @@ export const EditorSkeleton = () => {
               </div>
             </div>
             <div
-              className="mt-2 hidden grow rounded-md border border-gray-300 bg-white dark:border-accent  dark:bg-muted/70  lg:block  lg:w-[400px]"
+              className=" hidden grow rounded-md border border-gray-300 bg-white dark:border-accent  dark:bg-muted/70  lg:block  lg:w-[400px]"
               style={{
-                height: "calc(100vh - 150px)",
+                height: "calc(100vh - 100px)",
                 minWidth: "340px",
                 opacity: 1,
                 transition:

@@ -234,7 +234,9 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
             className=" z-10 flex flex-grow flex-col   "
           >
             <TabsList
-              className={`ring-gray ring-red sticky top-0 z-10  grid h-10 w-full grid-cols-2  rounded-none bg-lightgray dark:bg-accent`}
+              className={cn(
+                `ring-gray ring-red sticky top-0 z-10  grid h-10 w-full grid-cols-2  rounded-none rounded-t-md  bg-gray-200 dark:bg-accent`
+              )}
             >
               <TabsTrigger
                 value="properties"
@@ -251,7 +253,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="properties" className="flex-grow">
+            <TabsContent value="properties" className="flex-grow p-3">
               {SlateElement.isElement(rootNode) &&
                 rootNode?.type == "map" &&
                 elementData && (
@@ -312,7 +314,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                 ))}
             </TabsContent>
             <TabsContent value="preview">
-              <div className="flex justify-end gap-3 border-0">
+              <div className="flex justify-end gap-3">
                 {containsTtsNode(editor.children) && (
                   <button
                     className="mb-2 flex h-[28px] items-center justify-center rounded-md border border-muted-foreground bg-background p-1 text-xs  text-muted-foreground hover:border-accent hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted"

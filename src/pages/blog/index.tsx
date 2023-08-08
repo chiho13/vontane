@@ -39,7 +39,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     const activeWorkspaces = await prisma.workspace.findMany({
       where: { author_id: vontaneappid, deleted_at: null, published: true },
-      orderBy: { created_at: "asc" },
+      orderBy: { published_at: "desc" },
     });
 
     // Extract titles from the slate_value
@@ -81,7 +81,7 @@ const BlogPage = ({ blogs }) => {
         className={`relative  h-[100vh] overflow-y-auto rounded-md bg-white p-4 dark:bg-[#191919] `}
       >
         <div className="mx-auto mt-4 max-w-[700px] lg:mt-20">
-          <h1 className="mb-4 flex items-center text-[36px] font-bold text-gray-700">
+          <h1 className="mb-4 flex items-center text-[36px] font-bold text-gray-700 dark:text-gray-200">
             <div className="shrink">
               <Header />
             </div>
@@ -92,24 +92,28 @@ const BlogPage = ({ blogs }) => {
             {parseNodes(localValue)}
           </div> */}
 
-          {blogs.map((blog, index) => {
-            const link = blog.title
-              .toLowerCase()
-              .replace(/-/g, "_") // Add this line to remove dashes
-              .split(" ")
-              .join("_");
+          <div className="mt-10 block">
+            {blogs.map((blog, index) => {
+              const link = blog.title
+                .toLowerCase()
+                .replace(/-/g, "_") // Add this line to remove dashes
+                .split(" ")
+                .join("_");
 
-            return (
-              <Link
-                className="mb-3 flex justify-between rounded-md border border-gray-200 p-3"
-                key={index}
-                href={`/blog/${link}-${blog.id}`}
-              >
-                {blog.title}
-                <span>{blog.published_at}</span>
-              </Link>
-            );
-          })}
+              return (
+                <Link
+                  className="mb-6 flex justify-between rounded-md border border-gray-200  p-6 transition duration-300 hover:bg-gray-200 dark:border-gray-600 dark:hover:bg-accent/50"
+                  key={index}
+                  href={`/blog/${link}-${blog.id}`}
+                >
+                  <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">
+                    {blog.title}
+                  </span>
+                  <span>{blog.published_at}</span>
+                </Link>
+              );
+            })}
+          </div>
         </div>
         <div className="fixed bottom-4 right-4 hidden xl:block">
           <ModeToggle />

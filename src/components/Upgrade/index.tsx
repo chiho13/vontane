@@ -204,39 +204,39 @@ const Upgrade = () => {
           </div>
           <div className="relative mb-7 block ">
             <p className="mt-3 flex items-center text-left text-base text-sm font-semibold leading-loose text-gray-500 dark:text-gray-400">
-              <div className="flex h-[16px] w-[16px] items-center justify-center rounded-full bg-gray-400">
-                <Check className="w-3 text-white" />
+              <div className="flex h-[16px] w-[16px] items-center justify-center rounded-full bg-gray-400 dark:bg-foreground">
+                <Check className="w-3 text-white dark:text-background" />
               </div>
               <span className="mr-6 shrink bg-gradient-to-r from-blue-500 to-sky-500   bg-clip-text pl-2 text-transparent">
                 {audioTime}
               </span>
             </p>
             <p className="mt-3 flex  items-center text-left text-base text-sm font-semibold leading-loose text-gray-500 dark:text-gray-400">
-              <div className="flex h-[16px] w-[16px] items-center justify-center rounded-full bg-gray-400">
-                <Check className="w-3 text-white" />
+              <div className="flex h-[16px] w-[16px] items-center justify-center rounded-full bg-gray-400 dark:bg-foreground">
+                <Check className="w-3 text-white dark:text-background" />
               </div>
               <span className="mr-6 shrink bg-gradient-to-r from-blue-500 to-sky-500   bg-clip-text pl-2 text-transparent">
                 {imageGen}
               </span>
             </p>
             <p className="mt-3 flex  items-center text-left text-base text-sm font-semibold leading-loose text-gray-500 dark:text-gray-400">
-              <div className="flex h-[16px] w-[16px] items-center justify-center rounded-full bg-gray-400">
-                <Check className="w-3 text-white" />
+              <div className="flex h-[16px] w-[16px] items-center justify-center rounded-full bg-gray-400 dark:bg-foreground">
+                <Check className="w-3 text-white dark:text-background" />
               </div>
               <span className="mr-6 shrink bg-gradient-to-r from-blue-500 to-sky-500   bg-clip-text pl-2 text-transparent">
                 {aiGen}
               </span>
             </p>
             <p className="mt-2 flex  items-center text-left text-sm font-semibold leading-loose text-gray-500  dark:text-gray-400">
-              <div className="flex h-[16px] w-[16px] items-center justify-center rounded-full bg-gray-400">
-                <Check className="w-3 text-white" />
+              <div className="flex h-[16px] w-[16px] items-center justify-center rounded-full bg-gray-400 dark:bg-foreground">
+                <Check className="w-3 text-white dark:text-black" />
               </div>
               <span className="pl-2">One time payment</span>
             </p>
 
             <p className="mt-3 flex items-center text-left text-sm  font-semibold  leading-loose text-gray-500 dark:text-gray-400">
-              <div className="flex h-[16px] w-[16px] items-center justify-center rounded-full bg-gray-400">
-                <Check className="w-3 text-white" />
+              <div className="flex h-[16px] w-[16px] items-center justify-center rounded-full bg-gray-400 dark:bg-foreground">
+                <Check className="w-3 text-white dark:text-background" />
               </div>
               <span className="pl-2">No subscription</span>
             </p>

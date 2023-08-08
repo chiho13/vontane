@@ -1,7 +1,7 @@
-export function formatDate(input: string | number): string {
+export function formatDate(input: Date): string {
   const date = new Date(input);
   return date.toLocaleDateString("en-GB", {
-    month: "long",
+    month: "short",
     day: "numeric",
     year: "numeric",
   });

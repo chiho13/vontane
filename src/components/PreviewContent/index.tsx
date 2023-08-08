@@ -67,7 +67,7 @@ const renderElement = (
       );
     case "image":
       return (
-        <div className={`flex justify-${node.align}`}>
+        <div className={`flex justify-${node.align} mt-3`}>
           <img
             src={node.url}
             width={node.width}
@@ -88,7 +88,7 @@ const renderElement = (
 
     case "title":
       return (
-        <h1 className="mb-4 text-[28px] font-bold" key={key}>
+        <h1 className="mb-4 text-[34px] font-bold" key={key}>
           {children}
         </h1>
       );
@@ -107,7 +107,7 @@ const renderElement = (
 
     case "heading-three":
       return (
-        <h3 className="mt-3 text-2xl  font-bold" key={key}>
+        <h3 className="mt-3 text-xl  font-bold" key={key}>
           {children}
         </h3>
       );

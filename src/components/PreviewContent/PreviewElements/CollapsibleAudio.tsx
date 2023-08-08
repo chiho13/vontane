@@ -9,13 +9,9 @@ export const CollapsibleAudioPlayer = ({ node, children, index, nodes }) => {
     (child) => child.type === "block-quote"
   );
   const flexInline = node.content && node.content.length < 40;
-  console.log(flexInline);
   const nodeIndex = nodes.indexOf(node);
   const isFirst = nodeIndex === 0;
   const isLastNode = nodeIndex === nodes.length - 1;
-  console.log(nodeIndex);
-  console.log(isLastNode);
-
   // determine if the node is the first node of type "tts" and not the first node overall
   const firstTTSIndex = nodes.findIndex((node) => node.type === "tts");
   const isFirstTTS = firstTTSIndex === nodes.indexOf(node);
@@ -32,7 +28,6 @@ export const CollapsibleAudioPlayer = ({ node, children, index, nodes }) => {
     .findIndex((node) => node.type === "tts");
   const isLastTTS = nodes.length - 1 - lastTTSIndex === nodes.indexOf(node);
   const isNotLastOverall = nodeIndex === nodes.length;
-  console.log("sfsdfsf", node.audioplayer);
   return (
     <div
       className={`mb-3 py-3

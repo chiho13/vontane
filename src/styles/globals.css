@@ -179,3 +179,7 @@ body {
 .dark .scrollbar::-webkit-scrollbar-thumb {
   background: hsl(208, 10%, 25%);
 }
+
+.blog-content .katex-html {
+  display: none;
+}

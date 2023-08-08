@@ -24,8 +24,9 @@ import { Button } from "@/components/ui/button";
 import { parseNodes } from "@/components/PreviewContent";
 import { createClient } from "@supabase/supabase-js";
 import { supabaseClient } from "@/utils/supabaseClient";
-import { formatDate } from "@/utils/helpers";
+import { formatDate } from "@/utils/formatDate";
 import Head from "next/head";
+import { Header } from "@/components/Header";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   // get the entire URL path
@@ -80,7 +81,12 @@ const BlogPage = ({ blogs }) => {
         className={`relative  h-[100vh] overflow-y-auto rounded-md bg-white p-4 dark:bg-[#191919] `}
       >
         <div className="mx-auto mt-4 max-w-[700px] lg:mt-20">
-          <h1 className="mb-4 text-[36px] font-bold">Vontane Blog</h1>
+          <h1 className="mb-4 flex items-center text-[36px] font-bold text-gray-700">
+            <div className="shrink">
+              <Header />
+            </div>
+            Vontane Blog
+          </h1>
 
           {/* <div className="relative mx-auto max-w-[700px] xl:mt-[100px]">
             {parseNodes(localValue)}
@@ -95,11 +101,12 @@ const BlogPage = ({ blogs }) => {
 
             return (
               <Link
-                className="mb-3 block rounded-md border border-gray-200 p-3"
+                className="mb-3 flex justify-between rounded-md border border-gray-200 p-3"
                 key={index}
                 href={`/blog/${link}-${blog.id}`}
               >
                 {blog.title}
+                <span>{blog.published_at}</span>
               </Link>
             );
           })}

@@ -85,28 +85,9 @@ export const MapSettings = ({ element, path }) => {
     Transforms.setNodes(editor, { address: e.target.value }, { at: path });
   };
 
-  //   useEffect(() => {
-  //     if (element.latLng) {
-  //       async function fetchLocation() {
-  //         try {
-  //           const response = await locationNameMutation.mutateAsync({
-  //             lat: element.latLng[0],
-  //             lng: element.latLng[1],
-  //           });
-
-  //           console.log("response", response.features[0].place_name);
-  //           //   const location = response.features[0].geometry.coordinates;
-
-  //           //   const latLng = [location[1], location[0]];
-  //           //   Transforms.setNodes(editor, { latLng, zoom: 12 }, { at: path });
-  //           setIsGenerating(false);
-  //         } catch (error) {
-  //           setIsGenerating(false);
-  //         }
-  //       }
-  //       fetchLocation();
-  //     }
-  //   }, [element.latLng]);
+  if (element.type !== "map") {
+    return <div></div>;
+  }
 
   return (
     <div>
@@ -153,11 +134,11 @@ export const MapSettings = ({ element, path }) => {
 
       <div className="text-sm dark:text-gray-400">
         {" "}
-        Lat: {element.latLng[0].toFixed(3)}
+        Lat: {element.latLng && element.latLng[0].toFixed(3)}
       </div>
       <div className="text-sm dark:text-gray-400">
         {" "}
-        Lng: {element.latLng[1].toFixed(3)}
+        Lng: {element.latLng && element.latLng[1].toFixed(3)}
       </div>
 
       {address && (

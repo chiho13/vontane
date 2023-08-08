@@ -22,6 +22,8 @@ import { Button } from "@/components/ui/button";
 import { parseNodes } from "@/components/PreviewContent";
 import { createClient } from "@supabase/supabase-js";
 import { supabaseClient } from "@/utils/supabaseClient";
+import { formatDate } from "@/utils/formatDate";
+import { ChevronLeft } from "lucide-react";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   // get the entire URL path
@@ -32,17 +34,28 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const { req, res }: any = context;
     const { prisma } = createInnerTRPCContext({}, req, res);
 
-    const workspace = await prisma.workspace.findUnique({
-      where: { id: workspaceId },
+    const vontaneappid = "b53a0a8f-c6f7-4d10-a474-1a3e6dd96054";
+
+    const workspace = await prisma.workspace.findFirst({
+      where: {
+        id: workspaceId,
+        author_id: vontaneappid,
+      },
     });
 
-    if (!workspace.published) {
+    const date = new Date(workspace.published_at);
+    const formattedDate = formatDate(date);
+
+    if (!workspace.published || workspace.deleted_at) {
       throw new Error("Workspace not found");
     }
 
     // If there is a user, return the session and other necessary props.
     return {
-      props: { workspaceData: workspace.slate_value }, // Replace 'user' with your actual session data
+      props: {
+        published_at: formattedDate,
+        workspaceData: workspace.slate_value,
+      }, // Replace 'user' with your actual session data
     };
   } catch (error) {
     return {
@@ -54,7 +67,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 };
 
-const PublishedPage = ({ workspaceId, workspaceData }) => {
+const PublishedPage = ({ published_at, workspaceData }) => {
   const router = useRouter();
   const [localValue, setLocalValue] = useState(null);
 
@@ -69,34 +82,12 @@ const PublishedPage = ({ workspaceId, workspaceData }) => {
     };
   }, [workspaceData]);
 
-  const isMCQPresent = (children: any[]) => {
-    if (Array.isArray(children)) {
-      for (let child of children) {
-        if (child.node && child.node.type === "mcq") {
-          return true;
-        }
-
-        // If the child has its own children, check them too
-        if (Array.isArray(child.children)) {
-          if (isMCQPresent(child.children)) {
-            return true;
-          }
-        }
-      }
-    }
-    return false;
-  };
-
   if (!workspaceData) {
     // Show 404 page if workspaceId is not found
     return (
       <div className="flex h-[100vh] w-full flex-col items-center justify-center">
         <div className="text-bold mb-2 text-8xl">404</div>
-        <p className="text-2xl">Workspace not found</p>
-
-        <Link href="/">
-          <Button className="mt-4 ">Go Home</Button>
-        </Link>
+        <p className="text-2xl">Boo</p>
       </div>
     );
   }
@@ -107,7 +98,17 @@ const PublishedPage = ({ workspaceId, workspaceData }) => {
         <div
           className={`relative  h-[100vh] overflow-y-auto rounded-md bg-white p-4 dark:bg-[#191919] `}
         >
-          <div className="relative mx-auto mb-20 max-w-[700px] xl:mt-[100px]">
+          <div className="blog-content relative mx-auto mb-20 max-w-[700px] xl:mt-[100px]">
+            <div className="mb-2 flex justify-between ">
+              <Link href="/blog" className="flex underline">
+                {" "}
+                <ChevronLeft /> {"Back"}
+              </Link>
+
+              <span className="font-bold text-muted-foreground">
+                {published_at}
+              </span>
+            </div>
             {parseNodes(localValue)}
           </div>
         </div>

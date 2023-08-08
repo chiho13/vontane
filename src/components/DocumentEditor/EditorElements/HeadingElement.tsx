@@ -43,7 +43,7 @@ export function HeadingElement(props) {
   const headingSizeMap = {
     "heading-one": "text-4xl",
     "heading-two": "text-3xl",
-    "heading-three": "text-2xl",
+    "heading-three": "text-xl",
   };
   const placeHolderMap = {
     "heading-one": "Heading 1",

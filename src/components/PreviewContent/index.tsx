@@ -47,7 +47,12 @@ const renderElement = (
   switch (node.type) {
     case "paragraph":
       return (
-        <p className="mt-2 leading-7" key={key}>
+        <p
+          className={`mt-2 leading-7 text-${
+            alignMap[node.align] || node.align
+          }`}
+          key={key}
+        >
           {children}
         </p>
       );
@@ -94,20 +99,35 @@ const renderElement = (
       );
     case "heading-one":
       return (
-        <h1 className="mt-3  text-4xl font-bold " key={key}>
+        <h1
+          className={`mt-3  text-4xl font-bold text-${
+            alignMap[node.align] || node.align
+          }`}
+          key={key}
+        >
           {children}
         </h1>
       );
     case "heading-two":
       return (
-        <h2 className="mt-3  text-3xl font-bold" key={key}>
+        <h2
+          className={`mt-3  text-3xl font-bold text-${
+            alignMap[node.align] || node.align
+          }`}
+          key={key}
+        >
           {children}
         </h2>
       );
 
     case "heading-three":
       return (
-        <h3 className="mt-3 text-xl  font-bold" key={key}>
+        <h3
+          className={`mt-3 text-xl  font-bold text-${
+            alignMap[node.align] || node.align
+          }`}
+          key={key}
+        >
           {children}
         </h3>
       );

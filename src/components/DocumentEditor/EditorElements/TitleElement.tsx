@@ -6,7 +6,7 @@ import styled from "styled-components";
 
 const TitleStyle = styled.div`
   h1 {
-    font-size: 28px;
+    font-size: 34px;
     font-weight: bold;
     letter-spacing: -0.8px;
   }

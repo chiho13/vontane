@@ -191,45 +191,56 @@ const Upgrade = () => {
               $<span className="block text-foreground ">{price}</span>
             </h2>
           </div>
+
+          <div className="relative mb-5 mt-3 h-[40px]">
+            <button
+              onClick={() => createCheckoutSession(checkoutId, creditNumber)}
+              className="subscribe-btn flex h-[40px] w-full items-center justify-center rounded-md   bg-gradient-to-r from-blue-500 to-sky-400 text-center text-base  font-semibold text-white transition"
+            >
+              <div className="flex items-center justify-center">
+                <span className="text-md ml-2">Purchase</span>
+              </div>
+            </button>
+          </div>
           <div className="relative mb-7 block ">
             <p className="mt-3 flex items-center text-left text-base text-sm font-semibold leading-loose text-gray-500 dark:text-gray-400">
-              <Check />
+              <div className="flex h-[16px] w-[16px] items-center justify-center rounded-full bg-gray-400">
+                <Check className="w-3 text-white" />
+              </div>
               <span className="mr-6 shrink bg-gradient-to-r from-blue-500 to-sky-500   bg-clip-text pl-2 text-transparent">
                 {audioTime}
               </span>
             </p>
             <p className="mt-3 flex  items-center text-left text-base text-sm font-semibold leading-loose text-gray-500 dark:text-gray-400">
-              <Check />
+              <div className="flex h-[16px] w-[16px] items-center justify-center rounded-full bg-gray-400">
+                <Check className="w-3 text-white" />
+              </div>
               <span className="mr-6 shrink bg-gradient-to-r from-blue-500 to-sky-500   bg-clip-text pl-2 text-transparent">
                 {imageGen}
               </span>
             </p>
             <p className="mt-3 flex  items-center text-left text-base text-sm font-semibold leading-loose text-gray-500 dark:text-gray-400">
-              <Check />
+              <div className="flex h-[16px] w-[16px] items-center justify-center rounded-full bg-gray-400">
+                <Check className="w-3 text-white" />
+              </div>
               <span className="mr-6 shrink bg-gradient-to-r from-blue-500 to-sky-500   bg-clip-text pl-2 text-transparent">
                 {aiGen}
               </span>
             </p>
             <p className="mt-2 flex  items-center text-left text-sm font-semibold leading-loose text-gray-500  dark:text-gray-400">
-              <Check />
+              <div className="flex h-[16px] w-[16px] items-center justify-center rounded-full bg-gray-400">
+                <Check className="w-3 text-white" />
+              </div>
               <span className="pl-2">One time payment</span>
             </p>
 
             <p className="mt-3 flex items-center text-left text-sm  font-semibold  leading-loose text-gray-500 dark:text-gray-400">
-              <Check />
+              <div className="flex h-[16px] w-[16px] items-center justify-center rounded-full bg-gray-400">
+                <Check className="w-3 text-white" />
+              </div>
               <span className="pl-2">No subscription</span>
             </p>
           </div>
-        </div>
-        <div className="relative h-[40px]">
-          <button
-            onClick={() => createCheckoutSession(checkoutId, creditNumber)}
-            className="subscribe-btn flex h-[40px] w-full items-center justify-center rounded-md   bg-gradient-to-r from-blue-500 to-sky-400 text-center text-base  font-semibold text-white transition"
-          >
-            <div className="flex items-center justify-center">
-              <span className="text-md ml-2">Purchase</span>
-            </div>
-          </button>
         </div>
       </div>
     );
@@ -238,25 +249,14 @@ const Upgrade = () => {
   return (
     <PricingStyle>
       <div className="container mx-auto">
-        <div className="-mx-4 flex flex-wrap">
-          <div className="w-full px-4">
-            <div className="mx-auto mb-[20px] mt-10 max-w-[510px] text-center lg:mb-5">
-              <h1 className="mb-5 mr-6 bg-gradient-to-r from-blue-500 to-sky-400 bg-clip-text text-3xl   font-bold text-transparent sm:text-4xl">
-                Supercharge your content
-              </h1>
-              <p className="text-xs text-muted-foreground">
-                Text to MP3: 1 Character = 1 Credit
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Text to Image: An Image Set show 3 results = 250 Credits
-              </p>
-              <p className="text-xs text-muted-foreground">
-                AI Assist: One command = 50 Credits
-              </p>
-            </div>
+        <div className="w-full px-4">
+          <div className="mx-auto mb-[20px] mt-10 max-w-[510px] text-center lg:mb-5">
+            <h1 className="mb-7 mr-6 bg-gradient-to-r from-blue-500 to-sky-400 bg-clip-text text-3xl   font-bold text-transparent sm:text-4xl">
+              Supercharge your content
+            </h1>
           </div>
         </div>
-        <div className="relative -mx-4 mb-10 flex justify-center px-10">
+        <div className="relative -mx-4 mb-4 flex justify-center px-10">
           <div className="grid w-full grid-cols-3 gap-4">
             {PriceCards.map((card, index) => (
               <PriceCard
@@ -271,6 +271,28 @@ const Upgrade = () => {
                 createCheckoutSession={createCheckoutSession}
               />
             ))}
+          </div>
+        </div>
+        {/* <div className="mx-auto w-full text-center text-[11px]">
+          By clicking the button above to proceed you agree with Vontane's{" "}
+          <a href="https://vontane.com/terms" className="text-brand underline">
+            {" "}
+            TOS
+          </a>
+        </div> */}
+        <div className="flex w-full flex-wrap">
+          <div className=" mx-auto mt-3 px-4 ">
+            <div className="  max-w-[510px] text-center  lg:mb-5">
+              <p className="text-[10px] text-muted-foreground">
+                Text to MP3: 1 Character = 1 Credit
+              </p>
+              <p className="text-[10px] text-muted-foreground">
+                Text to Image: An Image Set show 3 results = 250 Credits
+              </p>
+              <p className="text-[10px] text-muted-foreground">
+                AI Assist: One command = 50 Credits
+              </p>
+            </div>
           </div>
         </div>
       </div>

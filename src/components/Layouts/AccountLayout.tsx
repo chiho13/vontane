@@ -443,7 +443,12 @@ const Layout: React.FC<LayoutProps> = ({
                   </Dropdown>
                 </DropdownProvider>
               </div>
-              <ul className="mb-10 mt-10">
+              <ul
+                className="mb-10 mt-10  overflow-y-auto"
+                style={{
+                  height: "calc(100vh - 170px)",
+                }}
+              >
                 {workspaces &&
                   workspaces.map((workspace) => {
                     const parsedSlateValue = JSON.parse(

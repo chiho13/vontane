@@ -19,9 +19,13 @@ import {
 import { Button } from "../ui/button";
 import { useContext } from "react";
 import { EditorContext } from "@/contexts/EditorContext";
+import { useWorkspaceTitleUpdate } from "@/contexts/WorkspaceTitleContext";
+import { useRouter } from "next/router";
 
 export const Export = () => {
   const { editor } = useContext(EditorContext);
+  const router = useRouter();
+  const workspaceId = router.query.workspaceId as string;
   const downloadAsHTML = () => {
     const htmlContent = exportToHTML(editor);
 
@@ -64,7 +68,12 @@ export const Export = () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "slate-document.html";
+    a.download = `${editor.children[0].children[0].text
+      .toLowerCase()
+      .replace(/-/g, "_") // Add this line to remove dashes
+      .split(" ")
+      .join("_")}.html`;
+
     a.click();
     URL.revokeObjectURL(url);
   };

@@ -154,8 +154,8 @@ export type CustomElement = {
   address?: string;
   zoom?: Number;
   url?: string | undefined;
-  width?: number;
-  height?: number;
+  width?: any;
+  height?: any;
 };
 
 type CustomText = {

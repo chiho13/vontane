@@ -274,6 +274,20 @@ export const exportSlateNodeToHtml = (node) => {
           node.height
         )}@2x?attribution=true&logo=true&access_token=pk.eyJ1IjoiYW50aG9ueWhvZGVzdSIsImEiOiJjanI2aWdmMmYxNXB2NDN0ZzJnd3FsMHg3In0.SejE2ZJApZ0Rg5UTsK7kPw" alt="Mapbox map" />`;
 
+      case "tts":
+        const ttsChildrenHtml = node.children
+          .map(exportSlateNodeToHtml)
+          .join("");
+        return `
+            <div>
+              <audio controls>
+                <source src="${node.audio_url}" type="audio/mpeg">
+                Your browser does not support the audio element.
+              </audio>
+              ${!node.audioplayer ? ttsChildrenHtml : ""}
+            </div>
+          `;
+
       default:
         return childrenHtml;
     }

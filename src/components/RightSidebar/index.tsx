@@ -314,7 +314,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                 ))}
             </TabsContent>
             <TabsContent value="preview">
-              <div className="flex justify-end gap-3">
+              {/* <div className="flex justify-end gap-3">
                 {containsTtsNode(editor.children) && (
                   <button
                     className="mb-2 flex h-[28px] items-center justify-center rounded-md border border-muted-foreground bg-background p-1 text-xs  text-muted-foreground hover:border-accent hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted"
@@ -323,7 +323,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                     Export as Single Audio File
                   </button>
                 )}
-              </div>
+              </div> */}
               <PreviewContent />
             </TabsContent>
           </Tabs>

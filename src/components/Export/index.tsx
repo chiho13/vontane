@@ -42,7 +42,7 @@ export const Export = () => {
     <style>
 
     .katex {
-        font-size: 22px;
+        font-size: 20px;
         text-align: center;
         margin-bottom: 10px
     }

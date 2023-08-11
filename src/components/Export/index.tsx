@@ -72,9 +72,18 @@ export const Export = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <Button className="flex h-[22px] w-[22px] items-center justify-center rounded-md bg-white p-0 outline-none hover:bg-gray-200 dark:bg-muted dark:hover:bg-accent">
-          <MoreHorizontal className="option-menu w-[18px] w-[18px] text-darkergray dark:text-foreground" />
-        </Button>
+        <TooltipProvider delayDuration={300}>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button className="flex h-[22px] w-[22px] items-center justify-center rounded-md bg-white p-0 outline-none hover:bg-gray-200 dark:bg-muted dark:hover:bg-accent">
+                <MoreHorizontal className="option-menu w-[18px] w-[18px] text-darkergray dark:text-foreground" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="right" sideOffset={10}>
+              <p className="text-[12px]">Export</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </DropdownMenuTrigger>
       <DropdownMenuContent className=" top-0 w-[200px] border dark:border-accent dark:bg-muted">
         <DropdownMenuItem

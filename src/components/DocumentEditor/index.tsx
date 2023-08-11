@@ -154,6 +154,8 @@ export type CustomElement = {
   address?: string;
   zoom?: Number;
   url?: string | undefined;
+  width?: number;
+  height?: number;
 };
 
 type CustomText = {
@@ -199,6 +201,7 @@ import { Button } from "../ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { Export } from "../Export";
 
 export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   workspaceId,
@@ -1965,7 +1968,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               transition: "right 0.3s ease-in-out, width 0.3s ease-in-out",
             }}
           >
-            <div className="absolute -top-[40px] left-0">
+            <div className="absolute -top-[40px] left-0 flex w-full items-center justify-between ">
               <div className="flex items-center">
                 <Dialog open={openUpgrade} onOpenChange={onOpenChangeUpgrade}>
                   <DialogTrigger asChild>
@@ -1994,6 +1997,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                   {credits && String(credits)}
                 </span>
               </div>
+              <Export />
             </div>
 
             <div className="absolute right-3 top-2 z-10 flex items-center gap-2 rounded-md border border-gray-300  bg-gray-100 px-2  py-1 text-xs text-slate-500 dark:border-gray-600 dark:bg-accent dark:text-slate-200">

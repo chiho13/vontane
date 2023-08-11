@@ -45,16 +45,11 @@ export async function uploadImage(
     }
 
     const expiresIn = 60 * 60 * 24 * 7; // 24 hours in seconds
-    const { data: signedURL, error: signedURLError } =
-      await supabaseServerClient.storage
-        .from("dalle")
-        .createSignedUrl(filePath, expiresIn);
+    const response = await supabaseServerClient.storage
+      .from("dalle")
+      .getPublicUrl(filePath);
 
-    if (signedURLError || !signedURL) {
-      throw new Error("Failed to generate signed URL for the audio file.");
-    }
-
-    return signedURL.signedUrl;
+    return response.data.publicUrl;
   } catch (error) {
     console.error("Error uploading image file to Supabase:", error);
     throw new Error("Failed to upload image file to Supabase storage.");

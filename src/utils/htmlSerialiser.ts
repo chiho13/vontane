@@ -2,6 +2,7 @@ import { alignMap } from "@/components/DocumentEditor/helpers/toggleBlock";
 import { genNodeId } from "@/hoc/withID";
 import { Editor, Element as SlateElement } from "slate";
 import katex from "katex";
+import { useTheme } from "next-themes";
 
 export const slateNodeToHtml = (node) => {
   if (SlateElement.isElement(node)) {
@@ -199,38 +200,42 @@ export const getHtmlFromSelection = (editor) => {
 };
 
 export const exportSlateNodeToHtml = (node) => {
+  const MAPTILER_ACCESS_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+
   if (SlateElement.isElement(node)) {
-    const childrenHtml = node.children.map(slateNodeToHtml).join("");
+    const childrenHtml = node.children.map(exportSlateNodeToHtml).join("");
     switch (node.type) {
+      case "title":
+        return `<h1 class="mb-4 text-4xl font-bold">
+                ${childrenHtml}
+          </h1>`;
       case "paragraph":
-        return `<p data-align="text-${
+        return `<p  class="mt-2 text-${
           alignMap[node.align] || node.align
         }">${childrenHtml}</p>`;
 
       case "link":
         return `<a class="text-brand underline dark:text-blue-400" href="${node.url}" target="_blank">${childrenHtml}</a>`;
       case "heading-one":
-        return `<h1 class="text-4xl" data-align="text-${
+        return `<h1 class="mt-3 mb-3 text-4xl font-bold text-${
           alignMap[node.align] || node.align
         }">${childrenHtml}</h1>`;
       case "heading-two":
-        return `<h2 class="text-3xl" data-align="text-${
+        return `<h2 class="mt-3 mb-3 text-3xl  font-bold text-${
           alignMap[node.align] || node.align
         }">${childrenHtml}</h2>`;
 
       case "heading-three":
-        return `<h3 class="text-2xl" data-align="text-${
+        return `<h3 class=" mt-3 mb-3 text-2xl font-bold text-${
           alignMap[node.align] || node.align
-        }">${childrenHtml}</h3>`;
+        }" >${childrenHtml}</h3>`;
 
       case "numbered-list":
         return childrenHtml;
       case "bulleted-list":
         return childrenHtml;
       case "checked-list":
-        return `<label data-align="text-${
-          alignMap[node.align] || node.align
-        }" class="flex items-center gap-3 mt-2"><input class="w-[18px] h-[18px]" type="checkbox" name="option1" value="Option1" ${
+        return `<label class="flex items-center gap-3 mt-2"><input class="w-[18px] h-[18px]" type="checkbox" name="option1" value="Option1" ${
           node.checked ? "checked" : ""
         } />${childrenHtml}</label>`;
 
@@ -238,14 +243,36 @@ export const exportSlateNodeToHtml = (node) => {
         return childrenHtml;
 
       case "block-quote":
-        return `<blockquote class="items-center border-l-4 border-gray-400 bg-white pl-3  text-gray-500 dark:bg-muted dark:text-gray-300">${childrenHtml}</blockquote>`;
+        return `<blockquote class="text-${
+          alignMap[node.align] || node.align
+        } border-l-4 border-gray-500 bg-white pl-3  text-gray-500">${childrenHtml}</blockquote>`;
       case "equation":
-        const renderedEquation = katex.renderToString(node.latex);
-        return `<div class="katex block text-[10px] mt-4">${renderedEquation}</div>`;
+        const renderedEquation = katex.renderToString(
+          `\\displaystyle${node.latex}`
+        );
+        return `<div class="katex block text-sm mt-4">${renderedEquation}</div>`;
 
       case "inline-equation":
-        const renderedInlineEquation = katex.renderToString(node.latex);
-        return `<span class="katex inline text-xs ">${renderedInlineEquation}</span>`;
+        const renderedInlineEquation = katex.renderToString(
+          `\\displaystyle${node.latex}`
+        );
+        return `<span class="katex inline text-sm ">${renderedInlineEquation}</span>`;
+
+      case "image":
+        return `<div class="flex mt-3 mb-3  w-full justify-${node.align}"><img src="${node.url}" width="${node.width}" /></div>`;
+      // case "map":
+      //   return `<iframe width="${node.width}" height="${node.height}" src="https://api.maptiler.com/maps/streets/?key=${MAPTILER_ACCESS_TOKEN}#${node.zoom}/${node.latLng[0]}/${node.latLng[1]}" frameborder="0" allowfullscreen></iframe>`;
+
+      case "map":
+        return `<img width="${node.width}" height="${
+          node.height
+        }" src="https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/static/pin-m-marker+285A98(${
+          node.latLng[1]
+        },${node.latLng[0]})/${node.latLng[1]},${node.latLng[0]},${
+          node.zoom
+        },0,0/${Math.round(node.width)}x${Math.round(
+          node.height
+        )}@2x?attribution=true&logo=true&access_token=pk.eyJ1IjoiYW50aG9ueWhvZGVzdSIsImEiOiJjanI2aWdmMmYxNXB2NDN0ZzJnd3FsMHg3In0.SejE2ZJApZ0Rg5UTsK7kPw" alt="Mapbox map" />`;
 
       default:
         return childrenHtml;
@@ -271,10 +298,8 @@ export const exportSlateNodeToHtml = (node) => {
 };
 
 export const exportToHTML = (editor) => {
-  if (!editor.selection) return "";
-
   // Get the fragment (block of text) from the current selection
-  const fragment = Editor.fragment(editor, editor.selection);
+  const fragment = editor.children;
 
   let inNumberedList = false;
   let inBulletedList = false;
@@ -339,21 +364,21 @@ export const exportToHTML = (editor) => {
       uniqueInputId = genNodeId();
       // Add alpha numbering to the option
       const alpha = indexToAlpha(optionCounterCounts[optionCounter] || 0);
-      quizOptions += `<li class="pl-2 list-none ">
+      let correctAnswerClass = node.correctAnswer
+        ? `<span class="correct-answer hidden absolute right-[40px] text-green-500">Correct</span>`
+        : `<span class="incorrect-answer hidden absolute right-[40px] text-red-500">Incorrect</span>`;
 
-      <label class="flex mt-2 h-[40px] w-full cursor-pointer items-center gap-3 rounded-md border border-gray-400 p-2 px-1 hover:border-gray-500 dark:border-gray-700">
-    
-            <div class=" flex h-[28px] w-[28px] ml-px items-center justify-center rounded-md">${alpha}.</div>
-        
-        <div class="w-full flex justify-between">
-    
+      quizOptions += `<li class="pl-2 list-none relative">
+    <label class="flex mt-2 h-[40px] w-full cursor-pointer items-center gap-3 rounded-md border border-gray-400 p-2 px-1 hover:border-gray-500 dark:border-gray-700">
+      <div class="flex h-[28px] w-[28px] ml-px items-center justify-center rounded-md">${alpha}.</div>
+      <div class="w-full flex justify-between">
         ${html}
-        <input class="flex h-[24px] w-[24px] justify-end mr-1" type="radio" name="quizOption-${optionCounter}" value="Option1" />
-          </div>
-        
-        </label>
-    </li>
-    `;
+        <input class="flex h-[24px] w-[24px] justify-end mr-1 answer-checkbox" type="radio" name="quizOption-${optionCounter}" value="Option1" />
+        ${correctAnswerClass}
+        </div>
+    
+    </label>
+  </li>`;
 
       // Increment the count for this optionCounter
       optionCounterCounts[optionCounter] =

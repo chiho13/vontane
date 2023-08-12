@@ -220,6 +220,20 @@ export const ListItem = withListNumbering((props) => {
                   : ""
               }`)}
           >
+            {selectedOption[groupNumber] === element.id &&
+              element.correctAnswer && (
+                <span className="absolute right-[50px] text-green-600">
+                  Correct
+                </span>
+              )}
+
+            {selectedOption[groupNumber] === element.id &&
+              !element.correctAnswer && (
+                <span className="absolute right-[50px] text-red-600">
+                  Incorrect
+                </span>
+              )}
+            {/* <span>Incorrect</span> */}
             <input
               type="radio"
               id={element.id}

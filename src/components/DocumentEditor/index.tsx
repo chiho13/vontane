@@ -1975,7 +1975,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     <Button
                       variant="outline"
                       size="xs"
-                      className=" border border-gray-300"
+                      className=" border ring-brand focus:ring-2 dark:ring-white"
                       // onClick={upgradeAccount}
                     >
                       <span className="mr-4 text-xs text-foreground  dark:text-foreground ">

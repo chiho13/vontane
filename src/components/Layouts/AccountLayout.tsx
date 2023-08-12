@@ -489,6 +489,7 @@ const Layout: React.FC<LayoutProps> = ({
                       <SidebarItem
                         key={workspace.id}
                         onClick={() => handleWorkspaceRoute(workspace.id, "")}
+                        className="ring-brand focus:ring-2 dark:ring-white"
                       >
                         <button
                           className={` group relative flex  items-center  hover:bg-gray-200 dark:hover:bg-accent ${

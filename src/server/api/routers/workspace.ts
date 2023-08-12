@@ -11,6 +11,8 @@ import { nanoid } from "nanoid";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 import { TRPCError } from "@trpc/server";
+import puppeteer from "puppeteer";
+
 const ee = new EventEmitter();
 
 export const workspaceRouter = createTRPCRouter({
@@ -221,5 +223,19 @@ export const workspaceRouter = createTRPCRouter({
       });
 
       return { workspace: updatedWorkspace };
+    }),
+  generatePDF: protectedProcedure
+    .input(z.object({ html: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const browser = await puppeteer.launch();
+      const page = await browser.newPage();
+      await page.setContent(input.html);
+      const pdf = await page.pdf({ format: "A4" });
+      await browser.close();
+
+      // Convert PDF buffer to a base64 string if you want to return it directly
+      const pdfBase64 = pdf.toString("base64");
+
+      return { pdf: pdfBase64 };
     }),
 });

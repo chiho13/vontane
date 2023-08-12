@@ -57,7 +57,7 @@ export const PublishButton = ({
               : "bg-brand "
           }`}
           disabled={pubLoading}
-          onClick={!pubLoading && publishWorkspace}
+          onClick={!pubLoading ? publishWorkspace : undefined}
         >
           {pubLoading ? (
             <>

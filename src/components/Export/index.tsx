@@ -85,7 +85,7 @@ export const Export = () => {
           Export <ChevronRight className="w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className=" top-0 w-[200px] border dark:border-accent dark:bg-muted">
+      <DropdownMenuContent className=" top-0 w-[200px] border dark:border-accent dark:bg-input">
         <DropdownMenuItem
           className={`flex w-full items-center rounded-sm px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:text-gray-900 focus:outline-none dark:text-foreground `}
           onClick={downloadAsHTML}

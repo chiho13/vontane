@@ -24,6 +24,7 @@ import { createClient } from "@supabase/supabase-js";
 import { supabaseClient } from "@/utils/supabaseClient";
 import { formatDate } from "@/utils/formatDate";
 import { ChevronLeft } from "lucide-react";
+import Head from "next/head";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   // get the entire URL path
@@ -68,7 +69,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 const PublishedPage = ({ published_at, workspaceData }) => {
-  const router = useRouter();
+  // Split the path by '/' and get the second last part, which contains the title and ID
+
   const [localValue, setLocalValue] = useState(null);
 
   useEffect(() => {
@@ -93,7 +95,24 @@ const PublishedPage = ({ published_at, workspaceData }) => {
   }
 
   return (
-    localValue && (
+    <>
+      <Head>
+        <title>
+          Vontane | {JSON.parse(workspaceData)[0].children[0].text}{" "}
+        </title>
+        <meta
+          name="description"
+          content={`Vontane - ${JSON.parse(workspaceData)[0].children[0].text}`}
+        />
+
+        <meta property="og:title" content="Vontane Content Editor" />
+        <meta
+          property="og:description"
+          content={JSON.parse(workspaceData)[0].children[0].text}
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.vontane.com" />
+      </Head>
       <AudioManagerProvider>
         <div
           className={`relative  h-[100vh] overflow-y-auto rounded-md bg-white p-4 dark:bg-[#191919] `}
@@ -109,14 +128,14 @@ const PublishedPage = ({ published_at, workspaceData }) => {
                 {published_at}
               </span>
             </div>
-            {parseNodes(localValue)}
+            {localValue && parseNodes(localValue)}
           </div>
         </div>
         <div className="fixed bottom-4 right-4 hidden xl:block">
           <ModeToggle />
         </div>
       </AudioManagerProvider>
-    )
+    </>
   );
 };
 

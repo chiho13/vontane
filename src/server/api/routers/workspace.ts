@@ -227,10 +227,17 @@ export const workspaceRouter = createTRPCRouter({
   generatePDF: protectedProcedure
     .input(z.object({ html: z.string() }))
     .mutation(async ({ input, ctx }) => {
-      const browser = await puppeteer.launch();
+      const browser = await puppeteer.connect({
+        browserWSEndpoint: `wss://chrome.browserless.io?token=${process.env.BLESS_TOKEN}`,
+      });
+
       const page = await browser.newPage();
+      await page.setViewport({ width: 1920, height: 1080 });
       await page.setContent(input.html);
-      const pdf = await page.pdf({ format: "A4" });
+      await page.waitForSelector(".katex"); // Wait for KaTeX to load
+
+      const pdf = await page.pdf();
+
       await browser.close();
 
       // Convert PDF buffer to a base64 string if you want to return it directly

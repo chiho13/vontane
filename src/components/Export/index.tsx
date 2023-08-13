@@ -93,6 +93,48 @@ Save as PDF
     URL.revokeObjectURL(url);
   };
 
+  const downloadAsPdf = async () => {
+    const htmlContent = exportToHTML(editor);
+
+    const fullHTMLContent = generateHTMLContent(htmlContent);
+
+    try {
+      const response = await pdfMutation.mutateAsync({
+        html: fullHTMLContent,
+      });
+      if (response && response.pdf) {
+        // Convert base64 to blob
+        const binaryString = window.atob(response.pdf);
+        const len = binaryString.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+        const blob = new Blob([bytes], { type: "application/pdf" });
+
+        // Create a URL for the blob
+        const url = URL.createObjectURL(blob);
+
+        // Create an anchor tag to trigger the download
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${editor.children[0].children[0].text
+          .toLowerCase()
+          .replace(/-/g, "_")
+          .split(" ")
+          .join("_")}.pdf`;
+
+        // Click the anchor tag to start the download
+        a.click();
+
+        // Revoke the URL to free up resources
+        URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error("Error getting summary:", error);
+    }
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="rounded-md outline-none ring-brand focus:ring-2">

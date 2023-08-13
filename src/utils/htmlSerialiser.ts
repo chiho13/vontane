@@ -248,13 +248,13 @@ export const exportSlateNodeToHtml = (node) => {
         } border-l-4 border-gray-500 bg-white pl-3  text-gray-500">${childrenHtml}</blockquote>`;
       case "equation":
         const renderedEquation = katex.renderToString(
-          `\\displaystyle(${node.latex})`
+          `\\displaystyle ${node.latex}`
         );
-        return `<div class="katex block text-sm mt-4">${renderedEquation}</div>`;
+        return `<div class="katex block text-sm mt-6 mb-6">${renderedEquation}</div>`;
 
       case "inline-equation":
         const renderedInlineEquation = katex.renderToString(
-          `\\displaystyle(${node.latex})`
+          `\\displaystyle ${node.latex}`
         );
         return `<span class="katex inline text-sm ">${renderedInlineEquation}</span>`;
 

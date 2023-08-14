@@ -151,7 +151,7 @@ const ElevenTTSWrapperBase = (props: {
       </div>
       {selected && (
         <div
-          className={`absolute bottom-[2px] right-[10px] z-10  rounded-md p-[2px] text-xs dark:text-muted-foreground ${
+          className={`absolute bottom-[2px] right-[10px] z-10 rounded-md  p-[2px] font-sans text-xs dark:text-muted-foreground ${
             extractedText.length > 5000
               ? "bg-red-300 dark:text-destructive"
               : ""

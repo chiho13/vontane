@@ -293,7 +293,10 @@ export const TextSpeech = ({
                         checked={audioChecked}
                         onCheckedChange={showAudioPlayer}
                       />
-                      <Label htmlFor="airplane-mode" className="text-xs">
+                      <Label
+                        htmlFor="airplane-mode"
+                        className="font-sans text-xs"
+                      >
                         Audio only
                       </Label>
                     </div>

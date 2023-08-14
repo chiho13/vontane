@@ -25,6 +25,7 @@ import {
 import { debounce } from "lodash";
 import { AudioManagerContext } from "@/contexts/PreviewAudioContext";
 import { cn } from "@/utils/cn";
+import { useTextSpeech } from "@/contexts/TextSpeechContext";
 
 const ListItemStyle = styled.div`
   position: relative;
@@ -137,6 +138,8 @@ export const ListItem = withListNumbering((props) => {
   } = props;
   const path = ReactEditor.findPath(editor, element);
 
+  const { workspaceData } = useTextSpeech();
+
   const { selectedOption, setSelectedOption } = useContext(AudioManagerContext);
   const [isVisible, setIsVisible] = useState(false);
   const focused = useFocused();
@@ -229,6 +232,9 @@ export const ListItem = withListNumbering((props) => {
       `${selectedElementID === element.id ? " bg-[#E0EDFB]" : "bg-transparent"}
     list-none transition
     duration-200 ease-in-out
+
+    ${workspaceData.workspace.font_style}
+    ${workspaceData.workspace.font_style === "font-mono" ? "text-sm" : ""}
     text-${alignMap[element.align] || element.align}
     ${isCheckedList && isChecked && "text-muted-foreground line-through"}
     ${isOptionList && !isPreview ? " ml-[51px]" : " ml-[21px]"}

@@ -5,6 +5,7 @@ import { Editor, Path, Node, Range } from "slate";
 import styled from "styled-components";
 import { hasSlideElement } from "@/utils/helpers";
 import { alignMap, isParentMCQ } from "../helpers/toggleBlock";
+import { useTextSpeech } from "@/contexts/TextSpeechContext";
 
 interface HeadingElementProps {
   isParentMCQ: boolean;
@@ -33,6 +34,7 @@ export function HeadingElement(props) {
     setSelectedElementID,
   } = useContext(EditorContext);
   const { attributes, children, element, tag } = props;
+  const { workspaceData } = useTextSpeech();
 
   const HeadingTag = tag || "h1";
   const path = ReactEditor.findPath(editor, element);
@@ -78,7 +80,9 @@ export function HeadingElement(props) {
           "text-xl"
         } 
         text-${alignMap[element.align] || element.align}
-        font-mono font-bold
+        font-bold
+
+        ${workspaceData.workspace.font_style}
         ${selectedElementID === element.id ? " bg-[#E0EDFB]" : ""}
         `}
         {...attributes}

@@ -49,12 +49,12 @@ export const AudioPlayerStyle: StyledComponent<"div", any> = styled.div`
 
   .audioPlayer_nib {
     display: block;
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     background-color: white;
     border: 1px solid #cccccc;
     position: absolute;
-    top: -3px;
+    top: -4px;
     border-radius: 50%;
     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   }

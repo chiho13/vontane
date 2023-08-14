@@ -34,7 +34,7 @@ export function HeadingElement(props) {
     setSelectedElementID,
   } = useContext(EditorContext);
   const { attributes, children, element, tag } = props;
-  const { workspaceData } = useTextSpeech();
+  const { fontStyle } = useTextSpeech();
 
   const HeadingTag = tag || "h1";
   const path = ReactEditor.findPath(editor, element);
@@ -82,7 +82,7 @@ export function HeadingElement(props) {
         text-${alignMap[element.align] || element.align}
         font-bold
         dark:text-gray-300
-        ${workspaceData.workspace.font_style}
+        ${fontStyle}
         ${selectedElementID === element.id ? " bg-[#E0EDFB]" : ""}
         `}
         {...attributes}

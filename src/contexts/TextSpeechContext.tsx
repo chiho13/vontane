@@ -28,6 +28,8 @@ interface TextSpeechContextType {
   refetchWorkspaceData: any;
   tab: any;
   setTab: any;
+  fontStyle: any;
+  setFontStyle: any;
 }
 // Create the context with default values
 const TextSpeechContext = createContext<TextSpeechContextType>({
@@ -51,6 +53,8 @@ const TextSpeechContext = createContext<TextSpeechContextType>({
   refetchWorkspaceData: {},
   tab: {},
   setTab: () => {},
+  fontStyle: {},
+  setFontStyle: () => {},
 });
 
 // Define the shape of the provider props
@@ -92,6 +96,10 @@ const RightSideBarProvider = ({
 
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
+  const [fontStyle, setFontStyle] = useState(
+    workspaceData.workspace.font_style
+  );
+
   return (
     <TextSpeechContext.Provider
       value={{
@@ -111,6 +119,8 @@ const RightSideBarProvider = ({
         refetchWorkspaceData,
         tab,
         setTab,
+        fontStyle,
+        setFontStyle,
       }}
     >
       {children}

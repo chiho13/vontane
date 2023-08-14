@@ -246,7 +246,7 @@ const renderElement = (
       );
 
     default:
-      return <span key={key}>{children}</span>;
+      return <div></div>;
   }
 };
 

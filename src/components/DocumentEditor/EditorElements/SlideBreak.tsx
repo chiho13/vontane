@@ -67,7 +67,7 @@ export const SlideBreak = withSlideNumbering(
       >
         {/* <hr className="border-1 my-4 h-1 w-[98%] divide-dashed rounded bg-gray-400" />
          */}
-        <div className="mt-1 mb-1 flex w-[100%] items-center text-center">
+        <div className="mb-1 mt-1 flex w-[100%] items-center text-center">
           <div className="mr-2 block h-[5px] grow -translate-y-1 border-b-2 border-gray-300 dark:border-slate-400"></div>
           <div className=" flex justify-end text-gray-500">
             {" "}
@@ -82,7 +82,6 @@ export const SlideBreak = withSlideNumbering(
           </div>
           <div className="mr-2 block h-[5px] grow -translate-y-1 border-b-2 border-gray-300 dark:border-slate-400"></div>
         </div>
-        {children}
       </div>
     );
   }

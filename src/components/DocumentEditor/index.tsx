@@ -1513,21 +1513,21 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
             console.log("overRect width", overRect.width * 0.7);
 
-            // if (isCloseToRight) {
-            //   console.log("Setting creatingNewColumn to true, direction right");
-            //   setCreatingNewColumn(true);
-            //   setInsertDirection("right");
-            // } else if (isCloseToLeft) {
-            //   console.log("Setting creatingNewColumn to true, direction left");
-            //   setCreatingNewColumn(true);
-            //   setInsertDirection("left");
-            // } else {
-            //   console.log(
-            //     "Setting creatingNewColumn and insertDirection to null"
-            //   );
-            //   setCreatingNewColumn(false);
-            //   setInsertDirection(null);
-            // }
+            if (isCloseToRight) {
+              console.log("Setting creatingNewColumn to true, direction right");
+              setCreatingNewColumn(true);
+              setInsertDirection("right");
+            } else if (isCloseToLeft) {
+              console.log("Setting creatingNewColumn to true, direction left");
+              setCreatingNewColumn(true);
+              setInsertDirection("left");
+            } else {
+              console.log(
+                "Setting creatingNewColumn and insertDirection to null"
+              );
+              setCreatingNewColumn(false);
+              setInsertDirection(null);
+            }
           }
         } else {
           setCreatingNewColumn(false);

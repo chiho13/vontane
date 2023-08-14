@@ -94,7 +94,11 @@ const renderElement = (
       return <MapBlock element={node} />;
     case "block-quote":
       return (
-        <blockquote className="text-red  relative mb-3  ml-3 mt-4 border-l-4 border-gray-400 pl-4 text-gray-500 dark:text-gray-300 ">
+        <blockquote
+          className={`text-red  relative mb-3  ml-3 mt-4 border-l-4 border-gray-400 pl-4 text-gray-500 dark:text-gray-300
+          ${fontFam}
+        `}
+        >
           {children}
         </blockquote>
       );
@@ -102,7 +106,7 @@ const renderElement = (
     case "title":
       return (
         <h1
-          className={`mb-4 text-[34px] font-bold  dark:text-gray-300 ${fontFam}`}
+          className={`mb-4 text-[34px] font-bold  dark:text-gray-200 ${fontFam}`}
           key={key}
         >
           {children}
@@ -115,6 +119,7 @@ const renderElement = (
             alignMap[node.align] || node.align
           }
           ${fontFam}
+          dark:text-gray-200
           `}
           key={key}
         >
@@ -128,6 +133,7 @@ const renderElement = (
             alignMap[node.align] || node.align
           }
           ${fontFam}
+          dark:text-gray-200
           `}
           key={key}
         >
@@ -142,6 +148,7 @@ const renderElement = (
             alignMap[node.align] || node.align
           }
           ${fontFam}
+          dark:text-gray-200
           `}
           key={key}
         >

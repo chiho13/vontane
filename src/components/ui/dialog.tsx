@@ -40,17 +40,17 @@ const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
 >(({ className, children, ...props }, ref) => (
-  <AnimatePresence>
-    <DialogPortal>
-      <DialogOverlay />
-      <DialogPrimitive.Content
-        ref={ref}
-        className={cn(
-          "animate-in data-[state=open]:fade-in-90 data-[state=open]:slide-in-from-bottom-10 sm:zoom-in-90 data-[state=open]:sm:slide-in-from-bottom-0 fixed z-50 grid w-full gap-4 rounded-b-lg border bg-background p-6 shadow-lg dark:border-accent sm:max-w-lg sm:rounded-lg",
-          className
-        )}
-        {...props}
-      >
+  <DialogPortal>
+    <DialogOverlay />
+    <DialogPrimitive.Content
+      ref={ref}
+      className={cn(
+        "animate-in data-[state=open]:fade-in-90 data-[state=open]:slide-in-from-bottom-10 sm:zoom-in-90 data-[state=open]:sm:slide-in-from-bottom-0 fixed z-50 grid w-full gap-4 rounded-b-lg border bg-background p-6 shadow-lg dark:border-accent sm:max-w-lg sm:rounded-lg",
+        className
+      )}
+      {...props}
+    >
+      <AnimatePresence>
         <motion.div
           initial={{ opacity: 0 }} // Start hidden
           animate={{ opacity: 1 }} // Animate to fully visible
@@ -63,9 +63,9 @@ const DialogContent = React.forwardRef<
             <span className="sr-only">Close</span>
           </DialogPrimitive.Close>
         </motion.div>
-      </DialogPrimitive.Content>
-    </DialogPortal>
-  </AnimatePresence>
+      </AnimatePresence>
+    </DialogPrimitive.Content>
+  </DialogPortal>
 ));
 DialogContent.displayName = DialogPrimitive.Content.displayName;
 

@@ -171,6 +171,7 @@ export const wrapElementWithTTS = (editor: any, element: any) => {
       voice_id: "022dAxTS7hgOwOZorFb9",
       name: "Arthur",
       accent: "british",
+      audioplayer: false,
       children: [],
     },
     { at: path }

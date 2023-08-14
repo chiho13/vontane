@@ -552,7 +552,10 @@ const Layout: React.FC<LayoutProps> = ({
               <SidebarItem className="absolute bottom-5">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="flex h-[36px] items-center  hover:bg-gray-200 dark:hover:bg-accent">
+                    <a
+                      href="#"
+                      className="flex h-[36px] items-center  hover:bg-gray-200 dark:hover:bg-accent"
+                    >
                       <Trash
                         className="text-darkergray  dark:text-foreground"
                         width={18}
@@ -560,7 +563,7 @@ const Layout: React.FC<LayoutProps> = ({
                       <span className="ml-4 text-sm text-darkergray  dark:text-foreground">
                         Bin
                       </span>
-                    </button>
+                    </a>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
                     sideOffset={5}

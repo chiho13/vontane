@@ -44,28 +44,44 @@ const ListItemStyle = styled.div`
 `;
 
 export const findAllNumberedLists = (nodes) => {
-  let numberedLists: any[] = [];
+  let numberedLists = [];
   let currentListIndex = 0;
   let groupCounter = 0;
+  let insideList = false;
 
-  nodes.forEach((node, index) => {
-    if (node.type !== "numbered-list" && node.type !== "option-list-item") {
-      currentListIndex++;
-      if (
-        index > 0 &&
-        (nodes[index - 1].type === "numbered-list" ||
-          nodes[index - 1].type === "option-list-item")
-      ) {
-        groupCounter++;
+  const traverseNodes = (nodes) => {
+    nodes.forEach((node, index) => {
+      if (node.type === "column") {
+        node.children.forEach((cell) => {
+          insideList = false; // Reset inside list status for each cell
+          currentListIndex++; // Increment list index for each cell
+          traverseNodes(cell.children);
+        });
+      } else {
+        if (node.type === "numbered-list" || node.type === "option-list-item") {
+          if (!insideList) {
+            insideList = true;
+            currentListIndex++;
+          }
+          numberedLists.push({
+            ...node,
+            listIndex: currentListIndex,
+            groupIndex: groupCounter,
+          });
+        } else {
+          if (insideList) {
+            insideList = false;
+            groupCounter++;
+          }
+        }
       }
-    } else {
-      numberedLists.push({
-        ...node,
-        listIndex: currentListIndex,
-        groupIndex: groupCounter,
-      });
-    }
-  });
+    });
+
+    insideList = false;
+    currentListIndex++;
+  };
+
+  traverseNodes(nodes);
 
   return numberedLists;
 };

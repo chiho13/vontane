@@ -20,6 +20,7 @@ import { ListItem } from "./PreviewElements/ListItem";
 import { Checkbox } from "../ui/checkbox";
 import { alignMap } from "../DocumentEditor/helpers/toggleBlock";
 import { getHtmlFromSelection } from "@/utils/htmlSerialiser";
+import { useTextSpeech } from "@/contexts/TextSpeechContext";
 
 const renderElement = (
   node: {
@@ -42,15 +43,18 @@ const renderElement = (
     | undefined,
   key: React.Key | null | undefined,
   index: number,
-  nodes: any
+  nodes: any,
+  fontFam: any
 ) => {
   switch (node.type) {
     case "paragraph":
       return (
         <p
-          className={`mt-2 leading-7 text-${
-            alignMap[node.align] || node.align
-          }`}
+          className={`mt-2 leading-6 text-${alignMap[node.align] || node.align}
+          ${fontFam}
+
+          ${fontFam === "font-mono" ? "text-sm" : ""}
+          `}
           key={key}
         >
           {children}
@@ -93,7 +97,7 @@ const renderElement = (
 
     case "title":
       return (
-        <h1 className="mb-4 text-[34px] font-bold" key={key}>
+        <h1 className={`mb-4 text-[34px] font-bold  ${fontFam}`} key={key}>
           {children}
         </h1>
       );
@@ -102,7 +106,9 @@ const renderElement = (
         <h1
           className={`mt-3  text-4xl font-bold text-${
             alignMap[node.align] || node.align
-          }`}
+          }
+          ${fontFam}
+          `}
           key={key}
         >
           {children}
@@ -113,7 +119,9 @@ const renderElement = (
         <h2
           className={`mt-3  text-3xl font-bold text-${
             alignMap[node.align] || node.align
-          }`}
+          }
+          ${fontFam}
+          `}
           key={key}
         >
           {children}
@@ -125,7 +133,9 @@ const renderElement = (
         <h3
           className={`mt-3 text-xl  font-bold text-${
             alignMap[node.align] || node.align
-          }`}
+          }
+          ${fontFam}
+          `}
           key={key}
         >
           {children}
@@ -166,7 +176,7 @@ const renderElement = (
       );
     case "bulleted-list":
       return (
-        <li className="mt-2 list-inside list-disc " key={key}>
+        <li className={`mt-2 list-inside list-disc  ${fontFam}`} key={key}>
           {children}
         </li>
       );
@@ -174,7 +184,7 @@ const renderElement = (
     case "numbered-list":
       // Find the corresponding list group for this node
       return (
-        <div className="mt-2 ">
+        <div className={`mt-2  ${fontFam}`}>
           <ListItem
             nodes={nodes}
             element={node}
@@ -188,7 +198,7 @@ const renderElement = (
     case "option-list-item":
       // Find the corresponding list group for this node
       return (
-        <div className="mt-2 ">
+        <div className={`mt-2  ${fontFam}`}>
           <ListItem
             nodes={nodes}
             element={node}
@@ -209,6 +219,8 @@ const renderElement = (
       duration-200 ease-in-out
       text-${alignMap[node.align] || node.align}
         ${node.checked && "text-muted-foreground line-through"}
+
+        ${fontFam}
         `}
         >
           <Checkbox
@@ -224,7 +236,7 @@ const renderElement = (
   }
 };
 
-export const parseNodes = (nodes: any[]) => {
+export const parseNodes = (nodes: any[], fontFam) => {
   return nodes.map((node: any, index: any) => {
     if (Text.isText(node)) {
       let customNode = node as any; // assert that node could be any type
@@ -254,13 +266,14 @@ export const parseNodes = (nodes: any[]) => {
 
       return component;
     } else if ("children" in node) {
-      const children = parseNodes(node.children);
+      const children = parseNodes(node.children, fontFam);
       return renderElement(
         node,
         children,
         node.id ? node.id : index,
         index,
-        nodes
+        nodes,
+        fontFam
       );
     }
   });
@@ -269,7 +282,11 @@ export const parseNodes = (nodes: any[]) => {
 export const PreviewContent = () => {
   const { editor: fromEditor, activePath } = useContext(EditorContext);
   const [localValue, setLocalValue] = useState(fromEditor.children);
+
+  const { workspaceData } = useTextSpeech();
   // update localValue when fromEditor.children changes
+
+  const fontFam = workspaceData.workspace.font_style;
   const { theme } = useTheme();
   const total = fromEditor.children.length;
   useEffect(() => {
@@ -280,7 +297,7 @@ export const PreviewContent = () => {
     <div
       className={`relative overflow-y-auto  p-5 dark:border-accent dark:bg-muted`}
     >
-      {parseNodes(localValue)}
+      {parseNodes(localValue, fontFam)}
     </div>
   );
 };

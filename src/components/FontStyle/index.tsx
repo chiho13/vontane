@@ -44,10 +44,10 @@ export const FontStyle = () => {
       <h4 className="text-sm font-bold text-foreground">Workspace Style</h4>
       <div className="mt-4 grid w-[240px] grid-cols-3 gap-2 ">
         <label
-          className={`cursor-pointer  rounded-lg  p-2 text-center transition duration-200 hover:bg-gray-200 ${
+          className={`cursor-pointer  rounded-lg  p-2 text-center transition duration-200 hover:bg-gray-200  dark:hover:bg-accent ${
             fontStyle === "font-sans"
-              ? " bg-gray-200 text-brand"
-              : "text-gray-500 dark:text-gray-300"
+              ? " bg-gray-200 text-brand dark:bg-accent"
+              : "text-gray-800 dark:text-gray-300"
           }`}
         >
           <input
@@ -62,10 +62,10 @@ export const FontStyle = () => {
           <div className="text-sm text-muted-foreground">Default</div>
         </label>
         <label
-          className={`cursor-pointer  rounded-lg p-2 text-center transition duration-200 hover:bg-gray-200 ${
+          className={`cursor-pointer  rounded-lg p-2 text-center transition duration-200 hover:bg-gray-200 dark:hover:bg-accent ${
             fontStyle === "font-serif"
-              ? "bg-gray-200 text-brand"
-              : "text-gray-500 dark:text-gray-300"
+              ? "bg-gray-200 text-brand dark:bg-accent"
+              : "text-gray-800 dark:text-gray-300"
           }`}
         >
           <input
@@ -80,10 +80,10 @@ export const FontStyle = () => {
           <div className="text-sm text-muted-foreground">Serif</div>
         </label>
         <label
-          className={`cursor-pointer  rounded-lg p-2 text-center transition duration-200 hover:bg-gray-200  ${
+          className={`cursor-pointer  rounded-lg p-2 text-center transition duration-200 hover:bg-gray-200 dark:hover:bg-accent ${
             fontStyle === "font-mono"
-              ? "bg-gray-200 text-brand"
-              : "text-gray-500 dark:text-gray-300"
+              ? "bg-gray-200 text-brand dark:bg-accent"
+              : "text-gray-800 dark:text-gray-300"
           }`}
         >
           <input

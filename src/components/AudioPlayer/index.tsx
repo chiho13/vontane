@@ -244,7 +244,7 @@ function AudioPlayer({
       key={id}
       className={cn(
         `relative flex items-center gap-2 border border-gray-300 bg-white dark:border-accent ${
-          !isPreview ? "dark:bg-muted" : "dark:bg-transparent"
+          !isPreview ? "dark:bg-muted/90" : "dark:bg-transparent"
         }
         ${content && content.length > 40 && !showAudio ? "mb-6" : ""}
         `,

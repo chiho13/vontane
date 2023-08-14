@@ -272,7 +272,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
                     <div className="my-2 block">
                       <AudioPlayer
-                        audioURL={audioURL}
+                        audioURL={audioData.audio_url}
                         content={rootNode.content}
                         fileName={audioData.file_name}
                       />

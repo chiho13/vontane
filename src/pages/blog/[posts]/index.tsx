@@ -54,6 +54,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     // If there is a user, return the session and other necessary props.
     return {
       props: {
+        font: workspace.font_style,
         published_at: formattedDate,
         workspaceData: workspace.slate_value,
       }, // Replace 'user' with your actual session data
@@ -68,7 +69,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 };
 
-const PublishedPage = ({ published_at, workspaceData }) => {
+const PublishedPage = ({ font, published_at, workspaceData }) => {
   // Split the path by '/' and get the second last part, which contains the title and ID
 
   const [localValue, setLocalValue] = useState(null);
@@ -128,7 +129,7 @@ const PublishedPage = ({ published_at, workspaceData }) => {
                 {published_at}
               </span>
             </div>
-            {localValue && parseNodes(localValue)}
+            {localValue && parseNodes(localValue, font)}
           </div>
         </div>
         <div className="fixed bottom-4 right-4 hidden xl:block">

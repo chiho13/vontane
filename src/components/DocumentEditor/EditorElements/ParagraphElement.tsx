@@ -88,7 +88,7 @@ export function ParagraphElement(props) {
         className={`paragraph-element  text-${
           alignMap[element.align] || element.align
         }
-        
+        dark:text-gray-300
         ${workspaceData.workspace.font_style}
         ${workspaceData.workspace.font_style === "font-mono" ? "text-sm" : ""}
         `}

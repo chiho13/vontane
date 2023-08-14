@@ -624,7 +624,7 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
       )}
     >
       <button
-        className="relative flex w-full justify-between  border-b border-gray-300 p-2 px-3 text-muted-foreground dark:border-accent"
+        className="relative flex w-full justify-between  border-b border-gray-300 p-2 px-3 text-gray-800 dark:border-accent dark:text-gray-300"
         onClick={openAIAssist}
       >
         AI Assist {openChat ? <ChevronDown /> : <ChevronUp />}

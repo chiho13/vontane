@@ -163,23 +163,20 @@ export const PublishButton = () => {
                 <span className="text-foreground"> Unpublish</span>
               </DropdownMenuItem>
               <DropdownMenuItem
-                className=" group flex grow cursor-pointer justify-center rounded-md bg-brand hover:bg-black hover:dark:bg-brand/90"
+                className="r group flex grow  cursor-pointer rounded-md bg-brand p-0 hover:bg-black hover:dark:bg-brand/90"
                 disabled={pubLoading}
-                onClick={() => {
-                  console.log(workspaceId);
-
-                  router.push(
-                    `/${editor.children[0].children[0].text
-                      .toLowerCase()
-                      .replace(/-/g, "_") // Add this line to remove dashes
-                      .split(" ")
-                      .join("_")}-${workspaceId}`
-                  );
-                }}
               >
-                <span className="text-white group-hover:text-black dark:text-foreground group-hover:dark:text-white">
+                <a
+                  href={`/${editor.children[0].children[0].text
+                    .toLowerCase()
+                    .replace(/-/g, "_") // Add this line to remove dashes
+                    .split(" ")
+                    .join("_")}-${workspaceId}`}
+                  target="_blank"
+                  className="flex h-full w-full  items-center justify-center  text-center text-white group-hover:text-black dark:text-foreground group-hover:dark:text-white"
+                >
                   View Site
-                </span>
+                </a>
               </DropdownMenuItem>
             </div>
           </DropdownMenuContent>

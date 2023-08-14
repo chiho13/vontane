@@ -178,7 +178,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
         className="m-w-full  flex hidden grow flex-col rounded-md  border border-gray-300 bg-white  dark:border-accent dark:bg-muted dark:text-lightgray lg:block"
         style={rightSidebarStyle}
       >
-        <div className="h-full flex-grow">
+        <div className="h-full flex-grow overflow-hidden">
           <Tabs value={tab} onValueChange={handleTabChange} className="mb-0">
             <TabsList
               className={cn(
@@ -207,7 +207,14 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="properties" className="flex-grow ">
+            <TabsContent
+              value="properties"
+              className="scrollbar flex-grow  overflow-y-auto pb-5 "
+              style={{
+                top: -8,
+                height: `calc(100vh - ${openChat ? "460" : "200"}px)`,
+              }}
+            >
               <FontStyle />
               {SlateElement.isElement(rootNode) &&
                 rootNode?.type == "map" &&
@@ -270,10 +277,10 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
             </TabsContent>
             <TabsContent
               value="docsView"
-              className="scrollbar relative overflow-y-auto"
+              className="scrollbar relative overflow-y-auto pb-5"
               style={{
                 top: -8,
-                height: "calc(100vh - 200px)",
+                height: `calc(100vh - ${openChat ? "460" : "200"}px)`,
               }}
             >
               {/* <div className="flex justify-end gap-3">

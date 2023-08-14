@@ -42,7 +42,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     // If there is a user, return the session and other necessary props.
     return {
-      props: { workspaceData: workspace.slate_value }, // Replace 'user' with your actual session data
+      props: {
+        workspaceData: workspace.slate_value,
+        font: workspace.font_style,
+      }, // Replace 'user' with your actual session data
     };
   } catch (error) {
     return {
@@ -54,7 +57,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 };
 
-const PublishedPage = ({ workspaceId, workspaceData }) => {
+const PublishedPage = ({ workspaceId, workspaceData, font }) => {
   const router = useRouter();
   const [localValue, setLocalValue] = useState(null);
 
@@ -108,7 +111,7 @@ const PublishedPage = ({ workspaceId, workspaceData }) => {
           className={`relative  h-[100vh] overflow-y-auto rounded-md bg-white p-4 dark:bg-[#191919] `}
         >
           <div className="relative mx-auto mb-20 max-w-[700px] xl:mt-[100px]">
-            {parseNodes(localValue)}
+            {parseNodes(localValue, font)}
           </div>
         </div>
         <div className="fixed bottom-4 right-4 hidden xl:block">

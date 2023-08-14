@@ -348,7 +348,7 @@ function AudioPlayer({
             <TooltipTrigger>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="mr-2 flex  h-[22px] items-center justify-center rounded-md border border-muted-foreground bg-background px-1 text-xs  text-muted-foreground hover:border-accent hover:bg-white hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-muted">
+                  <button className="mr-2 flex  h-[22px] items-center justify-center rounded-md border border-muted-foreground bg-background px-1 text-xs  text-muted-foreground hover:bg-accent hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-accent">
                     {playbackSpeed}X{/* <ChevronDown className="ml-1 w-3" /> */}
                   </button>
                 </DropdownMenuTrigger>
@@ -358,15 +358,9 @@ function AudioPlayer({
                 >
                   <DropdownMenuItem
                     className="dark:text-foreground hover:dark:bg-accent"
-                    onClick={() => setPlaybackSpeed(0.5)}
+                    onClick={() => setPlaybackSpeed(0.7)}
                   >
-                    <span className="text-foreground">0.5x</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="dark:text-foreground hover:dark:bg-accent"
-                    onClick={() => setPlaybackSpeed(0.75)}
-                  >
-                    <span className="text-foreground">0.75x</span>
+                    <span className="text-foreground">0.7x</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className="hover:dark:bg-accent"
@@ -391,12 +385,6 @@ function AudioPlayer({
                     onClick={() => setPlaybackSpeed(1.75)}
                   >
                     <span className="text-foreground"> 1.75x</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="hover:dark:bg-accent"
-                    onClick={() => setPlaybackSpeed(2.0)}
-                  >
-                    <span className="text-foreground">2x</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

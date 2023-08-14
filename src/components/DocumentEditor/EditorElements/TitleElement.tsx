@@ -28,7 +28,7 @@ export function TitleElement(props) {
   const { editor, showEditBlockPopup, setSelectedElementID } =
     useContext(EditorContext);
 
-  const { workspaceData } = useTextSpeech();
+  const { fontStyle } = useTextSpeech();
   const { attributes, children, element } = props;
   const path = ReactEditor.findPath(editor, element);
   const [isVisible, setIsVisible] = useState(false);
@@ -49,9 +49,7 @@ export function TitleElement(props) {
     element.children.length === 1 && element.children[0].text === "";
 
   return (
-    <TitleStyle
-      className={`${workspaceData.workspace.font_style} dark:text-gray-300`}
-    >
+    <TitleStyle className={`${fontStyle} dark:text-gray-300`}>
       <h1
         ref={paragraphRef}
         {...attributes}

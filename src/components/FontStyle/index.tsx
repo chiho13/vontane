@@ -8,11 +8,8 @@ export const FontStyle = () => {
   const router = useRouter();
   const workspaceId = router.query.workspaceId as string;
 
-  const { workspaceData, refetchWorkspaceData } = useTextSpeech();
-
-  const [fontStyle, setFontStyle] = useState(
-    workspaceData.workspace.font_style
-  );
+  const { workspaceData, refetchWorkspaceData, fontStyle, setFontStyle } =
+    useTextSpeech();
 
   useEffect(() => {
     setFontStyle(workspaceData.workspace.font_style);
@@ -23,21 +20,14 @@ export const FontStyle = () => {
   const changeFontHandler = async (event) => {
     setFontStyle(event.target.value);
     try {
-      const response = await changeFontMutation.mutateAsync({
+      await changeFontMutation.mutateAsync({
         id: workspaceId,
         font: event.target.value,
       });
-      if (response) {
-        refetchWorkspaceData();
-      }
     } catch (error) {
       console.error("Error changing font:", error);
     }
   };
-
-  //   const handleChange = (event) => {
-  //     setFontStyle(event.target.value);
-  //   };
 
   return (
     <div className="p-3">

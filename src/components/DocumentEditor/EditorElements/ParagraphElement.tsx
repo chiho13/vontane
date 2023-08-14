@@ -39,7 +39,7 @@ export function ParagraphElement(props) {
   const selected = useSelected();
   const paragraphRef = useRef(null);
 
-  const { workspaceData } = useTextSpeech();
+  const { fontStyle } = useTextSpeech();
 
   const { setElementData, showRightSidebar } = useTextSpeech();
 
@@ -89,8 +89,8 @@ export function ParagraphElement(props) {
           alignMap[element.align] || element.align
         }
         dark:text-gray-300
-        ${workspaceData.workspace.font_style}
-        ${workspaceData.workspace.font_style === "font-mono" ? "text-sm" : ""}
+        ${fontStyle}
+        ${fontStyle === "font-mono" ? "text-sm" : ""}
         `}
         {...attributes}
         {...(type !== "block-quote" && {

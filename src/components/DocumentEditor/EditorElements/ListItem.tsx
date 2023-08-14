@@ -138,7 +138,7 @@ export const ListItem = withListNumbering((props) => {
   } = props;
   const path = ReactEditor.findPath(editor, element);
 
-  const { workspaceData } = useTextSpeech();
+  const { fontStyle } = useTextSpeech();
 
   const { selectedOption, setSelectedOption } = useContext(AudioManagerContext);
   const [isVisible, setIsVisible] = useState(false);
@@ -233,8 +233,8 @@ export const ListItem = withListNumbering((props) => {
     list-none transition
     duration-200 ease-in-out
     dark:text-gray-300
-    ${workspaceData.workspace.font_style}
-    ${workspaceData.workspace.font_style === "font-mono" ? "text-sm" : ""}
+    ${fontStyle}
+    ${fontStyle === "font-mono" ? "text-sm" : ""}
     text-${alignMap[element.align] || element.align}
     ${isCheckedList && isChecked && "text-muted-foreground line-through"}
     ${isOptionList && !isPreview ? " ml-[51px]" : " ml-[21px]"}

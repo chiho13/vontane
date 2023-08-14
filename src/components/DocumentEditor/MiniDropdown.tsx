@@ -152,16 +152,16 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         ),
       },
 
-      // {
-      //   name: "Slide Break",
-      //   description: "Slide mode: break the page",
-      //   action: addSlideBreakHandler,
-      //   icon: (
-      //     <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
-      //       <SlideBreak />
-      //     </div>
-      //   ),d
-      // },
+      {
+        name: "Slide Break",
+        description: "Slide mode: break the page",
+        action: addSlideBreakHandler,
+        icon: (
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
+            <SlideBreak />
+          </div>
+        ),
+      },
       {
         name: "Bullet Points",
         description: "Create bullet point list",

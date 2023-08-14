@@ -1,29 +1,12 @@
 // "b53a0a8f-c6f7-4d10-a474-1a3e6dd96054"
 
 import { EditorContext, EditorProvider } from "@/contexts/EditorContext";
-import React, {
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  forwardRef,
-  useRef,
-} from "react";
-import { Path, Text, Node } from "slate";
+import React from "react";
 import Link from "next/link";
-
-import { api } from "@/utils/api";
-import { CollapsibleAudioPlayer } from "@/components/PreviewContent/PreviewElements/CollapsibleAudio";
-import { MCQ } from "@/components/PreviewContent/PreviewElements/MCQ";
-import { useRouter } from "next/router";
 import { ModeToggle } from "@/components/mode-toggle";
-import { AudioManagerProvider } from "@/contexts/PreviewAudioContext";
 import { createInnerTRPCContext } from "@/server/api/trpc";
 import { GetServerSideProps } from "next";
-import { Button } from "@/components/ui/button";
-import { parseNodes } from "@/components/PreviewContent/docs";
-import { createClient } from "@supabase/supabase-js";
-import { supabaseClient } from "@/utils/supabaseClient";
+
 import { formatDate } from "@/utils/formatDate";
 import Head from "next/head";
 import { Header } from "@/components/Header";

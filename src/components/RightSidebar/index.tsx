@@ -227,7 +227,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
         className="m-w-full  flex hidden grow flex-col rounded-md  border border-gray-300 bg-white  dark:border-accent dark:bg-muted dark:text-lightgray lg:block"
         style={rightSidebarStyle}
       >
-        <div className="scrollbar  h-full flex-grow  overflow-y-auto  ">
+        <div className="h-full flex-grow">
           <Tabs
             value={tab}
             onValueChange={handleTabChange}
@@ -235,7 +235,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
           >
             <TabsList
               className={cn(
-                `ring-gray ring-red sticky top-0 z-10  grid h-10 w-full grid-cols-2  rounded-none rounded-t-md  bg-gray-200 dark:bg-accent`
+                `ring-gray ring-red sticky top-0 z-10  grid h-10 w-full grid-cols-3  rounded-none rounded-t-md  bg-gray-200 dark:bg-accent`
               )}
             >
               <TabsTrigger
@@ -246,10 +246,17 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
               </TabsTrigger>
 
               <TabsTrigger
-                value="preview"
+                value="docsView"
                 className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
               >
-                Preview
+                Docs View
+              </TabsTrigger>
+
+              <TabsTrigger
+                value="slidesView"
+                className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
+              >
+                Slide View
               </TabsTrigger>
             </TabsList>
 
@@ -313,7 +320,13 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                   </div>
                 ))}
             </TabsContent>
-            <TabsContent value="preview">
+            <TabsContent
+              value="docsView"
+              className="scrollbar overflow-y-auto"
+              style={{
+                height: "calc(100vh - 210px)",
+              }}
+            >
               {/* <div className="flex justify-end gap-3">
                 {containsTtsNode(editor.children) && (
                   <button

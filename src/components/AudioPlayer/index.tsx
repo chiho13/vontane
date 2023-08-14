@@ -243,7 +243,9 @@ function AudioPlayer({
     <AudioPlayerStyle
       key={id}
       className={cn(
-        `relative flex items-center gap-2 border border-gray-300 bg-white dark:border-accent dark:bg-transparent
+        `relative flex items-center gap-2 border border-gray-300 bg-white dark:border-accent ${
+          !isPreview ? "dark:bg-muted" : "dark:bg-transparent"
+        }
         ${content && content.length > 40 && !showAudio ? "mb-6" : ""}
         `,
         classNames

@@ -54,6 +54,7 @@ const renderElement = (
           ${fontFam}
 
           ${fontFam === "font-mono" ? "text-sm" : ""}
+          dark:text-gray-300
           `}
           key={key}
         >
@@ -63,14 +64,17 @@ const renderElement = (
 
     case "inline-equation":
       return (
-        <span className="pointer-events-none px-1" key={key}>
+        <span className="pointer-events-none px-1 dark:text-gray-300" key={key}>
           <InlineMath math={node.latex} />
         </span>
       );
 
     case "equation":
       return (
-        <div className="mb-1 mt-1 flex justify-center" key={key}>
+        <div
+          className="mb-1 mt-1 flex justify-center dark:text-gray-300"
+          key={key}
+        >
           <BlockMath math={node.latex} />
         </div>
       );
@@ -97,7 +101,10 @@ const renderElement = (
 
     case "title":
       return (
-        <h1 className={`mb-4 text-[34px] font-bold  ${fontFam}`} key={key}>
+        <h1
+          className={`mb-4 text-[34px] font-bold  dark:text-gray-300 ${fontFam}`}
+          key={key}
+        >
           {children}
         </h1>
       );

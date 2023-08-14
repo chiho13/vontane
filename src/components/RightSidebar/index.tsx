@@ -187,21 +187,21 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
             >
               <TabsTrigger
                 value="properties"
-                className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
+                className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-gray-400 dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
               >
                 Properties
               </TabsTrigger>
 
               <TabsTrigger
                 value="docsView"
-                className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
+                className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-gray-400 dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
               >
                 Docs View
               </TabsTrigger>
 
               <TabsTrigger
                 value="slidesView"
-                className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-muted-foreground dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
+                className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-gray-400 dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
               >
                 Slide View
               </TabsTrigger>

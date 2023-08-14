@@ -33,7 +33,9 @@ export function EquationElement(props) {
       cursor-pointer`)}
       contentEditable={false}
     >
-      <BlockMath math={element.latex || ""} />
+      <div className="dark:text-gray-300">
+        <BlockMath math={element.latex || ""} />
+      </div>
 
       {element.latex?.trim() === "" && (
         <div className="flex items-center">

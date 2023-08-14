@@ -232,7 +232,7 @@ export const ListItem = withListNumbering((props) => {
       `${selectedElementID === element.id ? " bg-[#E0EDFB]" : "bg-transparent"}
     list-none transition
     duration-200 ease-in-out
-
+    dark:text-gray-300
     ${workspaceData.workspace.font_style}
     ${workspaceData.workspace.font_style === "font-mono" ? "text-sm" : ""}
     text-${alignMap[element.align] || element.align}

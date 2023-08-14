@@ -16,6 +16,31 @@ import puppeteer from "puppeteer";
 const ee = new EventEmitter();
 
 export const workspaceRouter = createTRPCRouter({
+  changeFont: protectedProcedure
+    .input(z.object({ id: z.string(), font: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const workspace = await ctx.prisma.workspace.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!workspace) {
+        throw new Error("workspace  not found");
+      }
+
+      if (ctx.user.id !== workspace.author_id) {
+        throw new Error("Unauthorized access");
+      }
+
+      // toggle the published status and adjust the published_at date accordingly
+      const updatedWorkspace = await ctx.prisma.workspace.update({
+        where: { id: input.id },
+        data: {
+          font_style: input.font,
+        },
+      });
+
+      return updatedWorkspace;
+    }),
   publishWorkspace: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ input, ctx }) => {
@@ -234,7 +259,6 @@ export const workspaceRouter = createTRPCRouter({
       const page = await browser.newPage();
       await page.setViewport({ width: 1920, height: 1080 });
       await page.setContent(input.html);
-      await page.waitForSelector(".katex"); // Wait for KaTeX to load
 
       const pdf = await page.pdf();
 

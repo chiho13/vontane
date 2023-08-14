@@ -18,23 +18,49 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { EditorContext } from "@/contexts/EditorContext";
+import { useTextSpeech } from "@/contexts/TextSpeechContext";
+import { api } from "@/utils/api";
 
-export const PublishButton = ({
-  published,
-  pubLoading,
-  publishWorkspace,
-  editor,
-  openDropdown,
-  setOpenDropdown,
-}) => {
+export const PublishButton = () => {
   const router = useRouter();
   const workspaceId = router.query.workspaceId as string;
+  const { editor, activePath } = useContext(EditorContext);
 
-  const [tooltipOpen, setTooltipOpen] = useState(false);
+  const { workspaceData, refetchWorkspaceData } = useTextSpeech();
   const { copied: linkCopied, copyToClipboard: copyLink } = useClipboard();
   const { copied: iframeCopied, copyToClipboard: copyIframe } = useClipboard();
 
+  const [published, setPublished] = useState(workspaceData.workspace.published);
+
+  const [openDropdown, setOpenDropdown] = useState(false);
+
+  useEffect(() => {
+    setPublished(workspaceData.workspace.published);
+  }, [workspaceData, router.isReady]);
+
+  const [pubLoading, setPubLoading] = useState(false);
+  const publishWorkspaceMutation = api.workspace.publishWorkspace.useMutation();
+
+  const publishWorkspace = async () => {
+    setPubLoading(true);
+
+    try {
+      const response = await publishWorkspaceMutation.mutateAsync({
+        id: workspaceId,
+      });
+      if (response) {
+        setPubLoading(false);
+        setPublished(response.published);
+        refetchWorkspaceData();
+        setOpenDropdown(true);
+      }
+    } catch (error) {
+      setPubLoading(false);
+      console.error("Error publishing:", error);
+    }
+  };
   const openDropdownChange = (value) => {
     setOpenDropdown(value);
   };

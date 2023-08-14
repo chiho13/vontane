@@ -269,7 +269,6 @@ export const parseNodes = (nodes: any[]) => {
 export const PreviewContent = () => {
   const { editor: fromEditor, activePath } = useContext(EditorContext);
   const [localValue, setLocalValue] = useState(fromEditor.children);
-
   // update localValue when fromEditor.children changes
   const { theme } = useTheme();
   const total = fromEditor.children.length;

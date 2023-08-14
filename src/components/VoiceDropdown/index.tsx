@@ -490,7 +490,7 @@ function VoiceDropdown({
         <DialogTrigger asChild>
           <Button
             variant="secondary"
-            className="h-[34px] min-w-[100px] border  bg-background px-2 font-bold hover:dark:bg-muted"
+            className="h-[34px] min-w-[100px] border  bg-background px-2 font-sans font-bold hover:dark:bg-muted"
           >
             {selectedItemText} <ChevronDown className="ml-2 w-4" />
           </Button>

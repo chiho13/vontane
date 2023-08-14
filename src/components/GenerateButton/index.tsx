@@ -27,7 +27,7 @@ function GenerateButton({ isDisabled, onClick, element }: GenerateButtonProps) {
         </>
       ) : (
         // <ImPlay3 width={40} />
-        <span className="text-sm">
+        <span className="font-sans text-sm">
           {element.file_name ? "Re-Generate" : "Generate"}
         </span>
       )}

@@ -68,6 +68,7 @@ import { getHtmlFromSelection } from "@/utils/htmlSerialiser";
 import { cn } from "@/utils/cn";
 import { UserContext } from "@/contexts/UserContext";
 import { AIAssist } from "../AIAssist";
+import { FontStyle } from "../FontStyle";
 interface RightSideBarProps {
   setRightSideBarWidth: any;
   showRightSidebar: boolean;
@@ -85,7 +86,6 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 }) => {
   const theme = useTheme();
   const router = useRouter();
-  const workspaceId = router.query.workspaceId as string;
 
   const { editor, activePath } = useContext(EditorContext);
   const rootNode = useMemo(() => {
@@ -98,27 +98,16 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
   console.log(rootNode);
 
-  const {
-    audioData,
-    setAudioData,
-    elementData,
-    rightBarAudioIsLoading,
-    workspaceData,
-    refetchWorkspaceData,
-    tab,
-    setTab,
-  } = useTextSpeech();
+  const { audioData, elementData, rightBarAudioIsLoading, tab, setTab } =
+    useTextSpeech();
   const [viewport, setViewPort] = useState({
     width: 390,
     height: 844,
   });
 
-  const [published, setPublished] = useState(workspaceData.workspace.published);
   const [openChat, setOpenChat] = useLocalStorage("openChat", false);
   const { copied, copyToClipboard: copyLink } = useClipboard();
 
-  const [audioURL, setAudioURL] = useState<string>("");
-  const [openDropdown, setOpenDropdown] = useState(false);
   const rightSidebarStyle: React.CSSProperties = {
     transform: `translateX(${
       showRightSidebar ? "0px" : `${rightSideBarWidth * 0.8}px`
@@ -134,15 +123,6 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     transition:
       "width 0.3s ease-in-out, opacity 0.4s ease-in-out, transform 0.3s ease-in-out",
   };
-  useEffect(() => {
-    setPublished(workspaceData.workspace.published);
-  }, [workspaceData, router.isReady]);
-
-  useEffect(() => {
-    if (audioData) {
-      setAudioURL(audioData.audio_url);
-    }
-  }, [audioData]);
 
   const handleTabChange = (newTab) => {
     setTab(newTab); // This will also update value in localStorage
@@ -191,51 +171,18 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     saveAs(concatenatedBlob, "concatenatedAudio.mp3");
   };
 
-  const [pubLoading, setPubLoading] = useState(false);
-  const publishWorkspaceMutation = api.workspace.publishWorkspace.useMutation();
-
-  const publishWorkspace = async () => {
-    setPubLoading(true);
-
-    try {
-      const response = await publishWorkspaceMutation.mutateAsync({
-        id: workspaceId,
-      });
-      if (response) {
-        setPubLoading(false);
-        setPublished(response.published);
-        refetchWorkspaceData();
-        setOpenDropdown(true);
-      }
-    } catch (error) {
-      setPubLoading(false);
-      console.error("Error publishing:", error);
-    }
-  };
-
   return (
     <AudioManagerProvider>
-      <PublishButton
-        published={published}
-        pubLoading={pubLoading}
-        publishWorkspace={publishWorkspace}
-        editor={editor}
-        openDropdown={openDropdown}
-        setOpenDropdown={setOpenDropdown}
-      />
+      <PublishButton />
       <div
         className="m-w-full  flex hidden grow flex-col rounded-md  border border-gray-300 bg-white  dark:border-accent dark:bg-muted dark:text-lightgray lg:block"
         style={rightSidebarStyle}
       >
         <div className="h-full flex-grow">
-          <Tabs
-            value={tab}
-            onValueChange={handleTabChange}
-            className=" z-10 flex flex-grow flex-col   "
-          >
+          <Tabs value={tab} onValueChange={handleTabChange} className="mb-0">
             <TabsList
               className={cn(
-                `ring-gray ring-red sticky top-0 z-10  grid h-10 w-full grid-cols-3  rounded-none rounded-t-md  bg-gray-200 dark:bg-accent`
+                `ring-gray ring-red  z-10  grid h-10 w-full grid-cols-3  rounded-none rounded-t-md  bg-gray-200 dark:bg-accent`
               )}
             >
               <TabsTrigger
@@ -260,7 +207,8 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="properties" className="flex-grow p-3">
+            <TabsContent value="properties" className="flex-grow ">
+              <FontStyle />
               {SlateElement.isElement(rootNode) &&
                 rootNode?.type == "map" &&
                 elementData && (
@@ -272,7 +220,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
               {SlateElement.isElement(rootNode) &&
                 rootNode?.type == "tts" &&
                 (audioData && audioData.file_name ? (
-                  <>
+                  <div className=" mt-3 bg-brand/20 p-3 dark:bg-brand/20">
                     <h3 className="text-bold mb-2 mt-4 text-sm   ">
                       Text to MP3
                     </h3>
@@ -285,9 +233,9 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                       />
                     </div>
 
-                    <div className=" truncate  rounded-md border border-gray-300 p-2 pl-3 dark:border-accent">
+                    {/* <div className=" truncate  rounded-md border border-gray-300 p-2 pl-3 dark:border-accent">
                       {audioData.content}{" "}
-                    </div>
+                    </div> */}
                     {/* {audioData.transcript && (
                       <div className=" truncate  rounded-md border border-gray-300 p-2 pl-3 dark:border-accent">
                         {audioData.transcript?.transcript}{" "}
@@ -313,7 +261,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                         </p>
                       </Button>
                     </div>
-                  </>
+                  </div>
                 ) : (
                   <div className="relative block rounded-lg border border-gray-300 bg-white p-4 dark:border-accent dark:bg-secondary">
                     No Audio generated
@@ -322,9 +270,10 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
             </TabsContent>
             <TabsContent
               value="docsView"
-              className="scrollbar overflow-y-auto"
+              className="scrollbar relative overflow-y-auto"
               style={{
-                height: "calc(100vh - 210px)",
+                top: -8,
+                height: "calc(100vh - 200px)",
               }}
             >
               {/* <div className="flex justify-end gap-3">

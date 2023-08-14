@@ -1,26 +1,12 @@
-import { EditorContext } from "@/contexts/EditorContext";
-import React, {
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  forwardRef,
-  useCallback,
-  useRef,
-} from "react";
-import { Path, Text, Node } from "slate";
-import { BiSolidQuoteLeft, BiSolidQuoteRight } from "react-icons/bi";
+import React from "react";
+import { Text } from "slate";
 import { BlockMath, InlineMath } from "react-katex";
+import { ListItem } from "@/components/PreviewContent/PreviewElements/ListItem";
+import { Checkbox } from "@/components/ui/checkbox";
+import { alignMap } from "@/components/DocumentEditor/helpers/toggleBlock";
 import { CollapsibleAudioPlayer } from "@/components/PreviewContent/PreviewElements/CollapsibleAudio";
 import { MCQ } from "@/components/PreviewContent/PreviewElements/MCQ";
 import { MapBlock } from "@/components/PreviewContent/PreviewElements/Map";
-import { useTheme } from "next-themes";
-
-import { ListItem } from "./PreviewElements/ListItem";
-import { Checkbox } from "../ui/checkbox";
-import { alignMap } from "../DocumentEditor/helpers/toggleBlock";
-import { getHtmlFromSelection } from "@/utils/htmlSerialiser";
-import { useTextSpeech } from "@/contexts/TextSpeechContext";
 
 const renderElement = (
   node: {
@@ -51,11 +37,11 @@ const renderElement = (
       return (
         <p
           className={`mt-2 leading-6 text-${alignMap[node.align] || node.align}
-          ${fontFam}
-
-          ${fontFam === "font-mono" ? "text-sm" : ""}
-          dark:text-gray-300
-          `}
+            ${fontFam}
+  
+            ${fontFam === "font-mono" ? "text-sm" : ""}
+            dark:text-gray-300
+            `}
           key={key}
         >
           {children}
@@ -96,8 +82,8 @@ const renderElement = (
       return (
         <blockquote
           className={`text-red  relative mb-3  ml-3 mt-4 border-l-4 border-gray-400 pl-4 text-gray-500 dark:text-gray-300
-          ${fontFam}
-        `}
+            ${fontFam}
+          `}
         >
           {children}
         </blockquote>
@@ -118,9 +104,9 @@ const renderElement = (
           className={`mt-3  text-4xl font-bold text-${
             alignMap[node.align] || node.align
           }
-          ${fontFam}
-          dark:text-gray-200
-          `}
+            ${fontFam}
+            dark:text-gray-200
+            `}
           key={key}
         >
           {children}
@@ -132,9 +118,9 @@ const renderElement = (
           className={`mt-3  text-3xl font-bold text-${
             alignMap[node.align] || node.align
           }
-          ${fontFam}
-          dark:text-gray-200
-          `}
+            ${fontFam}
+            dark:text-gray-200
+            `}
           key={key}
         >
           {children}
@@ -147,9 +133,9 @@ const renderElement = (
           className={`mt-3 text-xl  font-bold text-${
             alignMap[node.align] || node.align
           }
-          ${fontFam}
-          dark:text-gray-200
-          `}
+            ${fontFam}
+            dark:text-gray-200
+            `}
           key={key}
         >
           {children}
@@ -228,14 +214,14 @@ const renderElement = (
       return (
         <div
           className={`
-          ml-[21px]
-         mt-2 list-none transition
-      duration-200 ease-in-out
-      text-${alignMap[node.align] || node.align}
-        ${node.checked && "text-muted-foreground line-through"}
-
-        ${fontFam}
-        `}
+            ml-[21px]
+           mt-2 list-none transition
+        duration-200 ease-in-out
+        text-${alignMap[node.align] || node.align}
+          ${node.checked && "text-muted-foreground line-through"}
+  
+          ${fontFam}
+          `}
         >
           <Checkbox
             checked={node.checked}
@@ -291,27 +277,4 @@ export const parseNodes = (nodes: any[], fontFam) => {
       );
     }
   });
-};
-
-export const PreviewContent = () => {
-  const { editor: fromEditor, activePath } = useContext(EditorContext);
-  const [localValue, setLocalValue] = useState(fromEditor.children);
-
-  const { workspaceData } = useTextSpeech();
-  // update localValue when fromEditor.children changes
-
-  const fontFam = workspaceData.workspace.font_style;
-  const { theme } = useTheme();
-  const total = fromEditor.children.length;
-  useEffect(() => {
-    setLocalValue(fromEditor.children);
-  }, [fromEditor.children]);
-
-  return (
-    <div
-      className={`relative overflow-y-auto  p-5 dark:border-accent dark:bg-muted`}
-    >
-      {parseNodes(localValue, fontFam)}
-    </div>
-  );
 };

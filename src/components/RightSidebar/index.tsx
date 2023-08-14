@@ -40,7 +40,8 @@ import { Button } from "@/components/ui/button";
 import { debounce } from "lodash";
 import { saveAs } from "file-saver";
 
-import { PreviewContent } from "../PreviewContent";
+import { DocsPreview } from "../PreviewContent/docs";
+import { SlidesPreview } from "../PreviewContent/slides";
 import { PublishButton } from "../PublishButton";
 import { useClipboard } from "@/hooks/useClipboard";
 import { MapSettings } from "../MapSettings";
@@ -293,7 +294,17 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                   </button>
                 )}
               </div> */}
-              <PreviewContent />
+              <DocsPreview />
+            </TabsContent>
+            <TabsContent
+              value="slidesView"
+              className="scrollbar relative overflow-y-auto pb-5"
+              style={{
+                top: -8,
+                height: `calc(100vh - ${openChat ? "460" : "200"}px)`,
+              }}
+            >
+              <SlidesPreview />
             </TabsContent>
           </Tabs>
         </div>

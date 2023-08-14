@@ -19,7 +19,7 @@ import { AudioManagerProvider } from "@/contexts/PreviewAudioContext";
 import { createInnerTRPCContext } from "@/server/api/trpc";
 import { GetServerSideProps } from "next";
 import { Button } from "@/components/ui/button";
-import { parseNodes } from "@/components/PreviewContent";
+import { parseNodes } from "@/utils/renderHelpers";
 import { createClient } from "@supabase/supabase-js";
 import { supabaseClient } from "@/utils/supabaseClient";
 import { formatDate } from "@/utils/formatDate";

@@ -89,7 +89,7 @@ export const SlidesPreview = () => {
         {parseNodes(slides[currentSlideIndex], fontFam, true)}
         <div className="fixed bottom-8 right-8  shadow-md">
           <Button
-            className="h-[44px] w-[44px] rounded-none border border-r-0 border-gray-700 p-0 dark:border-gray-200"
+            className="h-[40px] w-[40px] rounded-none border border-r-0 border-gray-700 p-0 dark:border-gray-200"
             onClick={handlePrevious}
             disabled={currentSlideIndex === 0}
           >
@@ -97,7 +97,7 @@ export const SlidesPreview = () => {
           </Button>
           <Button
             className={cn(
-              `h-[44px] w-[44px] rounded-none border border-gray-700 p-0  disabled:border-l-0  ${
+              `h-[40px] w-[40px] rounded-none border border-gray-700 p-0  disabled:border-l-0  ${
                 currentSlideIndex === 0 && "border-l-0"
               } dark:border-gray-200`
             )}

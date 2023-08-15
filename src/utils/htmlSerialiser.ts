@@ -288,6 +288,17 @@ export const exportSlateNodeToHtml = (node) => {
             </div>
           `;
 
+      case "column":
+        const columnElements = node.children
+          .map(exportSlateNodeToHtml)
+          .join("");
+        return `
+            <div class="grid grid-cols-2 gap-4 mb-4">
+
+            ${columnElements}
+            </div>
+          `;
+
       default:
         return childrenHtml;
     }

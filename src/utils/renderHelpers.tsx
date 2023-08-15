@@ -238,6 +238,15 @@ const renderElement = (
         </div>
       );
 
+    case "column":
+      return (
+        <div className="grid w-full grid-cols-2 items-start gap-4  pb-1 pt-1">
+          {children}
+        </div>
+      );
+    case "column-cell":
+      return <div>{children}</div>;
+
     default:
       return <div></div>;
   }

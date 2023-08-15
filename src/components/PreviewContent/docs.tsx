@@ -17,7 +17,7 @@ export const DocsPreview = () => {
 
   return (
     <div
-      className={`relative overflow-y-auto  p-5 dark:border-accent dark:bg-muted`}
+      className={`@container relative  overflow-y-auto p-5 dark:border-accent dark:bg-muted`}
     >
       {parseNodes(localValue, fontFam)}
     </div>

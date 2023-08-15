@@ -198,7 +198,7 @@ export const ListItem = withListNumbering((props) => {
         {isOptionList && isPreview && (
           <span
             contentEditable={false}
-            className={cn(`absolute mr-3  mr-[5px] flex h-[28px] w-[28px] -translate-x-[41px] items-center justify-center rounded-md  border border-gray-400 dark:border-gray-700
+            className={cn(`absolute mr-3  mr-[5px] flex h-[28px] w-[28px] -translate-x-[41px] items-center justify-center rounded-md  border border-gray-400 dark:border-gray-600
               ${
                 selectedOption[groupNumber] === element.id &&
                 "border-brand dark:border-gray-300"
@@ -213,7 +213,7 @@ export const ListItem = withListNumbering((props) => {
           <label
             htmlFor={element.id}
             tabIndex={-1}
-            className={cn(`absolute left-0 top-0 flex h-full w-full cursor-pointer items-center justify-end rounded-md border border-gray-400   hover:bg-gray-400/10   dark:border-gray-700 dark:hover:bg-gray-700/20
+            className={cn(`absolute left-0 top-0 flex h-full w-full cursor-pointer items-center justify-end rounded-md border border-gray-400   hover:bg-gray-400/10   dark:border-gray-600 dark:hover:bg-gray-700/20
               ${
                 selectedOption[groupNumber] === element.id
                   ? "border-brand dark:border-gray-300 "
@@ -245,7 +245,7 @@ export const ListItem = withListNumbering((props) => {
             />
             <div
               className={cn(
-                `absolute right-2 flex h-[24px] w-[24px] items-center justify-center rounded-full border border-gray-400  dark:border-gray-700   ${
+                `absolute right-2 flex h-[24px] w-[24px] items-center justify-center rounded-full border border-gray-400  dark:border-gray-600   ${
                   selectedOption[groupNumber] === element.id &&
                   "border-brand dark:border-gray-300"
                 }`

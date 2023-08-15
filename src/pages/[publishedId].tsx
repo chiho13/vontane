@@ -110,7 +110,7 @@ const PublishedPage = ({ workspaceId, workspaceData, font }) => {
         <div
           className={`relative  h-[100vh] overflow-y-auto rounded-md bg-white p-4 dark:bg-[#191919] `}
         >
-          <div className="relative mx-auto mb-20 max-w-[700px] xl:mt-[100px]">
+          <div className="@container relative mx-auto mb-20 max-w-[700px] xl:mt-[100px]">
             {parseNodes(localValue, font)}
           </div>
         </div>

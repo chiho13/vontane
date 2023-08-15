@@ -12,13 +12,9 @@ export function ColumnCellElement(props: {
   const { editor } = useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);
 
-  const style = {
-    flexBasis: "20%", // You can set this to any valid CSS value
-  };
   return (
     <div
       {...attributes}
-      style={style}
       data-id={element.id}
       data-path={JSON.stringify(path)}
       className="flex-1 rounded pb-1 pt-1"

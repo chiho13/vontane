@@ -26,21 +26,6 @@ export const SlidesPreview = () => {
 
   const slides = splitIntoSlides(localValue);
 
-  if (slides.length === 0) {
-    return (
-      <div className="flex h-full w-full items-center justify-center">
-        <div className=" flex flex-col  items-center gap-4  p-7  dark:bg-muted">
-          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
-            <SlideBreak />
-          </div>
-          <p className="w-[200px] text-center text-lg">
-            Add Slide Breaks to get started
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   const handleNext = () => {
     setCurrentSlideIndex((prevIndex) =>
       Math.min(prevIndex + 1, slides.length - 1)
@@ -73,6 +58,20 @@ export const SlidesPreview = () => {
     console.log(currentSlideIndex);
   }, [currentSlideIndex]);
 
+  if (slides.length === 0) {
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <div className=" flex flex-col  items-center gap-4  p-7  dark:bg-muted">
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
+            <SlideBreak />
+          </div>
+          <p className="w-[200px] text-center text-lg">
+            Add Slide Breaks to get started
+          </p>
+        </div>
+      </div>
+    );
+  }
   return (
     <>
       <div className=" sticky top-0  z-10 flex gap-3 border-b border-accent bg-white p-5  text-gray-700 shadow-sm dark:bg-muted dark:text-gray-200">

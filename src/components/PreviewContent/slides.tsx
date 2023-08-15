@@ -52,6 +52,22 @@ export const SlidesPreview = () => {
   };
 
   useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "ArrowRight") {
+        handleNext();
+      } else if (e.key === "ArrowLeft") {
+        handlePrevious();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [currentSlideIndex, slides]);
+
+  useEffect(() => {
     setScrollToSlide(currentSlideIndex + 1);
 
     console.log(currentSlideIndex);
@@ -68,11 +84,9 @@ export const SlidesPreview = () => {
         </span>
       </div>
       <div
-        className={`relative p-5 pb-20 pt-0 dark:border-accent dark:bg-muted`}
+        className={`relative p-5 pb-20 pt-0 outline-none dark:border-accent dark:bg-muted`}
       >
-        <div className="slide">
-          {parseNodes(slides[currentSlideIndex], fontFam, true)}
-        </div>
+        {parseNodes(slides[currentSlideIndex], fontFam, true)}
         <div className="fixed bottom-8 right-8  shadow-md">
           <Button
             className="h-[44px] w-[44px] rounded-none border border-r-0 border-gray-700 p-0 dark:border-gray-200"

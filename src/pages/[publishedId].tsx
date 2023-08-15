@@ -104,14 +104,33 @@ const PublishedPage = ({ workspaceId, workspaceData, font }) => {
 
   const slides = localValue && splitIntoSlides(localValue);
 
+  const slideWidth = 100; // You can set this to the width you want for each slide
+  const totalSlidesWidth = slides && slides.length * slideWidth;
+  const slideTranslateValue = -(currentSlideIndex * slideWidth);
+
+  const slideContainerStyle = {
+    display: "flex",
+    width: `${totalSlidesWidth}%`, // Set the total width
+    transform: `translateX(${slideTranslateValue}%)`,
+    transition: "transform 300ms ease-in-out",
+  };
+
+  const individualSlideStyle = {
+    width: `${slideWidth}%`, // Set the individual slide width
+    flexShrink: 0,
+  };
+
+  const slidesContainer = useRef(null) as any;
   const handleNext = () => {
     setCurrentSlideIndex((prevIndex) =>
       Math.min(prevIndex + 1, slides.length - 1)
     );
+    slidesContainer.current.scrollTo(0, 0);
   };
 
   const handlePrevious = () => {
     setCurrentSlideIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+    slidesContainer.current.scrollTo(0, 0);
   };
 
   useEffect(() => {
@@ -183,13 +202,29 @@ const PublishedPage = ({ workspaceId, workspaceData, font }) => {
           </div>
         ) : (
           <div
-            className={`relative  overflow-y-auto rounded-md bg-white p-4 pb-[100px] dark:bg-[#191919] `}
+            ref={slidesContainer}
+            className={`relative  overflow-y-auto  overflow-x-hidden rounded-md bg-white p-4 pb-[100px] dark:bg-[#191919] `}
             style={{
               height: "calc(100vh - 65px)",
             }}
           >
-            <div className=" relative mx-auto max-w-[880px] xl:mt-[60px]">
-              {parseNodes(slides[currentSlideIndex], font, true)}
+            <div
+              className="relative mx-auto max-w-[880px] xl:mt-[60px]"
+              style={slideContainerStyle}
+            >
+              {slides.map((slide, index) => (
+                <div
+                  key={index}
+                  className={`  w-full transition-opacity duration-300 ${
+                    currentSlideIndex === index
+                      ? " opacity-100 "
+                      : "pointer-events-none  opacity-0"
+                  }`}
+                  style={individualSlideStyle}
+                >
+                  {currentSlideIndex === index && parseNodes(slide, font, true)}
+                </div>
+              ))}
             </div>
           </div>
         )}

@@ -188,23 +188,22 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
             >
               <TabsTrigger
                 value="properties"
-                className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-gray-400 dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
+                className={` text-xs data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-gray-400 dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
               >
                 Properties
               </TabsTrigger>
 
               <TabsTrigger
-                value="docsView"
-                className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-gray-400 dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
-              >
-                Docs View
-              </TabsTrigger>
-
-              <TabsTrigger
-                value="slidesView"
-                className={` data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-gray-400 dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
+                value="bookView"
+                className={` text-xs data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-gray-400 dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
               >
                 Slide View
+              </TabsTrigger>
+              <TabsTrigger
+                value="docsView"
+                className={` text-xs data-[state=active]:bg-brand data-[state=active]:text-white dark:text-gray-400 dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
+              >
+                One Page View
               </TabsTrigger>
             </TabsList>
 
@@ -277,6 +276,16 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                 ))}
             </TabsContent>
             <TabsContent
+              value="bookView"
+              className="scrollbar relative overflow-y-auto pb-5"
+              style={{
+                top: -8,
+                height: `calc(100vh - ${openChat ? "460" : "200"}px)`,
+              }}
+            >
+              <SlidesPreview />
+            </TabsContent>
+            <TabsContent
               value="docsView"
               className="scrollbar relative overflow-y-auto pb-5"
               style={{
@@ -295,16 +304,6 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                 )}
               </div> */}
               <DocsPreview />
-            </TabsContent>
-            <TabsContent
-              value="slidesView"
-              className="scrollbar relative overflow-y-auto pb-5"
-              style={{
-                top: -8,
-                height: `calc(100vh - ${openChat ? "460" : "200"}px)`,
-              }}
-            >
-              <SlidesPreview />
             </TabsContent>
           </Tabs>
         </div>

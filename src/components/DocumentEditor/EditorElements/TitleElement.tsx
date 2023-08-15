@@ -55,6 +55,7 @@ export function TitleElement(props) {
         {...attributes}
         data-id={element.id}
         data-path={JSON.stringify(path)}
+        data-element={element.type}
         data-placeholder={shouldShowPlaceholder ? "Untitled Workspace" : ""}
       >
         {children}

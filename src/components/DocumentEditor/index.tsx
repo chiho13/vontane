@@ -1485,9 +1485,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         if (activePath && overPath) {
           const isNearRoot = activePath.length === 1 && overPath.length === 1;
 
-          const overNode = Node.get(editor, overPath);
+          const activeNode = Node.get(editor, activePath);
 
-          if (SlateElement.isElement(overNode) && overNode.type === "slide") {
+          if (
+            SlateElement.isElement(activeNode) &&
+            activeNode.type === "slide"
+          ) {
             setCreatingNewColumn(false);
             setInsertDirection(null);
             return;
@@ -1897,7 +1900,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     };
   }, []);
 
-  const { showRightSidebar, setShowRightSidebar } = useTextSpeech();
+  const { showRightSidebar, setShowRightSidebar, scrolltoSlide } =
+    useTextSpeech();
 
   const [rightSideBarWidth, setRightSideBarWidth] = useLocalStorage(
     "sidebarWidth",
@@ -1922,6 +1926,26 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     }
   }, [elementWidth, windowSize]);
 
+  useLayoutEffect(() => {
+    const editorDiv = textEditorRef.current;
+    if (!editorDiv) return;
+
+    let targetElement;
+
+    if (scrolltoSlide === 1) {
+      targetElement = editorDiv.querySelector(`[data-element="title"]`);
+    } else {
+      targetElement = editorDiv.querySelector(
+        `[data-slide="${scrolltoSlide}"]`
+      );
+    }
+
+    targetElement?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }, [scrolltoSlide]);
+
   return (
     <div
       className="relative mx-auto mt-[50px] lg:max-w-[1000px] xl:max-w-[1400px]"
@@ -1932,6 +1956,14 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             : "95vw",
       }}
     >
+      {/* <button
+        onClick={() => {
+          textEditorRef.current.scrollTop = 0;
+        }}
+      >
+        {" "}
+        scroll to slide
+      </button> */}
       <Portal>
         <button
           className="group fixed right-[30px] top-[25px] z-0 hidden rounded  border-gray-300 p-1 transition duration-300 hover:border-brand dark:border-accent dark:hover:border-foreground dark:hover:bg-muted lg:block"

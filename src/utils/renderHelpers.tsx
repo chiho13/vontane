@@ -7,6 +7,7 @@ import { alignMap } from "@/components/DocumentEditor/helpers/toggleBlock";
 import { CollapsibleAudioPlayer } from "@/components/PreviewContent/PreviewElements/CollapsibleAudio";
 import { MCQ } from "@/components/PreviewContent/PreviewElements/MCQ";
 import { MapBlock } from "@/components/PreviewContent/PreviewElements/Map";
+import { cn } from "./cn";
 
 const renderElement = (
   node: {
@@ -30,18 +31,33 @@ const renderElement = (
   key: React.Key | null | undefined,
   index: number,
   nodes: any,
-  fontFam: any
+  fontFam: any,
+  hideTitle: boolean
 ) => {
   switch (node.type) {
+    case "title":
+      if (hideTitle) {
+        return null;
+      }
+      return (
+        <h1
+          className={`mb-4 text-[34px] font-bold  dark:text-gray-200 ${fontFam}`}
+          key={key}
+        >
+          {children}
+        </h1>
+      );
     case "paragraph":
       return (
         <p
-          className={`mt-2 leading-6 text-${alignMap[node.align] || node.align}
+          className={cn(`mt-2 leading-7 text-${
+            alignMap[node.align] || node.align
+          }
             ${fontFam}
   
-            ${fontFam === "font-mono" ? "text-sm" : ""}
+            ${fontFam === "font-mono leading-6" ? "text-sm" : ""}
             dark:text-gray-300
-            `}
+            `)}
           key={key}
         >
           {children}
@@ -89,15 +105,6 @@ const renderElement = (
         </blockquote>
       );
 
-    case "title":
-      return (
-        <h1
-          className={`mb-4 text-[34px] font-bold  dark:text-gray-200 ${fontFam}`}
-          key={key}
-        >
-          {children}
-        </h1>
-      );
     case "heading-one":
       return (
         <h1
@@ -236,7 +243,7 @@ const renderElement = (
   }
 };
 
-export const parseNodes = (nodes: any[], fontFam) => {
+export const parseNodes = (nodes: any[], fontFam, hideTitle = false) => {
   return nodes.map((node: any, index: any) => {
     if (Text.isText(node)) {
       let customNode = node as any; // assert that node could be any type
@@ -266,15 +273,43 @@ export const parseNodes = (nodes: any[], fontFam) => {
 
       return component;
     } else if ("children" in node) {
-      const children = parseNodes(node.children, fontFam);
+      const children = parseNodes(node.children, fontFam, hideTitle);
       return renderElement(
         node,
         children,
         node.id ? node.id : index,
         index,
         nodes,
-        fontFam
+        fontFam,
+        hideTitle
       );
     }
   });
+};
+
+export const splitIntoSlides = (nodes: any[]) => {
+  const slides = [];
+  let currentSlide = [];
+
+  // Check if there are any nodes of type "slide"
+  if (!nodes.some((node) => node.type === "slide")) {
+    return []; // Return an empty array if no "slide" nodes
+  }
+
+  nodes.forEach((node: any) => {
+    if (node.type === "slide") {
+      if (currentSlide.length > 0) {
+        slides.push(currentSlide); // Push content before the slide break
+        currentSlide = []; // Reset currentSlide for content after the slide break
+      }
+    } else {
+      currentSlide.push(node); // Collect nodes for the current slide
+    }
+  });
+
+  if (currentSlide.length > 0) {
+    slides.push(currentSlide); // Push the last slide if there's any content left
+  }
+
+  return slides;
 };

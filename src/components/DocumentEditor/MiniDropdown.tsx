@@ -154,7 +154,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
 
       {
         name: "Slide Break",
-        description: "Slide mode: break the page",
+        description: "Create multi-page slide navigation",
         action: addSlideBreakHandler,
         icon: (
           <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">

@@ -3651,10 +3651,10 @@
   "resolved" "https://registry.npmjs.org/lru-cache/-/lru-cache-7.18.3.tgz"
   "version" "7.18.3"
 
-"lucide-react@^0.135.0":
-  "integrity" "sha512-ZdxyYdzcmAVfXlQo9MOFbQeHWGim5mIngdmvl4zYbFllwff/AN/xdPPN6cXVMj5iQ5/CfJap1eS1eGwHMife3Q=="
-  "resolved" "https://registry.npmjs.org/lucide-react/-/lucide-react-0.135.0.tgz"
-  "version" "0.135.0"
+"lucide-react@^0.268.0":
+  "integrity" "sha512-XP/xY3ASJAViqNqVnDRcEfdxfRB7uNST8sqTLwZhL983ikmHMQ7qQak7ZxrnXOVhB3QDBawdr3ANq0P+iWHP/g=="
+  "resolved" "https://registry.npmjs.org/lucide-react/-/lucide-react-0.268.0.tgz"
+  "version" "0.268.0"
 
 "marked@^5.1.2":
   "integrity" "sha512-ahRPGXJpjMjwSOlBoTMZAK7ATXkli5qCPxZ21TG44rx1KEo44bii4ekgTDQPNRQ4Kh7JMb9Ub1PVk1NxRSsorg=="

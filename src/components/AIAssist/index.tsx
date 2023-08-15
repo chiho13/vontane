@@ -627,7 +627,7 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
         className="relative flex w-full justify-between  border-b border-gray-300 p-2 px-3 text-gray-800 dark:border-accent dark:text-gray-300"
         onClick={openAIAssist}
       >
-        AI Assist {openChat ? <ChevronDown /> : <ChevronUp />}
+        AI Assist {"(beta)"} {openChat ? <ChevronDown /> : <ChevronUp />}
         <div className=" absolute bottom-0 right-[50px]  top-[5px] mb-2 flex h-[30px] w-[40px]  items-center justify-center rounded-md border border-accent  text-xs">
           50 cr
         </div>

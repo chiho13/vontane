@@ -20,10 +20,13 @@ export const FontStyle = () => {
   const changeFontHandler = async (event) => {
     setFontStyle(event.target.value);
     try {
-      await changeFontMutation.mutateAsync({
+      const response = await changeFontMutation.mutateAsync({
         id: workspaceId,
         font: event.target.value,
       });
+      if (response) {
+        refetchWorkspaceData();
+      }
     } catch (error) {
       console.error("Error changing font:", error);
     }

@@ -74,7 +74,7 @@ const renderElement = (
     case "equation":
       return (
         <div
-          className="mb-1 mt-1 flex justify-center dark:text-gray-300"
+          className="mb-4 mt-4 flex justify-center dark:text-gray-300"
           key={key}
         >
           <BlockMath math={node.latex} />

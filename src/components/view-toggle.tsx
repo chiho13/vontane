@@ -11,9 +11,20 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Icons } from "@/components/Icons";
+import { Eye, File, FileStack } from "lucide-react";
+import { useRouter } from "next/router";
 
-export function ModeToggle() {
-  const { setTheme } = useTheme();
+export function ViewToggle() {
+  const router = useRouter();
+  const view = router.query.view;
+
+  const handleToggleView = (newView) => {
+    // const newView = view === "one-page" ? "slides" : "one-page";
+    router.push({
+      pathname: router.pathname,
+      query: { ...router.query, view: newView },
+    });
+  };
 
   return (
     <DropdownMenu>
@@ -23,9 +34,8 @@ export function ModeToggle() {
           size="sm"
           className="h-8 w-8 border border-gray-400 bg-white  px-0 text-gray-700 dark:border-gray-700 dark:bg-muted dark:text-gray-300"
         >
-          <Icons.sun className="rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <Icons.moon className="absolute rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-          <span className="sr-only">Toggle theme</span>
+          <Eye />
+          <span className="sr-only">Toggle View</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -33,17 +43,13 @@ export function ModeToggle() {
         side="bottom"
         className="z-100 border border-gray-400  bg-background  dark:border-gray-700 "
       >
-        <DropdownMenuItem onClick={() => setTheme("light")}>
-          <Icons.sun className="mr-2 h-4 w-4 text-foreground" />
-          <span className="text-foreground">Light</span>
+        <DropdownMenuItem onClick={() => handleToggleView("one-page")}>
+          <File className="mr-2 h-4 w-4 text-foreground" />
+          <span className="text-foreground">One Page</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>
-          <Icons.moon className="mr-2 h-4 w-4 text-foreground" />
-          <span className="text-foreground">Dark</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>
-          <Icons.laptop className="mr-2 h-4 w-4 text-foreground" />
-          <span className="text-foreground">System</span>
+        <DropdownMenuItem onClick={() => handleToggleView("slides")}>
+          <FileStack className="mr-2 h-4 w-4 text-foreground" />
+          <span className="text-foreground">Slides</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

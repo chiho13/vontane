@@ -84,7 +84,7 @@ export const SlidesPreview = () => {
         </span>
       </div>
       <div
-        className={`relative p-5 pb-20 pt-0 outline-none dark:border-accent dark:bg-muted`}
+        className={`relative p-5 pb-20  outline-none dark:border-accent dark:bg-muted`}
       >
         {parseNodes(slides[currentSlideIndex], fontFam, true)}
         <div className="fixed bottom-8 right-8  shadow-md">

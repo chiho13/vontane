@@ -277,7 +277,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
             </TabsContent>
             <TabsContent
               value="bookView"
-              className="scrollbar relative overflow-y-auto pb-5"
+              className="scrollbar relative overflow-y-auto pb-5 focus-visible:ring-transparent"
               style={{
                 top: -8,
                 height: `calc(100vh - ${openChat ? "460" : "200"}px)`,

@@ -232,7 +232,7 @@ export const ListItem = withListNumbering((props) => {
       `${selectedElementID === element.id ? " bg-[#E0EDFB]" : "bg-transparent"}
     list-none transition
     duration-200 ease-in-out
-    dark:text-gray-300
+    dark:text-gray-200
     ${fontStyle}
     ${fontStyle === "font-mono" ? "text-sm" : ""}
     text-${alignMap[element.align] || element.align}
@@ -254,7 +254,7 @@ export const ListItem = withListNumbering((props) => {
 
   return (
     <ListItemStyle
-      className={`text-gray-800 dark:text-gray-300 ${
+      className={`text-gray-800 dark:text-gray-200 ${
         isOptionList && isPreview ? " rounded-md p-2" : ""
       }
       `}

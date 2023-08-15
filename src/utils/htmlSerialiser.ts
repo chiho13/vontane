@@ -44,7 +44,7 @@ export const slateNodeToHtml = (node) => {
         return childrenHtml;
 
       case "block-quote":
-        return `<blockquote class="items-center border-l-4 border-gray-400 bg-white pl-3  text-gray-500 dark:bg-muted dark:text-gray-300">${childrenHtml}</blockquote>`;
+        return `<blockquote class="items-center border-l-4 border-gray-400 bg-white pl-3  text-gray-500 dark:bg-muted dark:text-gray-200">${childrenHtml}</blockquote>`;
       case "equation":
         return `<div data-type="equation" data-latex="${node.latex}"></div>`;
 

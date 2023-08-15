@@ -22,7 +22,7 @@ export const BlockQuoteElement = (props: {
       {...attributes}
       data-id={element.id}
       data-path={JSON.stringify(path)}
-      className={` items-center border-l-4 border-gray-400 pl-3 pr-1  text-gray-500  dark:text-gray-300
+      className={` items-center border-l-4 border-gray-400 pl-3 pr-1  text-gray-500  dark:text-gray-200
 
       ${fontStyle}
       ${fontStyle === "font-mono" ? "text-sm" : ""}

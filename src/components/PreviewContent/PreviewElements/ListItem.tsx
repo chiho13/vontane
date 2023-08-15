@@ -175,7 +175,7 @@ export const ListItem = withListNumbering((props) => {
 
   return (
     <ListItemStyle
-      className={`text-gray-800 dark:text-gray-300 ${
+      className={`text-gray-800 dark:text-gray-200 ${
         isOptionList && isPreview ? " rounded-md p-2" : ""
       }
         `}

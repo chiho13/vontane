@@ -81,7 +81,7 @@ export function HeadingElement(props) {
         } 
         text-${alignMap[element.align] || element.align}
         font-bold
-        dark:text-gray-300
+        dark:text-gray-200
         ${fontStyle}
         ${selectedElementID === element.id ? " bg-[#E0EDFB]" : ""}
         `}

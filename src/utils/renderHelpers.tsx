@@ -56,7 +56,7 @@ const renderElement = (
             ${fontFam}
   
             ${fontFam === "font-mono leading-6" ? "text-sm" : ""}
-            dark:text-gray-300
+            dark:text-gray-200
             `)}
           key={key}
         >
@@ -66,7 +66,7 @@ const renderElement = (
 
     case "inline-equation":
       return (
-        <span className="pointer-events-none px-1 dark:text-gray-300" key={key}>
+        <span className="pointer-events-none px-1 dark:text-gray-200" key={key}>
           <InlineMath math={node.latex} />
         </span>
       );
@@ -74,7 +74,7 @@ const renderElement = (
     case "equation":
       return (
         <div
-          className="mb-4 mt-4 flex justify-center dark:text-gray-300"
+          className="mb-4 mt-4 flex justify-center dark:text-gray-200"
           key={key}
         >
           <BlockMath math={node.latex} />
@@ -97,7 +97,7 @@ const renderElement = (
     case "block-quote":
       return (
         <blockquote
-          className={`text-red  relative mb-3  ml-3 mt-4 border-l-4 border-gray-400 pl-4 text-gray-500 dark:text-gray-300
+          className={`text-red  relative mb-3  ml-3 mt-4 border-l-4 border-gray-400 pl-4 text-gray-500 dark:text-gray-200
             ${fontFam}
           `}
         >

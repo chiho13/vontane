@@ -40,7 +40,7 @@ export const FontStyle = () => {
           className={`cursor-pointer  rounded-lg  p-2 text-center transition duration-200 hover:bg-gray-200  dark:hover:bg-accent ${
             fontStyle === "font-sans"
               ? " bg-gray-200 text-brand dark:bg-accent"
-              : "text-gray-800 dark:text-gray-300"
+              : "text-gray-800 dark:text-gray-200"
           }`}
         >
           <input
@@ -58,7 +58,7 @@ export const FontStyle = () => {
           className={`cursor-pointer  rounded-lg p-2 text-center transition duration-200 hover:bg-gray-200 dark:hover:bg-accent ${
             fontStyle === "font-serif"
               ? "bg-gray-200 text-brand dark:bg-accent"
-              : "text-gray-800 dark:text-gray-300"
+              : "text-gray-800 dark:text-gray-200"
           }`}
         >
           <input
@@ -76,7 +76,7 @@ export const FontStyle = () => {
           className={`cursor-pointer  rounded-lg p-2 text-center transition duration-200 hover:bg-gray-200 dark:hover:bg-accent ${
             fontStyle === "font-mono"
               ? "bg-gray-200 text-brand dark:bg-accent"
-              : "text-gray-800 dark:text-gray-300"
+              : "text-gray-800 dark:text-gray-200"
           }`}
         >
           <input

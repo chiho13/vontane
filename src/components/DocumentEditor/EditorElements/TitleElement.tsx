@@ -49,7 +49,7 @@ export function TitleElement(props) {
     element.children.length === 1 && element.children[0].text === "";
 
   return (
-    <TitleStyle className={`${fontStyle} dark:text-gray-300`}>
+    <TitleStyle className={`${fontStyle} dark:text-gray-200`}>
       <h1
         ref={paragraphRef}
         {...attributes}

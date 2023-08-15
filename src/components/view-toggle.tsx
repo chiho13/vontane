@@ -32,7 +32,7 @@ export function ViewToggle() {
         <Button
           variant="secondary"
           size="sm"
-          className="h-8 w-8 border border-gray-400 bg-white  px-0 text-gray-700 dark:border-gray-700 dark:bg-muted dark:text-gray-300"
+          className="h-8 w-8 border border-gray-400 bg-white  px-0 text-gray-700 dark:border-gray-700 dark:bg-muted dark:text-gray-200"
         >
           <Eye />
           <span className="sr-only">Toggle View</span>

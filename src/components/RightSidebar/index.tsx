@@ -197,7 +197,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                 value="bookView"
                 className={` text-xs data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-gray-400 dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
               >
-                Slide View
+                Slides View
               </TabsTrigger>
               <TabsTrigger
                 value="docsView"

@@ -234,26 +234,29 @@ const PublishedPage = ({ workspaceId, workspaceData, font }) => {
           {slides.length !== 0 ? <ViewToggle /> : null}
           <ModeToggle />
         </div>
-        <div className="fixed bottom-8 right-8  shadow-md">
-          <Button
-            className="h-[40px] w-[40px] rounded-none border border-r-0 border-gray-700 p-0 dark:border-gray-200"
-            onClick={handlePrevious}
-            disabled={currentSlideIndex === 0}
-          >
-            <ArrowLeft className="h-8 w-8 stroke-accent" />
-          </Button>
-          <Button
-            className={cn(
-              `h-[40px] w-[40px] rounded-none border border-gray-700 p-0  disabled:border-l-0  ${
-                currentSlideIndex === 0 && "border-l-0"
-              } dark:border-gray-200`
-            )}
-            onClick={handleNext}
-            disabled={currentSlideIndex === slides.length - 1}
-          >
-            <ArrowRight className="h-8 w-8 stroke-accent" />
-          </Button>
-        </div>
+
+        {view === "slides" && slides.length !== 0 ? (
+          <div className="fixed bottom-8 right-8  shadow-md">
+            <Button
+              className="h-[40px] w-[40px] rounded-none border border-r-0 border-gray-700 p-0 dark:border-gray-200"
+              onClick={handlePrevious}
+              disabled={currentSlideIndex === 0}
+            >
+              <ArrowLeft className="h-8 w-8 stroke-accent" />
+            </Button>
+            <Button
+              className={cn(
+                `h-[40px] w-[40px] rounded-none border border-gray-700 p-0  disabled:border-l-0  ${
+                  currentSlideIndex === 0 && "border-l-0"
+                } dark:border-gray-200`
+              )}
+              onClick={handleNext}
+              disabled={currentSlideIndex === slides.length - 1}
+            >
+              <ArrowRight className="h-8 w-8 stroke-accent" />
+            </Button>
+          </div>
+        ) : null}
       </AudioManagerProvider>
     )
   );

@@ -104,19 +104,19 @@ const PublishedPage = ({ workspaceId, workspaceData, font }) => {
 
   const slides = localValue && splitIntoSlides(localValue);
 
-  const slideWidth = 100; // You can set this to the width you want for each slide
+  const slideWidth = 100;
   const totalSlidesWidth = slides && slides.length * slideWidth;
   const slideTranslateValue = -(currentSlideIndex * slideWidth);
 
   const slideContainerStyle = {
     display: "flex",
-    width: `${totalSlidesWidth}%`, // Set the total width
+    flexBasis: `${totalSlidesWidth}%`,
     transform: `translateX(${slideTranslateValue}%)`,
     transition: "transform 300ms ease-in-out",
   };
 
   const individualSlideStyle = {
-    width: `${slideWidth}%`, // Set the individual slide width
+    width: "100%",
     flexShrink: 0,
   };
 
@@ -203,7 +203,7 @@ const PublishedPage = ({ workspaceId, workspaceData, font }) => {
         ) : (
           <div
             ref={slidesContainer}
-            className={`relative  overflow-y-auto  overflow-x-hidden rounded-md bg-white p-4 pb-[100px] dark:bg-[#191919] `}
+            className={`relative  overflow-y-auto  overflow-x-hidden rounded-md bg-white p-6 pb-[100px] dark:bg-[#191919] `}
             style={{
               height: "calc(100vh - 65px)",
             }}
@@ -215,7 +215,7 @@ const PublishedPage = ({ workspaceId, workspaceData, font }) => {
               {slides.map((slide, index) => (
                 <div
                   key={index}
-                  className={`  w-full transition-opacity duration-300 ${
+                  className={`  w-[300px] transition-opacity duration-300 lg:w-full ${
                     currentSlideIndex === index
                       ? " opacity-100 "
                       : "pointer-events-none  opacity-0"
@@ -236,7 +236,7 @@ const PublishedPage = ({ workspaceId, workspaceData, font }) => {
         </div>
         <div className="fixed bottom-8 right-8  shadow-md">
           <Button
-            className="h-[44px] w-[44px] rounded-none border border-r-0 border-gray-700 p-0 dark:border-gray-200"
+            className="h-[40px] w-[40px] rounded-none border border-r-0 border-gray-700 p-0 dark:border-gray-200"
             onClick={handlePrevious}
             disabled={currentSlideIndex === 0}
           >
@@ -244,7 +244,7 @@ const PublishedPage = ({ workspaceId, workspaceData, font }) => {
           </Button>
           <Button
             className={cn(
-              `h-[44px] w-[44px] rounded-none border border-gray-700 p-0  disabled:border-l-0  ${
+              `h-[40px] w-[40px] rounded-none border border-gray-700 p-0  disabled:border-l-0  ${
                 currentSlideIndex === 0 && "border-l-0"
               } dark:border-gray-200`
             )}

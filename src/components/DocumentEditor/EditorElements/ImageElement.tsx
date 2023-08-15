@@ -223,7 +223,7 @@ export const ImageElement = React.memo(
                   )}
                 </div>
               )}
-              <div className="absolute right-1 top-1 z-10 flex  items-center gap-1 opacity-0 group-hover:opacity-100 ">
+              <div className="absolute right-1 top-1 z-10 flex  items-center gap-1  ">
                 {!element.uploading && (
                   <>
                     <BlockAlign element={element} />

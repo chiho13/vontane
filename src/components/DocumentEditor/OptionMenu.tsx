@@ -156,7 +156,7 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
     return (
       <>
         <div
-          className={` relative  flex items-center  ${
+          className={` relative  flex h-[22px]   ${
             activeDropdown === element.id && "opacity-100"
           }`}
           onMouseDown={(e) => {

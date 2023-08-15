@@ -64,6 +64,7 @@ export const SlideBreak = withSlideNumbering(
         data-path={JSON.stringify(path)}
         className="relative flex cursor-grab items-center"
         contentEditable={false}
+        data-slide={slideNumber}
       >
         {/* <hr className="border-1 my-4 h-1 w-[98%] divide-dashed rounded bg-gray-400" />
          */}
@@ -74,7 +75,7 @@ export const SlideBreak = withSlideNumbering(
             <div className="relative -top-[2px] mr-1 flex flex-col items-center text-sm">
               {/* <ChevronUp className="absolute -top-5 w-4 text-gray-500" /> */}
               <div
-                className={`w-10 text-center text-base font-semibold text-brand dark:text-foreground`}
+                className={`w-10 text-center text-4xl font-semibold text-brand dark:text-foreground`}
               >
                 {slideNumber}
               </div>
@@ -82,6 +83,7 @@ export const SlideBreak = withSlideNumbering(
           </div>
           <div className="mr-2 block h-[5px] grow -translate-y-1 border-b-2 border-gray-300 dark:border-slate-400"></div>
         </div>
+        {children}
       </div>
     );
   }

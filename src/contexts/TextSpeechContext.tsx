@@ -30,6 +30,8 @@ interface TextSpeechContextType {
   setTab: any;
   fontStyle: any;
   setFontStyle: any;
+  scrolltoSlide: any;
+  setScrollToSlide: any;
 }
 // Create the context with default values
 const TextSpeechContext = createContext<TextSpeechContextType>({
@@ -55,6 +57,8 @@ const TextSpeechContext = createContext<TextSpeechContextType>({
   setTab: () => {},
   fontStyle: {},
   setFontStyle: () => {},
+  scrolltoSlide: {},
+  setScrollToSlide: () => {},
 });
 
 // Define the shape of the provider props
@@ -100,6 +104,8 @@ const RightSideBarProvider = ({
     workspaceData.workspace.font_style
   );
 
+  const [scrolltoSlide, setScrollToSlide] = useLocalStorage("slide-number", 1);
+
   return (
     <TextSpeechContext.Provider
       value={{
@@ -121,6 +127,8 @@ const RightSideBarProvider = ({
         setTab,
         fontStyle,
         setFontStyle,
+        scrolltoSlide,
+        setScrollToSlide,
       }}
     >
       {children}

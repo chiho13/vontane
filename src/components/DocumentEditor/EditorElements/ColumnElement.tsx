@@ -12,7 +12,7 @@ export function ColumnElement(props: any) {
       {...attributes}
       data-id={element.id}
       data-path={JSON.stringify(path)}
-      className="grid w-full grid-cols-2 items-start  pb-2 pt-2"
+      className="grid w-full grid-cols-2 items-start"
     >
       {children}
     </div>

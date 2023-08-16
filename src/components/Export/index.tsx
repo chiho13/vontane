@@ -262,6 +262,7 @@ Save as PDF
         <DropdownMenuItem
           className={`flex w-full items-center rounded-sm px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:text-gray-900 focus:outline-none dark:text-foreground `}
           onClick={downloadAsHTMLSlides}
+          disabled={slides.length === 0}
         >
           Slides
         </DropdownMenuItem>

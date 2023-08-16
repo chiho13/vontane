@@ -55,7 +55,7 @@ const renderElement = (
           }
             ${fontFam}
   
-            ${fontFam === "font-mono leading-6" ? "text-sm" : ""}
+            ${fontFam === "font-mono" ? "text-sm leading-6" : ""}
             dark:text-gray-200
             `)}
           key={key}

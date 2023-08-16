@@ -217,7 +217,7 @@ const PublishedPage = ({ workspaceId, workspaceData, font }) => {
               {slides.map((slide, index) => (
                 <div
                   key={index}
-                  className={`  w-[300px] transition-opacity duration-300 lg:w-full ${
+                  className={` w-[300px] transition-opacity duration-300 lg:w-full ${
                     currentSlideIndex === index
                       ? " opacity-100 "
                       : "pointer-events-none  opacity-0"

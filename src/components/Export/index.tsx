@@ -1,4 +1,10 @@
-import { MoreHorizontal, Trash2, Copy, ChevronRight } from "lucide-react";
+import {
+  MoreHorizontal,
+  Trash2,
+  Copy,
+  ChevronRight,
+  ChevronDown,
+} from "lucide-react";
 // import { isParentTTS, wrapWithTTS } from "./helpers/toggleBlock";
 import { cn } from "@/utils/cn";
 import { exportToHTML } from "@/utils/htmlSerialiser";
@@ -139,7 +145,7 @@ Save as PDF
     <DropdownMenu>
       <DropdownMenuTrigger className="rounded-md outline-none ring-brand focus:ring-2">
         <Button className="border outline-none" variant="outline" size="xs">
-          Export <ChevronRight className="w-4" />
+          Export <ChevronDown className="w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className=" top-0 w-[200px] border dark:border-accent dark:bg-input">

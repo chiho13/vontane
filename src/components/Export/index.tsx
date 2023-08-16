@@ -38,7 +38,7 @@ export const Export = () => {
 
   const slides = splitIntoSlides(editor.children);
   const workspaceId = router.query.workspaceId as string;
-
+  const font = workspaceData.workspace.font_style;
   const pdfMutation = api.workspace.generatePDF.useMutation();
 
   const generateHTMLOnePageContent = (editorContent) => `
@@ -74,9 +74,9 @@ export const Export = () => {
   }
 
 </style>
-<body class="pt-[50px]">
-<div class="relative mx-auto mb-20 max-w-[700px] lg:mt-[70px]">
-<button onclick="window.print()" class="print-button text-sm fixed top-4 right-4 mb-4 border border-accent bg-white hover:bg-gray-100 text-gray-500 font-bold py-2 px-4 rounded">
+<body class="pt-[50px] ">
+<div class="relative mx-auto mb-20 max-w-[700px] lg:mt-[70px] ${font}">
+<button onclick="window.print()" class="font-sans print-button text-sm fixed top-4 right-4 mb-4 border border-accent bg-white hover:bg-gray-100 text-gray-500 font-bold py-2 px-4 rounded">
 Save as PDF
 </button>
   ${editorContent}
@@ -153,14 +153,14 @@ Save as PDF
         <span id="slide-number">
           </span>
 
-        <span className="font-bold ${workspaceData.workspace.font_style}">
+        <span className="font-bold ${font}">
           ${editor.children[0].children[0].text}
         </span>
       </div>
 <div class="relative lg:mt-[70px]">
 
   <div class="slide-container overflow-y-auto ">
-  <div class="slide-wrapper relative mx-auto max-w-[700px]" >
+  <div class="slide-wrapper relative mx-auto max-w-[700px] ${font}" >
 
     ${editorContent}
     </div>

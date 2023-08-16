@@ -183,7 +183,7 @@ Save as PDF
   document.getElementById('title').display = "none";
   slideWrapper.style.flexBasis = slides.length * 100 + '%';
   document.getElementById('slide-number').textContent = "1 / " +  slides.length;
-
+  document.getElementById('title').style.display = "none";
   function navigateSlides(step) {
     slides[currentSlideIndex].classList.remove('active');
     currentSlideIndex += step;
@@ -196,10 +196,7 @@ Save as PDF
     slideWrapper.style.transform = 'translateX(' + slideTranslateValue + '%)';
     document.getElementById('slide-number').textContent = (currentSlideIndex + 1) + " / " + slides.length;
   }
-  window.addEventListener("load", function (e) {
-
-    document.getElementById('title').style.display = "none";
-  });
+  
   window.addEventListener("keydown", function (e) {
     if (e.key === "ArrowRight") {
       navigateSlides(1);

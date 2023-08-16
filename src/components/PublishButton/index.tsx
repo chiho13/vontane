@@ -74,10 +74,10 @@ export const PublishButton = () => {
 
   const iframeEmbed = `<iframe src="${publicURL}" width="100%" height="500" style="border:0" allowfullscreen loading="lazy"></iframe>`;
   return (
-    <Portal>
+    <>
       {!published ? (
         <Button
-          className={`text-bold fixed right-[80px] top-[25px] h-[28px] rounded-md px-3 text-sm  text-white hover:bg-brand/90 hover:text-white disabled:opacity-100 dark:border-t-gray-700 dark:bg-slate-100 dark:text-muted dark:hover:bg-slate-300 dark:hover:text-background ${
+          className={`text-bold  h-[28px] rounded-md px-3 text-sm  text-white hover:bg-brand/90 hover:text-white disabled:opacity-100 dark:border-t-gray-700 dark:bg-slate-100 dark:text-muted dark:hover:bg-slate-300 dark:hover:text-background ${
             published
               ? "bg-green-400 text-foreground dark:bg-green-400"
               : "bg-brand "
@@ -100,7 +100,7 @@ export const PublishButton = () => {
         <DropdownMenu open={openDropdown} onOpenChange={openDropdownChange}>
           <DropdownMenuTrigger asChild>
             <Button
-              className={`text-bold fixed  right-[80px]  top-[25px] flex h-[28px] rounded-md px-3 text-sm  text-white disabled:opacity-100 dark:border-t-gray-700 dark:bg-slate-100 dark:text-muted ${
+              className={`text-bold  flex h-[28px] rounded-md px-3 text-sm  text-white disabled:opacity-100 dark:border-t-gray-700 dark:bg-slate-100 dark:text-muted ${
                 published
                   ? "bg-green-400 text-foreground hover:bg-green-400 hover:text-foreground dark:bg-green-400"
                   : "bg-brand "
@@ -182,6 +182,6 @@ export const PublishButton = () => {
           </DropdownMenuContent>
         </DropdownMenu>
       )}
-    </Portal>
+    </>
   );
 };

@@ -86,7 +86,7 @@ export const SlidesPreview = () => {
         className={`relative p-5 pb-20  outline-none dark:border-accent dark:bg-muted`}
       >
         {parseNodes(slides[currentSlideIndex], fontFam, true)}
-        <div className="fixed bottom-8 right-8  shadow-md">
+        <div className="fixed bottom-8 right-8  h-[40px] shadow-md">
           <Button
             className="h-[40px] w-[40px]  rounded-none border border-r-0 border-gray-700 p-0 dark:border-gray-200"
             onClick={handlePrevious}

@@ -182,7 +182,7 @@ const PublishedPage = ({ workspaceId, workspaceData, font }) => {
     localValue && (
       <AudioManagerProvider>
         {view === "slides" ? (
-          <div className=" sticky top-0  flex gap-3 border-b border-gray-300 p-5  text-gray-700  shadow-md  dark:bg-[#191919] dark:text-gray-200">
+          <div className=" sticky top-0  flex gap-3 border-b border-gray-300 p-5  text-gray-700 shadow-md  dark:border-gray-700  dark:bg-[#191919] dark:text-gray-200">
             <span className=" flex min-w-[50px]">
               <span className="flex w-[20px] justify-center ">
                 {currentSlideIndex + 1}
@@ -238,7 +238,7 @@ const PublishedPage = ({ workspaceId, workspaceData, font }) => {
         </div>
 
         {view === "slides" && slides.length !== 0 ? (
-          <div className="fixed bottom-8 right-8  shadow-md">
+          <div className="fixed bottom-8 right-8 h-[40px] shadow-md">
             <Button
               className="h-[40px] w-[40px] rounded-none border border-r-0 border-gray-700 p-0 dark:border-gray-200"
               onClick={handlePrevious}

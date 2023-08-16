@@ -70,6 +70,7 @@ import { cn } from "@/utils/cn";
 import { UserContext } from "@/contexts/UserContext";
 import { AIAssist } from "../AIAssist";
 import { FontStyle } from "../FontStyle";
+import { Export } from "../Export";
 interface RightSideBarProps {
   setRightSideBarWidth: any;
   showRightSidebar: boolean;
@@ -174,7 +175,13 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 
   return (
     <AudioManagerProvider>
-      <PublishButton />
+      <Portal>
+        <div className="fixed right-[80px] top-[25px] flex gap-2">
+          <Export />
+
+          <PublishButton />
+        </div>
+      </Portal>
       <div
         className="m-w-full  flex hidden grow flex-col rounded-md  border border-gray-300 bg-white  dark:border-accent dark:bg-muted dark:text-lightgray lg:block"
         style={rightSidebarStyle}

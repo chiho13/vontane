@@ -78,7 +78,7 @@ export const SlidesPreview = () => {
         <span>
           {currentSlideIndex + 1} / {slides.length}
         </span>
-        <span className="font-bold">
+        <span className={`font-bold ${fontFam}`}>
           {fromEditor.children[0].children[0].text}
         </span>
       </div>

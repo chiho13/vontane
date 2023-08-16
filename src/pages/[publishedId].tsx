@@ -182,21 +182,23 @@ const PublishedPage = ({ workspaceId, workspaceData, font }) => {
     localValue && (
       <AudioManagerProvider>
         {view === "slides" ? (
-          <div className=" sticky top-0  flex gap-3 border-b border-accent  p-5  text-gray-700  dark:bg-[#191919] dark:text-gray-200">
+          <div className=" sticky top-0  flex gap-3 border-b border-gray-300 p-5  text-gray-700  shadow-md  dark:bg-[#191919] dark:text-gray-200">
             <span className=" flex min-w-[50px]">
               <span className="flex w-[20px] justify-center ">
                 {currentSlideIndex + 1}
               </span>{" "}
               / {slides.length}
             </span>
-            <span className="font-bold">{localValue[0].children[0].text}</span>
+            <span className={`font-bold ${font}`}>
+              {localValue[0].children[0].text}
+            </span>
           </div>
         ) : null}
         {view === "one-page" ? (
           <div
             className={`relative  h-[100vh] overflow-y-auto rounded-md bg-white p-4 dark:bg-[#191919] `}
           >
-            <div className=" relative mx-auto mb-20 max-w-[680px] xl:mt-[100px]">
+            <div className=" relative mx-auto mb-20 max-w-[580px] xl:mt-[100px]">
               {parseNodes(localValue, font)}
             </div>
           </div>
@@ -209,7 +211,7 @@ const PublishedPage = ({ workspaceId, workspaceData, font }) => {
             }}
           >
             <div
-              className="relative mx-auto max-w-[880px] xl:mt-[60px]"
+              className="relative mx-auto max-w-[700px] xl:mt-[40px]"
               style={slideContainerStyle}
             >
               {slides.map((slide, index) => (

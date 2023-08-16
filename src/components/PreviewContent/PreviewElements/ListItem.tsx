@@ -213,7 +213,7 @@ export const ListItem = withListNumbering((props) => {
           <label
             htmlFor={element.id}
             tabIndex={-1}
-            className={cn(`absolute left-0 top-0 flex h-full w-full max-w-[500px] cursor-pointer items-center justify-end rounded-md border   border-gray-400   hover:bg-gray-400/10 dark:border-gray-600
+            className={cn(`absolute left-0 top-0 flex h-full w-full  cursor-pointer items-center justify-end rounded-md border   border-gray-400   hover:bg-gray-400/10 dark:border-gray-600
             
             dark:hover:bg-gray-700/20
             ${

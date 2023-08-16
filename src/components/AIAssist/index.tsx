@@ -633,7 +633,7 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
         </div>
       </button>
 
-      {renderAIAssist()}
+      {openChat && renderAIAssist()}
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import { EditorContext } from "@/contexts/EditorContext";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { parseNodes, splitIntoSlides } from "@/utils/renderHelpers";
 import { Button } from "../ui/button";
@@ -16,6 +16,7 @@ export const SlidesPreview = () => {
     0
   );
 
+  const slidesRef = useRef(null);
   const { workspaceData, setScrollToSlide, scrolltoSlide } = useTextSpeech();
 
   const fontFam = workspaceData.workspace.font_style;
@@ -75,14 +76,20 @@ export const SlidesPreview = () => {
   return (
     <>
       <div className=" sticky top-0  z-10 flex gap-3 border-b border-accent bg-white p-5  text-gray-700 shadow-sm dark:bg-muted dark:text-gray-200">
-        <span>
-          {currentSlideIndex + 1} / {slides.length}
+        <span className=" flex min-w-[50px]">
+          <span className="flex w-[20px] justify-center ">
+            {currentSlideIndex + 1}
+          </span>{" "}
+          / {slides.length}
         </span>
+
         <span className={`font-bold ${fontFam}`}>
           {fromEditor.children[0].children[0].text}
         </span>
       </div>
       <div
+        ref={slidesRef}
+        tabIndex={-1}
         className={`relative p-5 pb-20  outline-none dark:border-accent dark:bg-muted`}
       >
         {parseNodes(slides[currentSlideIndex], fontFam, true)}

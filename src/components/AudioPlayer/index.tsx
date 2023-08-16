@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useLocalStorage } from "usehooks-ts";
 import { AudioManagerContext } from "@/contexts/PreviewAudioContext";
+import { A } from "million/dist/types-0b3c4385";
 
 interface Props {
   audioURL: string | null;
@@ -347,12 +348,15 @@ function AudioPlayer({
       {content && content.length > 40 && (
         <TooltipProvider delayDuration={300}>
           <Tooltip>
-            <TooltipTrigger>
+            <TooltipTrigger className="focus-visible:outline-none">
               <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="mr-2 flex  h-[22px] items-center justify-center rounded-md border border-muted-foreground bg-background px-1 text-xs  text-muted-foreground hover:bg-accent hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-accent">
+                <DropdownMenuTrigger
+                  asChild
+                  className="mr-2 flex  h-[22px] items-center justify-center rounded-md border border-muted-foreground bg-background px-1 text-xs  text-muted-foreground hover:bg-accent hover:text-gray-700 dark:border-muted-foreground dark:bg-secondary dark:text-foreground dark:hover:bg-accent "
+                >
+                  <a href="#">
                     {playbackSpeed}X{/* <ChevronDown className="ml-1 w-3" /> */}
-                  </button>
+                  </a>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="start"

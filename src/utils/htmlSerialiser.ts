@@ -3,6 +3,7 @@ import { genNodeId } from "@/hoc/withID";
 import { Editor, Element as SlateElement } from "slate";
 import katex from "katex";
 import { useTheme } from "next-themes";
+import { splitIntoSlides } from "./renderHelpers";
 
 export const slateNodeToHtml = (node) => {
   if (SlateElement.isElement(node)) {
@@ -206,7 +207,7 @@ export const exportSlateNodeToHtml = (node) => {
     const childrenHtml = node.children.map(exportSlateNodeToHtml).join("");
     switch (node.type) {
       case "title":
-        return `<h1 class="mb-4 text-4xl font-bold">
+        return `<h1 class="mb-4 text-4xl font-bold" id="title">
                 ${childrenHtml}
           </h1>`;
       case "paragraph":
@@ -322,10 +323,11 @@ export const exportSlateNodeToHtml = (node) => {
   }
 };
 
-export const exportToHTML = (editor) => {
+export const exportToHTML = (editor, view = "one-page") => {
   // Get the fragment (block of text) from the current selection
-  const fragment = editor.children;
-
+  // const fragment = editor.children;
+  const slides =
+    view === "slides" ? splitIntoSlides(editor.children) : [editor.children];
   let inNumberedList = false;
   let inBulletedList = false;
   let numberedListItems = "";
@@ -339,62 +341,71 @@ export const exportToHTML = (editor) => {
   const indexToAlpha = (index) => String.fromCharCode(65 + index);
 
   // Convert each node in the fragment to HTML
-  const htmlParts = fragment.map((node, i) => {
-    let html = exportSlateNodeToHtml(node);
 
-    let uniqueInputId;
+  const htmlSlides = slides.map((slide, slideNumber) => {
+    const fragment = slide;
 
-    if (SlateElement.isElement(node) && node.type === "numbered-list") {
-      numberedListItems += `<li class="list-decimal pl-2">${html}</li>`;
-      const nextNode = fragment[i + 1];
+    const htmlParts = fragment.map((node, i) => {
+      let html = exportSlateNodeToHtml(node);
 
-      // If it's the last node or the next node is not a numbered-list
-      if (
-        i === fragment.length - 1 ||
-        (SlateElement.isElement(nextNode) && nextNode.type !== "numbered-list")
+      let uniqueInputId;
+
+      if (SlateElement.isElement(node) && node.type === "numbered-list") {
+        numberedListItems += `<li class="list-decimal pl-2">${html}</li>`;
+        const nextNode = fragment[i + 1];
+
+        // If it's the last node or the next node is not a numbered-list
+        if (
+          i === fragment.length - 1 ||
+          (SlateElement.isElement(nextNode) &&
+            nextNode.type !== "numbered-list")
+        ) {
+          inNumberedList = false;
+          let olHtml = `<ol data-align="text-${
+            alignMap[node.align] || node.align
+          }" class="pl-5 mt-2">${numberedListItems}</ol>`;
+          numberedListItems = "";
+          return olHtml;
+        } else {
+          inNumberedList = true;
+          return null; // Do not add this node to htmlParts yet
+        }
+      } else if (
+        SlateElement.isElement(node) &&
+        node.type === "bulleted-list"
       ) {
-        inNumberedList = false;
-        let olHtml = `<ol data-align="text-${
-          alignMap[node.align] || node.align
-        }" class="pl-5 mt-2">${numberedListItems}</ol>`;
-        numberedListItems = "";
-        return olHtml;
-      } else {
-        inNumberedList = true;
-        return null; // Do not add this node to htmlParts yet
-      }
-    } else if (SlateElement.isElement(node) && node.type === "bulleted-list") {
-      bulletedListItems += `<li class="list-disc pl-2">${html}</li>`;
-      const nextNode = fragment[i + 1];
+        bulletedListItems += `<li class="list-disc pl-2">${html}</li>`;
+        const nextNode = fragment[i + 1];
 
-      // If it's the last node or the next node is not a bulleted-list
-      if (
-        i === fragment.length - 1 ||
-        (SlateElement.isElement(nextNode) && nextNode.type !== "bulleted-list")
+        // If it's the last node or the next node is not a bulleted-list
+        if (
+          i === fragment.length - 1 ||
+          (SlateElement.isElement(nextNode) &&
+            nextNode.type !== "bulleted-list")
+        ) {
+          inBulletedList = false;
+          let ulHtml = `<ul data-align="text-${
+            alignMap[node.align] || node.align
+          }" class="pl-5 mt-2">${bulletedListItems}</ul>`;
+          bulletedListItems = "";
+          return ulHtml;
+        } else {
+          inBulletedList = true;
+          return null; // Do not add this node to htmlParts yet
+        }
+      } else if (
+        SlateElement.isElement(node) &&
+        node.type === "option-list-item"
       ) {
-        inBulletedList = false;
-        let ulHtml = `<ul data-align="text-${
-          alignMap[node.align] || node.align
-        }" class="pl-5 mt-2">${bulletedListItems}</ul>`;
-        bulletedListItems = "";
-        return ulHtml;
-      } else {
-        inBulletedList = true;
-        return null; // Do not add this node to htmlParts yet
-      }
-    } else if (
-      SlateElement.isElement(node) &&
-      node.type === "option-list-item"
-    ) {
-      uniqueInputId = genNodeId();
-      // Add alpha numbering to the option
-      const alpha = indexToAlpha(optionCounterCounts[optionCounter] || 0);
-      let correctAnswerClass = node.correctAnswer
-        ? `<span class="correct-answer hidden absolute right-[40px] text-green-500">Correct</span>`
-        : `<span class="incorrect-answer hidden absolute right-[40px] text-red-500">Incorrect</span>`;
+        uniqueInputId = genNodeId();
+        // Add alpha numbering to the option
+        const alpha = indexToAlpha(optionCounterCounts[optionCounter] || 0);
+        let correctAnswerClass = node.correctAnswer
+          ? `<span class="correct-answer hidden absolute right-[40px] text-green-500">Correct</span>`
+          : `<span class="incorrect-answer hidden absolute right-[40px] text-red-500">Incorrect</span>`;
 
-      quizOptions += `<li class="pl-2 list-none relative">
-    <label class="flex mt-2 h-[40px] w-full cursor-pointer items-center gap-3 rounded-md border border-gray-400 p-2 px-1 hover:border-gray-500 dark:border-gray-700">
+        quizOptions += `<li class="pl-2 list-none relative">
+    <label class="flex mt-2 h-[40px] w-full max-w-[400px] cursor-pointer items-center gap-3 rounded-md border border-gray-400 p-2 px-1 hover:border-gray-500 dark:border-gray-700">
       <div class="flex h-[28px] w-[28px] ml-px items-center justify-center rounded-md">${alpha}.</div>
       <div class="w-full flex justify-between">
         ${html}
@@ -405,53 +416,60 @@ export const exportToHTML = (editor) => {
     </label>
   </li>`;
 
-      // Increment the count for this optionCounter
-      optionCounterCounts[optionCounter] =
-        (optionCounterCounts[optionCounter] || 0) + 1;
+        // Increment the count for this optionCounter
+        optionCounterCounts[optionCounter] =
+          (optionCounterCounts[optionCounter] || 0) + 1;
 
-      const nextNode = fragment[i + 1];
+        const nextNode = fragment[i + 1];
 
-      // If it's the last node or the next node is not a numbered-list
-      if (
-        i === fragment.length - 1 ||
-        (SlateElement.isElement(nextNode) &&
-          nextNode.type !== "option-list-item")
-      ) {
-        inQuiz = false;
-        let olHtml = `<ol data-type="quiz" class="mb-8">${quizOptions}</ol>`;
-        optionCounter++;
-        quizOptions = "";
-        return olHtml;
+        // If it's the last node or the next node is not a numbered-list
+        if (
+          i === fragment.length - 1 ||
+          (SlateElement.isElement(nextNode) &&
+            nextNode.type !== "option-list-item")
+        ) {
+          inQuiz = false;
+          let olHtml = `<ol data-type="quiz" class="mb-8">${quizOptions}</ol>`;
+          optionCounter++;
+          quizOptions = "";
+          return olHtml;
+        } else {
+          inQuiz = true;
+          return null; // Do not add this node to htmlParts yet
+        }
       } else {
-        inQuiz = true;
-        return null; // Do not add this node to htmlParts yet
+        if (SlateElement.isElement(node) && inNumberedList) {
+          inNumberedList = false;
+          let olHtml = `<ol data-align="text-${
+            alignMap[node.align] || node.align
+          }" class="pl-5 mt-2">${numberedListItems}</ol>`;
+          numberedListItems = "";
+          return olHtml + html;
+        } else if (SlateElement.isElement(node) && inBulletedList) {
+          inBulletedList = false;
+          let ulHtml = `<ul  data-align="text-${
+            alignMap[node.align] || node.align
+          }" class="pl-5 mt-2">${bulletedListItems}</ul>`;
+          bulletedListItems = "";
+          return ulHtml + html;
+        } else if (SlateElement.isElement(node) && inQuiz) {
+          inQuiz = false;
+          let divHtml = `<ol data-type="quiz" type="A">${quizOptions}</ol>`;
+          quizOptions = "";
+          optionCounter = 0; // Reset the counter
+          return divHtml + html;
+        } else {
+          return html;
+        }
       }
-    } else {
-      if (SlateElement.isElement(node) && inNumberedList) {
-        inNumberedList = false;
-        let olHtml = `<ol data-align="text-${
-          alignMap[node.align] || node.align
-        }" class="pl-5 mt-2">${numberedListItems}</ol>`;
-        numberedListItems = "";
-        return olHtml + html;
-      } else if (SlateElement.isElement(node) && inBulletedList) {
-        inBulletedList = false;
-        let ulHtml = `<ul  data-align="text-${
-          alignMap[node.align] || node.align
-        }" class="pl-5 mt-2">${bulletedListItems}</ul>`;
-        bulletedListItems = "";
-        return ulHtml + html;
-      } else if (SlateElement.isElement(node) && inQuiz) {
-        inQuiz = false;
-        let divHtml = `<ol data-type="quiz" type="A">${quizOptions}</ol>`;
-        quizOptions = "";
-        optionCounter = 0; // Reset the counter
-        return divHtml + html;
-      } else {
-        return html;
-      }
-    }
+    });
+
+    return view === "slides"
+      ? `<div class="slide" data-slide="${slideNumber + 1}">${htmlParts
+          .filter((part) => part !== null)
+          .join("")}</div>`
+      : htmlParts.filter((part) => part !== null).join("");
   });
 
-  return htmlParts.filter((part) => part !== null).join("");
+  return htmlSlides.join("");
 };

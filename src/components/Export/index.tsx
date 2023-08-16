@@ -165,10 +165,10 @@ Save as PDF
     ${editorContent}
     </div>
   </div>
-  <div class="fixed bottom-8 right-8 h-[40px] shadow-md">
-  <button id="previous "onclick="navigateSlides(-1)" class="cursor-pointer inline-flex items-center justify-center text-sm font-medium transition-colors focus-visible:outline-none disabled:opacity-50 disabled:pointer-events-none  bg-black text-white hover:bg-gray-800 h-[40px] w-[40px] rounded-none border border-r-0 border-gray-700 p-0 dark:border-gray-200"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8 stroke-accent"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>
+  <div class="fixed bottom-8 right-8 h-[40px] flex w-[80px] shadow-md">
+  <button id="previous "onclick="navigateSlides(-1)" class="cursor-pointer inline-flex items-center justify-center text-sm font-medium transition-colors focus-visible:outline-none disabled:opacity-50 disabled:pointer-events-none  bg-black text-white hover:bg-gray-800 h-[40px] w-[40px] rounded-none  border-gray-700 p-0 dark:border-gray-200"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8 stroke-accent"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>
   </button>
-  <button id="next" onclick="navigateSlides(1)" class="cursor-pointer inline-flex items-center justify-center text-sm font-medium transition-colors focus-visible:outline-none disabled:opacity-50 disabled:pointer-events-none  bg-black text-white hover:bg-gray-800  h-[40px] w-[40px] rounded-none border border-gray-700 p-0 disabled:border-l-0 border-l-0 dark:border-gray-200">
+  <button id="next" onclick="navigateSlides(1)" class="cursor-pointer inline-flex items-center justify-center text-sm font-medium transition-colors focus-visible:outline-none disabled:opacity-50 disabled:pointer-events-none  bg-black text-white hover:bg-gray-800  h-[40px] w-[40px] rounded-none  border-gray-700 p-0 border-l">
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8 stroke-accent"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
   </button>
   </div>
@@ -180,6 +180,7 @@ Save as PDF
   const slideWrapper = document.querySelector('.slide-wrapper');
 
   slides[0].classList.add('active');
+  document.getElementById('title').display = "none";
   slideWrapper.style.flexBasis = slides.length * 100 + '%';
   document.getElementById('slide-number').textContent = "1 / " +  slides.length;
 
@@ -195,7 +196,10 @@ Save as PDF
     slideWrapper.style.transform = 'translateX(' + slideTranslateValue + '%)';
     document.getElementById('slide-number').textContent = (currentSlideIndex + 1) + " / " + slides.length;
   }
+  window.addEventListener("load", function (e) {
 
+    document.getElementById('title').style.display = "none";
+  });
   window.addEventListener("keydown", function (e) {
     if (e.key === "ArrowRight") {
       navigateSlides(1);

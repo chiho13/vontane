@@ -1933,7 +1933,22 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     let targetElement;
 
     if (scrolltoSlide === 1) {
-      targetElement = editorDiv.querySelector(`[data-element="title"]`);
+      // targetElement = editorDiv.querySelector(`[data-element="title"]`);
+      const startPosition = editorDiv.scrollTop;
+      const totalFrames = 30; // You can adjust this for a faster or slower scroll
+      let currentFrame = 0;
+
+      const scrollToTop = () => {
+        editorDiv.scrollTop = startPosition * (1 - currentFrame / totalFrames);
+        currentFrame += 1;
+
+        if (currentFrame <= totalFrames) {
+          requestAnimationFrame(scrollToTop);
+        }
+      };
+
+      requestAnimationFrame(scrollToTop);
+      return;
     } else {
       targetElement = editorDiv.querySelector(
         `[data-slide="${scrolltoSlide}"]`

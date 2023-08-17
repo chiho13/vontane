@@ -98,6 +98,9 @@ Save as PDF
 
 <style>
 
+body {
+  overflow:hidden
+}
 .katex {
     font-size: 20px;
     text-align: center;
@@ -122,6 +125,7 @@ Save as PDF
     position: relative;
     overflow-x: hidden;
     height: calc(100vh - 65px);
+    padding-bottom: 50px'
   }
 
   .slide-wrapper {
@@ -150,16 +154,16 @@ Save as PDF
 <body>
 <div style="position: sticky; top: 0; z-index: 10; display: flex; gap: 0.75rem; border-bottom: 1px solid #cccccc; background-color: white; padding: 1.25rem; color: #4a5568; box-shadow: 0px 1px 3px 0px #0000001A, 0px 1px 2px 0px #0000000F; text-shadow: 0px 1px 3px 0px #0000001A, 0px 1px 2px 0px #0000000F;">
 
-        <span id="slide-number">
+        <span id="slide-number" class="flex min-w-[50px]">
           </span>
 
         <span className="font-bold ${font}">
           ${editor.children[0].children[0].text}
         </span>
       </div>
-<div class="relative lg:mt-[70px]">
+<div class="relative ">
 
-  <div class="slide-container overflow-y-auto ">
+  <div class="slide-container overflow-y-auto pt-[30px] pb-[50px] lg:pt-[70px] ">
   <div class="slide-wrapper relative mx-auto max-w-[700px] ${font}" >
 
     ${editorContent}
@@ -221,7 +225,7 @@ Save as PDF
       .toLowerCase()
       .replace(/-/g, "_")
       .split(" ")
-      .join("_")}.html`;
+      .join("_")}-one-page.html`;
 
     a.click();
     URL.revokeObjectURL(url);
@@ -240,7 +244,7 @@ Save as PDF
       .toLowerCase()
       .replace(/-/g, "_")
       .split(" ")
-      .join("_")}.html`;
+      .join("_")}-slides.html`;
 
     a.click();
     URL.revokeObjectURL(url);

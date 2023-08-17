@@ -14,7 +14,7 @@ import {
 import { AccountLayoutStyle } from "./style";
 import ChevronDown from "@/icons/ChevronDown";
 import { useRouter } from "next/router";
-import { Plus, Trash, MoreHorizontal, Undo2 } from "lucide-react";
+import { Plus, Trash, MoreHorizontal, Undo2, FolderPlus } from "lucide-react";
 import { workspace } from "@prisma/client";
 import { useLocalStorage } from "usehooks-ts";
 import { ModeToggle } from "../mode-toggle";
@@ -483,10 +483,24 @@ const Layout: React.FC<LayoutProps> = ({
                   </Dropdown>
                 </DropdownProvider>
               </div>
+              {/* <div className="mt-3 flex w-full justify-end p-1  ">
+                <Button
+                  className=" border-gray-accent flex items-center rounded-md border bg-white p-1 transition duration-200 hover:bg-neutral-100  dark:hover:bg-gray-300"
+                  style={{
+                    height: 32,
+                    width: 32,
+                  }}
+                >
+                  <FolderPlus
+                    className="text-darkergray  dark:text-background"
+                    width={22}
+                  />{" "}
+                </Button>
+              </div> */}
               <ul
-                className="mb-10 mt-10  overflow-y-auto"
+                className="mb-10 mt-4  overflow-y-auto"
                 style={{
-                  height: "calc(100vh - 170px)",
+                  height: `calc(100vh - ${!isLocked ? "370px" : "200px"})`,
                 }}
               >
                 {workspaces &&
@@ -499,94 +513,113 @@ const Layout: React.FC<LayoutProps> = ({
                     />
                   ))}
 
-                <SidebarItem onClick={createWorkspace}>
-                  <button className="flex h-[36px] items-center hover:bg-gray-200 dark:hover:bg-accent">
+                <SidebarItem
+                  // onClick={createWorkspace}
+                  className="w-[100px]"
+                >
+                  <button className=" flex h-[36px] items-center rounded-md px-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-accent">
                     <Plus
                       className="text-darkergray  dark:text-foreground"
                       width={22}
                     />{" "}
-                    <span className="ml-4 text-sm text-darkergray  dark:text-foreground">
-                      New Workspace
+                    <span className="ml-2 text-sm text-darkergray  dark:text-foreground">
+                      New Document
                     </span>
                   </button>
                 </SidebarItem>
               </ul>
-              <SidebarItem className="absolute bottom-5">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button className="flex h-[36px] items-center  hover:bg-gray-200 dark:hover:bg-accent">
-                      <Trash
-                        className="text-darkergray  dark:text-foreground"
-                        width={18}
-                      />{" "}
-                      <span className="ml-4 text-sm text-darkergray  dark:text-foreground">
-                        Bin
-                      </span>
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    sideOffset={5}
-                    side="right"
-                    className={`z-1000 relative  -left-[10px] ${
-                      isLocked && isOpen ? "bottom-[25px]" : "bottom-[65px]"
-                    }  h-[200px] w-[300px] overflow-y-auto rounded-l-none border-l-0 bg-background p-4 shadow-md dark:border-accent dark:bg-muted`}
-                  >
-                    {trashWorkspace.length === 0 && "Empty"}
-                    {trashWorkspace &&
-                      trashWorkspace.map((workspace) => {
-                        const parsedSlateValue = JSON.parse(
-                          workspace.slate_value as any
-                        );
 
-                        const workspaceName =
-                          parsedSlateValue[0].children[0].text;
-                        const displayName =
-                          updatedWorkspace &&
-                          updatedWorkspace.id === workspace.id
-                            ? updatedWorkspace.title
-                            : workspaceName;
+              <ul className="absolute bottom-5 w-full">
+                <SidebarItem
+                // onClick={createWorkspace}
+                >
+                  <button className=" flex h-[36px] items-center rounded-md px-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-accent">
+                    <FolderPlus
+                      className="text-darkergray  dark:text-foreground"
+                      width={22}
+                    />{" "}
+                    <span className="ml-2 text-sm text-darkergray  dark:text-foreground">
+                      New Folder
+                    </span>
+                  </button>
+                </SidebarItem>
+                <SidebarItem>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="flex h-[36px] items-center  hover:bg-gray-200 dark:hover:bg-accent">
+                        <Trash
+                          className="text-darkergray  dark:text-foreground"
+                          width={18}
+                        />{" "}
+                        <span className="ml-4 text-sm text-darkergray  dark:text-foreground">
+                          Bin
+                        </span>
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      sideOffset={5}
+                      side="right"
+                      className={`z-1000 relative  -left-[10px] ${
+                        isLocked && isOpen ? "bottom-[25px]" : "bottom-[65px]"
+                      }  h-[200px] w-[300px] overflow-y-auto rounded-l-none border-l-0 bg-background p-4 shadow-md dark:border-accent dark:bg-muted`}
+                    >
+                      {trashWorkspace.length === 0 && "Empty"}
+                      {trashWorkspace &&
+                        trashWorkspace.map((workspace) => {
+                          const parsedSlateValue = JSON.parse(
+                            workspace.slate_value as any
+                          );
 
-                        return (
-                          <DropdownMenuItem
-                            key={workspace.id}
-                            className="group relative flex cursor-pointer rounded-md"
-                            onClick={() =>
-                              handleWorkspaceRoute(workspace.id, "")
-                            }
-                          >
-                            <div className="flex w-full items-center justify-between">
-                              <span
-                                className={`grow text-sm  text-darkergray dark:text-foreground`}
-                              >
-                                {displayName || "Untitled"}
-                              </span>
-                              <TooltipProvider delayDuration={0}>
-                                <Tooltip>
-                                  <TooltipTrigger>
-                                    <a
-                                      href="#"
-                                      role="button"
-                                      className="flex h-[22px] w-[22px] items-center justify-center rounded-md p-0 opacity-0 outline-none transition  duration-300 hover:bg-gray-100 group-hover:opacity-100 dark:hover:bg-gray-600"
-                                      onClick={restoreWorkspace}
-                                    >
-                                      <Undo2
-                                        className="text-darkergray  dark:stroke-foreground"
-                                        width={18}
-                                      />{" "}
-                                    </a>
-                                  </TooltipTrigger>
-                                  <TooltipContent side="bottom">
-                                    <p className="text-[12px]">Restore</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-                            </div>
-                          </DropdownMenuItem>
-                        );
-                      })}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </SidebarItem>
+                          const workspaceName =
+                            parsedSlateValue[0].children[0].text;
+                          const displayName =
+                            updatedWorkspace &&
+                            updatedWorkspace.id === workspace.id
+                              ? updatedWorkspace.title
+                              : workspaceName;
+
+                          return (
+                            <DropdownMenuItem
+                              key={workspace.id}
+                              className="group relative flex cursor-pointer rounded-md"
+                              onClick={() =>
+                                handleWorkspaceRoute(workspace.id, "")
+                              }
+                            >
+                              <div className="flex w-full items-center justify-between">
+                                <span
+                                  className={`grow text-sm  text-darkergray dark:text-foreground`}
+                                >
+                                  {displayName || "Untitled"}
+                                </span>
+                                <TooltipProvider delayDuration={0}>
+                                  <Tooltip>
+                                    <TooltipTrigger>
+                                      <a
+                                        href="#"
+                                        role="button"
+                                        className="flex h-[22px] w-[22px] items-center justify-center rounded-md p-0 opacity-0 outline-none transition  duration-300 hover:bg-gray-100 group-hover:opacity-100 dark:hover:bg-gray-600"
+                                        onClick={restoreWorkspace}
+                                      >
+                                        <Undo2
+                                          className="text-darkergray  dark:stroke-foreground"
+                                          width={18}
+                                        />{" "}
+                                      </a>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="bottom">
+                                      <p className="text-[12px]">Restore</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              </div>
+                            </DropdownMenuItem>
+                          );
+                        })}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </SidebarItem>
+              </ul>
             </AccountLayoutStyle>
           </SidebarContent>
         </SidebarContainer>
@@ -598,9 +631,9 @@ const Layout: React.FC<LayoutProps> = ({
         <main
           className=" flex min-h-screen overflow-auto bg-[#f7f7f7] pt-4 dark:bg-background"
           style={{
-            marginLeft: isLocked && desktopbreakpoint ? "240px" : "0",
+            marginLeft: isLocked && desktopbreakpoint ? "140px" : "0",
             width:
-              isLocked && desktopbreakpoint ? "calc(100vw - 240px)" : "100vw",
+              isLocked && desktopbreakpoint ? "calc(100vw - 140px)" : "100vw",
             transition:
               "margin-left 300ms ease-in-out, width 300ms ease-in-out",
           }}

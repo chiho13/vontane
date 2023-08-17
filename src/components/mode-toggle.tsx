@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Icons } from "@/components/Icons";
 
-export function ModeToggle() {
+export function ModeToggle({ side }) {
   const { setTheme } = useTheme();
 
   return (
@@ -30,8 +30,8 @@ export function ModeToggle() {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        side="bottom"
-        className="z-100 border border-gray-400  bg-background  dark:border-gray-700 "
+        side={side}
+        className="z-100 border border-gray-400  bg-background dark:border-gray-700  dark:bg-muted "
       >
         <DropdownMenuItem onClick={() => setTheme("light")}>
           <Icons.sun className="mr-2 h-4 w-4 text-foreground" />

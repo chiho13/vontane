@@ -234,7 +234,7 @@ const PublishedPage = ({ workspaceId, workspaceData, font }) => {
           {/* <button onClick={handleToggleView}>Toggle View</button> */}
 
           {slides.length !== 0 ? <ViewToggle /> : null}
-          <ModeToggle />
+          <ModeToggle side="bottom" />
         </div>
 
         {view === "slides" && slides.length !== 0 ? (

@@ -35,6 +35,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
+import {
   ChevronsRight,
   ChevronsLeft,
   Menu,
@@ -376,6 +382,19 @@ const Layout: React.FC<LayoutProps> = ({
     );
   };
 
+  const [position, setPosition] = useState({ top: 0, left: 0 });
+  const [isPopoverVisible, setPopoverVisible] = useState(false);
+
+  const handleRightClick = (e) => {
+    e.preventDefault(); // Prevent default browser context menu
+    setPosition({ top: e.clientY, left: e.clientX });
+    setPopoverVisible(true);
+  };
+
+  const onPopOverChange = (value) => {
+    setPopoverVisible(value);
+  };
+
   return (
     <>
       <LayoutContext.Provider value={{ isLocked, workspaces }}>
@@ -470,72 +489,14 @@ const Layout: React.FC<LayoutProps> = ({
                 }}
               >
                 {workspaces &&
-                  workspaces.map((workspace) => {
-                    const parsedSlateValue = JSON.parse(
-                      workspace.slate_value as any
-                    );
-
-                    const workspaceName = parsedSlateValue[0].children[0].text;
-                    const displayName =
-                      updatedWorkspace && updatedWorkspace.id === workspace.id
-                        ? updatedWorkspace.title.trimStart() !== ""
-                          ? updatedWorkspace.title
-                          : "Untitled"
-                        : workspaceName.trimStart() !== ""
-                        ? workspaceName
-                        : "Untitled";
-
-                    return (
-                      <SidebarItem
-                        key={workspace.id}
-                        onClick={() => handleWorkspaceRoute(workspace.id, "")}
-                        className="ring-brand focus:ring-2 dark:ring-white"
-                      >
-                        <button
-                          className={` group relative flex  items-center  hover:bg-gray-200 dark:hover:bg-accent ${
-                            currentWorkspaceId === workspace.id
-                              ? "bg-gray-200 font-bold dark:bg-accent"
-                              : "transparent"
-                          }`}
-                        >
-                          <span
-                            className={`text-sm text-darkergray  dark:text-foreground`}
-                          >
-                            {displayName}
-                          </span>
-
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <a
-                                href="#"
-                                role="button"
-                                className="  absolute right-2 flex h-[22px] w-[22px] items-center justify-center rounded-md p-0 opacity-0 outline-none transition  duration-300 hover:bg-gray-100 group-hover:opacity-100 dark:hover:bg-gray-600"
-                              >
-                                <MoreHorizontal
-                                  className="text-darkergray  dark:stroke-foreground"
-                                  width={18}
-                                />{" "}
-                              </a>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent
-                              side="right"
-                              sideOffset={13}
-                              className="z-1000  relative -left-[10px]  w-[150px] rounded-l-none border-l-0 bg-background p-2 shadow-md dark:border-accent dark:bg-muted"
-                            >
-                              <DropdownMenuItem
-                                className={`flex w-full cursor-pointer  items-center  rounded-md px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:text-gray-900 focus:outline-none dark:text-foreground `}
-                                onClick={() =>
-                                  softDeleteWorkspace(workspace.id)
-                                }
-                              >
-                                Move to Bin
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </button>
-                      </SidebarItem>
-                    );
-                  })}
+                  workspaces.map((workspace) => (
+                    <SidebarWorkspaceItem
+                      workspace={workspace}
+                      handleWorkspaceRoute={handleWorkspaceRoute}
+                      softDeleteWorkspace={softDeleteWorkspace}
+                      currentWorkspaceId={currentWorkspaceId}
+                    />
+                  ))}
 
                 <SidebarItem onClick={createWorkspace}>
                   <button className="flex h-[36px] items-center hover:bg-gray-200 dark:hover:bg-accent">
@@ -673,3 +634,93 @@ const Layout: React.FC<LayoutProps> = ({
 };
 
 export default Layout;
+
+const SidebarWorkspaceItem = ({
+  workspace,
+  handleWorkspaceRoute,
+  softDeleteWorkspace,
+  currentWorkspaceId,
+}) => {
+  const popOverTriggerRef = useRef(null);
+  const [position, setPosition] = useState({ top: 0, left: 0 });
+  const [isPopoverVisible, setPopoverVisible] = useState(false);
+
+  const handleRightClick = (e) => {
+    e.preventDefault();
+    if (popOverTriggerRef.current) {
+      const rect = popOverTriggerRef.current.getBoundingClientRect();
+      setPosition({
+        top: e.clientY - rect.top - 20,
+        left: e.clientX - rect.left,
+      });
+    }
+    setPopoverVisible(true);
+  };
+
+  const onOpenChange = (value) => {
+    setPosition({
+      top: 0,
+      left: 0,
+    });
+    setPopoverVisible(value);
+  };
+
+  const parsedSlateValue = JSON.parse(workspace.slate_value as any);
+  const workspaceName = parsedSlateValue[0].children[0].text;
+  const displayName =
+    workspaceName.trimStart() !== "" ? workspaceName : "Untitled";
+
+  return (
+    <SidebarItem
+      key={workspace.id}
+      onClick={(e) => {
+        e.stopPropagation();
+        handleWorkspaceRoute(workspace.id, "");
+      }}
+      onContextMenu={handleRightClick}
+      className="relative ring-brand focus:ring-2 dark:ring-white"
+    >
+      <button
+        className={` group relative flex  items-center  hover:bg-gray-200 dark:hover:bg-accent ${
+          currentWorkspaceId === workspace.id
+            ? "bg-gray-200 font-bold dark:bg-accent"
+            : "transparent"
+        }`}
+      >
+        <span className={`text-sm text-darkergray  dark:text-foreground`}>
+          {displayName}
+        </span>
+
+        <Popover open={isPopoverVisible} onOpenChange={onOpenChange}>
+          <PopoverTrigger
+            ref={popOverTriggerRef}
+            className="  absolute right-2 flex h-[22px] w-[22px] items-center justify-center rounded-md p-0 opacity-0 outline-none transition  duration-300 hover:bg-gray-100 group-hover:opacity-100 dark:hover:bg-gray-600"
+            style={{ width: "22px", padding: 0 }}
+          >
+            <MoreHorizontal
+              className="text-darkergray  dark:stroke-foreground"
+              width={18}
+            />
+          </PopoverTrigger>
+          <PopoverContent
+            className="w-[250px] p-2"
+            align="start"
+            style={{
+              position: "fixed",
+              zIndex: 1000,
+              left: position.left,
+              top: position.top,
+            }}
+          >
+            <button
+              className={`flex w-full cursor-pointer items-center gap-4  rounded-md  px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:bg-accent hover:text-gray-900 focus:outline-none dark:text-foreground `}
+              onClick={() => softDeleteWorkspace(workspace.id)}
+            >
+              <Trash className="text-red-400 " /> Move to Bin
+            </button>
+          </PopoverContent>
+        </Popover>
+      </button>
+    </SidebarItem>
+  );
+};

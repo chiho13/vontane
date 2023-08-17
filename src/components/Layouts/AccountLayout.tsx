@@ -58,6 +58,7 @@ import { useWorkspaceTitleUpdate } from "@/contexts/WorkspaceTitleContext";
 import { api } from "@/utils/api";
 import { Button } from "../ui/button";
 import { on } from "process";
+import { Portal } from "react-portal";
 
 const SidebarContainer = styled.div`
   position: relative;
@@ -625,7 +626,7 @@ const Layout: React.FC<LayoutProps> = ({
           {children}
 
           <div className="fixed bottom-4 right-4">
-            <ModeToggle />
+            <ModeToggle side="top" />
           </div>
         </main>
       </LayoutContext.Provider>
@@ -671,59 +672,70 @@ const SidebarWorkspaceItem = ({
     workspaceName.trimStart() !== "" ? workspaceName : "Untitled";
 
   return (
-    <SidebarItem
-      key={workspace.id}
-      onClick={(e) => {
-        e.stopPropagation();
-        handleWorkspaceRoute(workspace.id, "");
-      }}
-      onContextMenu={handleRightClick}
-      className="relative ring-brand focus:ring-2 dark:ring-white"
-    >
-      <button
-        className={` group relative flex  items-center  hover:bg-gray-200 dark:hover:bg-accent ${
-          currentWorkspaceId === workspace.id
-            ? "bg-gray-200 font-bold dark:bg-accent"
-            : "transparent"
-        }`}
+    <>
+      {isPopoverVisible && (
+        <Portal>
+          <div
+            className="closeOutside   fixed left-0 top-0 h-full w-screen"
+            style={{ zIndex: 1000 }}
+          ></div>
+        </Portal>
+      )}
+      <SidebarItem
+        key={workspace.id}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleWorkspaceRoute(workspace.id, "");
+        }}
+        onContextMenu={handleRightClick}
+        className="relative ring-brand focus:ring-2 dark:ring-white"
       >
-        <span className={`text-sm text-darkergray  dark:text-foreground`}>
-          {displayName}
-        </span>
+        <button
+          className={` group relative flex  items-center  hover:bg-gray-200 dark:hover:bg-accent ${
+            currentWorkspaceId === workspace.id
+              ? "bg-gray-200 font-bold dark:bg-accent"
+              : "transparent"
+          }`}
+        >
+          <span className={`text-sm text-darkergray  dark:text-foreground`}>
+            {displayName}
+          </span>
 
-        <Popover open={isPopoverVisible} onOpenChange={onOpenChange}>
-          <PopoverTrigger
-            ref={popOverTriggerRef}
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-            className="  absolute right-2 flex h-[22px] w-[22px] items-center justify-center rounded-md p-0 opacity-0 outline-none transition  duration-300 hover:bg-gray-100 group-hover:opacity-100 dark:hover:bg-gray-600"
-            style={{ width: "22px", padding: 0 }}
-          >
-            <MoreHorizontal
-              className="text-darkergray  dark:stroke-foreground"
-              width={18}
-            />
-          </PopoverTrigger>
-          <PopoverContent
-            className="w-[250px] p-2"
-            align="start"
-            style={{
-              position: "fixed",
-              zIndex: 1000,
-              left: position.left,
-              top: position.top,
-            }}
-          >
-            <button
-              className={`flex w-full cursor-pointer items-center gap-4  rounded-md  px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:bg-accent hover:text-gray-900 focus:outline-none dark:text-foreground `}
-              onClick={() => softDeleteWorkspace(workspace.id)}
+          <Popover open={isPopoverVisible} onOpenChange={onOpenChange}>
+            <PopoverTrigger
+              ref={popOverTriggerRef}
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+              className="  absolute right-2 flex h-[22px] w-[22px] items-center justify-center rounded-md p-0 opacity-0 outline-none transition  duration-300 hover:bg-gray-100 group-hover:opacity-100 dark:hover:bg-gray-600"
+              style={{ width: "22px", padding: 0 }}
             >
-              <Trash className="text-red-400 " /> Move to Bin
-            </button>
-          </PopoverContent>
-        </Popover>
-      </button>
-    </SidebarItem>
+              <MoreHorizontal
+                className="text-darkergray  dark:stroke-foreground"
+                width={18}
+              />
+            </PopoverTrigger>
+            <PopoverContent
+              className="w-[250px] p-1 dark:border-gray-800 dark:bg-accent"
+              align="start"
+              style={{
+                position: "fixed",
+                zIndex: 1000,
+                left: position.left,
+                top: position.top,
+              }}
+            >
+              <button
+                className={`flex w-full cursor-pointer items-center gap-4  rounded-md  px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:bg-accent hover:text-gray-900 focus:outline-none dark:text-foreground dark:hover:bg-neutral-800 `}
+                onClick={() => softDeleteWorkspace(workspace.id)}
+              >
+                <Trash className="w-4 text-gray-700 dark:text-gray-200 " /> Move
+                to Bin
+              </button>
+            </PopoverContent>
+          </Popover>
+        </button>
+      </SidebarItem>
+    </>
   );
 };

@@ -694,6 +694,9 @@ const SidebarWorkspaceItem = ({
         <Popover open={isPopoverVisible} onOpenChange={onOpenChange}>
           <PopoverTrigger
             ref={popOverTriggerRef}
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
             className="  absolute right-2 flex h-[22px] w-[22px] items-center justify-center rounded-md p-0 opacity-0 outline-none transition  duration-300 hover:bg-gray-100 group-hover:opacity-100 dark:hover:bg-gray-600"
             style={{ width: "22px", padding: 0 }}
           >

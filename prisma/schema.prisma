@@ -20,6 +20,7 @@ model user {
   stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end")
   credits     Int          @default(3000)
   workspaces  workspace[]
+  folders     folder[] 
 }
 
 model workspace {
@@ -33,4 +34,16 @@ model workspace {
   deleted_at  DateTime? 
   author_id   String      @db.Uuid
   author      user        @relation(fields: [author_id], references: [id])
+  folder_id   String?     @db.Uuid
+  folder      folder?     @relation(fields: [folder_id], references: [id]) 
 }
+
+model folder {
+  id          String      @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
+  name        String      @default("New Folder") // Default name
+  created_at  DateTime    @default(now()) @db.Timestamptz(6)
+  owner_id    String      @db.Uuid
+  owner       user        @relation(fields: [owner_id], references: [id])
+  workspaces  workspace[]
+}
+

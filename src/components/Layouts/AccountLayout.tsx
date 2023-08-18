@@ -59,6 +59,7 @@ import { api } from "@/utils/api";
 import { Button } from "../ui/button";
 import { on } from "process";
 import { Portal } from "react-portal";
+import { CreateNewFolder } from "../CreateNewFolder";
 
 const SidebarContainer = styled.div`
   position: relative;
@@ -513,10 +514,7 @@ const Layout: React.FC<LayoutProps> = ({
                     />
                   ))}
 
-                <SidebarItem
-                  // onClick={createWorkspace}
-                  className="w-[100px]"
-                >
+                <SidebarItem onClick={createWorkspace} className="w-[100px]">
                   <button className=" flex h-[36px] items-center rounded-md px-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-accent">
                     <Plus
                       className="text-darkergray  dark:text-foreground"
@@ -533,7 +531,8 @@ const Layout: React.FC<LayoutProps> = ({
                 <SidebarItem
                 // onClick={createWorkspace}
                 >
-                  <button className=" flex h-[36px] items-center rounded-md px-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-accent">
+                  <CreateNewFolder />
+                  {/* <button className=" flex h-[36px] items-center rounded-md px-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-accent">
                     <FolderPlus
                       className="text-darkergray  dark:text-foreground"
                       width={22}
@@ -541,7 +540,7 @@ const Layout: React.FC<LayoutProps> = ({
                     <span className="ml-2 text-sm text-darkergray  dark:text-foreground">
                       New Folder
                     </span>
-                  </button>
+                  </button> */}
                 </SidebarItem>
                 <SidebarItem>
                   <DropdownMenu>

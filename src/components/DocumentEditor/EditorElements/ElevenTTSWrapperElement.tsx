@@ -129,9 +129,7 @@ const ElevenTTSWrapperBase = (props: {
       className={` relative  ${
         isFirstInGroup ? "border-t" : ""
       } border-b border-gray-300 p-1 pb-3 pl-0 dark:border-accent ${
-        selected
-          ? " bg-brand/20 dark:bg-slate-700/40"
-          : "bg-white dark:bg-muted"
+        selected ? " bg-brand/20 dark:bg-brand/30" : "bg-white dark:bg-muted"
       }`}
     >
       <div className="mb-5 ml-[49px] mt-4" contentEditable={false}>

@@ -264,7 +264,11 @@ export const TextSpeech = ({
               onOpenChange={onGenOpen}
             >
               <TooltipTrigger>
-                <GenerateButton onClick={generateAudio} element={element} />
+                <GenerateButton
+                  onClick={generateAudio}
+                  element={element}
+                  isDisabled={textSpeech.length === 0}
+                />
               </TooltipTrigger>
 
               <TooltipContent

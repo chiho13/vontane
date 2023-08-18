@@ -187,6 +187,18 @@ export const workspaceRouter = createTRPCRouter({
 
     return { workspace };
   }),
+  createFolder: protectedProcedure
+    .input(z.object({ folder_name: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const workspace = await ctx.prisma.folder.create({
+        data: {
+          owner_id: ctx.user.id,
+          name: input.folder_name,
+        },
+      });
+
+      return { workspace };
+    }),
   softDeleteWorkspace: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ input, ctx }) => {

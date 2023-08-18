@@ -28,6 +28,11 @@ import { api } from "@/utils/api";
 import { Button } from "../ui/button";
 
 export const CreateNewFolder = () => {
+  const [openCreateFolder, setOpenCreateFolder] = useState(false);
+
+  const onOpenChange = (value) => {
+    setOpenCreateFolder(value);
+  };
   const newFolderFormSchema = z.object({
     prompt: z.string(),
   });
@@ -41,20 +46,22 @@ export const CreateNewFolder = () => {
   const promptValue = newFolderForm.watch("prompt");
 
   const createNewFolderHandler = async (value) => {
-    // try {
-    //   const response = await createNewFolderMutation.mutateAsync({
-    //     folder_name: value.prompt,
-    //   });
-    //   if (response) {
-    //   }
-    // } catch (error) {
-    //   console.error("Error creating folder:", error);
-    // }
+    try {
+      const response = await createNewFolderMutation.mutateAsync({
+        folder_name: value.prompt,
+      });
+      if (response) {
+        console.log("create folder success");
+        setOpenCreateFolder(false);
+      }
+    } catch (error) {
+      console.error("Error creating folder:", error);
+    }
   };
 
   return (
     <Fragment>
-      <Dialog>
+      <Dialog open={openCreateFolder} onOpenChange={onOpenChange}>
         <DialogTrigger asChild>
           <button className=" flex h-[36px] items-center rounded-md px-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-accent">
             <FolderPlus

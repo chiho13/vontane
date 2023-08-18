@@ -29,7 +29,7 @@ import { Button } from "../ui/button";
 
 export const CreateNewFolder = () => {
   const newFolderFormSchema = z.object({
-    prompt: z.string().nonempty(),
+    prompt: z.string(),
   });
 
   const createNewFolderMutation = api.workspace.createFolder.useMutation();
@@ -37,6 +37,8 @@ export const CreateNewFolder = () => {
     resolver: zodResolver(newFolderFormSchema),
     reValidateMode: "onChange",
   });
+
+  const promptValue = newFolderForm.watch("prompt");
 
   const createNewFolderHandler = async (value) => {
     // try {
@@ -94,7 +96,7 @@ export const CreateNewFolder = () => {
               />
 
               <div className="mt-4 flex w-full justify-end">
-                <Button>Create</Button>
+                <Button disabled={!promptValue}>Create</Button>
               </div>
             </form>
           </Form>

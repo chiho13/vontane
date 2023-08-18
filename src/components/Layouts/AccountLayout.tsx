@@ -21,6 +21,8 @@ import {
   Undo2,
   FolderPlus,
   Folder,
+  ChevronDown as ChevronDownLucide,
+  ChevronRight,
 } from "lucide-react";
 import { workspace } from "@prisma/client";
 import { useLocalStorage } from "usehooks-ts";
@@ -67,6 +69,7 @@ import { Button } from "../ui/button";
 import { on } from "process";
 import { Portal } from "react-portal";
 import { CreateNewFolder } from "../CreateNewFolder";
+import { AnimatePresence, motion } from "framer-motion";
 
 const SidebarContainer = styled.div`
   position: relative;
@@ -264,9 +267,9 @@ const Layout: React.FC<LayoutProps> = ({
   }, [workspacesData]);
 
   const createWorkspaceMutation = api.workspace.createWorkspace.useMutation();
-  const handleWorkspaceRoute = (workspaceId: string, workspaceName: string) => {
+  const handleWorkspaceRoute = (workspaceId: string) => {
     router.push(`/docs/${workspaceId}`);
-    refetchWorkspaces();
+    refetchFolderWorkspaceData();
     refetchWorkspaceData();
   };
 
@@ -274,9 +277,9 @@ const Layout: React.FC<LayoutProps> = ({
     try {
       const response = await createWorkspaceMutation.mutateAsync();
       if (response && response.workspace) {
-        refetchWorkspaces();
+        refetchFolderWorkspaceData();
         refetchWorkspaceData();
-        handleWorkspaceRoute(response.workspace.id, "");
+        handleWorkspaceRoute(response.workspace.id);
       }
     } catch (error) {
       console.error("Error creating workspace:", error);
@@ -406,19 +409,6 @@ const Layout: React.FC<LayoutProps> = ({
     );
   };
 
-  const [position, setPosition] = useState({ top: 0, left: 0 });
-  const [isPopoverVisible, setPopoverVisible] = useState(false);
-
-  const handleRightClick = (e) => {
-    e.preventDefault(); // Prevent default browser context menu
-    setPosition({ top: e.clientY, left: e.clientX });
-    setPopoverVisible(true);
-  };
-
-  const onPopOverChange = (value) => {
-    setPopoverVisible(value);
-  };
-
   return (
     <>
       <LayoutContext.Provider value={{ isLocked, workspaces }}>
@@ -529,7 +519,12 @@ const Layout: React.FC<LayoutProps> = ({
                 {workspaceFolders &&
                   workspaceFolders.map((folder) => {
                     return (
-                      <FolderWorkspaceItem key={folder.id} folder={folder} />
+                      <FolderWorkspaceItem
+                        key={folder.id}
+                        folder={folder}
+                        handleWorkspaceRoute={handleWorkspaceRoute}
+                        softDeleteWorkspace={softDeleteWorkspace}
+                      />
                     );
                   })}
 
@@ -540,7 +535,6 @@ const Layout: React.FC<LayoutProps> = ({
                       workspace={workspace}
                       handleWorkspaceRoute={handleWorkspaceRoute}
                       softDeleteWorkspace={softDeleteWorkspace}
-                      currentWorkspaceId={currentWorkspaceId}
                     />
                   ))}
 
@@ -611,9 +605,7 @@ const Layout: React.FC<LayoutProps> = ({
                             <DropdownMenuItem
                               key={workspace.id}
                               className="group relative flex cursor-pointer rounded-md"
-                              onClick={() =>
-                                handleWorkspaceRoute(workspace.id, "")
-                              }
+                              onClick={() => handleWorkspaceRoute(workspace.id)}
                             >
                               <div className="flex w-full items-center justify-between">
                                 <span
@@ -702,8 +694,10 @@ const SidebarWorkspaceItem = ({
   workspace,
   handleWorkspaceRoute,
   softDeleteWorkspace,
-  currentWorkspaceId,
 }) => {
+  const router = useRouter();
+
+  const currentWorkspaceId = router.query.workspaceId as string;
   const popOverTriggerRef = useRef(null);
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const [isPopoverVisible, setPopoverVisible] = useState(false);
@@ -747,7 +741,7 @@ const SidebarWorkspaceItem = ({
         key={workspace.id}
         onClick={(e) => {
           e.stopPropagation();
-          handleWorkspaceRoute(workspace.id, "");
+          handleWorkspaceRoute(workspace.id);
         }}
         onContextMenu={handleRightClick}
         className="relative ring-brand focus:ring-2 dark:ring-white"
@@ -802,15 +796,70 @@ const SidebarWorkspaceItem = ({
   );
 };
 
-const FolderWorkspaceItem = ({ folder }) => {
+const FolderWorkspaceItem = ({
+  folder,
+  handleWorkspaceRoute,
+  softDeleteWorkspace,
+}) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const variants = {
+    open: { opacity: 1, maxHeight: 1000 }, // You might want to set this to an appropriate value
+    closed: { opacity: 0, maxHeight: 0 },
+  };
+
   return (
-    <SidebarItem>
-      <button className=" flex h-[36px] items-center rounded-md px-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-accent">
-        <Folder className="text-darkergray  dark:text-foreground" width={22} />
-        <span className="ml-2 text-sm text-darkergray  dark:text-foreground">
-          {folder.name}
-        </span>
-      </button>
-    </SidebarItem>
+    <>
+      <SidebarItem>
+        <button
+          className="flex h-[36px] items-center rounded-md px-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-accent "
+          onClick={() => setIsExpanded(!isExpanded)}
+        >
+          {isExpanded ? (
+            <ChevronDownLucide className="absolute left-2 w-5 text-darkergray  dark:text-foreground" />
+          ) : (
+            <ChevronRight className="absolute left-2 w-5 text-darkergray  dark:text-foreground" />
+          )}
+          <Folder
+            className="text-darkergray  dark:text-foreground"
+            width={22}
+          />
+          <span className="ml-2 text-sm text-darkergray  dark:text-foreground">
+            {folder.name}
+          </span>
+        </button>
+      </SidebarItem>
+
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial="closed"
+            animate="open"
+            exit="closed"
+            variants={variants}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            className="bg-neutral-100 px-2 dark:bg-neutral-800"
+            style={{
+              padding: "8px 28px",
+            }}
+          >
+            {folder.workspaces.length === 0 ? (
+              <div className="text-gray-500 dark:text-gray-300">Empty</div>
+            ) : (
+              <ul>
+                {folder.workspaces.map((workspace) => (
+                  <SidebarWorkspaceItem
+                    key={workspace.id}
+                    workspace={workspace}
+                    handleWorkspaceRoute={handleWorkspaceRoute}
+                    softDeleteWorkspace={softDeleteWorkspace}
+                  />
+                ))}
+              </ul>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };

@@ -14,7 +14,14 @@ import {
 import { AccountLayoutStyle } from "./style";
 import ChevronDown from "@/icons/ChevronDown";
 import { useRouter } from "next/router";
-import { Plus, Trash, MoreHorizontal, Undo2, FolderPlus } from "lucide-react";
+import {
+  Plus,
+  Trash,
+  MoreHorizontal,
+  Undo2,
+  FolderPlus,
+  Folder,
+} from "lucide-react";
 import { workspace } from "@prisma/client";
 import { useLocalStorage } from "usehooks-ts";
 import { ModeToggle } from "../mode-toggle";
@@ -228,16 +235,31 @@ const Layout: React.FC<LayoutProps> = ({
   const [workspaces, setWorkspaces] = useState<workspace[]>([]);
   const [trashWorkspace, setTrashWorkspace] = useState<workspace[]>([]);
 
+  const [workspaceFolders, setWorkspacesFolders] = useState(null);
+
   const { data: workspacesData, refetch: refetchWorkspaces } =
     api.workspace.getWorkspaces.useQuery();
+
+  const { data: folderWorkspaceData, refetch: refetchFolderWorkspaceData } =
+    api.workspace.getFolderAndWorkspaces.useQuery();
 
   useEffect(() => {
     if (workspacesData) {
       const response = workspacesData.workspaces;
 
       const trash = workspacesData.trash;
-      setWorkspaces(response);
+      // setWorkspaces(response);
       setTrashWorkspace(trash);
+    }
+  }, [workspacesData]);
+
+  useEffect(() => {
+    if (folderWorkspaceData) {
+      const response = folderWorkspaceData;
+
+      setWorkspacesFolders(response.folders);
+      setWorkspaces(response.rootLevelworkspaces);
+      console.log(response);
     }
   }, [workspacesData]);
 
@@ -504,9 +526,17 @@ const Layout: React.FC<LayoutProps> = ({
                   height: `calc(100vh - ${!isLocked ? "370px" : "200px"})`,
                 }}
               >
+                {workspaceFolders &&
+                  workspaceFolders.map((folder) => {
+                    return (
+                      <FolderWorkspaceItem key={folder.id} folder={folder} />
+                    );
+                  })}
+
                 {workspaces &&
                   workspaces.map((workspace) => (
                     <SidebarWorkspaceItem
+                      key={workspace.id}
                       workspace={workspace}
                       handleWorkspaceRoute={handleWorkspaceRoute}
                       softDeleteWorkspace={softDeleteWorkspace}
@@ -630,9 +660,9 @@ const Layout: React.FC<LayoutProps> = ({
         <main
           className=" flex min-h-screen overflow-auto bg-[#f7f7f7] pt-4 dark:bg-background"
           style={{
-            marginLeft: isLocked && desktopbreakpoint ? "140px" : "0",
+            marginLeft: isLocked && desktopbreakpoint ? "240px" : "0",
             width:
-              isLocked && desktopbreakpoint ? "calc(100vw - 140px)" : "100vw",
+              isLocked && desktopbreakpoint ? "calc(100vw - 240px)" : "100vw",
             transition:
               "margin-left 300ms ease-in-out, width 300ms ease-in-out",
           }}
@@ -769,5 +799,18 @@ const SidebarWorkspaceItem = ({
         </button>
       </SidebarItem>
     </>
+  );
+};
+
+const FolderWorkspaceItem = ({ folder }) => {
+  return (
+    <SidebarItem>
+      <button className=" flex h-[36px] items-center rounded-md px-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-accent">
+        <Folder className="text-darkergray  dark:text-foreground" width={22} />
+        <span className="ml-2 text-sm text-darkergray  dark:text-foreground">
+          {folder.name}
+        </span>
+      </button>
+    </SidebarItem>
   );
 };

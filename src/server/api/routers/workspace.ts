@@ -89,6 +89,27 @@ export const workspaceRouter = createTRPCRouter({
 
     return { workspaces: activeWorkspaces, trash: deletedWorkspaces };
   }),
+  getFolderAndWorkspaces: protectedProcedure.query(async ({ ctx }) => {
+    const userWithFoldersAndWorkspaces = await ctx.prisma.user.findUnique({
+      where: { id: ctx.user.id },
+      include: {
+        folders: {
+          include: {
+            workspaces: true, // Include workspaces in each folder
+          },
+        },
+        workspaces: {
+          where: { folder_id: null, deleted_at: null }, // Include top-level workspaces
+          orderBy: { created_at: "asc" },
+        },
+      },
+    });
+
+    return {
+      folders: userWithFoldersAndWorkspaces?.folders,
+      rootLevelworkspaces: userWithFoldersAndWorkspaces?.workspaces,
+    };
+  }),
   getWorkspace: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input, ctx }) => {

@@ -74,8 +74,7 @@ function AudioPlayer({
     if (audioURL) {
       const audio = new Audio(audioURL);
       setGenerateAudio(audio);
-      setSeekMax(audio.duration);
-      setSeekValue(0);
+
       return () => {
         setGenerateAudio(null);
       };
@@ -93,6 +92,7 @@ function AudioPlayer({
 
       const handleLoadedMetadata = () => {
         setSeekMax(generatedAudio.duration);
+        setSeekValue(0);
       };
 
       const handleEnded = () => {

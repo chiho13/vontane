@@ -119,7 +119,7 @@ const BlogPage = ({ blogs }) => {
           </div>
         </div>
         <div className="fixed bottom-4 right-4 hidden xl:block">
-          <ModeToggle />
+          <ModeToggle side="top" />
         </div>
       </main>
     </>

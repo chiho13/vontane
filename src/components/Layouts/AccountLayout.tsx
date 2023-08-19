@@ -23,6 +23,7 @@ import {
   Folder,
   ChevronDown as ChevronDownLucide,
   ChevronRight,
+  ArrowRight,
 } from "lucide-react";
 import { workspace } from "@prisma/client";
 import { useLocalStorage } from "usehooks-ts";
@@ -57,6 +58,18 @@ import {
   ArrowUpCircle,
   Settings,
 } from "lucide-react";
+
+import {
+  DndContext,
+  rectIntersection,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  useDraggable,
+  useDroppable,
+  DragOverlay,
+} from "@dnd-kit/core";
 
 import { LogoutIcon } from "@/icons/Logout";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
@@ -246,6 +259,15 @@ const Layout: React.FC<LayoutProps> = ({
   const { data: folderWorkspaceData, refetch: refetchFolderWorkspaceData } =
     api.workspace.getFolderAndWorkspaces.useQuery();
 
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor)
+  );
+
   useEffect(() => {
     if (workspacesData) {
       const response = workspacesData.workspaces;
@@ -264,7 +286,7 @@ const Layout: React.FC<LayoutProps> = ({
       setWorkspaces(response.rootLevelworkspaces);
       console.log(response);
     }
-  }, [workspacesData]);
+  }, [folderWorkspaceData]);
 
   const createWorkspaceMutation = api.workspace.createWorkspace.useMutation();
   const handleWorkspaceRoute = (workspaceId: string) => {
@@ -347,7 +369,7 @@ const Layout: React.FC<LayoutProps> = ({
         id,
       });
       if (response) {
-        refetchWorkspaces();
+        refetchFolderWorkspaceData();
         refetchWorkspaceData();
         console.log(response);
       }
@@ -407,6 +429,61 @@ const Layout: React.FC<LayoutProps> = ({
         </Tooltip>
       </TooltipProvider>
     );
+  };
+
+  const moveWorkspaceMutation = api.workspace.moveWorkspace.useMutation();
+
+  const [draggedItem, setDraggedItem] = useState(null);
+
+  const [openFolder, setOpenFolder] = useState("");
+  const handleDragStart = (event) => {
+    const { active } = event;
+    const workspaceId = active.id;
+    const workspace = workspaces.find((ws) => ws.id === workspaceId);
+    setDraggedItem(workspace);
+  };
+
+  const handleDragEnd = async (event) => {
+    const { active, over } = event;
+
+    if (over) {
+      const workspaceId = active.id;
+      const folderId = over.id.replace("folder-", "");
+
+      if (over.id.startsWith("folder-")) {
+        console.log(
+          `Workspace ${workspaceId} was dragged over folder ${folderId}`
+        );
+
+        try {
+          const response = await moveWorkspaceMutation.mutateAsync({
+            workspace_id: workspaceId,
+            folder_id: folderId,
+          });
+          if (response) {
+            refetchFolderWorkspaceData();
+            refetchWorkspaceData();
+          }
+        } catch (error) {
+          console.error("Error moving workspace:", error);
+        }
+      }
+    }
+  };
+
+  const moveBackToTopLevel = async (workspaceId) => {
+    try {
+      const response = await moveWorkspaceMutation.mutateAsync({
+        workspace_id: workspaceId,
+        folder_id: "",
+      });
+      if (response) {
+        refetchFolderWorkspaceData();
+        refetchWorkspaceData();
+      }
+    } catch (error) {
+      console.error("Error moving workspace:", error);
+    }
   };
 
   return (
@@ -510,46 +587,67 @@ const Layout: React.FC<LayoutProps> = ({
                   />{" "}
                 </Button>
               </div> */}
-              <ul
-                className="mb-10 mt-4  overflow-y-auto"
-                style={{
-                  height: `calc(100vh - ${!isLocked ? "370px" : "200px"})`,
-                }}
+              <DndContext
+                sensors={sensors}
+                collisionDetection={rectIntersection}
+                onDragEnd={handleDragEnd}
+                onDragStart={handleDragStart}
               >
-                {workspaceFolders &&
-                  workspaceFolders.map((folder) => {
-                    return (
-                      <FolderWorkspaceItem
-                        key={folder.id}
-                        folder={folder}
+                <ul
+                  className="mb-10 mt-4  overflow-y-auto"
+                  style={{
+                    height: `calc(100vh - ${!isLocked ? "370px" : "200px"})`,
+                  }}
+                >
+                  {workspaceFolders &&
+                    workspaceFolders.map((folder) => {
+                      return (
+                        <FolderWorkspaceItem
+                          key={folder.id}
+                          folder={folder}
+                          handleWorkspaceRoute={handleWorkspaceRoute}
+                          softDeleteWorkspace={softDeleteWorkspace}
+                          moveBackToTopLevel={moveBackToTopLevel}
+                        />
+                      );
+                    })}
+
+                  {workspaces &&
+                    workspaces.map((workspace) => (
+                      <SidebarWorkspaceItem
+                        key={workspace.id}
+                        workspace={workspace}
                         handleWorkspaceRoute={handleWorkspaceRoute}
                         softDeleteWorkspace={softDeleteWorkspace}
+                        moveBackToTopLevel={moveBackToTopLevel}
                       />
-                    );
-                  })}
+                    ))}
 
-                {workspaces &&
-                  workspaces.map((workspace) => (
-                    <SidebarWorkspaceItem
-                      key={workspace.id}
-                      workspace={workspace}
-                      handleWorkspaceRoute={handleWorkspaceRoute}
-                      softDeleteWorkspace={softDeleteWorkspace}
-                    />
-                  ))}
-
-                <SidebarItem onClick={createWorkspace} className="w-[100px]">
-                  <button className=" flex h-[36px] items-center rounded-md px-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-accent">
-                    <Plus
-                      className="text-darkergray  dark:text-foreground"
-                      width={22}
-                    />{" "}
-                    <span className="ml-2 text-sm text-darkergray  dark:text-foreground">
-                      New Document
-                    </span>
-                  </button>
-                </SidebarItem>
-              </ul>
+                  <SidebarItem onClick={createWorkspace} className="w-[100px]">
+                    <button className=" flex h-[36px] items-center rounded-md px-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-accent">
+                      <Plus
+                        className="text-darkergray  dark:text-foreground"
+                        width={22}
+                      />{" "}
+                      <span className="ml-2 text-sm text-darkergray  dark:text-foreground">
+                        New Document
+                      </span>
+                    </button>
+                  </SidebarItem>
+                  <DragOverlay>
+                    {draggedItem && (
+                      <div className="opacity-80">
+                        <SidebarWorkspaceItem
+                          workspace={draggedItem}
+                          handleWorkspaceRoute={() => {}}
+                          softDeleteWorkspace={() => {}}
+                          moveBackToTopLevel={() => {}}
+                        />
+                      </div>
+                    )}
+                  </DragOverlay>
+                </ul>
+              </DndContext>
 
               <ul className="absolute bottom-5 w-full">
                 <SidebarItem
@@ -586,7 +684,7 @@ const Layout: React.FC<LayoutProps> = ({
                         isLocked && isOpen ? "bottom-[25px]" : "bottom-[65px]"
                       }  h-[200px] w-[300px] overflow-y-auto rounded-l-none border-l-0 bg-background p-4 shadow-md dark:border-accent dark:bg-muted`}
                     >
-                      {trashWorkspace.length === 0 && "Empty"}
+                      {trashWorkspace.length === 0 && "empty"}
                       {trashWorkspace &&
                         trashWorkspace.map((workspace) => {
                           const parsedSlateValue = JSON.parse(
@@ -694,8 +792,13 @@ const SidebarWorkspaceItem = ({
   workspace,
   handleWorkspaceRoute,
   softDeleteWorkspace,
+  moveBackToTopLevel,
 }) => {
   const router = useRouter();
+
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+    id: workspace.id,
+  });
 
   const currentWorkspaceId = router.query.workspaceId as string;
   const popOverTriggerRef = useRef(null);
@@ -751,7 +854,11 @@ const SidebarWorkspaceItem = ({
             currentWorkspaceId === workspace.id
               ? "bg-gray-200 font-bold dark:bg-accent"
               : "transparent"
-          }`}
+          }
+          `}
+          ref={setNodeRef}
+          {...listeners}
+          {...attributes}
         >
           <span className={`text-sm text-darkergray  dark:text-foreground`}>
             {displayName}
@@ -781,6 +888,15 @@ const SidebarWorkspaceItem = ({
                 top: position.top,
               }}
             >
+              {workspace.folder_id && (
+                <button
+                  className={`flex w-full cursor-pointer items-center gap-4  rounded-md  px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:bg-accent hover:text-gray-900 focus:outline-none dark:text-foreground dark:hover:bg-neutral-800 `}
+                  onClick={() => moveBackToTopLevel(workspace.id)}
+                >
+                  <ArrowRight className="w-4 text-gray-700 dark:text-gray-200 " />{" "}
+                  Move to Top Level
+                </button>
+              )}
               <button
                 className={`flex w-full cursor-pointer items-center gap-4  rounded-md  px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:bg-accent hover:text-gray-900 focus:outline-none dark:text-foreground dark:hover:bg-neutral-800 `}
                 onClick={() => softDeleteWorkspace(workspace.id)}
@@ -800,25 +916,39 @@ const FolderWorkspaceItem = ({
   folder,
   handleWorkspaceRoute,
   softDeleteWorkspace,
+  moveBackToTopLevel,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isMovingOver, setIsOver] = useState(false);
 
   const variants = {
     open: { opacity: 1, maxHeight: 1000 }, // You might want to set this to an appropriate value
     closed: { opacity: 0, maxHeight: 0 },
   };
 
+  const { setNodeRef, isOver } = useDroppable({
+    id: `folder-${folder.id}`,
+    data: { folderId: folder.id },
+  });
+
+  useEffect(() => {
+    setIsOver(isOver);
+  }, [isOver]);
   return (
     <>
-      <SidebarItem>
+      <SidebarItem ref={setNodeRef}>
         <button
-          className="flex h-[36px] items-center rounded-md px-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-accent "
-          onClick={() => setIsExpanded(!isExpanded)}
+          className={`relative flex h-[36px] items-center rounded-md px-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-accent ${
+            isMovingOver ? "bg-brand/20" : ""
+          }`}
+          onClick={() => {
+            setIsExpanded(!isExpanded);
+          }}
         >
           {isExpanded ? (
-            <ChevronDownLucide className="absolute left-2 w-5 text-darkergray  dark:text-foreground" />
+            <ChevronDownLucide className="absolute left-1 w-5 text-darkergray  dark:text-foreground" />
           ) : (
-            <ChevronRight className="absolute left-2 w-5 text-darkergray  dark:text-foreground" />
+            <ChevronRight className="absolute left-1 w-5 text-darkergray  dark:text-foreground" />
           )}
           <Folder
             className="text-darkergray  dark:text-foreground"
@@ -840,11 +970,14 @@ const FolderWorkspaceItem = ({
             transition={{ duration: 0.2, ease: "easeInOut" }}
             className="bg-neutral-100 px-2 dark:bg-neutral-800"
             style={{
-              padding: "8px 28px",
+              padding:
+                folder.workspaces.length === 0 ? "8px 28px" : "0 0 0 24px",
             }}
           >
             {folder.workspaces.length === 0 ? (
-              <div className="text-gray-500 dark:text-gray-300">Empty</div>
+              <div className="text-sm text-gray-500 dark:text-gray-300">
+                empty
+              </div>
             ) : (
               <ul>
                 {folder.workspaces.map((workspace) => (
@@ -853,6 +986,7 @@ const FolderWorkspaceItem = ({
                     workspace={workspace}
                     handleWorkspaceRoute={handleWorkspaceRoute}
                     softDeleteWorkspace={softDeleteWorkspace}
+                    moveBackToTopLevel={moveBackToTopLevel}
                   />
                 ))}
               </ul>

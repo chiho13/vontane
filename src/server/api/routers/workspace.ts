@@ -208,6 +208,29 @@ export const workspaceRouter = createTRPCRouter({
 
     return { workspace };
   }),
+  moveWorkspace: protectedProcedure
+    .input(z.object({ folder_id: z.string(), workspace_id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const workspace = await ctx.prisma.workspace.findUnique({
+        where: { id: input.workspace_id },
+      });
+
+      if (ctx.user.id !== workspace.author_id) {
+        throw new Error("Unauthorized access");
+      }
+
+      const newFolderId = input.folder_id === "" ? null : input.folder_id;
+
+      const updatedWorkspace = await ctx.prisma.workspace.update({
+        where: { id: input.workspace_id },
+        data: {
+          folder_id: newFolderId,
+        },
+      });
+
+      return { workspace: updatedWorkspace };
+    }),
+
   createFolder: protectedProcedure
     .input(z.object({ folder_name: z.string() }))
     .mutation(async ({ input, ctx }) => {

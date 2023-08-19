@@ -13,9 +13,6 @@ export function EquationElement(props) {
     useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);
 
-  const selected = useSelected();
-
-  console.log("selected", selectedElementID, path);
   return (
     <div
       tabIndex={0}

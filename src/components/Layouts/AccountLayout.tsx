@@ -943,7 +943,11 @@ const FolderWorkspaceItem = ({
     setIsOver(isOver);
   }, [isOver]);
   return (
-    <div className={`${isExpanded ? "bg-accent" : ""} mb-4`}>
+    <div
+      className={`${
+        isExpanded ? "bg-neutral-100 dark:bg-neutral-800 " : ""
+      } mb-4`}
+    >
       <li ref={setNodeRef} className="relative w-full">
         <button
           className={`relative flex h-[36px] w-full items-center px-2  pl-[24px] transition duration-200 hover:bg-gray-200 dark:hover:bg-accent ${
@@ -954,9 +958,9 @@ const FolderWorkspaceItem = ({
           }}
         >
           {isExpanded ? (
-            <ChevronDownLucide className="absolute left-1 w-5 text-darkergray  dark:text-foreground" />
+            <ChevronDownLucide className="absolute left-1 w-4 text-darkergray  dark:text-foreground" />
           ) : (
-            <ChevronRight className="absolute left-1 w-5 text-darkergray  dark:text-foreground" />
+            <ChevronRight className="absolute left-1 w-4 text-darkergray  dark:text-foreground" />
           )}
           <Folder
             className="text-darkergray  dark:text-foreground"

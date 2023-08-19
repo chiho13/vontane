@@ -161,9 +161,9 @@ transition: transform 300ms, ${(props) =>
 
 const SidebarItem = styled.li<{ activeWorkspace?: boolean }>`
   display: flex;
-  padding: 4px;
   width: 100%;
   box-sizing: border-box;
+  margin-bottom: 4px;
   button {
     display: flex;
     padding: 8px 24px;
@@ -847,14 +847,17 @@ const SidebarWorkspaceItem = ({
           handleWorkspaceRoute(workspace.id);
         }}
         onContextMenu={handleRightClick}
-        className="relative ring-brand focus:ring-2 dark:ring-white"
+        className={`relative  ring-brand transition duration-300 focus:ring-2 dark:ring-white 
+        ${
+          currentWorkspaceId === workspace.id
+            ? "bg-gray-200 font-bold dark:bg-accent"
+            : "transparent"
+        }
+        hover:bg-gray-200 dark:hover:bg-accent 
+        `}
       >
         <button
-          className={` group relative flex  items-center  hover:bg-gray-200 dark:hover:bg-accent ${
-            currentWorkspaceId === workspace.id
-              ? "bg-gray-200 font-bold dark:bg-accent"
-              : "transparent"
-          }
+          className={` group relative flex  items-center  
           `}
           ref={setNodeRef}
           {...listeners}
@@ -935,7 +938,7 @@ const FolderWorkspaceItem = ({
     setIsOver(isOver);
   }, [isOver]);
   return (
-    <>
+    <div className={`${isExpanded ? "bg-accent" : ""} mb-4`}>
       <SidebarItem ref={setNodeRef}>
         <button
           className={`relative flex h-[36px] items-center rounded-md px-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-accent ${
@@ -968,11 +971,6 @@ const FolderWorkspaceItem = ({
             exit="closed"
             variants={variants}
             transition={{ duration: 0.2, ease: "easeInOut" }}
-            className="bg-neutral-100 px-2 dark:bg-neutral-800"
-            style={{
-              padding:
-                folder.workspaces.length === 0 ? "8px 28px" : "0 0 0 24px",
-            }}
           >
             {folder.workspaces.length === 0 ? (
               <div className="text-sm text-gray-500 dark:text-gray-300">
@@ -981,19 +979,21 @@ const FolderWorkspaceItem = ({
             ) : (
               <ul>
                 {folder.workspaces.map((workspace) => (
-                  <SidebarWorkspaceItem
-                    key={workspace.id}
-                    workspace={workspace}
-                    handleWorkspaceRoute={handleWorkspaceRoute}
-                    softDeleteWorkspace={softDeleteWorkspace}
-                    moveBackToTopLevel={moveBackToTopLevel}
-                  />
+                  <div className="indent-4">
+                    <SidebarWorkspaceItem
+                      key={workspace.id}
+                      workspace={workspace}
+                      handleWorkspaceRoute={handleWorkspaceRoute}
+                      softDeleteWorkspace={softDeleteWorkspace}
+                      moveBackToTopLevel={moveBackToTopLevel}
+                    />
+                  </div>
                 ))}
               </ul>
             )}
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </div>
   );
 };

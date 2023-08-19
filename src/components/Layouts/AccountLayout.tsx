@@ -83,6 +83,7 @@ import { on } from "process";
 import { Portal } from "react-portal";
 import { CreateNewFolder } from "../CreateNewFolder";
 import { AnimatePresence, motion } from "framer-motion";
+import { cn } from "@/utils/cn";
 
 const SidebarContainer = styled.div`
   position: relative;
@@ -793,6 +794,7 @@ const SidebarWorkspaceItem = ({
   handleWorkspaceRoute,
   softDeleteWorkspace,
   moveBackToTopLevel,
+  classNames = "",
 }) => {
   const router = useRouter();
 
@@ -847,14 +849,17 @@ const SidebarWorkspaceItem = ({
           handleWorkspaceRoute(workspace.id);
         }}
         onContextMenu={handleRightClick}
-        className={`relative  ring-brand transition duration-300 focus:ring-2 dark:ring-white 
+        className={cn(
+          `relative  ring-brand transition duration-300 focus:ring-2 dark:ring-white 
         ${
           currentWorkspaceId === workspace.id
             ? "bg-gray-200 font-bold dark:bg-accent"
             : "transparent"
         }
         hover:bg-gray-200 dark:hover:bg-accent 
-        `}
+        `,
+          classNames
+        )}
       >
         <button
           className={` group relative flex  items-center  
@@ -939,9 +944,9 @@ const FolderWorkspaceItem = ({
   }, [isOver]);
   return (
     <div className={`${isExpanded ? "bg-accent" : ""} mb-4`}>
-      <SidebarItem ref={setNodeRef}>
+      <li ref={setNodeRef} className="relative w-full">
         <button
-          className={`relative flex h-[36px] items-center rounded-md px-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-accent ${
+          className={`relative flex h-[36px] w-full items-center px-2  pl-[24px] transition duration-200 hover:bg-gray-200 dark:hover:bg-accent ${
             isMovingOver ? "bg-brand/20" : ""
           }`}
           onClick={() => {
@@ -955,13 +960,13 @@ const FolderWorkspaceItem = ({
           )}
           <Folder
             className="text-darkergray  dark:text-foreground"
-            width={22}
+            width={16}
           />
           <span className="ml-2 text-sm text-darkergray  dark:text-foreground">
             {folder.name}
           </span>
         </button>
-      </SidebarItem>
+      </li>
 
       <AnimatePresence>
         {isExpanded && (
@@ -979,15 +984,14 @@ const FolderWorkspaceItem = ({
             ) : (
               <ul>
                 {folder.workspaces.map((workspace) => (
-                  <div className="indent-4">
-                    <SidebarWorkspaceItem
-                      key={workspace.id}
-                      workspace={workspace}
-                      handleWorkspaceRoute={handleWorkspaceRoute}
-                      softDeleteWorkspace={softDeleteWorkspace}
-                      moveBackToTopLevel={moveBackToTopLevel}
-                    />
-                  </div>
+                  <SidebarWorkspaceItem
+                    key={workspace.id}
+                    workspace={workspace}
+                    handleWorkspaceRoute={handleWorkspaceRoute}
+                    softDeleteWorkspace={softDeleteWorkspace}
+                    moveBackToTopLevel={moveBackToTopLevel}
+                    classNames="pl-[24px] "
+                  />
                 ))}
               </ul>
             )}

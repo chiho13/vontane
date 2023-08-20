@@ -45,6 +45,7 @@ model folder {
   owner_id     String      @db.Uuid
   owner        user        @relation(fields: [owner_id], references: [id])
   workspaces   workspace[]
+  deleted_at   DateTime? 
   parent_id    String?     @db.Uuid
   parent       folder?     @relation("FolderToFolder", fields: [parent_id], references: [id])
   children     folder[]    @relation("FolderToFolder")

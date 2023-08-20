@@ -274,6 +274,38 @@ export const workspaceRouter = createTRPCRouter({
 
       return { workspace: updatedWorkspace };
     }),
+
+  softDeleteFolderAndWorkspace: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const { id } = input;
+
+      const folder = await ctx.prisma.folder.findUnique({
+        where: { id },
+      });
+
+      if (!folder) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "folder not found",
+        });
+      }
+
+      if (ctx.user.id !== folder.owner_id) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Unauthorized access",
+        });
+      }
+
+      // Perform the soft delete
+      const updatedWorkspace = await ctx.prisma.workspace.update({
+        where: { id },
+        data: { deleted_at: new Date() },
+      });
+
+      return { workspace: updatedWorkspace };
+    }),
   restoreWorkspace: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ input, ctx }) => {

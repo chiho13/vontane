@@ -84,6 +84,7 @@ import { Portal } from "react-portal";
 import { CreateNewFolder } from "../CreateNewFolder";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/utils/cn";
+import { usePopover } from "@/hooks/useSidebarPopover";
 
 const SidebarContainer = styled.div`
   position: relative;
@@ -789,6 +790,98 @@ const Layout: React.FC<LayoutProps> = ({
 
 export default Layout;
 
+interface WorkspacePopoverProps {
+  position: { top: number; left: number };
+  onOpenChange: (value: boolean) => void;
+  isPopoverVisible: boolean;
+  popOverTriggerRef: any;
+  workspace: any; // Define the type properly
+  folder?: boolean;
+  softDeleteWorkspace: (id: string) => void;
+  moveBackToTopLevel: (id: string) => void;
+  renameFolder?: (id: string) => void; // Optional prop
+}
+
+const WorkspacePopover: React.FC<WorkspacePopoverProps> = ({
+  position,
+  onOpenChange,
+  isPopoverVisible,
+  popOverTriggerRef,
+  workspace,
+  folder = false,
+  softDeleteWorkspace,
+  moveBackToTopLevel,
+  renameFolder,
+}) => {
+  return (
+    <>
+      {isPopoverVisible && (
+        <Portal>
+          <div
+            className="closeOutside fixed left-0 top-0 h-full w-screen"
+            style={{ zIndex: 1000 }}
+          ></div>
+        </Portal>
+      )}
+      <Popover open={isPopoverVisible} onOpenChange={onOpenChange}>
+        <PopoverTrigger
+          ref={popOverTriggerRef}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+          className="absolute right-2 flex h-[22px] w-[22px] items-center justify-center rounded-md p-0 opacity-0 outline-none transition duration-300 hover:bg-gray-100 group-hover:opacity-100 dark:hover:bg-gray-600"
+          style={{ width: "22px", padding: 0 }}
+        >
+          <MoreHorizontal
+            className="text-darkergray dark:stroke-foreground"
+            width={18}
+          />
+        </PopoverTrigger>
+        <PopoverContent
+          className="w-[200px] p-1 dark:border-gray-800 dark:bg-accent"
+          align="start"
+          style={{
+            position: "fixed",
+            zIndex: 1000,
+            left: position.left,
+            top: position.top,
+          }}
+        >
+          {workspace.folder_id && (
+            <button
+              className="flex w-full cursor-pointer items-center gap-4 rounded-md px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:bg-accent hover:text-gray-900 focus:outline-none dark:text-foreground dark:hover:bg-neutral-800"
+              onClick={() => moveBackToTopLevel(workspace.id)}
+            >
+              <ArrowRight className="w-4 text-gray-700 dark:text-gray-200" />{" "}
+              Move to Top Level
+            </button>
+          )}
+
+          {!folder ? (
+            <button
+              className="flex w-full cursor-pointer items-center gap-4 rounded-md px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:bg-accent hover:text-gray-900 focus:outline-none dark:text-foreground dark:hover:bg-neutral-800"
+              onClick={() => softDeleteWorkspace(workspace.id)}
+            >
+              <Trash className="w-4 text-gray-700 dark:text-gray-200" /> Move to
+              Bin
+            </button>
+          ) : (
+            <button
+              className="flex w-full cursor-pointer items-center gap-4 rounded-md px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:bg-accent hover:text-gray-900 focus:outline-none dark:text-foreground dark:hover:bg-neutral-800"
+              onClick={(e) => {
+                e.stopPropagation();
+                renameFolder(workspace.id);
+              }}
+            >
+              Rename Folder
+            </button>
+          )}
+        </PopoverContent>
+      </Popover>
+    </>
+  );
+};
+
 const SidebarWorkspaceItem = ({
   workspace,
   handleWorkspaceRoute,
@@ -803,29 +896,14 @@ const SidebarWorkspaceItem = ({
   });
 
   const currentWorkspaceId = router.query.workspaceId as string;
-  const popOverTriggerRef = useRef(null);
-  const [position, setPosition] = useState({ top: 0, left: 0 });
-  const [isPopoverVisible, setPopoverVisible] = useState(false);
 
-  const handleRightClick = (e) => {
-    e.preventDefault();
-    if (popOverTriggerRef.current) {
-      const rect = popOverTriggerRef.current.getBoundingClientRect();
-      setPosition({
-        top: e.clientY - rect.top - 20,
-        left: e.clientX - rect.left,
-      });
-    }
-    setPopoverVisible(true);
-  };
-
-  const onOpenChange = (value) => {
-    setPosition({
-      top: 0,
-      left: 0,
-    });
-    setPopoverVisible(value);
-  };
+  const {
+    position,
+    isPopoverVisible,
+    handleRightClick,
+    onOpenChange,
+    popOverTriggerRef,
+  } = usePopover();
 
   const parsedSlateValue = JSON.parse(workspace.slate_value as any);
   const workspaceName = parsedSlateValue[0].children[0].text;
@@ -872,48 +950,15 @@ const SidebarWorkspaceItem = ({
             {displayName}
           </span>
 
-          <Popover open={isPopoverVisible} onOpenChange={onOpenChange}>
-            <PopoverTrigger
-              ref={popOverTriggerRef}
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-              className="  absolute right-2 flex h-[22px] w-[22px] items-center justify-center rounded-md p-0 opacity-0 outline-none transition  duration-300 hover:bg-gray-100 group-hover:opacity-100 dark:hover:bg-gray-600"
-              style={{ width: "22px", padding: 0 }}
-            >
-              <MoreHorizontal
-                className="text-darkergray  dark:stroke-foreground"
-                width={18}
-              />
-            </PopoverTrigger>
-            <PopoverContent
-              className="w-[250px] p-1 dark:border-gray-800 dark:bg-accent"
-              align="start"
-              style={{
-                position: "fixed",
-                zIndex: 1000,
-                left: position.left,
-                top: position.top,
-              }}
-            >
-              {workspace.folder_id && (
-                <button
-                  className={`flex w-full cursor-pointer items-center gap-4  rounded-md  px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:bg-accent hover:text-gray-900 focus:outline-none dark:text-foreground dark:hover:bg-neutral-800 `}
-                  onClick={() => moveBackToTopLevel(workspace.id)}
-                >
-                  <ArrowRight className="w-4 text-gray-700 dark:text-gray-200 " />{" "}
-                  Move to Top Level
-                </button>
-              )}
-              <button
-                className={`flex w-full cursor-pointer items-center gap-4  rounded-md  px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:bg-accent hover:text-gray-900 focus:outline-none dark:text-foreground dark:hover:bg-neutral-800 `}
-                onClick={() => softDeleteWorkspace(workspace.id)}
-              >
-                <Trash className="w-4 text-gray-700 dark:text-gray-200 " /> Move
-                to Bin
-              </button>
-            </PopoverContent>
-          </Popover>
+          <WorkspacePopover
+            position={position}
+            onOpenChange={onOpenChange}
+            isPopoverVisible={isPopoverVisible}
+            popOverTriggerRef={popOverTriggerRef}
+            workspace={workspace}
+            softDeleteWorkspace={softDeleteWorkspace}
+            moveBackToTopLevel={moveBackToTopLevel}
+          />
         </button>
       </SidebarItem>
     </>
@@ -929,6 +974,17 @@ const FolderWorkspaceItem = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const [isMovingOver, setIsOver] = useState(false);
 
+  const [editFolderName, setEditFolderName] = useState(false);
+
+  const [changeFolderName, setChangeFolderName] = useState(folder.name);
+  const {
+    position,
+    isPopoverVisible,
+    handleRightClick,
+    onOpenChange,
+    popOverTriggerRef,
+  } = usePopover();
+
   const variants = {
     open: { opacity: 1, maxHeight: 1000 }, // You might want to set this to an appropriate value
     closed: { opacity: 0, maxHeight: 0 },
@@ -942,15 +998,23 @@ const FolderWorkspaceItem = ({
   useEffect(() => {
     setIsOver(isOver);
   }, [isOver]);
+
+  const renameFolder = (folderId) => {
+    setEditFolderName(true);
+  };
   return (
     <div
       className={`${
         isExpanded ? "bg-neutral-100 dark:bg-neutral-800 " : ""
       } mb-4`}
     >
-      <li ref={setNodeRef} className="relative w-full">
+      <li
+        ref={setNodeRef}
+        className="relative w-full"
+        onContextMenu={handleRightClick}
+      >
         <button
-          className={`relative flex h-[36px] w-full items-center px-2  pl-[24px] transition duration-200 hover:bg-gray-200 dark:hover:bg-accent ${
+          className={`group relative flex h-[36px] w-full items-center px-2  pl-[24px] transition duration-200 hover:bg-gray-200 dark:hover:bg-accent ${
             isMovingOver ? "bg-brand/20" : ""
           }`}
           onClick={() => {
@@ -967,8 +1031,43 @@ const FolderWorkspaceItem = ({
             width={16}
           />
           <span className="ml-2 text-sm text-darkergray  dark:text-foreground">
-            {folder.name}
+            {editFolderName ? (
+              <input
+                autoFocus
+                type="text"
+                value={changeFolderName}
+                onChange={(e) => {
+                  // Handle the name change here
+                  setChangeFolderName(e.target.value);
+                }}
+                onBlur={() => {
+                  setEditFolderName(false);
+                  // Possibly send the update to the server here
+                }}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault(); // Prevent form submission if inside a form
+                    setEditFolderName(false);
+                  }
+                }}
+                className="rounded-sm p-[2px] py-px text-sm text-darkergray outline-none focus:ring-2 focus:ring-brand/70 dark:text-foreground"
+              />
+            ) : (
+              changeFolderName
+            )}
           </span>
+
+          <WorkspacePopover
+            position={position}
+            onOpenChange={onOpenChange}
+            isPopoverVisible={isPopoverVisible}
+            popOverTriggerRef={popOverTriggerRef}
+            workspace={folder}
+            folder={true}
+            softDeleteWorkspace={softDeleteWorkspace}
+            moveBackToTopLevel={moveBackToTopLevel}
+            renameFolder={renameFolder}
+          />
         </button>
       </li>
 

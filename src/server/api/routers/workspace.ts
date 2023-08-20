@@ -95,7 +95,9 @@ export const workspaceRouter = createTRPCRouter({
       include: {
         folders: {
           include: {
-            workspaces: true, // Include workspaces in each folder
+            workspaces: {
+              orderBy: { created_at: "asc" }, // Order workspaces in each folder by created_at in ascending order
+            },
           },
         },
         workspaces: {

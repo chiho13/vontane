@@ -10,6 +10,7 @@ import {
   useMemo,
   createContext,
   use,
+  useCallback,
 } from "react";
 import { AccountLayoutStyle } from "./style";
 import ChevronDown from "@/icons/ChevronDown";
@@ -85,6 +86,8 @@ import { CreateNewFolder } from "../CreateNewFolder";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/utils/cn";
 import { usePopover } from "@/hooks/useSidebarPopover";
+
+import debounce from "lodash/debounce";
 
 const SidebarContainer = styled.div`
   position: relative;
@@ -610,6 +613,9 @@ const Layout: React.FC<LayoutProps> = ({
                           handleWorkspaceRoute={handleWorkspaceRoute}
                           softDeleteWorkspace={softDeleteWorkspace}
                           moveBackToTopLevel={moveBackToTopLevel}
+                          refetchFolderWorkspaceData={
+                            refetchFolderWorkspaceData
+                          }
                         />
                       );
                     })}
@@ -970,6 +976,7 @@ const FolderWorkspaceItem = ({
   handleWorkspaceRoute,
   softDeleteWorkspace,
   moveBackToTopLevel,
+  refetchFolderWorkspaceData,
 }) => {
   const [errorMessage, setErrorMessage] = useState(null);
 
@@ -1001,9 +1008,43 @@ const FolderWorkspaceItem = ({
     setIsOver(isOver);
   }, [isOver]);
 
-  const renameFolder = (folderId) => {
+  const renameFolderClick = () => {
     setEditFolderName(true);
   };
+
+  const changeFolderNameMutation = api.workspace.renameFolder.useMutation();
+
+  const renameFolder = async (name) => {
+    if (!name.trim()) {
+      setErrorMessage("Must not be blank");
+      return;
+    }
+
+    try {
+      const response = await changeFolderNameMutation.mutateAsync({
+        folder_name: name,
+        folder_id: folder.id,
+      });
+
+      if (response) {
+        refetchFolderWorkspaceData();
+      }
+    } catch (error) {
+      console.error("Error renaming folder:", error);
+    }
+  };
+
+  const debouncedRenameFolder = useCallback(
+    debounce(renameFolder, 300), // 300ms delay
+    [] // Dependencies
+  );
+
+  const handleInputChange = (e) => {
+    setErrorMessage(null);
+    setChangeFolderName(e.target.value);
+    debouncedRenameFolder(e.target.value);
+  };
+
   return (
     <div
       className={`${
@@ -1042,15 +1083,7 @@ const FolderWorkspaceItem = ({
                   autoFocus
                   type="text"
                   value={changeFolderName}
-                  onChange={(e) => {
-                    // Handle the name change here
-                    if (!e.target.value.trim()) {
-                      setErrorMessage("Must not be blank");
-                    } else {
-                      setErrorMessage(null);
-                    }
-                    setChangeFolderName(e.target.value);
-                  }}
+                  onChange={handleInputChange}
                   onBlur={() => {
                     setEditFolderName(false);
                     // Possibly send the update to the server here
@@ -1087,7 +1120,7 @@ const FolderWorkspaceItem = ({
             folder={true}
             softDeleteWorkspace={softDeleteWorkspace}
             moveBackToTopLevel={moveBackToTopLevel}
-            renameFolder={renameFolder}
+            renameFolder={renameFolderClick}
           />
         </button>
       </li>

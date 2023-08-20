@@ -243,6 +243,18 @@ export const workspaceRouter = createTRPCRouter({
 
       return { workspace };
     }),
+  renameFolder: protectedProcedure
+    .input(z.object({ folder_id: z.string(), folder_name: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const folder = await ctx.prisma.folder.update({
+        where: { id: input.folder_id },
+        data: {
+          name: input.folder_name,
+        },
+      });
+
+      return { folder };
+    }),
   softDeleteWorkspace: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ input, ctx }) => {

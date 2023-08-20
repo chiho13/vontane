@@ -459,6 +459,27 @@ const Layout: React.FC<LayoutProps> = ({
         console.log(
           `Workspace ${workspaceId} was dragged over folder ${folderId}`
         );
+        const draggedWorkspace = workspaces.find(
+          (workspace) => workspace.id === workspaceId
+        );
+
+        // Remove the workspace from the top-level array by filtering it out
+        const updatedWorkspaces = workspaces.filter(
+          (workspace) => workspace.id !== workspaceId
+        );
+        setWorkspaces(updatedWorkspaces);
+
+        // Add the dragged workspace to the target folder
+        const updatedWorkspacesFolders = workspaceFolders.map((folder) => {
+          if (folder.id === folderId) {
+            return {
+              ...folder,
+              workspaces: [...folder.workspaces, draggedWorkspace],
+            };
+          }
+          return folder;
+        });
+        setWorkspacesFolders(updatedWorkspacesFolders);
 
         try {
           const response = await moveWorkspaceMutation.mutateAsync({

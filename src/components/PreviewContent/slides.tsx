@@ -7,12 +7,17 @@ import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { SlideBreak } from "@/icons/SlideBreak";
 import { useLocalStorage } from "usehooks-ts";
+import { useRouter } from "next/router";
 
 export const SlidesPreview = () => {
+  const router = useRouter();
+
+  const workspaceId = router.query.workspaceId;
+
   const { editor: fromEditor, activePath } = useContext(EditorContext);
   const [localValue, setLocalValue] = useState(fromEditor.children);
   const [currentSlideIndex, setCurrentSlideIndex] = useLocalStorage(
-    "currentSlideIndex",
+    `currentSlideIndex-${workspaceId}`,
     0
   );
 

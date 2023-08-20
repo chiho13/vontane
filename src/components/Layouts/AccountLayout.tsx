@@ -971,6 +971,8 @@ const FolderWorkspaceItem = ({
   softDeleteWorkspace,
   moveBackToTopLevel,
 }) => {
+  const [errorMessage, setErrorMessage] = useState(null);
+
   const [isExpanded, setIsExpanded] = useState(false);
   const [isMovingOver, setIsOver] = useState(false);
 
@@ -1007,6 +1009,9 @@ const FolderWorkspaceItem = ({
       className={`${
         isExpanded ? "bg-neutral-100 dark:bg-neutral-800 " : ""
       } mb-4`}
+      style={{
+        zIndex: 1000,
+      }}
     >
       <li
         ref={setNodeRef}
@@ -1032,26 +1037,42 @@ const FolderWorkspaceItem = ({
           />
           <span className="ml-2 text-sm text-darkergray  dark:text-foreground">
             {editFolderName ? (
-              <input
-                autoFocus
-                type="text"
-                value={changeFolderName}
-                onChange={(e) => {
-                  // Handle the name change here
-                  setChangeFolderName(e.target.value);
-                }}
-                onBlur={() => {
-                  setEditFolderName(false);
-                  // Possibly send the update to the server here
-                }}
-                onKeyPress={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault(); // Prevent form submission if inside a form
+              <div className="relative">
+                <input
+                  autoFocus
+                  type="text"
+                  value={changeFolderName}
+                  onChange={(e) => {
+                    // Handle the name change here
+                    if (!e.target.value.trim()) {
+                      setErrorMessage("Must not be blank");
+                    } else {
+                      setErrorMessage(null);
+                    }
+                    setChangeFolderName(e.target.value);
+                  }}
+                  onBlur={() => {
                     setEditFolderName(false);
-                  }
-                }}
-                className="rounded-sm p-[2px] py-px text-sm text-darkergray outline-none focus:ring-2 focus:ring-brand/70 dark:text-foreground"
-              />
+                    // Possibly send the update to the server here
+                  }}
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault(); // Prevent form submission if inside a form
+                      setEditFolderName(false);
+                    }
+                  }}
+                  className={cn(
+                    `rounded-sm  py-px text-sm text-darkergray outline-none focus:ring-2 focus:ring-brand/70 focus:ring-offset-2  dark:text-foreground ${
+                      errorMessage && "rounded-b-none focus:ring-red-700"
+                    }`
+                  )}
+                />
+                {errorMessage && (
+                  <div className="absolute -bottom-[32px] right-0 w-full bg-red-600 p-1 text-xs text-red-500 text-white ring-2 ring-red-700 ring-offset-2 ring-offset-red-600 ">
+                    {errorMessage}
+                  </div>
+                )}
+              </div>
             ) : (
               changeFolderName
             )}

@@ -63,7 +63,7 @@ export const CreateNewFolder = () => {
     <Fragment>
       <Dialog open={openCreateFolder} onOpenChange={onOpenChange}>
         <DialogTrigger asChild>
-          <button className=" flex h-[36px] items-center rounded-md px-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-accent">
+          <button className="flex h-[36px] w-full items-center  px-2 px-[24px] py-[8px] transition duration-200 hover:bg-gray-200 dark:hover:bg-accent">
             <FolderPlus
               className="text-darkergray  dark:text-foreground"
               width={22}

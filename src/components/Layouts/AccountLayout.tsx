@@ -169,24 +169,6 @@ const SidebarItem = styled.li<{ activeWorkspace?: boolean }>`
   width: 100%;
   box-sizing: border-box;
   margin-bottom: 4px;
-  button {
-    display: flex;
-    padding: 8px 24px;
-    width: 100%;
-    border-radius: 4px;
-    transition: background-color 300ms ease, transform 300ms;
-    overflow: hidden;
-
-    &:focus {
-      outline: none;
-    }
-
-    span {
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-    }
-  }
 `;
 
 const fadeIn = keyframes`
@@ -653,12 +635,12 @@ const Layout: React.FC<LayoutProps> = ({
                     ))}
 
                   <SidebarItem onClick={createWorkspace} className="w-[100px]">
-                    <button className=" flex h-[36px] items-center rounded-md px-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-accent">
+                    <button className="flex h-[36px] w-full items-center  px-2 px-[24px] py-[8px] transition duration-200 hover:bg-gray-200 dark:hover:bg-accent">
                       <Plus
                         className="text-darkergray  dark:text-foreground"
                         width={22}
                       />{" "}
-                      <span className="ml-2 text-sm text-darkergray  dark:text-foreground">
+                      <span className="ml-2 truncate text-sm  text-darkergray dark:text-foreground">
                         New Document
                       </span>
                     </button>
@@ -680,7 +662,8 @@ const Layout: React.FC<LayoutProps> = ({
 
               <ul className="absolute bottom-5 w-full">
                 <SidebarItem
-                // onClick={createWorkspace}
+                  // onClick={createWorkspace}
+                  className="truncate"
                 >
                   <CreateNewFolder />
                   {/* <button className=" flex h-[36px] items-center rounded-md px-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-accent">
@@ -693,15 +676,15 @@ const Layout: React.FC<LayoutProps> = ({
                     </span>
                   </button> */}
                 </SidebarItem>
-                <SidebarItem>
+                <SidebarItem className="truncate">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button className="flex h-[36px] items-center  hover:bg-gray-200 dark:hover:bg-accent">
+                      <button className="flex h-[36px] w-full items-center  px-[24px] py-[8px] hover:bg-gray-200  dark:hover:bg-accent">
                         <Trash
                           className="text-darkergray  dark:text-foreground"
                           width={18}
                         />{" "}
-                        <span className="ml-4 text-sm text-darkergray  dark:text-foreground">
+                        <span className="ml-4 truncate text-sm  text-darkergray dark:text-foreground">
                           Bin
                         </span>
                       </button>
@@ -953,9 +936,10 @@ const SidebarWorkspaceItem = ({
           e.stopPropagation();
           handleWorkspaceRoute(workspace.id);
         }}
+        tabIndex={-1}
         onContextMenu={handleRightClick}
         className={cn(
-          `relative  ring-brand transition duration-300 focus:ring-2 dark:ring-white 
+          `relative  ring-brand transition duration-300 focus:ring-2  dark:ring-white
         ${
           currentWorkspaceId === workspace.id
             ? "bg-gray-200 font-bold dark:bg-accent"
@@ -967,13 +951,15 @@ const SidebarWorkspaceItem = ({
         )}
       >
         <button
-          className={` group relative flex  items-center  
+          className={` group relative flex w-full items-center px-[24px]  py-[8px]  
           `}
           ref={setNodeRef}
           {...listeners}
           {...attributes}
         >
-          <span className={`text-sm text-darkergray  dark:text-foreground`}>
+          <span
+            className={`truncate text-sm  text-darkergray dark:text-foreground`}
+          >
             {displayName}
           </span>
 
@@ -1108,12 +1094,6 @@ const FolderWorkspaceItem = ({
                   onBlur={() => {
                     setEditFolderName(false);
                     // Possibly send the update to the server here
-                  }}
-                  onKeyPress={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault(); // Prevent form submission if inside a form
-                      setEditFolderName(false);
-                    }
                   }}
                   className={cn(
                     `rounded-sm  py-px text-sm text-darkergray outline-none focus:ring-2 focus:ring-brand/70 focus:ring-offset-2  dark:text-foreground ${

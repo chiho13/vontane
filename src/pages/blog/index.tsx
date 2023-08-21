@@ -19,9 +19,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const { prisma } = createInnerTRPCContext({}, req, res);
 
     const vontaneappid = "b53a0a8f-c6f7-4d10-a474-1a3e6dd96054";
-
+    const folderId = "9b865168-e6d8-4abf-b00a-9a1bfa557f4f";
     const activeWorkspaces = await prisma.workspace.findMany({
-      where: { author_id: vontaneappid, deleted_at: null, published: true },
+      where: {
+        author_id: vontaneappid,
+        deleted_at: null,
+        folder_id: folderId,
+        published: true,
+      },
       orderBy: { published_at: "desc" },
     });
 

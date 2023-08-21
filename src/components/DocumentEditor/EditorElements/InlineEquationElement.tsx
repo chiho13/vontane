@@ -28,8 +28,11 @@ export const InlineEquation = (props: {
   const { editor, showEditBlockPopup, selectedElementID, activePath } =
     useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);
+
+  console.log(element.latex);
   return (
     <span
+      key={element.id}
       {...attributes}
       data-id={element.id}
       data-path={JSON.stringify(path)}
@@ -45,7 +48,7 @@ export const InlineEquation = (props: {
         Transforms.select(editor, path);
       }}
     >
-      <InlineMath math={element.latex || ""} />
+      <InlineMath math={element.latex} />
 
       {element.latex?.trim() === "" && (
         <span className="bg-gray-300 p-1 text-gray-800 opacity-60">
@@ -53,9 +56,7 @@ export const InlineEquation = (props: {
           Equation{" "}
         </span>
       )}
-      <InlineChromiumBugfix />
-      {children}
-      <InlineChromiumBugfix />
+      <div className="hidden">{children}</div>
     </span>
   );
 };

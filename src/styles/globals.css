@@ -161,9 +161,9 @@ body {
   font-size: 1.3em !important;
 }
 
-.katex-html {
+/* .katex-html {
   display: none;
-}
+} */
 
 .scrollbar::-webkit-scrollbar {
   width: 5px;
@@ -185,5 +185,9 @@ body {
 }
 
 .blog-content .katex-html {
+  display: none;
+}
+
+.published .katex-html {
   display: none;
 }

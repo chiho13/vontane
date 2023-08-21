@@ -524,8 +524,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           const { selection } = editor;
 
           if (selection) {
-            event.preventDefault();
-
             if (
               SlateElement.isElement(parentNode) &&
               (parentNode.type === "paragraph" ||
@@ -540,7 +538,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         } else if (currentText.startsWith("1.")) {
           const { selection } = editor;
           if (selection) {
-            event.preventDefault();
             if (
               SlateElement.isElement(parentNode) &&
               (parentNode.type === "paragraph" ||

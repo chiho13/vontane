@@ -237,6 +237,7 @@ const Layout: React.FC<LayoutProps> = ({
   }
 
   const [workspaces, setWorkspaces] = useState<workspace[]>([]);
+  const [allWorkspaces, setAllWorkspaces] = useState<workspace[]>([]);
   const [trashWorkspace, setTrashWorkspace] = useState<workspace[]>([]);
 
   const [workspaceFolders, setWorkspacesFolders] = useState(null);
@@ -261,7 +262,7 @@ const Layout: React.FC<LayoutProps> = ({
       const response = workspacesData.workspaces;
 
       const trash = workspacesData.trash;
-      // setWorkspaces(response);
+      setAllWorkspaces(response);
       setTrashWorkspace(trash);
     }
   }, [workspacesData]);
@@ -435,7 +436,7 @@ const Layout: React.FC<LayoutProps> = ({
   const handleDragStart = (event) => {
     const { active } = event;
     const workspaceId = active.id;
-    const workspace = workspaces.find((ws) => ws.id === workspaceId);
+    const workspace = allWorkspaces.find((ws) => ws.id === workspaceId);
     setDraggedItem(workspace);
   };
 
@@ -455,27 +456,27 @@ const Layout: React.FC<LayoutProps> = ({
         );
 
         // Remove the workspace from the top-level array by filtering it out
-        const updatedWorkspaces = workspaces.filter(
-          (workspace) => workspace.id !== workspaceId
-        );
-        setWorkspaces(updatedWorkspaces);
+        // const updatedWorkspaces = workspaces.filter(
+        //   (workspace) => workspace.id !== workspaceId
+        // );
+        // setWorkspaces(updatedWorkspaces);
 
-        // Add the dragged workspace to the target folder
-        const updatedWorkspacesFolders = workspaceFolders.map((folder) => {
-          if (folder.id === folderId) {
-            return {
-              ...folder,
-              workspaces: [...folder.workspaces, draggedWorkspace].sort(
-                (a, b) => {
-                  return a.created_at - b.created_at;
-                }
-              ),
-            };
-          }
-          return folder;
-        });
+        // // Add the dragged workspace to the target folder
+        // const updatedWorkspacesFolders = workspaceFolders.map((folder) => {
+        //   if (folder.id === folderId) {
+        //     return {
+        //       ...folder,
+        //       workspaces: [...folder.workspaces, draggedWorkspace].sort(
+        //         (a, b) => {
+        //           return a.created_at - b.created_at;
+        //         }
+        //       ),
+        //     };
+        //   }
+        //   return folder;
+        // });
 
-        setWorkspacesFolders(updatedWorkspacesFolders);
+        // setWorkspacesFolders(updatedWorkspacesFolders);
         setIsExpanded(folderId);
 
         try {
@@ -670,7 +671,7 @@ const Layout: React.FC<LayoutProps> = ({
                   </SidebarItem>
                   <DragOverlay>
                     {draggedItem && (
-                      <div className="opacity-80">
+                      <div className="absolute w-[240px] opacity-80">
                         <SidebarWorkspaceItem
                           workspace={draggedItem}
                           handleWorkspaceRoute={() => {}}
@@ -985,6 +986,7 @@ const SidebarWorkspaceItem = ({
       ? updatedWorkspace.title
       : workspaceName;
 
+  const applyListeners = !workspace.folder_id && listeners;
   return (
     <>
       {isPopoverVisible && (

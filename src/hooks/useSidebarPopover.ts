@@ -28,6 +28,7 @@ export const usePopover = () => {
   return {
     position,
     isPopoverVisible,
+    setPopoverVisible,
     handleRightClick,
     onOpenChange,
     popOverTriggerRef,

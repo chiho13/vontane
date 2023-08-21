@@ -218,6 +218,7 @@ const Layout: React.FC<LayoutProps> = ({
   const { updatedWorkspace } = useWorkspaceTitleUpdate();
   const [isLocked, setIsLocked] = useLocalStorage("isLocked", false);
   const [isOpen, setIsOpen] = useLocalStorage("isOpen", false);
+  const [isExpanded, setIsExpanded] = useState("");
 
   const desktopbreakpoint = window.screen.width > breakpoints.lg;
 
@@ -282,13 +283,19 @@ const Layout: React.FC<LayoutProps> = ({
     refetchWorkspaceData();
   };
 
-  const createWorkspace = async () => {
+  const createWorkspace = async (folderId) => {
+    const _folderId = folderId;
     try {
-      const response = await createWorkspaceMutation.mutateAsync();
+      const response = await createWorkspaceMutation.mutateAsync({
+        folder_id: _folderId,
+      });
       if (response && response.workspace) {
         refetchFolderWorkspaceData();
         refetchWorkspaceData();
         handleWorkspaceRoute(response.workspace.id);
+        if (_folderId) {
+          setIsExpanded(_folderId);
+        }
       }
     } catch (error) {
       console.error("Error creating workspace:", error);
@@ -357,6 +364,7 @@ const Layout: React.FC<LayoutProps> = ({
       });
       if (response) {
         refetchFolderWorkspaceData();
+        refetchWorkspaces();
         refetchWorkspaceData();
         console.log(response);
       }
@@ -367,12 +375,13 @@ const Layout: React.FC<LayoutProps> = ({
 
   const restoreWorkspaceMutation = api.workspace.restoreWorkspace.useMutation();
 
-  const restoreWorkspace = async () => {
+  const restoreWorkspace = async (workspaceId) => {
     try {
       const response = await restoreWorkspaceMutation.mutateAsync({
-        id: currentWorkspaceId as string,
+        id: workspaceId,
       });
       if (response) {
+        refetchFolderWorkspaceData();
         refetchWorkspaces();
         refetchWorkspaceData();
         console.log(response);
@@ -456,12 +465,18 @@ const Layout: React.FC<LayoutProps> = ({
           if (folder.id === folderId) {
             return {
               ...folder,
-              workspaces: [...folder.workspaces, draggedWorkspace],
+              workspaces: [...folder.workspaces, draggedWorkspace].sort(
+                (a, b) => {
+                  return a.created_at - b.created_at;
+                }
+              ),
             };
           }
           return folder;
         });
+
         setWorkspacesFolders(updatedWorkspacesFolders);
+        setIsExpanded(folderId);
 
         try {
           const response = await moveWorkspaceMutation.mutateAsync({
@@ -620,6 +635,9 @@ const Layout: React.FC<LayoutProps> = ({
                             refetchFolderWorkspaceData={
                               refetchFolderWorkspaceData
                             }
+                            createWorkspace={createWorkspace}
+                            isExpanded={isExpanded}
+                            setIsExpanded={setIsExpanded}
                           />
                         );
                       })}
@@ -636,7 +654,10 @@ const Layout: React.FC<LayoutProps> = ({
                       />
                     ))}
 
-                  <SidebarItem onClick={createWorkspace} className="w-[100px]">
+                  <SidebarItem
+                    onClick={() => createWorkspace("")}
+                    className="w-[100px]"
+                  >
                     <button className="flex h-[36px] w-full items-center  px-2 px-[24px] py-[8px] transition duration-200 hover:bg-gray-200 dark:hover:bg-accent">
                       <Plus
                         className="text-darkergray  dark:text-foreground"
@@ -694,7 +715,7 @@ const Layout: React.FC<LayoutProps> = ({
                       </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
-                      sideOffset={5}
+                      sideOffset={2}
                       side="right"
                       className={`z-1000 relative  -left-[10px] ${
                         isLocked && isOpen ? "bottom-[25px]" : "bottom-[65px]"
@@ -718,8 +739,16 @@ const Layout: React.FC<LayoutProps> = ({
                           return (
                             <DropdownMenuItem
                               key={workspace.id}
-                              className="group relative flex cursor-pointer rounded-md"
-                              onClick={() => handleWorkspaceRoute(workspace.id)}
+                              className={`group relative flex cursor-pointer rounded-md   ${
+                                currentWorkspaceId === workspace.id
+                                  ? "bg-gray-200 font-bold dark:bg-accent"
+                                  : "transparent"
+                              }`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                handleWorkspaceRoute(workspace.id);
+                              }}
                             >
                               <div className="flex w-full items-center justify-between">
                                 <span
@@ -733,8 +762,12 @@ const Layout: React.FC<LayoutProps> = ({
                                       <a
                                         href="#"
                                         role="button"
-                                        className="flex h-[22px] w-[22px] items-center justify-center rounded-md p-0 opacity-0 outline-none transition  duration-300 hover:bg-gray-100 group-hover:opacity-100 dark:hover:bg-gray-600"
-                                        onClick={restoreWorkspace}
+                                        className={cn(
+                                          `flex h-[22px] w-[22px] items-center justify-center rounded-md p-0 opacity-0 outline-none transition  duration-300 hover:bg-gray-100 group-hover:opacity-100 dark:hover:bg-gray-600 `
+                                        )}
+                                        onClick={() => {
+                                          restoreWorkspace(workspace.id);
+                                        }}
                                       >
                                         <Undo2
                                           className="text-darkergray  dark:stroke-foreground"
@@ -808,24 +841,28 @@ interface WorkspacePopoverProps {
   position: { top: number; left: number };
   onOpenChange: (value: boolean) => void;
   isPopoverVisible: boolean;
+  setPopoverVisible: (value: boolean) => void;
   popOverTriggerRef: any;
   workspace: any; // Define the type properly
   folder?: boolean;
   softDeleteWorkspace: (id: string) => void;
   moveBackToTopLevel: (id: string) => void;
   renameFolder?: (id: string) => void; // Optional prop
+  createWorkspace?: () => void;
 }
 
 const WorkspacePopover: React.FC<WorkspacePopoverProps> = ({
   position,
   onOpenChange,
   isPopoverVisible,
+  setPopoverVisible,
   popOverTriggerRef,
   workspace,
   folder = false,
   softDeleteWorkspace,
   moveBackToTopLevel,
   renameFolder,
+  createWorkspace,
 }) => {
   return (
     <>
@@ -864,7 +901,10 @@ const WorkspacePopover: React.FC<WorkspacePopoverProps> = ({
           {workspace.folder_id && (
             <button
               className="flex w-full cursor-pointer items-center gap-4 rounded-md px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:bg-accent hover:text-gray-900 focus:outline-none dark:text-foreground dark:hover:bg-neutral-800"
-              onClick={() => moveBackToTopLevel(workspace.id)}
+              onClick={() => {
+                moveBackToTopLevel(workspace.id);
+                setPopoverVisible(false);
+              }}
             >
               <ArrowRight className="w-4 text-gray-700 dark:text-gray-200" />{" "}
               Move to Top Level
@@ -874,21 +914,38 @@ const WorkspacePopover: React.FC<WorkspacePopoverProps> = ({
           {!folder ? (
             <button
               className="flex w-full cursor-pointer items-center gap-4 rounded-md px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:bg-accent hover:text-gray-900 focus:outline-none dark:text-foreground dark:hover:bg-neutral-800"
-              onClick={() => softDeleteWorkspace(workspace.id)}
+              onClick={() => {
+                softDeleteWorkspace(workspace.id);
+                setPopoverVisible(false);
+              }}
             >
               <Trash className="w-4 text-gray-700 dark:text-gray-200" /> Move to
               Bin
             </button>
           ) : (
-            <button
-              className="flex w-full cursor-pointer items-center gap-4 rounded-md px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:bg-accent hover:text-gray-900 focus:outline-none dark:text-foreground dark:hover:bg-neutral-800"
-              onClick={(e) => {
-                e.stopPropagation();
-                renameFolder(workspace.id);
-              }}
-            >
-              Rename Folder
-            </button>
+            <div>
+              <button
+                className="flex w-full cursor-pointer items-center gap-4 rounded-md px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:bg-accent hover:text-gray-900 focus:outline-none dark:text-foreground dark:hover:bg-neutral-800"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  createWorkspace();
+                  setPopoverVisible(false);
+                }}
+              >
+                New Document
+              </button>
+              <button
+                className="flex w-full cursor-pointer items-center gap-4 rounded-md px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:bg-accent hover:text-gray-900 focus:outline-none dark:text-foreground dark:hover:bg-neutral-800"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  renameFolder(workspace.id);
+                }}
+              >
+                Rename Folder
+              </button>
+            </div>
           )}
         </PopoverContent>
       </Popover>
@@ -904,7 +961,7 @@ const SidebarWorkspaceItem = ({
   classNames = "",
 }) => {
   const router = useRouter();
-
+  const { updatedWorkspace } = useWorkspaceTitleUpdate();
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: workspace.id,
   });
@@ -914,6 +971,7 @@ const SidebarWorkspaceItem = ({
   const {
     position,
     isPopoverVisible,
+    setPopoverVisible,
     handleRightClick,
     onOpenChange,
     popOverTriggerRef,
@@ -921,8 +979,11 @@ const SidebarWorkspaceItem = ({
 
   const parsedSlateValue = JSON.parse(workspace.slate_value as any);
   const workspaceName = parsedSlateValue[0].children[0].text;
+
   const displayName =
-    workspaceName.trimStart() !== "" ? workspaceName : "Untitled";
+    updatedWorkspace && updatedWorkspace.id === workspace.id
+      ? updatedWorkspace.title
+      : workspaceName;
 
   return (
     <>
@@ -964,12 +1025,13 @@ const SidebarWorkspaceItem = ({
           <span
             className={`truncate text-sm  text-darkergray dark:text-foreground`}
           >
-            {displayName}
+            {displayName || "Untitled"}
           </span>
 
           <WorkspacePopover
             position={position}
             onOpenChange={onOpenChange}
+            setPopoverVisible={setPopoverVisible}
             isPopoverVisible={isPopoverVisible}
             popOverTriggerRef={popOverTriggerRef}
             workspace={workspace}
@@ -988,18 +1050,25 @@ const FolderWorkspaceItem = ({
   softDeleteWorkspace,
   moveBackToTopLevel,
   refetchFolderWorkspaceData,
+  createWorkspace,
+  isExpanded,
+  setIsExpanded,
 }) => {
+  const itemsInFolder = useRef(null);
+
   const [errorMessage, setErrorMessage] = useState(null);
 
-  const [isExpanded, setIsExpanded] = useState(false);
   const [isMovingOver, setIsOver] = useState(false);
 
   const [editFolderName, setEditFolderName] = useState(false);
 
   const [changeFolderName, setChangeFolderName] = useState(folder.name);
+
+  const [localIsExpanded, setLocalExpanded] = useState(folder.id);
   const {
     position,
     isPopoverVisible,
+    setPopoverVisible,
     handleRightClick,
     onOpenChange,
     popOverTriggerRef,
@@ -1045,6 +1114,10 @@ const FolderWorkspaceItem = ({
     }
   };
 
+  const createNewDocInFolder = () => {
+    createWorkspace(folder.id);
+  };
+
   const debouncedRenameFolder = useCallback(
     debounce(renameFolder, 300), // 300ms delay
     [] // Dependencies
@@ -1058,7 +1131,9 @@ const FolderWorkspaceItem = ({
 
   return (
     <div
-      className={`${isExpanded ? "bg-neutral-100 dark:bg-neutral-800 " : ""}`}
+      className={`${
+        isExpanded === folder.id ? "bg-neutral-100 dark:bg-neutral-800 " : ""
+      }`}
       style={{
         zIndex: 1000,
       }}
@@ -1073,10 +1148,14 @@ const FolderWorkspaceItem = ({
             isMovingOver ? "bg-brand/20" : ""
           }`}
           onClick={() => {
-            setIsExpanded(!isExpanded);
+            if (isExpanded !== folder.id) {
+              setIsExpanded(folder.id);
+            } else {
+              setIsExpanded("");
+            }
           }}
         >
-          {isExpanded ? (
+          {isExpanded === folder.id ? (
             <ChevronDownLucide className="absolute left-1 w-4 text-darkergray  dark:text-foreground" />
           ) : (
             <ChevronRight className="absolute left-1 w-4 text-darkergray  dark:text-foreground" />
@@ -1113,10 +1192,10 @@ const FolderWorkspaceItem = ({
               changeFolderName
             )}
           </span>
-
           <WorkspacePopover
             position={position}
             onOpenChange={onOpenChange}
+            setPopoverVisible={setPopoverVisible}
             isPopoverVisible={isPopoverVisible}
             popOverTriggerRef={popOverTriggerRef}
             workspace={folder}
@@ -1124,12 +1203,13 @@ const FolderWorkspaceItem = ({
             softDeleteWorkspace={softDeleteWorkspace}
             moveBackToTopLevel={moveBackToTopLevel}
             renameFolder={renameFolderClick}
+            createWorkspace={createNewDocInFolder}
           />
         </button>
       </li>
 
       <AnimatePresence>
-        {isExpanded && (
+        {isExpanded === folder.id && (
           <motion.div
             initial="closed"
             animate="open"
@@ -1142,7 +1222,7 @@ const FolderWorkspaceItem = ({
                 empty
               </div>
             ) : (
-              <ul>
+              <ul className="outline-none" ref={itemsInFolder}>
                 {folder.workspaces.map((workspace) => (
                   <SidebarWorkspaceItem
                     key={workspace.id}

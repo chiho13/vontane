@@ -178,38 +178,43 @@ export const workspaceRouter = createTRPCRouter({
         };
       });
     }),
-  createWorkspace: protectedProcedure.mutation(async ({ ctx }) => {
-    const defaultSlateValue = JSON.stringify([
-      {
-        id: nanoid(),
-        type: "title",
-        children: [
-          {
-            text: "",
-          },
-        ],
-      },
-      {
-        id: nanoid(),
-        type: "paragraph",
-        align: "start",
-        children: [
-          {
-            text: "",
-          },
-        ],
-      },
-    ]);
+  createWorkspace: protectedProcedure
+    .input(z.object({ folder_id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const defaultSlateValue = JSON.stringify([
+        {
+          id: nanoid(),
+          type: "title",
+          children: [
+            {
+              text: "",
+            },
+          ],
+        },
+        {
+          id: nanoid(),
+          type: "paragraph",
+          align: "start",
+          children: [
+            {
+              text: "",
+            },
+          ],
+        },
+      ]);
 
-    const workspace = await ctx.prisma.workspace.create({
-      data: {
-        author_id: ctx.user.id,
-        slate_value: defaultSlateValue,
-      },
-    });
+      const newFolderId = input.folder_id === "" ? null : input.folder_id;
 
-    return { workspace };
-  }),
+      const workspace = await ctx.prisma.workspace.create({
+        data: {
+          author_id: ctx.user.id,
+          slate_value: defaultSlateValue,
+          folder_id: newFolderId,
+        },
+      });
+
+      return { workspace };
+    }),
   moveWorkspace: protectedProcedure
     .input(z.object({ folder_id: z.string(), workspace_id: z.string() }))
     .mutation(async ({ input, ctx }) => {

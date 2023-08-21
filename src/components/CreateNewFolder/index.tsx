@@ -27,7 +27,7 @@ import { cn } from "@/utils/cn";
 import { api } from "@/utils/api";
 import { Button } from "../ui/button";
 
-export const CreateNewFolder = () => {
+export const CreateNewFolder = ({ refetchFolderWorkspaceData }) => {
   const [openCreateFolder, setOpenCreateFolder] = useState(false);
 
   const onOpenChange = (value) => {
@@ -52,6 +52,7 @@ export const CreateNewFolder = () => {
       });
       if (response) {
         console.log("create folder success");
+        refetchFolderWorkspaceData();
         setOpenCreateFolder(false);
       }
     } catch (error) {

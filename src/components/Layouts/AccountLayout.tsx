@@ -607,21 +607,23 @@ const Layout: React.FC<LayoutProps> = ({
                     height: `calc(100vh - ${!isLocked ? "370px" : "200px"})`,
                   }}
                 >
-                  {workspaceFolders &&
-                    workspaceFolders.map((folder) => {
-                      return (
-                        <FolderWorkspaceItem
-                          key={folder.id}
-                          folder={folder}
-                          handleWorkspaceRoute={handleWorkspaceRoute}
-                          softDeleteWorkspace={softDeleteWorkspace}
-                          moveBackToTopLevel={moveBackToTopLevel}
-                          refetchFolderWorkspaceData={
-                            refetchFolderWorkspaceData
-                          }
-                        />
-                      );
-                    })}
+                  <div className="mb-4">
+                    {workspaceFolders &&
+                      workspaceFolders.map((folder) => {
+                        return (
+                          <FolderWorkspaceItem
+                            key={folder.id}
+                            folder={folder}
+                            handleWorkspaceRoute={handleWorkspaceRoute}
+                            softDeleteWorkspace={softDeleteWorkspace}
+                            moveBackToTopLevel={moveBackToTopLevel}
+                            refetchFolderWorkspaceData={
+                              refetchFolderWorkspaceData
+                            }
+                          />
+                        );
+                      })}
+                  </div>
 
                   {workspaces &&
                     workspaces.map((workspace) => (
@@ -665,7 +667,9 @@ const Layout: React.FC<LayoutProps> = ({
                   // onClick={createWorkspace}
                   className="truncate"
                 >
-                  <CreateNewFolder />
+                  <CreateNewFolder
+                    refetchFolderWorkspaceData={refetchFolderWorkspaceData}
+                  />
                   {/* <button className=" flex h-[36px] items-center rounded-md px-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-accent">
                     <FolderPlus
                       className="text-darkergray  dark:text-foreground"
@@ -1054,9 +1058,7 @@ const FolderWorkspaceItem = ({
 
   return (
     <div
-      className={`${
-        isExpanded ? "bg-neutral-100 dark:bg-neutral-800 " : ""
-      } mb-4`}
+      className={`${isExpanded ? "bg-neutral-100 dark:bg-neutral-800 " : ""}`}
       style={{
         zIndex: 1000,
       }}
@@ -1136,7 +1138,7 @@ const FolderWorkspaceItem = ({
             transition={{ duration: 0.2, ease: "easeInOut" }}
           >
             {folder.workspaces.length === 0 ? (
-              <div className="text-sm text-gray-500 dark:text-gray-300">
+              <div className="px-[24px] py-[8px] text-sm text-gray-500 dark:text-gray-300">
                 empty
               </div>
             ) : (

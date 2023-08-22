@@ -260,7 +260,7 @@ export const exportSlateNodeToHtml = (node) => {
         return `<span class="katex inline text-sm ">${renderedInlineEquation}</span>`;
 
       case "image":
-        return `<div class="flex mt-3 mb-3  w-full justify-${node.align}"><img src="${node.url}" width="${node.width}" /></div>`;
+        return `<div class="flex mt-3 mb-3  w-full justify-${node.align}"><img src="${node.url}" width="${node.width}" class="rounded-md " /></div>`;
       // case "map":
       //   return `<iframe width="${node.width}" height="${node.height}" src="https://api.maptiler.com/maps/streets/?key=${MAPTILER_ACCESS_TOKEN}#${node.zoom}/${node.latLng[0]}/${node.latLng[1]}" frameborder="0" allowfullscreen></iframe>`;
 
@@ -401,11 +401,11 @@ export const exportToHTML = (editor, view = "one-page") => {
         // Add alpha numbering to the option
         const alpha = indexToAlpha(optionCounterCounts[optionCounter] || 0);
         let correctAnswerClass = node.correctAnswer
-          ? `<span class="correct-answer hidden absolute right-[40px] text-green-500">Correct</span>`
-          : `<span class="incorrect-answer hidden absolute right-[40px] text-red-500">Incorrect</span>`;
+          ? `<span class="correct-answer hidden absolute right-[44px] text-green-500">Correct</span>`
+          : `<span class="incorrect-answer hidden absolute right-[44px] text-red-500">Incorrect</span>`;
 
-        quizOptions += `<li class="pl-2 list-none relative">
-    <label class="flex mt-2 h-[40px] w-full max-w-[400px] cursor-pointer items-center gap-3 rounded-md border border-gray-400 p-2 px-1 hover:border-gray-500 dark:border-gray-700">
+        quizOptions += `<li class="pl-2 list-none relative max-w-[420px]">
+    <label class="flex mt-2 h-[40px] w-full  cursor-pointer items-center gap-3 rounded-md border border-gray-400 p-2 px-1 hover:border-gray-500 dark:border-gray-700">
       <div class="flex h-[28px] w-[28px] ml-px items-center justify-center rounded-md">${alpha}.</div>
       <div class="w-full flex justify-between">
         ${html}

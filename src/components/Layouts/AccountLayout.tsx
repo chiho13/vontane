@@ -169,6 +169,10 @@ const SidebarItem = styled.li<{ activeWorkspace?: boolean }>`
   width: 100%;
   box-sizing: border-box;
   margin-bottom: 4px;
+
+  button {
+    overflow: hidden;
+  }
 `;
 
 const fadeIn = keyframes`

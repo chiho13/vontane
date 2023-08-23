@@ -74,6 +74,10 @@ const ElevenTTSWrapperBase = (props: {
   const { attributes, children, element, isFirstInGroup } = props;
   const { editor, activePath } = useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);
+  const lastChildIndex = element.children.length - 1;
+  const pathToLastChild = [...path, lastChildIndex];
+
+  const endOfTextNode = Editor.end(editor, pathToLastChild);
   const [selectedVoiceId, setSelectedVoiceId] = useState<string>(
     element.voice_id
   );

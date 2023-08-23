@@ -258,7 +258,7 @@ export const TextSpeech = ({
             </TooltipProvider>
           </div>
         ) : (
-          <div className="flex items-center  gap-4">
+          <div className="flex h-[34px]  items-center gap-4">
             <div className=" cursor-pointer text-2xl font-bold text-muted-foreground">
               {" "}
               Text to MP3{" "}

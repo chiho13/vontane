@@ -820,37 +820,44 @@ const Layout: React.FC<LayoutProps> = ({
           onMouseEnter={handleMouseEnter}
         ></div>
         <main
-          className=" flex min-h-screen overflow-auto bg-[#f7f7f7] pt-4 dark:bg-background"
+          className="bg-[#f7f7f7] dark:bg-background"
           style={{
-            marginLeft: isLocked && desktopbreakpoint ? "240px" : "0",
-            width:
-              isLocked && desktopbreakpoint ? "calc(100vw - 240px)" : "100vw",
-            transition:
-              "margin-left 300ms ease-in-out, width 300ms ease-in-out",
+            width: "100vw",
           }}
-          data-locked={isLocked}
-          onMouseEnter={handleMouseLeave}
         >
-          {isTrashed && (
-            <div className="fixed left-0 right-0 top-0 flex justify-center ">
-              <div className="item-center flex w-[300px] justify-center gap-4 bg-[#EB5756] p-2 text-sm  text-white">
-                <p className="flex items-center">
-                  This workspace is in the bin
-                </p>
-                <Button
-                  size="xs"
-                  className="border border-white  bg-transparent p-1 px-2 text-sm text-white hover:bg-white/10"
-                  onClick={restoreWorkspace}
-                >
-                  Restore
-                </Button>
+          <div
+            className=" flex min-h-screen overflow-auto bg-[#f7f7f7] pt-4 dark:bg-background"
+            style={{
+              marginLeft: isLocked && desktopbreakpoint ? "240px" : "0",
+              width:
+                isLocked && desktopbreakpoint ? "calc(100vw - 240px)" : "100vw",
+              transition:
+                "margin-left 300ms ease-in-out, width 300ms ease-in-out",
+            }}
+            data-locked={isLocked}
+            onMouseEnter={handleMouseLeave}
+          >
+            {isTrashed && (
+              <div className="fixed left-0 right-0 top-0 flex justify-center ">
+                <div className="item-center flex w-[300px] justify-center gap-4 bg-[#EB5756] p-2 text-sm  text-white">
+                  <p className="flex items-center">
+                    This workspace is in the bin
+                  </p>
+                  <Button
+                    size="xs"
+                    className="border border-white  bg-transparent p-1 px-2 text-sm text-white hover:bg-white/10"
+                    onClick={restoreWorkspace}
+                  >
+                    Restore
+                  </Button>
+                </div>
               </div>
-            </div>
-          )}
-          {children}
+            )}
+            {children}
 
-          <div className="fixed bottom-4 right-4">
-            <ModeToggle side="top" />
+            <div className="fixed bottom-4 right-4">
+              <ModeToggle side="top" />
+            </div>
           </div>
         </main>
       </LayoutContext.Provider>

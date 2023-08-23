@@ -88,7 +88,7 @@ export const TextSpeech = ({
   const selected = useSelected();
   const { editor } = useContext(EditorContext);
   const path = ReactEditor.findPath(editor, element);
-
+  const pathToChild = [...path, 0];
   const { credits, setCredits }: any = useContext(UserContext);
 
   const createTTSAudio = async () => {
@@ -239,23 +239,49 @@ export const TextSpeech = ({
   return (
     <div className="flex w-[95%] justify-between gap-2">
       <div className="relative flex items-center lg:max-w-[980px]">
-        <div className="mr-2">
-          <TooltipProvider delayDuration={300}>
-            <Tooltip>
-              <TooltipTrigger>
-                <VoiceDropdown
-                  setSelectedVoiceId={setSelectedVoiceId}
-                  selectedVoiceId={selectedVoiceId}
-                  element={element}
-                />
-              </TooltipTrigger>
+        {selected ? (
+          <div className="mr-2">
+            <TooltipProvider delayDuration={300}>
+              <Tooltip>
+                <TooltipTrigger>
+                  <VoiceDropdown
+                    setSelectedVoiceId={setSelectedVoiceId}
+                    selectedVoiceId={selectedVoiceId}
+                    element={element}
+                  />
+                </TooltipTrigger>
 
-              <TooltipContent side="top" sideOffset={10}>
-                <p className="text-[12px]">Choose Voice</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
+                <TooltipContent side="top" sideOffset={10}>
+                  <p className="text-[12px]">Choose Voice</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+        ) : (
+          <div className="flex items-center  gap-4">
+            <div className=" cursor-pointer text-2xl font-bold text-muted-foreground">
+              {" "}
+              Text to MP3{" "}
+            </div>
+            <Button
+              variant="outline"
+              size="xs"
+              className="border text-muted-foreground"
+              onClick={() => {
+                const pathToElement = ReactEditor.findPath(editor, element);
+                const lastChildIndex = element.children.length - 1;
+                const pathToLastChild = [...pathToElement, lastChildIndex];
+
+                // Move the cursor to the last text node within the paragraph
+                const lastTextNode = Node.get(editor, pathToLastChild);
+                const endOfTextNode = Editor.end(editor, pathToLastChild);
+                Transforms.select(editor, endOfTextNode);
+              }}
+            >
+              Edit
+            </Button>
+          </div>
+        )}
 
         {selected && textSpeech.length <= 5000 && (
           <TooltipProvider delayDuration={300}>

@@ -247,7 +247,8 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
     });
 
     useEffect(() => {
-      if (isOpen && searchInputRef.current) {
+      ReactEditor.blur(editor);
+      if (searchInputRef.current) {
         searchInputRef.current.focus();
       }
     }, [isOpen, searchBarPosition]);

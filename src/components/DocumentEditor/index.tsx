@@ -1990,7 +1990,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           )}
         </button>
       </Portal>
-      <div className="flex  lg:justify-center xl:px-4">
+      <div className="flex  gap-4 lg:justify-center xl:px-4">
         <div className="mx-auto block">
           <div
             className="relative  z-0   rounded-md  border border-gray-300  bg-white px-2 dark:border-accent dark:bg-muted dark:text-foreground lg:min-w-[600px] lg:px-0 xl:min-w-[740px]"
@@ -2077,7 +2077,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                         editor={editor}
                         value={slatevalue}
                         onChange={(newValue) => {
-                          console.log(newValue);
                           if (!isEqual(slatevalue, newValue)) {
                             setSyncStatus("syncing");
                             debouncedSetSlateValue(newValue);
@@ -2328,33 +2327,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             </div>
           </div>
         </div>
-        <>
-          <div
-            style={{
-              opacity: showRightSidebar ? "1" : "0",
-              pointerEvents: showRightSidebar ? "auto" : "none",
-            }}
-            className="flex items-center"
-          >
-            <DraggableCore onDrag={handleDrag} onStop={handleDragStop}>
-              <div
-                className={` pointer-events-none w-[22px] opacity-0 ${
-                  isDraggingRightSideBar && "opacity-100"
-                } flex items-center opacity-0 transition duration-300 xl:pointer-events-auto xl:hover:opacity-100 `}
-                style={{
-                  height: "calc(100vh - 150px)",
-                }}
-              >
-                <div className="mx-auto mt-4 block h-[200px] w-[8px]  cursor-col-resize rounded bg-[#b4b4b4] dark:bg-muted-foreground"></div>
-              </div>
-            </DraggableCore>
-          </div>
-          <RightSideBar
-            setRightSideBarWidth={setRightSideBarWidth}
-            showRightSidebar={showRightSidebar}
-            rightSideBarWidth={rightSideBarWidth}
-          />
-        </>
+
+        <RightSideBar
+          setRightSideBarWidth={setRightSideBarWidth}
+          showRightSidebar={showRightSidebar}
+          rightSideBarWidth={rightSideBarWidth}
+        />
       </div>
     </div>
   );

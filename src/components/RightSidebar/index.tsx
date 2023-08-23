@@ -98,8 +98,6 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     return path.length ? Node.get(editor, path) : null;
   }, [editor, activePath]);
 
-  console.log(rootNode);
-
   const { audioData, elementData, rightBarAudioIsLoading, tab, setTab } =
     useTextSpeech();
   const [viewport, setViewPort] = useState({
@@ -115,10 +113,9 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
       showRightSidebar ? "0px" : `${rightSideBarWidth * 0.8}px`
     })`,
     height: `calc(100vh - ${openChat ? "415" : "157"}px)`,
-    minWidth: "390px",
-    maxWidth: "570px",
-    flexBasis: `${rightSideBarWidth}px`,
+    flexBasis: "400px",
     opacity: showRightSidebar ? "1" : "0",
+    maxWidth: "400px",
     flexGrow: 0,
     flexShrink: 0,
     pointerEvents: showRightSidebar ? "auto" : "none",

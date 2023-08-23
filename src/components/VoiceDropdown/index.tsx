@@ -39,6 +39,7 @@ import { Button } from "../ui/button";
 import { ReactEditor } from "slate-react";
 import { EditorContext } from "@/contexts/EditorContext";
 import { Transforms } from "slate";
+import { useLocalStorage } from "usehooks-ts";
 
 interface FilterOption {
   key: string;
@@ -114,7 +115,7 @@ function VoiceDropdown({
   const [voiceStyles, setVoiceStyles] = useState<Filter[]>([]);
   const [tempos, setTempos] = useState<string[]>([]);
   const [filters, setFilters] = useState<Filter[]>([]);
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   const [isOpenMobileFilterDropdown, setIsOpenMobileFilterDropdown] =
     useState(false);

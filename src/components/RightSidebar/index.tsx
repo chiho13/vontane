@@ -71,6 +71,7 @@ import { UserContext } from "@/contexts/UserContext";
 import { AIAssist } from "../AIAssist";
 import { FontStyle } from "../FontStyle";
 import { Export } from "../Export";
+import { LayoutContext } from "../Layouts/AccountLayout";
 interface RightSideBarProps {
   setRightSideBarWidth: any;
   showRightSidebar: boolean;
@@ -88,6 +89,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
 }) => {
   const theme = useTheme();
   const router = useRouter();
+  const { setIsOpen, setIsLocked } = useContext(LayoutContext);
 
   const { editor, activePath } = useContext(EditorContext);
   const rootNode = useMemo(() => {
@@ -113,9 +115,9 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
       showRightSidebar ? "0px" : `${rightSideBarWidth * 0.8}px`
     })`,
     height: `calc(100vh - ${openChat ? "415" : "157"}px)`,
-    flexBasis: "400px",
+    flexBasis: "390px",
     opacity: showRightSidebar ? "1" : "0",
-    maxWidth: "400px",
+    maxWidth: "390px",
     flexGrow: 0,
     flexShrink: 0,
     pointerEvents: showRightSidebar ? "auto" : "none",
@@ -169,6 +171,13 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     // Save concatenated blob
     saveAs(concatenatedBlob, "concatenatedAudio.mp3");
   };
+
+  useEffect(() => {
+    if (showRightSidebar) {
+      setIsOpen(false);
+      setIsLocked(false);
+    }
+  }, [showRightSidebar]);
 
   return (
     <AudioManagerProvider>

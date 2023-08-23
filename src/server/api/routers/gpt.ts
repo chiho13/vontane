@@ -448,6 +448,7 @@ export const GPTRouter = createTRPCRouter({
               
               Anything to do with tracking tasks and todo use this html format <label data-align="start" class="flex items-center gap-3 mt-2"><input class="w-[18px] h-[18px]" type="checkbox" name="option1" value="Option1" 
               } />text</label>
+              For everything else, use unordered list <ul><li></li></ul>
 
               For long katex code use this html format: <div data-type="equation" data-latex="katex"></div>
 

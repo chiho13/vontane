@@ -222,16 +222,16 @@ export const exportSlateNodeToHtml = (node) => {
       case "link":
         return `<a class="text-brand underline dark:text-blue-400" href="${node.url}" target="_blank">${childrenHtml}</a>`;
       case "heading-one":
-        return `<h1 class="mt-4 mb-6 text-4xl font-bold text-${
+        return `<h1 class="mt-4 mb-10  text-4xl lg:text-5xl font-bold text-${
           alignMap[node.align] || node.align
         }">${childrenHtml}</h1>`;
       case "heading-two":
-        return `<h2 class="mt-4 mb-4 text-3xl  font-bold text-${
+        return `<h2 class="mt-4 mb-4 text-2xl lg:text-3xl  font-bold text-${
           alignMap[node.align] || node.align
         }">${childrenHtml}</h2>`;
 
       case "heading-three":
-        return `<h3 class=" mt-4 mb-4 text-2xl font-bold text-${
+        return `<h3 class=" mt-4 mb-4  text-xl lg:text-2xl font-bold text-${
           alignMap[node.align] || node.align
         }" >${childrenHtml}</h3>`;
 

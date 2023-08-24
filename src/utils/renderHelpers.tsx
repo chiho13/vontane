@@ -108,7 +108,7 @@ const renderElement = (
     case "heading-one":
       return (
         <h1
-          className={`mt-3   text-4xl font-bold lg:text-5xl text-${
+          className={`mb-3 mt-3   text-4xl font-bold lg:text-5xl text-${
             alignMap[node.align] || node.align
           }
             ${fontFam}

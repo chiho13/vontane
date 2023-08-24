@@ -283,7 +283,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                     </div>
                   </div>
                 ) : (
-                  <div className="relative block rounded-lg border border-gray-300 bg-white p-4 dark:border-accent dark:bg-secondary">
+                  <div className="relative m-3 block rounded-lg border border-gray-300 bg-white  p-4 dark:border-accent dark:bg-secondary">
                     No Audio generated
                   </div>
                 ))}

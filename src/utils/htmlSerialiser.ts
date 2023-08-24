@@ -291,7 +291,7 @@ export const exportSlateNodeToHtml = (node) => {
             }">
             <div class="${
               node.children[0].children[0].text.length < 40
-                ? "w-[50px] overflow-hidden"
+                ? "w-[50px] overflow-hidden flex gap-[10px] items-center"
                 : ""
             }">
 

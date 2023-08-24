@@ -38,7 +38,7 @@ export const CollapsibleAudioPlayer = ({ node, children, index, nodes }) => {
       ${
         node.content &&
         node.content.length < 40 &&
-        `flex items-center justify-${node.children[0].align}`
+        `flex items-center gap-[10px] justify-${node.children[0].align}`
       }
       `}
     >

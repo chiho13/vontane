@@ -95,6 +95,11 @@ export const Export = () => {
     margin: 0
   }
 
+  .preview-tts h1 {
+    line-height: 1.5;
+  }
+
+
 </style>
 <body class="pt-[50px] ">
 <div class="relative mx-auto mb-20 max-w-[700px] lg:mt-[70px] ${font}">
@@ -201,6 +206,9 @@ body {
     margin: 0
   }
 
+  .preview-tts h1 {
+    line-height: 1.5;
+  }
 
 </style>
 <body>

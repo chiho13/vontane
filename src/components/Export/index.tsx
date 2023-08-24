@@ -160,7 +160,6 @@ body {
     position: relative;
     overflow-x: hidden;
     height: calc(100vh - 65px);
-    padding-bottom: 50px'
   }
 
   .slide-wrapper {
@@ -216,7 +215,7 @@ body {
       </div>
 <div class="relative ">
 
-  <div class="slide-container overflow-y-auto pt-[30px] pb-[50px] lg:pt-[70px] ">
+  <div class="slide-container px-4 overflow-y-auto pt-[30px] pb-[50px] lg:pt-[70px] ">
   <div class="slide-wrapper relative mx-auto max-w-[700px] ${font}" >
 
     ${editorContent}

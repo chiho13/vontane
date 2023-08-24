@@ -149,13 +149,17 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
 
   const languages = [
     "English",
+    "Japanese",
+    "Korean",
+    "Chinese",
+    "Malay",
     "Spanish",
-    "French",
     "Hindi",
     "Italian",
     "German",
     "Polish",
     "Portuguese",
+    "French",
   ];
 
   const [genOpen, setGenOpen] = useState(false);
@@ -514,7 +518,7 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent
                         align="start"
-                        className="border bg-muted dark:border-gray-700"
+                        className="scrollbar max-h-[200px] overflow-y-auto border bg-muted dark:border-gray-700 dark:bg-muted"
                         side="top"
                       >
                         {languages.map((language, index) => (

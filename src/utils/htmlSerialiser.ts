@@ -280,11 +280,22 @@ export const exportSlateNodeToHtml = (node) => {
           .map(exportSlateNodeToHtml)
           .join("");
         return `
-            <div>
-              <audio>
+            <div class="${
+              node.children[0].children[0].text.length < 40
+                ? `flex justify-${node.children[0].align}`
+                : ""
+            }">
+            <div class="${
+              node.children[0].children[0].text.length < 40
+                ? "w-[50px] overflow-hidden"
+                : ""
+            }">
+
+              <audio controls data-text="${node.children[0].children[0].text}">
                 <source src="${node.audio_url}" type="audio/mpeg">
                 Your browser does not support the audio element.
               </audio>
+            </div>
               ${!node.audioplayer ? ttsChildrenHtml : ""}
             </div>
           `;

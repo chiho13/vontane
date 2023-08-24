@@ -31,6 +31,7 @@ import {
 import { useLocalStorage } from "usehooks-ts";
 import { AudioManagerContext } from "@/contexts/PreviewAudioContext";
 import { A } from "million/dist/types-0b3c4385";
+import { FaPause, FaPlay } from "react-icons/fa";
 
 interface Props {
   audioURL: string | null;
@@ -255,12 +256,12 @@ function AudioPlayer({
     >
       <button
         onClick={isPlaying ? handlePause : handlePlay}
-        className="play_pause_button group relative flex h-[34px] w-[34px] items-center justify-center rounded-full bg-brand transition duration-200 hover:bg-brand/90 dark:bg-foreground dark:hover:bg-brand"
+        className="play_pause_button group relative flex h-[30px] w-[30px] items-center justify-center rounded-md transition duration-200 hover:bg-brand/90 dark:bg-foreground dark:hover:bg-brand"
       >
         {isPlaying ? (
-          <IoIosPause className="pause-icon h-7 w-7 text-white group-hover:text-gray-100 dark:text-brand  group-hover:dark:text-foreground" />
+          <FaPause className="pause-icon h-4 w-4 text-brand group-hover:text-gray-100 dark:text-brand  group-hover:dark:text-foreground" />
         ) : (
-          <IoIosPlay className="play-icon relative left-[1px] h-7 w-7 text-white  group-hover:text-gray-100 dark:text-brand  group-hover:dark:text-foreground" />
+          <FaPlay className="play-icon relative left-[1px] h-4 w-4 text-brand  group-hover:text-gray-100 dark:text-brand  group-hover:dark:text-foreground" />
         )}
       </button>
 

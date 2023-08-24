@@ -35,15 +35,17 @@ export const CollapsibleAudioPlayer = ({ node, children, index, nodes }) => {
        py-3 dark:border-accent 
       ${node.audioplayer ? "rounded-md border" : ""}
 
-      ${node.content && node.content.length < 40 && "flex items-center"}
+      ${
+        node.content &&
+        node.content.length < 40 &&
+        `flex items-center justify-${node.children[0].align}`
+      }
       `}
     >
       {node.audio_url && !containsMCQ && (
         <div
           className={`${
-            node.content && node.content.length < 40
-              ? "absolute left-[30px] "
-              : ""
+            node.content && node.content.length < 40 ? "w-[50px] " : ""
           }`}
         >
           <AudioPlayer
@@ -58,13 +60,7 @@ export const CollapsibleAudioPlayer = ({ node, children, index, nodes }) => {
         </div>
       )}
       {/* {BlockQuote} */}
-      <div
-        className={`${
-          node.content && node.content.length < 40 ? "ml-[70px]" : ""
-        }`}
-      >
-        {!JSON.parse(node.audioplayer) && children}
-      </div>
+      <div>{!JSON.parse(node.audioplayer) && children}</div>
     </div>
   );
 };

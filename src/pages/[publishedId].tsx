@@ -70,7 +70,7 @@ const PublishedPage = ({ workspaceId, workspaceData, font }) => {
   const [localValue, setLocalValue] = useState(null);
 
   const [currentSlideIndex, setCurrentSlideIndex] = useLocalStorage(
-    "publishedSlideIndex",
+    `${workspaceId}-publishedSlideIndex`,
     0
   );
   useEffect(() => {
@@ -134,6 +134,7 @@ const PublishedPage = ({ workspaceId, workspaceData, font }) => {
   };
 
   useEffect(() => {
+    if (view !== "slides") return;
     const handleKeyDown = (e) => {
       if (e.key === "ArrowRight") {
         handleNext();

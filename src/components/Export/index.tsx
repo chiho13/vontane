@@ -164,7 +164,7 @@ body {
   .slide-container {
     position: relative;
     overflow-x: hidden;
-    height: auto;
+    height: calc(100vh - 65px);
   }
 
   .slide-wrapper {
@@ -221,9 +221,9 @@ body {
           ${editor.children[0].children[0].text}
         </span>
       </div>
-<div class="relative flex items-center justify-center" style="height: calc(100vh - 65px);">
+<div class="relative">
 
-  <div class="slide-container px-4 overflow-y-auto pt-[30px] pb-[50px] lg:pt-[70px] ">
+  <div class="slide-container px-4 overflow-y-auto pt-[30px] pb-[10vh] lg:pt-[15vh] ">
   <div class="slide-wrapper relative mx-auto max-w-[700px] ${font}" >
 
     ${editorContent}

@@ -206,7 +206,7 @@ const PublishedPage = ({ workspaceId, workspaceData, font }) => {
           ) : (
             <div
               ref={slidesContainer}
-              className={`relative  overflow-y-auto  overflow-x-hidden rounded-md bg-white p-6 pb-[100px] dark:bg-[#191919] `}
+              className={`relative  flex items-center overflow-y-auto  overflow-x-hidden rounded-md bg-white p-6 pb-[100px] dark:bg-[#191919] `}
               style={{
                 height: "calc(100vh - 65px)",
               }}

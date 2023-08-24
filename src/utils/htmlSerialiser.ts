@@ -286,12 +286,12 @@ export const exportSlateNodeToHtml = (node) => {
         return `
             <div class=" preview-tts mt-4 mb-4 ${
               node.children[0].children[0].text.length < 40
-                ? `flex justify-${node.children[0].align}`
+                ? `flex  gap-[10px] justify-${node.children[0].align}`
                 : ""
             }">
             <div class="${
               node.children[0].children[0].text.length < 40
-                ? "w-[50px] overflow-hidden flex gap-[10px] items-center"
+                ? "w-[50px] overflow-hidden flex  items-center"
                 : ""
             }">
 

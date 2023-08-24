@@ -211,23 +211,27 @@ export const exportSlateNodeToHtml = (node) => {
                 ${childrenHtml}
           </h1>`;
       case "paragraph":
-        return `<p  class="mt-2 text-${
-          alignMap[node.align] || node.align
-        }">${childrenHtml}</p>`;
+        if (childrenHtml === "") {
+          return `<p class="mt-2"> </p>`;
+        } else {
+          return `<p class="mt-2 text-${
+            alignMap[node.align] || node.align
+          }">${childrenHtml}</p>`;
+        }
 
       case "link":
         return `<a class="text-brand underline dark:text-blue-400" href="${node.url}" target="_blank">${childrenHtml}</a>`;
       case "heading-one":
-        return `<h1 class="mt-3 mb-3 text-4xl font-bold text-${
+        return `<h1 class="mt-4 mb-6 text-4xl font-bold text-${
           alignMap[node.align] || node.align
         }">${childrenHtml}</h1>`;
       case "heading-two":
-        return `<h2 class="mt-3 mb-3 text-3xl  font-bold text-${
+        return `<h2 class="mt-4 mb-4 text-3xl  font-bold text-${
           alignMap[node.align] || node.align
         }">${childrenHtml}</h2>`;
 
       case "heading-three":
-        return `<h3 class=" mt-3 mb-3 text-2xl font-bold text-${
+        return `<h3 class=" mt-4 mb-4 text-2xl font-bold text-${
           alignMap[node.align] || node.align
         }" >${childrenHtml}</h3>`;
 
@@ -280,7 +284,7 @@ export const exportSlateNodeToHtml = (node) => {
           .map(exportSlateNodeToHtml)
           .join("");
         return `
-            <div class="${
+            <div class=" preview-tts mt-4 mb-4 ${
               node.children[0].children[0].text.length < 40
                 ? `flex justify-${node.children[0].align}`
                 : ""

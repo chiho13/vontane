@@ -6,7 +6,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import classes from "./styles/SortableElement.module.css";
 import { default as classNames } from "classnames";
-import { GripVertical, Plus } from "lucide-react";
+import { Grip, GripVertical, Plus } from "lucide-react";
 import { useTheme } from "styled-components";
 import { EditorContext } from "@/contexts/EditorContext";
 import React, { useContext, useMemo, useState } from "react";
@@ -42,6 +42,8 @@ export function SortableElement({
   } = useSortable({ id: element.id });
 
   const slideBreakListener = element.type === "slide" && listeners;
+
+  const eleventtsListener = element.type === "tts" && listeners;
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -54,7 +56,8 @@ export function SortableElement({
           (element.type === "heading-one" ||
             element.type === "heading-two" ||
             element.type === "heading-three") &&
-            "items-center"
+            "items-center",
+          element.type !== "tts" && "mb-3 mt-3"
         )}
         ref={setNodeRef}
         {...sortableAttributes}
@@ -66,7 +69,14 @@ export function SortableElement({
         onMouseLeave={() => setIsHovered(false)}
       >
         {readOnly ? null : (
-          <div className="group flex h-[24px] w-[46px] justify-end ">
+          <div
+            className={`group flex h-[24px] w-[46px] justify-end ${
+              element.type === "tts" && " absolute -left-4 top-2"
+            }`}
+            style={{
+              zIndex: 1000,
+            }}
+          >
             <div
               className={classNames(
                 classes.addButton,
@@ -78,13 +88,20 @@ export function SortableElement({
             <button
               ref={setActivatorNodeRef}
               {...listeners}
-              className={`${classes.handle} opactiy-0 flex items-center hover:bg-gray-300 group-hover:opacity-100 dark:hover:bg-accent `}
+              className={` flex cursor-grab items-center rounded-md opacity-0 hover:bg-gray-300 group-hover:opacity-100 dark:hover:bg-accent `}
               contentEditable={false}
             >
-              <GripVertical
-                className="stroke-muted-foreground dark:stroke-muted-foreground"
-                width={22}
-              />
+              {element.type === "tts" ? (
+                <Grip
+                  className={`stroke-muted-foreground  dark:stroke-muted-foreground `}
+                  width={22}
+                />
+              ) : (
+                <GripVertical
+                  className={`stroke-muted-foreground dark:stroke-muted-foreground `}
+                  width={18}
+                />
+              )}
             </button>
           </div>
         )}

@@ -48,6 +48,7 @@ export const Export = () => {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
   <title>${editor.children[0].children[0].text}</title>
 </head>
 
@@ -73,6 +74,27 @@ export const Export = () => {
     }
   }
 
+  .plyr--audio .plyr__control:focus-visible, .plyr--audio .plyr__control:hover, .plyr--audio .plyr__control[aria-expanded=true] {
+    background: #0E78EF;
+  }
+
+  .plyr__control svg {
+    fill: #0E78EF;
+  }
+
+  .plyr__control:hover svg {
+    fill: #f1f1f1;
+  }
+
+  .plyr__control:focus-visible svg {
+    fill: #f1f1f1;
+  }
+
+
+  .preview-tts p, .preview-tts h1, .preview-tts h2, .preview-tts h3 {
+    margin: 0
+  }
+
 </style>
 <body class="pt-[50px] ">
 <div class="relative mx-auto mb-20 max-w-[700px] lg:mt-[70px] ${font}">
@@ -81,7 +103,19 @@ Save as PDF
 </button>
   ${editorContent}
   </div>
-  
+  <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+  <script>
+  document.querySelectorAll('audio').forEach(audio => {
+    const text = audio.getAttribute('data-text');
+    if (text && text.length < 40) {
+      const player = new Plyr(audio, {
+        controls: ['play'], // Only show the play button
+      });
+    } else {
+      const player = new Plyr(audio); // Show full controls
+    }
+  });
+</script>
 </body>
 </html>
 `;
@@ -151,7 +185,23 @@ body {
   .plyr--audio .plyr__control:focus-visible, .plyr--audio .plyr__control:hover, .plyr--audio .plyr__control[aria-expanded=true] {
     background: #0E78EF;
   }
-  
+
+  .plyr__control svg {
+    fill: #0E78EF;
+  }
+
+  .plyr__control:hover svg {
+    fill: #f1f1f1;
+  }
+
+  .plyr__control:focus-visible svg {
+    fill: #f1f1f1;
+  }
+
+  .preview-tts p, .preview-tts h1, .preview-tts h2, .preview-tts h3 {
+    margin: 0
+  }
+
 
 </style>
 <body>

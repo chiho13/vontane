@@ -43,7 +43,7 @@ export function HeadingElement(props) {
   const selected = useSelected();
   const paragraphRef = useRef(null);
   const headingSizeMap = {
-    "heading-one": "text-4xl",
+    "heading-one": "text-5xl",
     "heading-two": "text-3xl",
     "heading-three": "text-xl",
   };

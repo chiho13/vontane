@@ -108,7 +108,7 @@ const renderElement = (
     case "heading-one":
       return (
         <h1
-          className={`mt-3  text-4xl font-bold text-${
+          className={`mt-3   text-4xl font-bold lg:text-5xl text-${
             alignMap[node.align] || node.align
           }
             ${fontFam}
@@ -122,7 +122,7 @@ const renderElement = (
     case "heading-two":
       return (
         <h2
-          className={`mt-3  text-3xl font-bold text-${
+          className={`mt-3  text-2xl font-bold lg:text-3xl text-${
             alignMap[node.align] || node.align
           }
             ${fontFam}
@@ -137,7 +137,7 @@ const renderElement = (
     case "heading-three":
       return (
         <h3
-          className={`mt-3 text-xl  font-bold text-${
+          className={`mt-3 text-xl font-bold  lg:text-2xl text-${
             alignMap[node.align] || node.align
           }
             ${fontFam}

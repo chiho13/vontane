@@ -253,47 +253,50 @@ const renderElement = (
 };
 
 export const parseNodes = (nodes: any[], fontFam, hideTitle = false) => {
-  return nodes.map((node: any, index: any) => {
-    if (Text.isText(node)) {
-      let customNode = node as any; // assert that node could be any type
+  return (
+    nodes &&
+    nodes.map((node: any, index: any) => {
+      if (Text.isText(node)) {
+        let customNode = node as any; // assert that node could be any type
 
-      let component =
-        customNode.text !== "" ? (
-          <span key={index}>{customNode.text}</span>
-        ) : (
-          "\u00A0"
+        let component =
+          customNode.text !== "" ? (
+            <span key={index}>{customNode.text}</span>
+          ) : (
+            "\u00A0"
+          );
+
+        if (customNode.bold) {
+          component = <b key={index}>{component}</b>;
+        }
+
+        if (customNode.italic) {
+          component = <i key={index}>{component}</i>;
+        }
+
+        if (customNode.underline) {
+          component = <u key={index}>{component}</u>;
+        }
+
+        if (customNode.strikethrough) {
+          component = <del key={index}>{component}</del>;
+        }
+
+        return component;
+      } else if ("children" in node) {
+        const children = parseNodes(node.children, fontFam, hideTitle);
+        return renderElement(
+          node,
+          children,
+          node.id ? node.id : index,
+          index,
+          nodes,
+          fontFam,
+          hideTitle
         );
-
-      if (customNode.bold) {
-        component = <b key={index}>{component}</b>;
       }
-
-      if (customNode.italic) {
-        component = <i key={index}>{component}</i>;
-      }
-
-      if (customNode.underline) {
-        component = <u key={index}>{component}</u>;
-      }
-
-      if (customNode.strikethrough) {
-        component = <del key={index}>{component}</del>;
-      }
-
-      return component;
-    } else if ("children" in node) {
-      const children = parseNodes(node.children, fontFam, hideTitle);
-      return renderElement(
-        node,
-        children,
-        node.id ? node.id : index,
-        index,
-        nodes,
-        fontFam,
-        hideTitle
-      );
-    }
-  });
+    })
+  );
 };
 
 export const splitIntoSlides = (nodes: any[]) => {

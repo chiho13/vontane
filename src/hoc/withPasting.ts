@@ -276,6 +276,13 @@ export const withPasting = (editor) => {
       return;
     }
 
+    const text = data.getData("text/plain");
+
+    if (text) {
+      Transforms.insertText(editor, text);
+      return;
+    }
+
     insertData(data);
   };
 

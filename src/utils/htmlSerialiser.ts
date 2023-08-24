@@ -281,7 +281,7 @@ export const exportSlateNodeToHtml = (node) => {
           .join("");
         return `
             <div>
-              <audio controls>
+              <audio>
                 <source src="${node.audio_url}" type="audio/mpeg">
                 Your browser does not support the audio element.
               </audio>

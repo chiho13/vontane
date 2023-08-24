@@ -93,6 +93,7 @@ Save as PDF
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
   <title>${editor.children[0].children[0].text}</title>
 </head>
 
@@ -147,7 +148,9 @@ body {
     transition: opacity 300ms ease-in-out;
   }
   
-  
+  .plyr--audio .plyr__control:focus-visible, .plyr--audio .plyr__control:hover, .plyr--audio .plyr__control[aria-expanded=true] {
+    background: #0E78EF;
+  }
   
 
 </style>
@@ -177,8 +180,21 @@ body {
   </button>
   </div>
   </div>
-
+  <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
   <script>
+  document.querySelectorAll('audio').forEach(audio => {
+    const text = audio.getAttribute('data-text');
+    if (text && text.length < 40) {
+      const player = new Plyr(audio, {
+        controls: ['play'], // Only show the play button
+      });
+    } else {
+      const player = new Plyr(audio); // Show full controls
+    }
+  });
+</script>
+  <script>
+  
   let currentSlideIndex = 0;
   const slides = document.querySelectorAll('.slide');
   const slideWrapper = document.querySelector('.slide-wrapper');

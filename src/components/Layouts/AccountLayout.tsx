@@ -699,7 +699,11 @@ const Layout: React.FC<LayoutProps> = ({
                   </SidebarItem>
                   <DragOverlay>
                     {draggedItem && (
-                      <div className="absolute w-[240px] opacity-80">
+                      <div
+                        className={`absolute  top-0 w-[240px] opacity-80 ${
+                          !isLocked && "-translate-y-[70px] translate-x-[20px]"
+                        }`}
+                      >
                         <SidebarWorkspaceItem
                           workspace={draggedItem}
                           handleWorkspaceRoute={() => {}}

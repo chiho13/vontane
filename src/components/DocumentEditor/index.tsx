@@ -1486,7 +1486,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
           if (
             SlateElement.isElement(activeNode) &&
-            activeNode.type === "slide"
+            (activeNode.type === "slide" || activeNode.type === "tts")
           ) {
             setCreatingNewColumn(false);
             setInsertDirection(null);

@@ -6,7 +6,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import classes from "./styles/SortableElement.module.css";
 import { default as classNames } from "classnames";
-import { Grip, GripVertical, Plus } from "lucide-react";
+import { Grip, GripHorizontal, GripVertical, Plus } from "lucide-react";
 import { useTheme } from "styled-components";
 import { EditorContext } from "@/contexts/EditorContext";
 import React, { useContext, useMemo, useState } from "react";
@@ -88,11 +88,13 @@ export function SortableElement({
             <button
               ref={setActivatorNodeRef}
               {...listeners}
-              className={` flex cursor-grab items-center rounded-md opacity-0 hover:bg-gray-300 group-hover:opacity-100 dark:hover:bg-accent `}
+              className={` ${
+                element.type === "tts" && "h-[18px] p-px"
+              } flex cursor-grab items-center  rounded-md opacity-0 hover:bg-gray-300 group-hover:opacity-100 dark:hover:bg-accent`}
               contentEditable={false}
             >
               {element.type === "tts" ? (
-                <Grip
+                <GripHorizontal
                   className={`stroke-muted-foreground  dark:stroke-muted-foreground `}
                   width={22}
                 />

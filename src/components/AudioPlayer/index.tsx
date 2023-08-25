@@ -256,7 +256,7 @@ function AudioPlayer({
     >
       <button
         onClick={isPlaying ? handlePause : handlePlay}
-        className="play_pause_button group relative flex h-[30px] w-[30px] items-center justify-center rounded-md transition duration-200 hover:bg-brand/90 dark:bg-foreground dark:hover:bg-brand"
+        className="play_pause_button group relative flex h-[30px] w-[30px] items-center justify-center rounded-md transition duration-300 hover:bg-brand/90 dark:bg-foreground dark:hover:bg-brand"
       >
         {isPlaying ? (
           <FaPause className="pause-icon h-4 w-4 text-brand group-hover:text-gray-100 dark:text-brand  group-hover:dark:text-foreground" />

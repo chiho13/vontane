@@ -28,6 +28,8 @@ model workspace {
   name        String?
   slate_value String?
   font_style  String      @default("font-sans")
+  brand_color  String?  
+  accent_color String?
   published   Boolean     @default(false)
   published_at DateTime?
   created_at  DateTime    @default(dbgenerated("now()"))

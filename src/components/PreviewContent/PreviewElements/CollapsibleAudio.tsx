@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import AudioPlayer from "@/components/AudioPlayer";
+import { PlyrAudioPlayer } from "@/components/PlyrAudio";
 import { AudioManagerContext } from "@/contexts/PreviewAudioContext";
 
 export const CollapsibleAudioPlayer = ({ node, children, index, nodes }) => {
@@ -48,13 +49,19 @@ export const CollapsibleAudioPlayer = ({ node, children, index, nodes }) => {
             node.content && node.content.length < 40 ? "w-[50px] " : ""
           }`}
         >
-          <AudioPlayer
+          {/* <AudioPlayer
             id={node.id}
             audioURL={node.audio_url}
             fileName={node.file_name}
             content={node.content}
             showAudio={node.audioplayer}
             classNames="py-0 shadow-none border-0"
+            isPreview={true}
+          /> */}
+
+          <PlyrAudioPlayer
+            audioURL={node.audio_url}
+            content={node.content}
             isPreview={true}
           />
         </div>

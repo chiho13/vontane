@@ -78,6 +78,10 @@ export const Export = () => {
     background: #0E78EF;
   }
 
+  .plyr--audio .plyr__control {
+    border-radius: 8px;
+  }
+
 
   .plyr__control svg {
     fill: #0E78EF;
@@ -203,6 +207,10 @@ body {
   
   .plyr--audio .plyr__control:hover, .plyr--audio .plyr__control[aria-expanded=true] {
     background: #0E78EF;
+  }
+
+  .plyr--audio .plyr__control {
+    border-radius: 8px;
   }
 
   .plyr--full-ui input[type=range] {

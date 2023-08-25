@@ -253,9 +253,9 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                       />
                     </div>
 
-                    {/* <div className=" truncate  rounded-md border border-gray-300 p-2 pl-3 dark:border-accent">
+                    <div className=" truncate  rounded-md border border-gray-300 bg-white p-2 pl-3 dark:border-accent">
                       {audioData.content}{" "}
-                    </div> */}
+                    </div>
                     {/* {audioData.transcript && (
                       <div className=" truncate  rounded-md border border-gray-300 p-2 pl-3 dark:border-accent">
                         {audioData.transcript?.transcript}{" "}

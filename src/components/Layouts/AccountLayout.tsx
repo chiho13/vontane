@@ -232,7 +232,7 @@ const Layout: React.FC<LayoutProps> = ({
   const { updatedWorkspace } = useWorkspaceTitleUpdate();
   const [isLocked, setIsLocked] = useLocalStorage("isLocked", false);
   const [isOpen, setIsOpen] = useLocalStorage("isOpen", false);
-  const [isExpanded, setIsExpanded] = useState("");
+  const [isExpanded, setIsExpanded] = useState({});
 
   const desktopbreakpoint = window.screen.width > breakpoints.lg;
 
@@ -309,7 +309,10 @@ const Layout: React.FC<LayoutProps> = ({
         refetchWorkspaceData();
         handleWorkspaceRoute(response.workspace.id);
         if (_folderId) {
-          setIsExpanded(_folderId);
+          setIsExpanded({
+            ...isExpanded,
+            [_folderId]: true,
+          });
         }
       }
     } catch (error) {
@@ -497,7 +500,10 @@ const Layout: React.FC<LayoutProps> = ({
         // });
 
         // setWorkspacesFolders(updatedWorkspacesFolders);
-        setIsExpanded(folderId);
+        setIsExpanded({
+          ...isExpanded,
+          [folderId]: true,
+        });
 
         try {
           const response = await moveWorkspaceMutation.mutateAsync({
@@ -1163,7 +1169,7 @@ const FolderWorkspaceItem = ({
   return (
     <div
       className={`${
-        isExpanded === folder.id ? "bg-neutral-100 dark:bg-neutral-800 " : ""
+        isExpanded[folder.id] ? "bg-neutral-100 dark:bg-neutral-800 " : ""
       }`}
       style={{
         zIndex: 1000,
@@ -1179,14 +1185,20 @@ const FolderWorkspaceItem = ({
             isMovingOver ? "bg-brand/20" : ""
           }`}
           onClick={() => {
-            if (isExpanded !== folder.id) {
-              setIsExpanded(folder.id);
+            if (!isExpanded[folder.id]) {
+              setIsExpanded({
+                ...isExpanded,
+                [folder.id]: true,
+              });
             } else {
-              setIsExpanded("");
+              setIsExpanded({
+                ...isExpanded,
+                [folder.id]: false,
+              });
             }
           }}
         >
-          {isExpanded === folder.id ? (
+          {isExpanded[folder.id] ? (
             <ChevronDownLucide className="absolute left-1 w-4 text-darkergray  dark:text-foreground" />
           ) : (
             <ChevronRight className="absolute left-1 w-4 text-darkergray  dark:text-foreground" />
@@ -1240,7 +1252,7 @@ const FolderWorkspaceItem = ({
       </li>
 
       <AnimatePresence>
-        {isExpanded === folder.id && (
+        {isExpanded[folder.id] && (
           <motion.div
             initial="closed"
             animate="open"

@@ -90,7 +90,7 @@ export const MapSettings = ({ element, path }) => {
   }
 
   return (
-    <div>
+    <div className="p-4">
       <h2 className="text-bold mb-3 text-sm">Map Properties</h2>
 
       <Form {...locationSearchForm}>

@@ -1,12 +1,3 @@
-import {
-  GetStaticPropsContext,
-  type NextPage,
-  InferGetStaticPropsType,
-  GetStaticPaths,
-} from "next";
-import Head from "next/head";
-import Link from "next/link";
-
 import { api } from "@/utils/api";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
@@ -18,7 +9,6 @@ import { NewColumnProvider } from "@/contexts/NewColumnContext";
 
 import { useRouter } from "next/router";
 import { Mirt } from "@/plugins/audioTrimmer";
-import debounce from "lodash/debounce";
 import { RightSideBarProvider } from "@/contexts/TextSpeechContext";
 import { EditorProvider } from "@/contexts/EditorContext";
 import { EditorSkeleton } from "../Skeletons/editor";
@@ -38,6 +28,8 @@ import { useUserContext } from "@/contexts/UserContext";
 import { supabaseClient } from "@/utils/supabaseClient";
 import { Button } from "../ui/button";
 import Layout from "../Layouts/AccountLayout";
+import { ThemeProvider } from "styled-components";
+import { debounce } from "lodash";
 
 // import "react-mirt/dist/css/react-mirt.css";
 type WorkspaceProps = {
@@ -56,6 +48,11 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = ({
 
   const [open, setOpen] = useState(true);
   //   const [workspaceId, setWorkSpaceId] = useState(router.query.workspaceId);
+
+  const [currentTheme, setCurrentTheme] = useState({
+    brandColor: "#0E78EF", // initial default value
+    accentColor: "#e9e9e9",
+  });
 
   const [syncStatus, setSyncStatus] = useState<"idle" | "syncing" | "synced">(
     "idle"
@@ -97,6 +94,11 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = ({
         setIsTrashed(false);
       }
 
+      setCurrentTheme({
+        brandColor: workspaceData.workspace.brand_color || "#0E78EF",
+        accentColor: workspaceData.workspace.accent_color || "f1f1f1",
+      });
+
       if (workspaceData.workspace.deleted_at) {
         setIsTrashed(true);
       }
@@ -106,6 +108,10 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = ({
       setInitialSlateValue(null);
     };
   }, [workspaceData]);
+
+  const theme = {
+    brandColor: workspaceData?.workspace?.brand_color || "#defaultColor", // default to a safe color if brand_color doesn't exist
+  };
 
   const updateWorkspaceMutation = api.workspace.updateWorkspace.useMutation();
 
@@ -157,54 +163,56 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = ({
   }
 
   return (
-    <Layout
-      profile={profile}
-      currentWorkspaceId={workspaceId}
-      refetchWorkspaceData={refetchWorkspaceData}
-      isTrashed={isTrashed}
-    >
-      <NewColumnProvider>
-        {!fetchWorkspaceIsLoading && initialSlateValue && workspaceId && (
-          <EditorProvider key={workspaceId}>
-            <RightSideBarProvider
-              key={workspaceId}
-              workspaceData={workspaceData}
-              refetchWorkspaceData={refetchWorkspaceData}
-            >
-              <DocumentEditor
+    <ThemeProvider theme={currentTheme}>
+      <Layout
+        profile={profile}
+        currentWorkspaceId={workspaceId}
+        refetchWorkspaceData={refetchWorkspaceData}
+        isTrashed={isTrashed}
+      >
+        <NewColumnProvider>
+          {!fetchWorkspaceIsLoading && initialSlateValue && workspaceId && (
+            <EditorProvider key={workspaceId}>
+              <RightSideBarProvider
                 key={workspaceId}
-                setSyncStatus={setSyncStatus}
-                syncStatus={syncStatus}
-                workspaceId={workspaceId}
-                credits={credits}
-                handleTextChange={debounce(handleTextChange, 400)}
-                initialSlateValue={initialSlateValue}
-                setFetchWorkspaceIsLoading={setFetchWorkspaceIsLoading}
-              />
-              <AlertDialog open={open && paymentSuccess}>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Payment Successful!</AlertDialogTitle>
-                    <AlertDialogDescription className="text-md">
-                      New Credit Balance: {profile?.credits}
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogAction
-                      onClick={() => {
-                        setOpen(false);
-                        router.push(`/docs/${workspaceId}`);
-                      }}
-                    >
-                      OK
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </RightSideBarProvider>
-          </EditorProvider>
-        )}
-      </NewColumnProvider>
-    </Layout>
+                workspaceData={workspaceData}
+                refetchWorkspaceData={refetchWorkspaceData}
+              >
+                <DocumentEditor
+                  key={workspaceId}
+                  setSyncStatus={setSyncStatus}
+                  syncStatus={syncStatus}
+                  workspaceId={workspaceId}
+                  credits={credits}
+                  handleTextChange={debounce(handleTextChange, 400)}
+                  initialSlateValue={initialSlateValue}
+                  setFetchWorkspaceIsLoading={setFetchWorkspaceIsLoading}
+                />
+                <AlertDialog open={open && paymentSuccess}>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Payment Successful!</AlertDialogTitle>
+                      <AlertDialogDescription className="text-md">
+                        New Credit Balance: {profile?.credits}
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogAction
+                        onClick={() => {
+                          setOpen(false);
+                          router.push(`/docs/${workspaceId}`);
+                        }}
+                      >
+                        OK
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </RightSideBarProvider>
+            </EditorProvider>
+          )}
+        </NewColumnProvider>
+      </Layout>
+    </ThemeProvider>
   );
 };

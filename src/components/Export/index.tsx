@@ -74,9 +74,10 @@ export const Export = () => {
     }
   }
 
-  .plyr--audio .plyr__control:focus-visible, .plyr--audio .plyr__control:hover, .plyr--audio .plyr__control[aria-expanded=true] {
+  .plyr--audio .plyr__control:hover, .plyr--audio .plyr__control[aria-expanded=true] {
     background: #0E78EF;
   }
+
 
   .plyr__control svg {
     fill: #0E78EF;
@@ -86,10 +87,17 @@ export const Export = () => {
     fill: #f1f1f1;
   }
 
+  .plyr--audio .plyr__control[aria-expanded=true] svg {
+    fill: #f1f1f1;
+  }
+
   .plyr__control:focus-visible svg {
     fill: #f1f1f1;
   }
 
+  .plyr--full-ui input[type=range] {
+    color: #0E78EF;
+  }
 
   .preview-tts p, .preview-tts h1, .preview-tts h2, .preview-tts h3 {
     margin: 0
@@ -117,7 +125,14 @@ Save as PDF
         controls: ['play'], // Only show the play button
       });
     } else {
-      const player = new Plyr(audio); // Show full controls
+      const player = new Plyr(audio, {
+        controls: [
+          'play',
+          'progress',
+          'current-time',
+          'settings'
+      ]
+      });
     }
   });
 </script>
@@ -186,8 +201,16 @@ body {
     transition: opacity 300ms ease-in-out;
   }
   
-  .plyr--audio .plyr__control:focus-visible, .plyr--audio .plyr__control:hover, .plyr--audio .plyr__control[aria-expanded=true] {
+  .plyr--audio .plyr__control:hover, .plyr--audio .plyr__control[aria-expanded=true] {
     background: #0E78EF;
+  }
+
+  .plyr--full-ui input[type=range] {
+    color: #0E78EF;
+  }
+
+  .plyr--audio .plyr__control[aria-expanded=true] svg {
+    fill: #f1f1f1;
   }
 
   .plyr__control svg {
@@ -246,7 +269,14 @@ body {
         controls: ['play'], // Only show the play button
       });
     } else {
-      const player = new Plyr(audio); // Show full controls
+      const player = new Plyr(audio, {
+        controls: [
+          'play',
+          'progress',
+          'current-time',
+          'settings'
+      ]
+      });
     }
   });
 </script>

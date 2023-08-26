@@ -363,12 +363,9 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
 
     function addSlideBreakHandler() {
       console.log("add slide break");
-      addSlideBreak(editor, JSON.parse(activePath));
+      const newPath = addSlideBreak(editor, JSON.parse(activePath));
       setShowDropdown(false);
-      Transforms.select(
-        editor,
-        Editor.start(editor, Path.next(JSON.parse(activePath)))
-      );
+      Transforms.select(editor, Editor.start(editor, newPath));
 
       ReactEditor.focus(editor);
     }

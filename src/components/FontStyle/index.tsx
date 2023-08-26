@@ -3,6 +3,16 @@ import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { api } from "@/utils/api";
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
+import { HexColorPicker } from "react-colorful";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ChevronDown } from "lucide-react";
+import { debounce } from "lodash";
 
 export const FontStyle = () => {
   const router = useRouter();
@@ -11,11 +21,18 @@ export const FontStyle = () => {
   const { workspaceData, refetchWorkspaceData, fontStyle, setFontStyle } =
     useTextSpeech();
 
+  const [color, setColor] = useState(
+    workspaceData.workspace.brand_color || "#0E78EF"
+  );
+
   useEffect(() => {
     setFontStyle(workspaceData.workspace.font_style);
+    setColor(workspaceData.workspace.brand_color);
   }, [workspaceData, router.isReady]);
 
   const changeFontMutation = api.workspace.changeFont.useMutation();
+  const changeBrandColorMutation =
+    api.workspace.changeBrandColour.useMutation();
 
   const changeFontHandler = async (event) => {
     setFontStyle(event.target.value);
@@ -29,6 +46,21 @@ export const FontStyle = () => {
       }
     } catch (error) {
       console.error("Error changing font:", error);
+    }
+  };
+
+  const changeBrandColourHandler = async (value) => {
+    try {
+      const response = await changeBrandColorMutation.mutateAsync({
+        id: workspaceId,
+        brandColor: value,
+      });
+      if (response) {
+        // setColor(value);
+        refetchWorkspaceData();
+      }
+    } catch (error) {
+      console.error("Error changing brand color:", error);
     }
   };
 
@@ -90,6 +122,34 @@ export const FontStyle = () => {
 
           <div className="text-sm text-muted-foreground">Mono</div>
         </label>
+      </div>
+      <div className="mt-4">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="secondary"
+              size="sm"
+              className="gap-2 border border-gray-400  bg-white px-[6px] text-gray-700 dark:border-gray-700 dark:bg-muted  dark:text-gray-200 dark:hover:bg-accent/30"
+            >
+              <span
+                className="h-[24px] w-[24px] rounded-md"
+                style={{
+                  backgroundColor: color,
+                }}
+              ></span>
+              Brand Colour <ChevronDown className="w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="start"
+            className="z-100 border border-gray-400  bg-background dark:border-gray-700  dark:bg-muted "
+          >
+            <HexColorPicker
+              color={color}
+              onChange={debounce(changeBrandColourHandler, 400)}
+            />
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );

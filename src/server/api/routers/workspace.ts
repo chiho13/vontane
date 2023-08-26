@@ -41,6 +41,31 @@ export const workspaceRouter = createTRPCRouter({
 
       return updatedWorkspace;
     }),
+  changeBrandColour: protectedProcedure
+    .input(z.object({ id: z.string(), brandColor: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const workspace = await ctx.prisma.workspace.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!workspace) {
+        throw new Error("workspace  not found");
+      }
+
+      if (ctx.user.id !== workspace.author_id) {
+        throw new Error("Unauthorized access");
+      }
+
+      // toggle the published status and adjust the published_at date accordingly
+      const updatedWorkspace = await ctx.prisma.workspace.update({
+        where: { id: input.id },
+        data: {
+          brand_color: input.brandColor,
+        },
+      });
+
+      return updatedWorkspace;
+    }),
   publishWorkspace: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ input, ctx }) => {

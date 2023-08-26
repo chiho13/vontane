@@ -474,32 +474,18 @@ const Layout: React.FC<LayoutProps> = ({
         console.log(
           `Workspace ${workspaceId} was dragged over folder ${folderId}`
         );
-        const draggedWorkspace = workspaces.find(
+
+        const draggedWorkspace = allWorkspaces.find(
           (workspace) => workspace.id === workspaceId
         );
 
-        // Remove the workspace from the top-level array by filtering it out
-        // const updatedWorkspaces = workspaces.filter(
-        //   (workspace) => workspace.id !== workspaceId
-        // );
-        // setWorkspaces(updatedWorkspaces);
+        console.log(draggedWorkspace);
 
-        // // Add the dragged workspace to the target folder
-        // const updatedWorkspacesFolders = workspaceFolders.map((folder) => {
-        //   if (folder.id === folderId) {
-        //     return {
-        //       ...folder,
-        //       workspaces: [...folder.workspaces, draggedWorkspace].sort(
-        //         (a, b) => {
-        //           return a.created_at - b.created_at;
-        //         }
-        //       ),
-        //     };
-        //   }
-        //   return folder;
-        // });
+        if (draggedWorkspace && draggedWorkspace.folder_id === folderId) {
+          console.log("cancelled");
+          return;
+        }
 
-        // setWorkspacesFolders(updatedWorkspacesFolders);
         setIsExpanded({
           ...isExpanded,
           [folderId]: true,

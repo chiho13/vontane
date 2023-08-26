@@ -135,7 +135,11 @@ Save as PDF
           'progress',
           'current-time',
           'settings'
-      ]
+      ],
+      speed: { 
+        selected: 1, 
+        options: [0.7, 1, 1.25, 1.5, 2]
+    }
       });
     }
   });
@@ -283,7 +287,11 @@ body {
           'progress',
           'current-time',
           'settings'
-      ]
+      ],
+      speed: { 
+        selected: 1, 
+        options: [0.7, 1, 1.25, 1.5, 2]
+    }
       });
     }
   });

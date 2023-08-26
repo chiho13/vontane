@@ -250,12 +250,12 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                     <div className="my-2 block">
                       <AudioPlayer
                         audioURL={audioData.audio_url}
-                        content={rootNode.content}
+                        content={elementData.content}
                         fileName={audioData.file_name}
                       />
                     </div>
 
-                    <div className=" truncate  rounded-md border border-gray-300 bg-white p-2 pl-3 dark:border-accent">
+                    <div className=" truncate  rounded-md border border-gray-300 bg-white p-2 pl-3 dark:border-accent dark:bg-muted">
                       {audioData.content}{" "}
                     </div>
                     {/* {audioData.transcript && (

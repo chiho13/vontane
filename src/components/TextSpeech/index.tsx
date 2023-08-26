@@ -96,31 +96,30 @@ export const TextSpeech = ({
 
   const createTTSAudio = async () => {
     setAudioIsLoading(true);
-    // if (element.audio_url) {
-    //   try {
-    //     const response = await deleteTTS.mutateAsync({
-    //       fileName: element.file_name,
-    //       workspaceId,
-    //     });
-    //     if (response) {
-    //       console.log(response);
-    //       setAudioData({
-    //         audio_url: "",
-    //         file_name: "",
-    //         content: "",
-    //         transcript: "",
-    //       });
+    if (element.audio_url) {
+      try {
+        const response = await deleteTTS.mutateAsync({
+          fileName: element.file_name,
+          workspaceId,
+        });
+        if (response) {
+          console.log(response);
+          // setAudioData({
+          //   audio_url: "",
+          //   file_name: "",
+          //   content: "",
+          // });
 
-    //       Transforms.setNodes(
-    //         editor,
-    //         { audio_url: "", file_name: "" }, // New properties
-    //         { at: path } // Location
-    //       );
-    //     }
-    //   } catch (error) {
-    //     console.error("Error:", error);
-    //   }
-    // }
+          // Transforms.setNodes(
+          //   editor,
+          //   { audio_url: "", file_name: "" }, // New properties
+          //   { at: path } // Location
+          // );
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
     try {
       const response = await startTTS.mutateAsync({
         voice_id: selectedVoiceId,

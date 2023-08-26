@@ -26,4 +26,6 @@ export const addSlideBreak = (editor, path) => {
     Transforms.insertNodes(editor, slideBreakNode, { at: Path.next(path) });
     newPath = Path.next(path);
   }
+
+  return newPath;
 };

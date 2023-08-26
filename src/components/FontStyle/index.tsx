@@ -27,7 +27,9 @@ export const FontStyle = () => {
 
   useEffect(() => {
     setFontStyle(workspaceData.workspace.font_style);
-    setColor(workspaceData.workspace.brand_color);
+    if (workspaceData.workspace.brand_color) {
+      setColor(workspaceData.workspace.brand_color);
+    }
   }, [workspaceData, router.isReady]);
 
   const changeFontMutation = api.workspace.changeFont.useMutation();

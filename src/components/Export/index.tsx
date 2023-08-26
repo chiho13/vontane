@@ -74,7 +74,7 @@ export const Export = () => {
     }
   }
 
-  .plyr--audio .plyr__control:hover, .plyr--audio .plyr__control[aria-expanded=true] {
+  .plyr--audio .plyr__control:hover,  .plyr__control:focus-visible, .plyr--audio .plyr__control[aria-expanded=true] {
     background: #0E78EF;
   }
 
@@ -209,7 +209,7 @@ body {
     transition: opacity 300ms ease-in-out;
   }
   
-  .plyr--audio .plyr__control:hover, .plyr--audio .plyr__control[aria-expanded=true] {
+  .plyr--audio .plyr__control:hover, .plyr__control:focus-visible, .plyr--audio .plyr__control[aria-expanded=true] {
     background: #0E78EF;
   }
 

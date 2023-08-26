@@ -9,10 +9,14 @@ const StyledPlyr = styled.div`
   }
 
   .plyr--audio .plyr__control:hover,
+  .plyr__control:focus-visible,
   .plyr--audio .plyr__control[aria-expanded="true"] {
     background: ${(props) => props.theme.brandColor} !important;
   }
 
+  .plyr__control:focus-visible {
+    outline: 2px dashed ${(props) => props.theme.brandColor};
+  }
   .plyr__control svg {
     fill: ${(props) => props.theme.brandColor} !important;
   }

@@ -95,6 +95,11 @@ export const Export = () => {
     fill: #f1f1f1;
   }
 
+  .plyr__control:focus-visible {
+    outline: 2px dashed #0E78EF;
+    background: #0E78EF !important;
+  }
+
   .plyr__control:focus-visible svg {
     fill: #f1f1f1;
   }
@@ -236,6 +241,12 @@ body {
   .plyr__control:focus-visible svg {
     fill: #f1f1f1;
   }
+
+  .plyr__control:focus-visible {
+    outline: 2px dashed #0E78EF;
+    background: #0E78EF !important;
+  }
+
 
   .preview-tts p, .preview-tts h1, .preview-tts h2, .preview-tts h3 {
     margin: 0

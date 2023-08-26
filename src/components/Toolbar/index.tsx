@@ -424,11 +424,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               <TooltipTrigger>
                 <ChangeBlocks openLink={openLink} />
               </TooltipTrigger>
-              <TooltipContent
-                className="text-bold  border-black text-white  dark:bg-white dark:text-gray-600"
-                side="top"
-                sideOffset={10}
-              >
+              <TooltipContent side="top" sideOffset={10}>
                 <p className="text-[12px]">Turn Into</p>
               </TooltipContent>
             </Tooltip>
@@ -497,11 +493,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
                     })}
                   </button>
                 </TooltipTrigger>
-                <TooltipContent
-                  className="text-bold  border-black text-white dark:bg-white dark:text-gray-600"
-                  side="top"
-                  sideOffset={10}
-                >
+                <TooltipContent side="top" sideOffset={10}>
                   <p className="text-[12px]">{button.name}</p>
                 </TooltipContent>
               </Tooltip>

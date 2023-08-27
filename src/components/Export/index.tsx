@@ -74,17 +74,31 @@ export const Export = () => {
     }
   }
 
-  .plyr--audio .plyr__control:hover,  .plyr__control:focus-visible, .plyr--audio .plyr__control[aria-expanded=true] {
-    background: #0E78EF;
+  
+  .plyr--audio .plyr__control:hover, .plyr__control:focus-visible, .plyr--audio .plyr__control[aria-expanded=true] {
+    background: #eeeeee;
   }
 
   .plyr--audio .plyr__control {
     border-radius: 8px;
+    border: 1px solid #eeeeee !important;
+    display: flex !important; 
+    justify-content: center;
+    align-items: center;
+    width: 30px !important;
+    height: 30px !important;
   }
 
+  .plyr--full-ui input[type=range] {
+    color: #0E78EF;
+  }
+
+  .plyr--audio .plyr__control[aria-expanded=true] svg {
+    fill: #0E78EF !important;
+  }
 
   .plyr__control svg {
-    fill: #0E78EF;
+    fill: #0E78EF !important;
   }
 
   .plyr__control:hover svg {
@@ -215,11 +229,17 @@ body {
   }
   
   .plyr--audio .plyr__control:hover, .plyr__control:focus-visible, .plyr--audio .plyr__control[aria-expanded=true] {
-    background: #0E78EF;
+    background: #eeeeee;
   }
 
   .plyr--audio .plyr__control {
     border-radius: 8px;
+    border: 1px solid #eeeeee !important;
+    display: flex !important; 
+    justify-content: center;
+    align-items: center;
+    width: 30px !important;
+    height: 30px !important;
   }
 
   .plyr--full-ui input[type=range] {
@@ -227,11 +247,11 @@ body {
   }
 
   .plyr--audio .plyr__control[aria-expanded=true] svg {
-    fill: #f1f1f1;
+    fill: #0E78EF !important;
   }
 
   .plyr__control svg {
-    fill: #0E78EF;
+    fill: #0E78EF !important;
   }
 
   .plyr__control:hover svg {

@@ -12,7 +12,18 @@ const StyledPlyr = styled.div`
   .plyr--audio .plyr__control:hover,
   .plyr__control:focus-visible,
   .plyr--audio .plyr__control[aria-expanded="true"] {
-    background: ${(props) => props.theme.brandColor};
+    background: #eeeeee;
+    opacity: 0.9;
+    svg {
+      fill: ${(props) => props.theme.brandColor} !important;
+    }
+    .dark & {
+      background: #333333;
+
+      svg {
+        fill: #f1f1f1 !important;
+      }
+    }
   }
 
   .plyr__control:focus-visible {
@@ -23,19 +34,26 @@ const StyledPlyr = styled.div`
   }
 
   .plyr--audio .plyr__control {
-    border-radius: 8px;
+    border-radius: 6px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    align-items: center;
+    border: 1px solid #eeeeee;
+
+    .dark & {
+      border: 1px solid #333333;
+    }
+    svg {
+      width: 16px;
+    }
   }
 
   .plyr__control svg {
     .dark & {
       fill: #f1f1f1;
-    }
-  }
-
-  .plyr--audio .plyr__control:hover,
-  .plyr--audio .plyr__control[aria-expanded="true"] {
-    .dark & {
-      background: ${(props) => props.theme.brandColor};
     }
   }
 

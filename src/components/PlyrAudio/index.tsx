@@ -17,6 +17,11 @@ const StyledPlyr = styled.div`
     svg {
       fill: ${(props) => props.theme.brandColor} !important;
     }
+
+    * {
+      color: #333333;
+    }
+
     .dark & {
       background: #333333;
 
@@ -35,11 +40,20 @@ const StyledPlyr = styled.div`
 
   .plyr--audio .plyr__control {
     border-radius: 6px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    svg {
+      width: 16px;
+    }
+  }
+  .plyr--audio .plyr__control[data-plyr="play"] {
+    border-radius: 6px;
     width: 30px;
     height: 30px;
     display: flex;
     justify-content: center;
-    padding: 0;
     align-items: center;
     border: 1px solid #eeeeee;
 
@@ -64,15 +78,15 @@ const StyledPlyr = styled.div`
   }
 
   .plyr__control:hover svg {
-    fill: #f1f1f1 !important;
+    fill: ${(props) => props.theme.brandColor};
   }
 
   .plyr--audio .plyr__control[aria-expanded="true"] svg {
-    fill: #f1f1f1 !important;
+    fill: ${(props) => props.theme.brandColor};
   }
 
   .plyr__control:focus-visible svg {
-    fill: #f1f1f1 !important;
+    fill: ${(props) => props.theme.brandColor};
   }
 
   .plyr--full-ui input[type="range"] {
@@ -99,7 +113,7 @@ export const PlyrAudioPlayer = ({ audioURL, content, isPreview = false }) => {
       className={`${
         !isPreview &&
         content.length > 40 &&
-        "mb-4 rounded-lg border border-gray-300"
+        "mb-4 rounded-lg border border-gray-200 shadow-sm"
       }`}
     >
       <Plyr

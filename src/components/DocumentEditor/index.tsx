@@ -29,7 +29,7 @@ import scrollIntoView from "scroll-into-view-if-needed";
 import { isEqual } from "lodash";
 import { EditorContext } from "@/contexts/EditorContext";
 import { Slate, Editable, withReact, ReactEditor } from "slate-react";
-import { Crown, Plus, Sidebar } from "lucide-react";
+import { Crown, Plus, Sidebar, Zap } from "lucide-react";
 import {
   VscLayoutSidebarRightOff,
   VscLayoutSidebarRight,
@@ -2019,13 +2019,15 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     <Button
                       variant="outline"
                       size="xs"
-                      className=" border ring-brand focus:ring-2 dark:ring-white"
+                      className=" border px-1 ring-brand focus:ring-2 dark:ring-white"
                       // onClick={upgradeAccount}
                     >
                       <span className="mr-4 text-xs text-foreground  dark:text-foreground ">
                         Shop Credits
                       </span>
-                      <Crown className="w-5 fill-orange-200 text-orange-500 dark:text-orange-300" />{" "}
+                      <span className="flex h-[18px] w-[18px] items-center justify-center rounded-[4px] bg-orange-400">
+                        <Zap className="w-[12px] fill-white text-orange-100" />{" "}
+                      </span>
                     </Button>
                   </DialogTrigger>
 

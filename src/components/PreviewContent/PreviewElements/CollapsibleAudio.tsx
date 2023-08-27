@@ -62,7 +62,7 @@ export const CollapsibleAudioPlayer = ({ node, children, index, nodes }) => {
           <PlyrAudioPlayer
             audioURL={node.audio_url}
             content={node.content}
-            isPreview={true}
+            isPreview={false}
           />
         </div>
       )}

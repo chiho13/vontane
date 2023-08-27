@@ -72,6 +72,8 @@ import { AIAssist } from "../AIAssist";
 import { FontStyle } from "../FontStyle";
 import { Export } from "../Export";
 import { LayoutContext } from "../Layouts/AccountLayout";
+import { DownloadButton } from "../DownloadButton";
+import { PlyrAudioPlayer } from "../PlyrAudio";
 interface RightSideBarProps {
   setRightSideBarWidth: any;
   showRightSidebar: boolean;
@@ -242,16 +244,21 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
               {SlateElement.isElement(rootNode) &&
                 rootNode?.type == "tts" &&
                 (audioData && audioData.file_name ? (
-                  <div className=" mt-3 bg-brand/20 p-3 dark:bg-brand/30">
+                  <div className=" mt-3 bg-brand/20 p-3 dark:bg-gray-800">
                     <h3 className="text-bold mb-2 mt-4 text-sm   ">
                       Text to MP3
                     </h3>
 
-                    <div className="my-2 block">
-                      <AudioPlayer
+                    <div className="my-2 block rounded-md border border-gray-300 bg-white dark:border-accent dark:bg-muted">
+                      {/* <AudioPlayer
                         audioURL={audioData.audio_url}
                         content={elementData.content}
                         fileName={audioData.file_name}
+                      /> */}
+                      <PlyrAudioPlayer
+                        audioURL={audioData.audio_url}
+                        content={elementData.content}
+                        isPreview={true}
                       />
                     </div>
 
@@ -264,18 +271,25 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                       </div>
                     )} */}
 
+                    <div className="mt-4 flex justify-end">
+                      <DownloadButton
+                        url={audioData.audio_url}
+                        fileName={audioData.file_name}
+                      />
+                    </div>
+
                     <h3 className="text-bold mb-2 mt-4 text-sm">Share Audio</h3>
                     <div className="relative flex items-center">
                       <Link className="absolute left-3 w-4 dark:stroke-gray-300 " />
 
                       <input
                         value={audioData.audio_url}
-                        className=" h-[36px]  w-full rounded-md  rounded-r-none border  border-r-0 border-gray-300 bg-muted  p-2  pl-[40px] text-sm focus:outline-none  focus-visible:outline-none dark:border-accent dark:border-gray-400 dark:text-gray-400"
+                        className=" h-[36px]  w-full rounded-md  rounded-r-none border  border-r-0 border-gray-300 bg-muted  p-2  pl-[40px] text-sm focus:outline-none  focus-visible:outline-none dark:border-gray-700 dark:text-gray-400"
                         readOnly={true}
                       />
                       <Button
                         variant="outline"
-                        className=" h-[36px] rounded-l-none border border-gray-300 bg-background px-2 text-center dark:border-gray-400"
+                        className=" h-[36px] rounded-l-none border border-gray-300 bg-background px-2 text-center dark:border-gray-700"
                         onClick={() => copyLink(audioData.audio_url)}
                       >
                         <p className="flex truncate text-xs ">

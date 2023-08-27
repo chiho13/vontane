@@ -249,17 +249,25 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                       Text to MP3
                     </h3>
 
-                    <div className="my-2 block rounded-md border border-gray-300 bg-white dark:border-accent dark:bg-muted">
+                    <div className="my-2  flex w-full rounded-md border border-gray-300 bg-white dark:border-accent dark:bg-muted">
                       {/* <AudioPlayer
                         audioURL={audioData.audio_url}
                         content={elementData.content}
                         fileName={audioData.file_name}
                       /> */}
-                      <PlyrAudioPlayer
-                        audioURL={audioData.audio_url}
-                        content={elementData.content}
-                        isPreview={true}
-                      />
+                      <div className="grow">
+                        <PlyrAudioPlayer
+                          audioURL={audioData.audio_url}
+                          content={elementData.content}
+                          isPreview={true}
+                        />
+                      </div>
+                      <div className="flex items-center pr-3 ">
+                        <DownloadButton
+                          url={audioData.audio_url}
+                          fileName={audioData.file_name}
+                        />
+                      </div>
                     </div>
 
                     <div className=" truncate  rounded-md border border-gray-300 bg-white p-2 pl-3 dark:border-accent dark:bg-muted">
@@ -271,12 +279,12 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                       </div>
                     )} */}
 
-                    <div className="mt-4 flex justify-end">
+                    {/* <div className="mt-4 flex justify-end">
                       <DownloadButton
                         url={audioData.audio_url}
                         fileName={audioData.file_name}
                       />
-                    </div>
+                    </div> */}
 
                     <h3 className="text-bold mb-2 mt-4 text-sm">Share Audio</h3>
                     <div className="relative flex items-center">

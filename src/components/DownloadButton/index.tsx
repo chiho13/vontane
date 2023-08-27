@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/tooltip";
 
 import { cn } from "@/utils/cn";
-import { Button } from "../ui/button";
 
 interface DownloadButtonProps {
   url: string | null;
@@ -38,23 +37,30 @@ export function DownloadButton({
   }
 
   return (
-    <Button
-      onClick={handleDownload}
-      variant="outline"
-      size="sm"
-      className={cn(
-        "group flex items-center justify-center gap-2 border border-gray-300 bg-white px-3 py-2 text-sm font-medium outline-none transition duration-200 hover:bg-gray-200 focus:outline-none  focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50 dark:border-gray-700 dark:bg-muted dark:hover:bg-accent dark:hover:text-white ",
-        className
-      )}
-    >
-      <span>Download</span>
-      <Download
-        strokeWidth={2}
-        className={cn(
-          "h-4 w-4 stroke-foreground dark:stroke-white",
-          iconClassName
-        )}
-      />
-    </Button>
+    <TooltipProvider delayDuration={300}>
+      <Tooltip>
+        <TooltipTrigger>
+          <a
+            href="#"
+            onClick={handleDownload}
+            className={cn(
+              "group flex h-[24px] w-[24px] items-center justify-center rounded-full border border-muted-foreground bg-white px-1 py-2 text-sm font-medium text-gray-700 outline-none transition duration-200  hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50 dark:border-white dark:bg-white dark:text-foreground",
+              className
+            )}
+          >
+            <Download
+              strokeWidth={2}
+              className={cn(
+                "h-4 w-4 stroke-muted-foreground dark:stroke-gray-600",
+                iconClassName
+              )}
+            />
+          </a>
+        </TooltipTrigger>
+        <TooltipContent side="top" sideOffset={10}>
+          <p className="text-[12px]">Download</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }

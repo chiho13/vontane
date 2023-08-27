@@ -5,33 +5,43 @@ import styled, { useTheme } from "styled-components";
 
 const StyledPlyr = styled.div`
   .plyr--audio .plyr__controls {
-    background: transparent !important;
+    gap: 5px;
+    background: transparent;
   }
 
   .plyr--audio .plyr__control:hover,
   .plyr__control:focus-visible,
   .plyr--audio .plyr__control[aria-expanded="true"] {
-    background: ${(props) => props.theme.brandColor} !important;
+    background: ${(props) => props.theme.brandColor};
   }
 
   .plyr__control:focus-visible {
     outline: 2px dashed ${(props) => props.theme.brandColor};
   }
   .plyr__control svg {
-    fill: ${(props) => props.theme.brandColor} !important;
+    fill: ${(props) => props.theme.brandColor};
   }
 
   .plyr--audio .plyr__control {
-    border-radius: 8px !important;
+    border-radius: 8px;
+  }
+
+  .plyr__control svg {
     .dark & {
-      background: #f1f1f1 !important;
+      fill: #f1f1f1;
     }
   }
 
   .plyr--audio .plyr__control:hover,
   .plyr--audio .plyr__control[aria-expanded="true"] {
     .dark & {
-      background: ${(props) => props.theme.brandColor} !important;
+      background: ${(props) => props.theme.brandColor};
+    }
+  }
+
+  .plyr__time {
+    .dark & {
+      color: #ffffff;
     }
   }
 
@@ -48,19 +58,32 @@ const StyledPlyr = styled.div`
   }
 
   .plyr--full-ui input[type="range"] {
-    color: ${(props) => props.theme.brandColor} !important;
+    color: ${(props) => props.theme.brandColor};
   }
 `;
 
 export const PlyrAudioPlayer = ({ audioURL, content, isPreview = false }) => {
   const theme = useTheme();
-  const controls =
-    content.length < 40
-      ? ["play"]
-      : ["play", "restart", "progress", "current-time", "settings"];
+
+  let controls;
+
+  if (isPreview) {
+    controls = ["play", "progress", "current-time"];
+  } else if (content.length < 40) {
+    controls = ["play"];
+  } else {
+    controls = ["play", "restart", "progress", "current-time", "settings"];
+  }
 
   return (
-    <StyledPlyr theme={theme}>
+    <StyledPlyr
+      theme={theme}
+      className={`${
+        !isPreview &&
+        content.length > 40 &&
+        "mb-4 rounded-lg border border-gray-300"
+      }`}
+    >
       <Plyr
         source={{
           type: "audio",

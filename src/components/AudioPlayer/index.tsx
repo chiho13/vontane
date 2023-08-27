@@ -404,7 +404,7 @@ function AudioPlayer({
         </TooltipProvider>
       )}
 
-      {!isPreview && <DownloadButton url={audioURL} fileName={fileName} />}
+      {/* {!isPreview && <DownloadButton url={audioURL} fileName={fileName} />} */}
     </AudioPlayerStyle>
   );
 }

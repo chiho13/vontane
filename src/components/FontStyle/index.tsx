@@ -131,7 +131,7 @@ export const FontStyle = () => {
             <Button
               variant="secondary"
               size="sm"
-              className="gap-2 border border-gray-400  bg-white px-[6px] text-gray-700 dark:border-gray-700 dark:bg-muted  dark:text-gray-200 dark:hover:bg-accent/30"
+              className="gap-2 border border-gray-300  bg-white px-[6px] text-gray-700 dark:border-accent dark:bg-muted  dark:text-gray-200 dark:hover:bg-accent/80"
             >
               <span
                 className="h-[24px] w-[24px] rounded-md"

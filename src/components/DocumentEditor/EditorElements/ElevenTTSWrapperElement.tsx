@@ -133,7 +133,7 @@ const ElevenTTSWrapperBase = (props: {
         isFirstInGroup ? "border-t" : ""
       } border-b border-gray-300 p-1 pb-3 pl-0 dark:border-accent ${
         selected
-          ? " bg-brand/20 dark:bg-brand/30"
+          ? " bg-brand/20 dark:bg-gray-800"
           : "bg-neutral-100 dark:bg-neutral-900"
       }`}
     >

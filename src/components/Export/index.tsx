@@ -74,6 +74,11 @@ export const Export = () => {
     }
   }
 
+  .plyr--audio .plyr__controls {
+    background: none !important;
+    gap: 5px;
+  }
+  
   
   .plyr--audio .plyr__control:hover, .plyr__control:focus-visible, .plyr--audio .plyr__control[aria-expanded=true] {
     background: #eeeeee;
@@ -81,13 +86,18 @@ export const Export = () => {
 
   .plyr--audio .plyr__control {
     border-radius: 8px;
-    border: 1px solid #eeeeee !important;
+    border: none !important;
     display: flex !important; 
     justify-content: center;
     align-items: center;
     width: 30px !important;
     height: 30px !important;
   }
+
+  .plyr--audio .plyr__control[data-plyr="play"] {
+    border: 1px solid #eeeeee !important;
+  }
+
 
   .plyr--full-ui input[type=range] {
     color: #0E78EF;
@@ -151,6 +161,7 @@ Save as PDF
       const player = new Plyr(audio, {
         controls: [
           'play',
+          'restart',
           'progress',
           'current-time',
           'settings'
@@ -230,16 +241,27 @@ body {
   
   .plyr--audio .plyr__control:hover, .plyr__control:focus-visible, .plyr--audio .plyr__control[aria-expanded=true] {
     background: #eeeeee;
+  } 
+
+  .plyr--audio .plyr__controls {
+    background: none !important;
+    gap: 5px;
   }
+  
 
   .plyr--audio .plyr__control {
+    gap: 5px;
     border-radius: 8px;
-    border: 1px solid #eeeeee !important;
+    border: none !important;
     display: flex !important; 
     justify-content: center;
     align-items: center;
     width: 30px !important;
     height: 30px !important;
+  }
+
+  .plyr--audio .plyr__control[data-plyr="play"] {
+    border: 1px solid #eeeeee !important;
   }
 
   .plyr--full-ui input[type=range] {
@@ -315,6 +337,7 @@ body {
       const player = new Plyr(audio, {
         controls: [
           'play',
+          'restart',
           'progress',
           'current-time',
           'settings'

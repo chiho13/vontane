@@ -3,7 +3,7 @@ import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { api } from "@/utils/api";
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
-import { HexColorPicker } from "react-colorful";
+import { HexColorPicker, HexColorInput } from "react-colorful";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -144,12 +144,19 @@ export const FontStyle = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="start"
-            className="z-100 border border-gray-400  bg-background dark:border-gray-700  dark:bg-muted "
+            className="z-100 border border-gray-400 bg-background  p-2 dark:border-gray-700  dark:bg-muted "
           >
             <HexColorPicker
               color={color}
               onChange={debounce(changeBrandColourHandler, 400)}
             />
+            <div className="mb-1 mt-2 w-full">
+              <HexColorInput
+                color={color}
+                onChange={debounce(changeBrandColourHandler, 400)}
+                className="h-[32px] w-full rounded-md  border border-neutral-300 px-1"
+              />
+            </div>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

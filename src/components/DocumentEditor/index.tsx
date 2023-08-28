@@ -2022,7 +2022,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                       className=" border px-1 ring-brand focus:ring-2 dark:ring-white"
                       // onClick={upgradeAccount}
                     >
-                      <span className="mr-4 text-xs text-foreground  dark:text-foreground ">
+                      <span className=" ml-1 mr-2 text-xs text-foreground  dark:text-foreground ">
                         Shop Credits
                       </span>
                       <span className="flex h-[18px] w-[18px] items-center justify-center rounded-[4px] bg-orange-400">

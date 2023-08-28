@@ -292,7 +292,7 @@ export const exportSlateNodeToHtml = (node) => {
             <div class="${
               node.children[0].children[0].text.length < 40
                 ? "w-[50px] overflow-hidden flex  items-center"
-                : ""
+                : "rounded-lg border border-neutral-200 shadow-sm mb-4"
             }">
 
               <audio controls data-text="${node.children[0].children[0].text}">

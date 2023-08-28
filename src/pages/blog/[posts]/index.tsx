@@ -25,6 +25,7 @@ import { supabaseClient } from "@/utils/supabaseClient";
 import { formatDate } from "@/utils/formatDate";
 import { ChevronLeft } from "lucide-react";
 import Head from "next/head";
+import { ThemeProvider } from "styled-components";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   // get the entire URL path
@@ -55,6 +56,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
       props: {
         font: workspace.font_style,
+        brandColor: workspace.brand_color || "#0E78EF",
         published_at: formattedDate,
         workspaceData: workspace.slate_value,
       }, // Replace 'user' with your actual session data
@@ -69,10 +71,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 };
 
-const PublishedPage = ({ font, published_at, workspaceData }) => {
+const PublishedPage = ({ font, brandColor, published_at, workspaceData }) => {
   // Split the path by '/' and get the second last part, which contains the title and ID
 
   const [localValue, setLocalValue] = useState(null);
+
+  const [currentTheme, setCurrentTheme] = useState({
+    brandColor: "#0E78EF", // initial default value
+    accentColor: "#e9e9e9",
+  });
 
   useEffect(() => {
     if (workspaceData) {
@@ -84,6 +91,15 @@ const PublishedPage = ({ font, published_at, workspaceData }) => {
       setLocalValue(null);
     };
   }, [workspaceData]);
+
+  useEffect(() => {
+    if (brandColor) {
+      setCurrentTheme({
+        brandColor,
+        accentColor: "#e9e9e9",
+      });
+    }
+  }, [brandColor]);
 
   if (!workspaceData) {
     // Show 404 page if workspaceId is not found
@@ -114,28 +130,30 @@ const PublishedPage = ({ font, published_at, workspaceData }) => {
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.vontane.com" />
       </Head>
-      <AudioManagerProvider>
-        <div
-          className={`relative  h-[100vh] overflow-y-auto rounded-md bg-white p-4 dark:bg-[#191919] `}
-        >
-          <div className="blog-content relative mx-auto mb-20 max-w-[700px] xl:mt-[100px]">
-            <div className="mb-2 flex justify-between ">
-              <Link href="/blog" className="flex underline">
-                {" "}
-                <ChevronLeft /> {"Back"}
-              </Link>
+      <ThemeProvider theme={currentTheme}>
+        <AudioManagerProvider>
+          <div
+            className={`relative  h-[100vh] overflow-y-auto rounded-md bg-white p-4 dark:bg-[#191919] `}
+          >
+            <div className="blog-content relative mx-auto mb-20 max-w-[700px] xl:mt-[100px]">
+              <div className="mb-2 flex justify-between ">
+                <Link href="/blog" className="flex underline">
+                  {" "}
+                  <ChevronLeft /> {"Back"}
+                </Link>
 
-              <span className="font-bold text-muted-foreground">
-                {published_at}
-              </span>
+                <span className="font-bold text-muted-foreground">
+                  {published_at}
+                </span>
+              </div>
+              {localValue && parseNodes(localValue, font)}
             </div>
-            {localValue && parseNodes(localValue, font)}
           </div>
-        </div>
-        <div className="fixed bottom-4 right-4 hidden xl:block">
-          <ModeToggle side="top" />
-        </div>
-      </AudioManagerProvider>
+          <div className="fixed bottom-4 right-4 hidden xl:block">
+            <ModeToggle side="top" />
+          </div>
+        </AudioManagerProvider>
+      </ThemeProvider>
     </>
   );
 };

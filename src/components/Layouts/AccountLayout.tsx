@@ -822,7 +822,7 @@ const Layout: React.FC<LayoutProps> = ({
           }}
         >
           <div
-            className=" flex min-h-screen overflow-auto bg-[#f7f7f7] pt-4 dark:bg-background"
+            className=" flex min-h-screen  overflow-hidden bg-[#f7f7f7] pt-4 dark:bg-background"
             style={{
               marginLeft: isLocked && desktopbreakpoint ? "240px" : "0",
               width:

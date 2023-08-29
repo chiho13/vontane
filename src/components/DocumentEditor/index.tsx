@@ -2019,7 +2019,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     <Button
                       variant="outline"
                       size="xs"
-                      className=" border px-1 ring-brand focus:ring-2 dark:ring-white"
+                      className=" border px-1 ring-brand focus-visible:ring-2 dark:ring-white"
                       // onClick={upgradeAccount}
                     >
                       <span className=" ml-1 mr-2 text-xs text-foreground  dark:text-foreground ">

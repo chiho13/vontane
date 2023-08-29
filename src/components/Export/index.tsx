@@ -426,7 +426,11 @@ body {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="rounded-md outline-none ring-brand focus:ring-2">
-        <Button className="border outline-none" variant="outline" size="xs">
+        <Button
+          className="border outline-none ring-brand focus-visible:ring-2 dark:ring-white"
+          variant="outline"
+          size="xs"
+        >
           Export HTML <ChevronDown className="w-4" />
         </Button>
       </DropdownMenuTrigger>

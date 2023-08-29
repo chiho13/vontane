@@ -5,6 +5,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
 import { Portal } from "react-portal";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, Copy, Link } from "lucide-react";
@@ -77,7 +84,7 @@ export const PublishButton = () => {
     <>
       {!published ? (
         <Button
-          className={`text-bold  h-[28px] rounded-md px-3 text-sm  text-white hover:bg-brand/90 hover:text-white disabled:opacity-100 dark:border-t-gray-700 dark:bg-slate-100 dark:text-muted dark:hover:bg-slate-300 dark:hover:text-background ${
+          className={`text-bold  h-[28px] rounded-md px-3 text-sm  text-white ring-brand hover:bg-brand/90 hover:text-white focus-visible:ring-2 disabled:opacity-100 dark:border-t-gray-700 dark:bg-slate-100 dark:text-muted dark:ring-white dark:hover:bg-slate-300 dark:hover:text-background ${
             published
               ? "bg-green-400 text-foreground dark:bg-green-400"
               : "bg-brand "
@@ -97,10 +104,10 @@ export const PublishButton = () => {
           )}
         </Button>
       ) : (
-        <DropdownMenu open={openDropdown} onOpenChange={openDropdownChange}>
-          <DropdownMenuTrigger asChild>
+        <Popover open={openDropdown} onOpenChange={openDropdownChange}>
+          <PopoverTrigger asChild>
             <Button
-              className={`text-bold  flex h-[28px] rounded-md px-3 text-sm  text-white disabled:opacity-100 dark:border-t-gray-700 dark:bg-slate-100 dark:text-muted ${
+              className={`text-bold  flex h-[28px]  rounded-md px-3 text-sm text-white ring-brand focus-visible:ring-2  disabled:opacity-100 dark:border-t-gray-700 dark:bg-slate-100 dark:text-muted dark:ring-white ${
                 published
                   ? "bg-green-400 text-foreground hover:bg-green-400 hover:text-foreground dark:bg-green-400"
                   : "bg-brand "
@@ -109,12 +116,12 @@ export const PublishButton = () => {
               Published
               <ChevronDown className="ml-1 w-4" />
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
+          </PopoverTrigger>
+          <PopoverContent
             align="end"
             className="w-[400px] border border-gray-300  bg-background p-3 dark:border-gray-500 dark:bg-secondary"
           >
-            <div className="relative mb-4 flex items-center">
+            <div className="relative mb-4 flex items-center" tabIndex={-1}>
               <Link className="absolute left-3 w-4 dark:stroke-gray-300 " />
 
               <input
@@ -125,7 +132,7 @@ export const PublishButton = () => {
 
               <Button
                 variant="outline"
-                className=" h-[36px] rounded-l-none border border-gray-300 bg-muted px-2 text-center dark:border-gray-400 dark:text-gray-200"
+                className=" h-[36px] rounded-l-none border border-gray-300 bg-muted px-2 text-center ring-brand focus-visible:ring-2 dark:border-gray-400 dark:text-gray-200 dark:ring-white"
                 onClick={() => copyLink(publicURL)}
               >
                 <p className="flex truncate text-xs ">
@@ -146,7 +153,7 @@ export const PublishButton = () => {
 
               <Button
                 variant="outline"
-                className=" absolute bottom-2  right-2 h-[36px] border border-gray-300 bg-muted px-2 text-center dark:border-gray-400 dark:text-gray-200"
+                className=" absolute bottom-2  right-2 h-[36px] border  border-gray-300 bg-muted px-2 text-center ring-brand focus-visible:ring-2 dark:border-gray-400 dark:text-gray-200 dark:ring-white"
                 onClick={() => copyIframe(iframeEmbed)}
               >
                 <p className="flex truncate text-xs ">
@@ -154,33 +161,29 @@ export const PublishButton = () => {
                 </p>
               </Button>
             </div>
-            <div className="flex w-full gap-4 ">
-              <DropdownMenuItem
-                className="flex grow cursor-pointer justify-center rounded-md border border-gray-300 dark:border-gray-500 hover:dark:bg-accent"
+            <div className="grid w-full grid-cols-2 gap-4 ">
+              <button
+                className="flex  h-[36px] grow cursor-pointer items-center justify-center rounded-md border border-gray-300 dark:border-gray-500 hover:dark:bg-accent"
                 disabled={pubLoading}
                 onClick={!pubLoading && publishWorkspace}
               >
                 <span className="text-foreground"> Unpublish</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="r group flex grow  cursor-pointer rounded-md bg-brand p-0 hover:bg-black hover:dark:bg-brand/90"
-                disabled={pubLoading}
+              </button>
+
+              <a
+                href={`/${editor.children[0].children[0].text
+                  .toLowerCase()
+                  .replace(/-/g, "_") // Add this line to remove dashes
+                  .split(" ")
+                  .join("_")}-${workspaceId}`}
+                target="_blank"
+                className="flex h-full w-full shrink items-center justify-center  rounded-md bg-brand text-center text-white  hover:bg-brand/90 hover:text-white dark:text-foreground hover:dark:bg-brand/90"
               >
-                <a
-                  href={`/${editor.children[0].children[0].text
-                    .toLowerCase()
-                    .replace(/-/g, "_") // Add this line to remove dashes
-                    .split(" ")
-                    .join("_")}-${workspaceId}`}
-                  target="_blank"
-                  className="flex h-full w-full  items-center justify-center  text-center text-white group-hover:text-black dark:text-foreground group-hover:dark:text-white"
-                >
-                  View Site
-                </a>
-              </DropdownMenuItem>
+                View Site
+              </a>
             </div>
-          </DropdownMenuContent>
-        </DropdownMenu>
+          </PopoverContent>
+        </Popover>
       )}
     </>
   );

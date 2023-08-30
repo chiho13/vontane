@@ -44,5 +44,4 @@ currently under development (April)
 - [x] preview content
 - [x] map block
 - [x] ai integration (wip)
-- [] speech to text - audio timestamp - replace audio player seeking - for quizzes and custom stuff
-- [] audio trimmer
+- [] research music composition block

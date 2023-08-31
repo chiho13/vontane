@@ -170,7 +170,6 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
   useEffect(() => {
     if (editor.selection && !Range.isCollapsed(editor.selection)) {
       const html = getHtmlFromSelection(editor);
-      console.log(html);
       setPromptValue(html);
       setSelectedTextTooltip(true);
     } else {
@@ -315,7 +314,6 @@ export const AIAssist = ({ openChat, setOpenChat }) => {
           console.log(response.data);
           const displayHTML = renderMathInHtmlString(response.data);
 
-          console.log(displayHTML);
           setDisplayResultHTML(displayHTML);
         }
       } catch (error) {

@@ -199,7 +199,12 @@ const PublishedPage = ({ workspaceId, workspaceData, font, brandColor }) => {
         <AudioManagerProvider>
           <div className="published">
             {view === "slides" ? (
-              <div className=" sticky top-0  flex gap-3 border-b border-gray-300 p-5  text-gray-700 shadow-md  dark:border-gray-700  dark:bg-[#191919] dark:text-gray-200">
+              <div
+                className=" sticky top-0  flex gap-3 border-b border-gray-300 p-5  text-gray-700 shadow-md  dark:border-gray-700  dark:bg-[#191919] dark:text-gray-200"
+                style={{
+                  zIndex: 1000,
+                }}
+              >
                 <span className=" flex min-w-[50px]">
                   <span className="flex w-[20px] justify-center ">
                     {currentSlideIndex + 1}
@@ -213,7 +218,7 @@ const PublishedPage = ({ workspaceId, workspaceData, font, brandColor }) => {
             ) : null}
             {view === "one-page" ? (
               <div
-                className={`relative  h-[100vh] overflow-y-auto rounded-md bg-white p-4 dark:bg-[#191919] `}
+                className={`relative  h-[100vh] overflow-y-auto bg-white p-4 dark:bg-[#191919] `}
               >
                 <div className=" relative mx-auto mb-20 max-w-[580px] xl:mt-[100px]">
                   {parseNodes(localValue, font)}
@@ -222,7 +227,7 @@ const PublishedPage = ({ workspaceId, workspaceData, font, brandColor }) => {
             ) : (
               <div
                 ref={slidesContainer}
-                className={`relative  overflow-y-auto  overflow-x-hidden rounded-md bg-white p-6 pb-[100px] dark:bg-[#191919] `}
+                className={`relative  overflow-y-auto  overflow-x-hidden bg-white p-6 pb-[100px] dark:bg-[#191919] `}
                 style={{
                   height: "calc(100vh - 65px)",
                 }}

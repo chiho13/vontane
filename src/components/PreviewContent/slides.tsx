@@ -20,6 +20,25 @@ export const SlidesPreview = () => {
     `currentSlideIndex-${workspaceId}`,
     0
   );
+  const [touchStartX, setTouchStartX] = useState(null);
+  const [touchEndX, setTouchEndX] = useState(null);
+  const handleTouchStart = (e) => {
+    setTouchStartX(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartX - touchEndX > 100) {
+      // swiped left
+      handleNext();
+    } else if (touchEndX - touchStartX > 100) {
+      // swiped right
+      handlePrevious();
+    }
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEndX(e.touches[0].clientX);
+  };
 
   const slidesRef = useRef(null);
   const { workspaceData, setScrollToSlide, scrolltoSlide } = useTextSpeech();
@@ -57,6 +76,20 @@ export const SlidesPreview = () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [currentSlideIndex, slides]);
+
+  useEffect(() => {
+    const slidesElement = slidesRef.current;
+
+    slidesElement.addEventListener("touchstart", handleTouchStart);
+    slidesElement.addEventListener("touchmove", handleTouchMove);
+    slidesElement.addEventListener("touchend", handleTouchEnd);
+
+    return () => {
+      slidesElement.removeEventListener("touchstart", handleTouchStart);
+      slidesElement.removeEventListener("touchmove", handleTouchMove);
+      slidesElement.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [touchStartX, touchEndX]);
 
   useEffect(() => {
     setScrollToSlide(currentSlideIndex + 1);

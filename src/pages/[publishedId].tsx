@@ -121,7 +121,6 @@ const PublishedPage = ({ workspaceId, workspaceData, font, brandColor }) => {
   const slideWidth = 100;
   const totalSlidesWidth = slides && slides.length * slideWidth;
   const slideTranslateValue = -(currentSlideIndex * slideWidth);
-
   const slideContainerStyle = {
     display: "flex",
     flexBasis: `${totalSlidesWidth}%`,
@@ -134,7 +133,38 @@ const PublishedPage = ({ workspaceId, workspaceData, font, brandColor }) => {
     flexShrink: 0,
   };
 
+  const [touchStartX, setTouchStartX] = useState(null);
+  const [touchEndX, setTouchEndX] = useState(null);
+  const handleTouchStart = (e) => {
+    e.preventDefault();
+    setTouchStartX(e.touches[0].clientX);
+    console.log("Touch started at:", e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = (e) => {
+    e.preventDefault();
+    if (touchStartX - touchEndX > 100) {
+      // swiped left
+      handleNext();
+    } else if (touchEndX - touchStartX > 100) {
+      // swiped right
+      handlePrevious();
+    }
+
+    // Resetting after handling the swipe
+    setTouchStartX(null);
+    setTouchEndX(null);
+  };
+
+  const handleTouchMove = (e) => {
+    e.preventDefault();
+    setTouchEndX(e.touches[0].clientX);
+  };
+
   const slidesContainer = useRef(null) as any;
+
+  const slideRef = useRef(null);
+
   const handleNext = () => {
     setCurrentSlideIndex((prevIndex) =>
       Math.min(prevIndex + 1, slides.length - 1)
@@ -163,6 +193,22 @@ const PublishedPage = ({ workspaceId, workspaceData, font, brandColor }) => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [currentSlideIndex, slides]);
+
+  useEffect(() => {
+    const slidesElement = slidesContainer.current;
+
+    if (!slidesElement) return;
+
+    slidesElement.addEventListener("touchstart", handleTouchStart);
+    slidesElement.addEventListener("touchmove", handleTouchMove);
+    slidesElement.addEventListener("touchend", handleTouchEnd);
+
+    return () => {
+      slidesElement.removeEventListener("touchstart", handleTouchStart);
+      slidesElement.removeEventListener("touchmove", handleTouchMove);
+      slidesElement.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [touchStartX, touchEndX]);
 
   if (slides && slides.length === 0 && view === "slides") {
     return (
@@ -233,6 +279,7 @@ const PublishedPage = ({ workspaceId, workspaceData, font, brandColor }) => {
                 }}
               >
                 <div
+                  ref={slideRef}
                   className="relative mx-auto max-w-[700px] xl:mt-[40px]"
                   style={slideContainerStyle}
                 >

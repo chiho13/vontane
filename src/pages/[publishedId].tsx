@@ -126,6 +126,7 @@ const PublishedPage = ({ workspaceId, workspaceData, font, brandColor }) => {
     flexBasis: `${totalSlidesWidth}%`,
     transform: `translateX(${slideTranslateValue}%)`,
     transition: "transform 300ms ease-in-out",
+    height: "calc(100vh - 65px)",
   };
 
   const individualSlideStyle = {
@@ -195,7 +196,7 @@ const PublishedPage = ({ workspaceId, workspaceData, font, brandColor }) => {
   }, [currentSlideIndex, slides]);
 
   useEffect(() => {
-    const slidesElement = slidesContainer.current;
+    const slidesElement = slideRef.current;
 
     if (!slidesElement) return;
 

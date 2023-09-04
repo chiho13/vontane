@@ -163,13 +163,8 @@ Save as PDF
           'play',
           'restart',
           'progress',
-          'current-time',
-          'settings'
-      ],
-      speed: { 
-        selected: 1, 
-        options: [0.7, 1, 1.25, 1.5, 2]
-    }
+          'current-time'
+      ]
       });
     }
   });
@@ -340,12 +335,7 @@ body {
           'restart',
           'progress',
           'current-time',
-          'settings'
-      ],
-      speed: { 
-        selected: 1, 
-        options: [0.7, 1, 1.25, 1.5, 2]
-    }
+      ]
       });
     }
   });

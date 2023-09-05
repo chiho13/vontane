@@ -1956,6 +1956,22 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     });
   }, [scrolltoSlide]);
 
+  const [lastChild, setLastChild] = useState<Node | null>(null);
+
+  useEffect(() => {
+    const currentLastChild = editor.children[editor.children.length - 1];
+
+    // Compare current last child with stored last child
+    if (!isEqual(currentLastChild, lastChild)) {
+      if (textEditorRef.current) {
+        const container = textEditorRef.current;
+        container.scrollTop = container.scrollHeight;
+      }
+      // Update stored last child
+      setLastChild(currentLastChild);
+    }
+  }, [editor.children]);
+
   return (
     <div
       className="relative mx-auto mt-[50px] lg:max-w-[1000px] xl:max-w-[1400px]"
@@ -2096,6 +2112,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                               handleEditorMouseUp(event, editor);
                               handleSelectedText(event, editor);
                             }}
+                            scrollSelectionIntoView={() => {}}
                             spellCheck={false}
                             onKeyDown={handleKeyDown}
                             onKeyUp={(event) => {

@@ -37,6 +37,7 @@ import {
   Range,
   Node,
   Element as SlateElement,
+  Path,
 } from "slate";
 import { ReactEditor } from "slate-react";
 import { useTheme } from "styled-components";
@@ -274,13 +275,14 @@ export const Toolbar: React.FC<ToolbarProps> = ({
       setShowMiniToolbar(false);
       ReactEditor.blur(editor);
       setLastActiveSelection(null);
+      Transforms.select(editor, Path.next(path));
       setShowEditBlockPopup({
         open: true,
         element: "inline-equation",
         path: JSON.stringify(path),
         latex,
       });
-    }, 0);
+    }, 10);
   };
 
   const handleSubmit = (event) => {

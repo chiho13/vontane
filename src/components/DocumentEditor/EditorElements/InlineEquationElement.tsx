@@ -49,7 +49,7 @@ export const InlineEquation = (props: {
       }}
     >
       <InlineMath math={element.latex} />
-
+      {children}
       {element.latex?.trim() === "" && (
         <span className="bg-gray-300 p-1 text-gray-800 opacity-60">
           {" "}

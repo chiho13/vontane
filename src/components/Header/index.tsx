@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 export function Header() {
   const [top, setTop] = useState<boolean>(true);
 
@@ -40,13 +41,15 @@ export function Header() {
               </button>
             </div> */}
 
-            <Image
-              src="/images/vontanecircle.png"
-              width="80"
-              height="80"
-              alt={"logo"}
-              className="rotate-0 scale-100 "
-            />
+            <Link href="https://vontane.com">
+              <Image
+                src="/images/vontanecircle.png"
+                width="80"
+                height="80"
+                alt={"logo"}
+                className="rotate-0 scale-100 "
+              />
+            </Link>
             {/* <Image
                 src="/images/whitevontane.png"
                 width="300"

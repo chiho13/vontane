@@ -121,12 +121,12 @@ const PublishedPage = ({ workspaceId, workspaceData, font, brandColor }) => {
   const slideWidth = 100;
   const totalSlidesWidth = slides && slides.length * slideWidth;
   const slideTranslateValue = -(currentSlideIndex * slideWidth);
-
   const slideContainerStyle = {
     display: "flex",
     flexBasis: `${totalSlidesWidth}%`,
     transform: `translateX(${slideTranslateValue}%)`,
     transition: "transform 300ms ease-in-out",
+    height: "calc(100vh - 65px)",
   };
 
   const individualSlideStyle = {
@@ -134,7 +134,38 @@ const PublishedPage = ({ workspaceId, workspaceData, font, brandColor }) => {
     flexShrink: 0,
   };
 
+  const [touchStartX, setTouchStartX] = useState(null);
+  const [touchEndX, setTouchEndX] = useState(null);
+  const handleTouchStart = (e) => {
+    e.preventDefault();
+    setTouchStartX(e.touches[0].clientX);
+    console.log("Touch started at:", e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = (e) => {
+    e.preventDefault();
+    if (touchStartX - touchEndX > 100) {
+      // swiped left
+      handleNext();
+    } else if (touchEndX - touchStartX > 100) {
+      // swiped right
+      handlePrevious();
+    }
+
+    // Resetting after handling the swipe
+    setTouchStartX(null);
+    setTouchEndX(null);
+  };
+
+  const handleTouchMove = (e) => {
+    e.preventDefault();
+    setTouchEndX(e.touches[0].clientX);
+  };
+
   const slidesContainer = useRef(null) as any;
+
+  const slideRef = useRef(null);
+
   const handleNext = () => {
     setCurrentSlideIndex((prevIndex) =>
       Math.min(prevIndex + 1, slides.length - 1)
@@ -163,6 +194,22 @@ const PublishedPage = ({ workspaceId, workspaceData, font, brandColor }) => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [currentSlideIndex, slides]);
+
+  useEffect(() => {
+    const slidesElement = slideRef.current;
+
+    if (!slidesElement) return;
+
+    slidesElement.addEventListener("touchstart", handleTouchStart);
+    slidesElement.addEventListener("touchmove", handleTouchMove);
+    slidesElement.addEventListener("touchend", handleTouchEnd);
+
+    return () => {
+      slidesElement.removeEventListener("touchstart", handleTouchStart);
+      slidesElement.removeEventListener("touchmove", handleTouchMove);
+      slidesElement.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [touchStartX, touchEndX]);
 
   if (slides && slides.length === 0 && view === "slides") {
     return (
@@ -199,7 +246,12 @@ const PublishedPage = ({ workspaceId, workspaceData, font, brandColor }) => {
         <AudioManagerProvider>
           <div className="published">
             {view === "slides" ? (
-              <div className=" sticky top-0  flex gap-3 border-b border-gray-300 p-5  text-gray-700 shadow-md  dark:border-gray-700  dark:bg-[#191919] dark:text-gray-200">
+              <div
+                className=" sticky top-0  flex gap-3 border-b border-gray-300 p-5  text-gray-700 shadow-md  dark:border-gray-700  dark:bg-[#191919] dark:text-gray-200"
+                style={{
+                  zIndex: 1000,
+                }}
+              >
                 <span className=" flex min-w-[50px]">
                   <span className="flex w-[20px] justify-center ">
                     {currentSlideIndex + 1}
@@ -213,7 +265,7 @@ const PublishedPage = ({ workspaceId, workspaceData, font, brandColor }) => {
             ) : null}
             {view === "one-page" ? (
               <div
-                className={`relative  h-[100vh] overflow-y-auto rounded-md bg-white p-4 dark:bg-[#191919] `}
+                className={`relative  h-[100vh] overflow-y-auto bg-white p-4 dark:bg-[#191919] `}
               >
                 <div className=" relative mx-auto mb-20 max-w-[580px] xl:mt-[100px]">
                   {parseNodes(localValue, font)}
@@ -222,12 +274,13 @@ const PublishedPage = ({ workspaceId, workspaceData, font, brandColor }) => {
             ) : (
               <div
                 ref={slidesContainer}
-                className={`relative  overflow-y-auto  overflow-x-hidden rounded-md bg-white p-6 pb-[100px] dark:bg-[#191919] `}
+                className={`relative  overflow-y-auto  overflow-x-hidden bg-white p-6 pb-[100px] dark:bg-[#191919] `}
                 style={{
                   height: "calc(100vh - 65px)",
                 }}
               >
                 <div
+                  ref={slideRef}
                   className="relative mx-auto max-w-[700px] xl:mt-[40px]"
                   style={slideContainerStyle}
                 >

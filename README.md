@@ -46,3 +46,7 @@ currently under development (April)
 - [x] ai integration (wip)
 - [] research music composition block
 - [] mobile cms ?
+
+## Next phase - requirements
+
+Audio guide niche

@@ -65,7 +65,7 @@ export const texttospeechRouter = createTRPCRouter({
         messages: [
           {
             role: "system",
-            content: `Find and convert numbers and notations to readable text of the same langauge as input.  Return the output as text. If there are no numbers or symbols, return original text. `,
+            content: `Find and convert numbers, day, month, year, and other notations to readable text of the same langauge as input.  Return the output as text. If there are no numbers or symbols, return original text. `,
           },
           {
             role: "user",

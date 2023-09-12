@@ -87,7 +87,7 @@ const renderElement = (
             src={node.url}
             width={node.width}
             height={node.height}
-            className="rounded-md"
+            className="rounded-md shadow-md"
           />
         </div>
       );

@@ -45,3 +45,4 @@ currently under development (April)
 - [x] map block
 - [x] ai integration (wip)
 - [] research music composition block
+- [] mobile cms ?

@@ -50,7 +50,7 @@ const renderElement = (
     case "paragraph":
       return (
         <p
-          className={cn(`mt-2 leading-7 text-${
+          className={cn(`pt-3 leading-7 text-${
             alignMap[node.align] || node.align
           }
             ${fontFam}

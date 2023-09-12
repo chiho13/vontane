@@ -104,7 +104,7 @@ export const PlyrAudioPlayer = ({ audioURL, content, isPreview = false }) => {
   } else if (!isPreview && content.length < 40) {
     controls = ["play"];
   } else {
-    controls = ["play", "restart", "progress", "current-time"];
+    controls = ["play", "restart", "progress", "current-time", "duration"];
   }
 
   return (

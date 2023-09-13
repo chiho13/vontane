@@ -59,6 +59,7 @@ import { useRouter } from "next/router";
 import { nanoid } from "nanoid";
 import { useResizeBlock, Position } from "@/hooks/useResizeBlock";
 import { UserContext } from "@/contexts/UserContext";
+import { useTextSpeech } from "@/contexts/TextSpeechContext";
 
 function generateRandomFilename(file) {
   const extension = file.name.split(".").pop();
@@ -69,6 +70,7 @@ function generateRandomFilename(file) {
 export const ImageElement = React.memo(
   (props: { attributes: any; children: any; element: any }) => {
     const { attributes, children, element } = props;
+    const { setElementData } = useTextSpeech();
     const {
       editor,
       showEditBlockPopup,
@@ -98,6 +100,7 @@ export const ImageElement = React.memo(
       path
     );
 
+    const selected = useSelected();
     const [hasFetched, setHasFetched] = useState(false);
 
     const [tempURL, setTempURL] = useState(element.tempURL);
@@ -119,6 +122,13 @@ export const ImageElement = React.memo(
     //     staleTime: 5 * 60 * 1000,
     //   }
     // );
+
+    useEffect(() => {
+      if (selected) {
+        setElementData(element);
+      }
+    }, [selected]);
+
     return (
       <div data-id={element.id} data-path={JSON.stringify(path)}>
         {!element.file_name ? (
@@ -170,7 +180,7 @@ export const ImageElement = React.memo(
           </>
         ) : (
           <div
-            className={`group mr-1 flex justify-${align}`}
+            className={`group mr-1 flex justify-${align} `}
             {...attributes}
             contentEditable={false}
           >
@@ -180,7 +190,9 @@ export const ImageElement = React.memo(
                 width={blockWidth}
                 height={imageHeight}
                 ref={ref}
-                className="rounded-md"
+                className={`rounded-md ${
+                  selected && "ring-2 ring-brand ring-offset-2"
+                }`}
                 alt="alt"
                 tabIndex={-1}
               />

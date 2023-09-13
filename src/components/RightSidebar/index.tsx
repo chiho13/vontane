@@ -45,6 +45,7 @@ import { SlidesPreview } from "../PreviewContent/slides";
 import { PublishButton } from "../PublishButton";
 import { useClipboard } from "@/hooks/useClipboard";
 import { MapSettings } from "../MapSettings";
+import { ImageSettings } from "../ImageSettings";
 import { deserialize } from "@/hoc/withPasting";
 
 import {
@@ -233,6 +234,10 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
               }}
             >
               <FontStyle />
+
+              {SlateElement.isElement(rootNode) &&
+                rootNode?.type == "image" &&
+                elementData && <ImageSettings element={elementData} />}
               {SlateElement.isElement(rootNode) &&
                 rootNode?.type == "map" &&
                 elementData && (

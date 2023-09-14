@@ -34,7 +34,6 @@ export const CollapsibleAudioPlayer = ({ node, children, index, nodes }) => {
       className={`preview-tts mb-3 mt-4
     
        py-3 dark:border-accent 
-      ${node.audioplayer ? "rounded-md border" : ""}
 
       ${
         node.content &&

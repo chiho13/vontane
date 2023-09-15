@@ -11,6 +11,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { ChevronDown } from "lucide-react";
 import { debounce } from "lodash";
 
@@ -125,9 +131,9 @@ export const FontStyle = () => {
           <div className="text-sm text-muted-foreground">Mono</div>
         </label>
       </div>
-      <div className="mt-4">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+      {/* <div className="mt-4">
+        <Popover>
+          <PopoverTrigger asChild>
             <Button
               variant="secondary"
               size="sm"
@@ -141,10 +147,11 @@ export const FontStyle = () => {
               ></span>
               Brand Colour <ChevronDown className="w-4" />
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
+          </PopoverTrigger>
+          <PopoverContent
             align="start"
-            className="z-100 border border-gray-400 bg-background  p-2 dark:border-gray-700  dark:bg-muted "
+            sideOffset={10}
+            className=" w-auto border border-gray-300 bg-background  p-2 dark:border-gray-700  dark:bg-muted "
           >
             <HexColorPicker
               color={color}
@@ -157,9 +164,9 @@ export const FontStyle = () => {
                 className="h-[32px] w-full rounded-md  border border-neutral-300 px-1"
               />
             </div>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+          </PopoverContent>
+        </Popover>
+      </div> */}
     </div>
   );
 };

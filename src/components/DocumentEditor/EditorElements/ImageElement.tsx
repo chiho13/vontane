@@ -191,7 +191,8 @@ export const ImageElement = React.memo(
                 height={imageHeight}
                 ref={ref}
                 className={`rounded-md ${
-                  selected && "ring-2 ring-brand ring-offset-2"
+                  selected &&
+                  "ring-2 ring-brand ring-offset-2 ring-offset-white "
                 }`}
                 alt="alt"
                 tabIndex={-1}

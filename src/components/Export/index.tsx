@@ -414,31 +414,22 @@ body {
   };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger className="rounded-md outline-none ring-brand focus:ring-2">
-        <Button
-          className="border outline-none ring-brand focus-visible:ring-2 dark:ring-white"
-          variant="outline"
-          size="xs"
-        >
-          Export HTML <ChevronDown className="w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className=" top-0 w-[200px] border dark:border-accent dark:bg-input">
-        <DropdownMenuItem
-          className={`flex w-full items-center rounded-sm px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:text-gray-900 focus:outline-none dark:text-foreground `}
-          onClick={downloadAsHTMLOnePage}
-        >
-          One Page
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className={`flex w-full items-center rounded-sm px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:text-gray-900 focus:outline-none dark:text-foreground `}
-          onClick={downloadAsHTMLSlides}
-          disabled={slides.length === 0}
-        >
-          Slides
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <div>
+      <h4 className="pb-3 text-sm font-bold text-foreground">Export HTML</h4>
+
+      <Button
+        className={`flex w-full items-center rounded-sm bg-transparent px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:bg-gray-200 hover:text-gray-900 focus:outline-none dark:bg-transparent dark:text-foreground `}
+        onClick={downloadAsHTMLOnePage}
+      >
+        One Page
+      </Button>
+      <Button
+        className={`flex w-full items-center rounded-sm bg-transparent px-4 py-2 text-left text-sm text-gray-700 transition duration-200  hover:bg-gray-200 hover:text-gray-900 focus:outline-none dark:bg-transparent dark:text-foreground `}
+        onClick={downloadAsHTMLSlides}
+        disabled={slides.length === 0}
+      >
+        Slides
+      </Button>
+    </div>
   );
 };

@@ -75,6 +75,7 @@ import { Export } from "../Export";
 import { LayoutContext } from "../Layouts/AccountLayout";
 import { DownloadButton } from "../DownloadButton";
 import { PlyrAudioPlayer } from "../PlyrAudio";
+import { WorkspaceSetting } from "../WorkspaceSetting";
 interface RightSideBarProps {
   setRightSideBarWidth: any;
   showRightSidebar: boolean;
@@ -188,8 +189,8 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     <AudioManagerProvider>
       <Portal>
         <div className="fixed right-[80px] top-[25px] flex gap-2">
-          <Export />
-
+          <WorkspaceSetting />
+          {/* <Export /> */}
           <PublishButton />
         </div>
       </Portal>
@@ -233,7 +234,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                 height: `calc(100vh - ${openChat ? "460" : "200"}px)`,
               }}
             >
-              <FontStyle />
+              {/* <FontStyle /> */}
 
               {SlateElement.isElement(rootNode) &&
                 rootNode?.type == "image" &&

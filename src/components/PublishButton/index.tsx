@@ -119,6 +119,7 @@ export const PublishButton = () => {
           </PopoverTrigger>
           <PopoverContent
             align="end"
+            sideOffset={10}
             className="w-[400px] border border-gray-300  bg-background p-3 dark:border-gray-500 dark:bg-secondary"
           >
             <div className="relative mb-4 flex items-center" tabIndex={-1}>

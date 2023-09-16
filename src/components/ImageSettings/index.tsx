@@ -22,12 +22,13 @@ import { Button } from "../ui/button";
 import { Search } from "lucide-react";
 import { useClipboard } from "@/hooks/useClipboard";
 import { debounce } from "lodash";
+import { ReactEditor } from "slate-react";
 
-export const ImageSettings = ({ element, path }) => {
+export const ImageSettings = ({ element }) => {
   const { editor, activePath } = useContext(EditorContext);
 
   const [altText, setAltText] = useState(element.altText ?? null);
-
+  const path = ReactEditor.findPath(editor, element);
   useEffect(() => {
     if (element.altText) {
       setAltText(element.altText);

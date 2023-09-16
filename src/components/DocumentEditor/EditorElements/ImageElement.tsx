@@ -180,7 +180,7 @@ export const ImageElement = React.memo(
           </>
         ) : (
           <div
-            className={`group mr-1 flex justify-${align} `}
+            className={`group flex pr-2 justify-${align} `}
             {...attributes}
             contentEditable={false}
           >

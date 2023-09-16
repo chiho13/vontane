@@ -2059,7 +2059,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               </div>
             </div>
 
-            <div className="absolute right-3 top-2 z-10 flex items-center gap-2 rounded-md border border-gray-300  bg-gray-100 px-2  py-1 text-xs text-slate-500 dark:border-gray-600 dark:bg-accent dark:text-slate-200">
+            <div className="absolute right-2 top-2 z-10 flex items-center gap-2 rounded-md border border-gray-300  bg-gray-100 px-2  py-1 text-xs text-slate-500 dark:border-gray-600 dark:bg-accent dark:text-slate-200">
               <div
                 className={`h-2 w-2 rounded-full transition duration-200 
                 ${syncStatus === "syncing" ? "bg-yellow-500" : "bg-green-500"}

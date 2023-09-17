@@ -82,7 +82,7 @@ export function BlockAlign({ element, className }: any) {
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="center"
-              className="border-2 border-gray-300  bg-background dark:border-accent"
+              className="border border-gray-300  bg-background dark:border-accent"
             >
               <DropdownMenuItem onClick={() => alignImage("start")}>
                 <AlignLeft

@@ -63,6 +63,7 @@ import { UserContext } from "@/contexts/UserContext";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { Portal } from "react-portal";
 import { relative } from "path";
+import { debounce } from "lodash";
 
 function generateRandomFilename(file) {
   const extension = file.name.split(".").pop();
@@ -74,16 +75,26 @@ const ItemType = {
   RADIO: "radio",
 };
 
-export const useDraggable = (initialPosition = { x: 0, y: 0 }, imageRef) => {
+export const useDraggable = (
+  initialPosition = { x: 0, y: 0 },
+  imageRef,
+  editor,
+  id,
+  path,
+  activeAudioPoint
+) => {
   const AudioPointref = React.useRef(null);
   const [position, setPosition] = React.useState(initialPosition);
-  let dragStart = { x: 0, y: 0 };
+  const dragStart = useRef({ x: 0, y: 0 });
+
   const dragging = useRef(false);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
     dragging.current = true;
-    dragStart = {
+
+    // Set drag start for the current audio point
+    dragStart.current = {
       x: e.clientX - AudioPointref.current.offsetLeft,
       y: e.clientY - AudioPointref.current.offsetTop,
     };
@@ -91,8 +102,8 @@ export const useDraggable = (initialPosition = { x: 0, y: 0 }, imageRef) => {
 
   const handleMouseMove = (e: MouseEvent) => {
     if (dragging.current && imageRef.current && AudioPointref.current) {
-      const deltaX = e.clientX - dragStart.x;
-      const deltaY = e.clientY - dragStart.y;
+      const deltaX = e.clientX - dragStart.current.x;
+      const deltaY = e.clientY - dragStart.current.y;
       const percentX = (deltaX / imageRef.current.width) * 100;
       const percentY = (deltaY / imageRef.current.height) * 100;
 
@@ -100,50 +111,70 @@ export const useDraggable = (initialPosition = { x: 0, y: 0 }, imageRef) => {
         x: percentX,
         y: percentY,
       });
+
       e.preventDefault();
     }
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     dragging.current = false;
-  };
+    dragStart.current = { x: 0, y: 0 };
+
+    // Get the node at the known path
+    const imageNode = Node.get(editor, path);
+
+    // Find the specific audio point to update its position
+    const audioPointIndex = imageNode.audioPoint.findIndex(
+      (point) => point.id === id
+    );
+
+    if (audioPointIndex !== -1) {
+      const newAudioPoint = [...imageNode.audioPoint];
+      newAudioPoint[audioPointIndex] = {
+        ...newAudioPoint[audioPointIndex],
+        x: position.x,
+        y: position.y,
+      };
+
+      // Update the entire audioPoint array for that image node
+      Transforms.setNodes(editor, { audioPoint: newAudioPoint }, { at: path });
+    }
+  }, [position]);
 
   React.useEffect(() => {
-    if (dragging) {
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseup", handleMouseUp);
-    }
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
 
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [dragging]);
+  }, []);
 
   return { AudioPointref, position, handleMouseDown };
 };
+
 const DraggableRadioGroupItem = ({
   value,
-  element,
+  editor,
   id,
   imageRef,
   initialPosition,
+  path,
 }) => {
+  const activeAudioPoint = useRef(null);
+
   const { AudioPointref, position, handleMouseDown } = useDraggable(
     {
       x: initialPosition.x,
       y: initialPosition.y,
     },
-    imageRef
+    imageRef,
+    editor,
+    id,
+    path,
+    activeAudioPoint
   );
-
-  const aspectRatio = imageRef.current?.height / imageRef.current?.width;
-  const originalWidth = element.width;
-  const originalHeight = element.height;
-
-  // Calculate the relative position as percentages
-  const originalX = (position.x / originalWidth) * 100;
-  const originalY = (position.y / originalHeight) * 100;
 
   return (
     <div
@@ -337,9 +368,10 @@ export const ImageElement = React.memo(
                       <DraggableRadioGroupItem
                         key={i}
                         value={el.id}
-                        element={element}
+                        editor={editor}
                         id={el.id}
                         imageRef={imageRef}
+                        path={path}
                         initialPosition={{
                           x: el.x,
                           y: el.y,

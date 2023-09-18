@@ -9,7 +9,7 @@ export const addImageBlock = (editor, path) => {
     id,
     url: "",
     type: "image",
-    width: "auto",
+    width: 680,
     children: [{ text: "" }],
   };
 

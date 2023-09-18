@@ -116,30 +116,39 @@ export const useDraggable = (
     }
   };
 
+  const [updateSlate, setUpdateSlate] = useState(false);
+
   const handleMouseUp = useCallback(() => {
     dragging.current = false;
     dragStart.current = { x: 0, y: 0 };
-
-    // Get the node at the known path
-    const imageNode = Node.get(editor, path);
-
-    // Find the specific audio point to update its position
-    const audioPointIndex = imageNode.audioPoint.findIndex(
-      (point) => point.id === id
-    );
-
-    if (audioPointIndex !== -1) {
-      const newAudioPoint = [...imageNode.audioPoint];
-      newAudioPoint[audioPointIndex] = {
-        ...newAudioPoint[audioPointIndex],
-        x: position.x,
-        y: position.y,
-      };
-
-      // Update the entire audioPoint array for that image node
-      Transforms.setNodes(editor, { audioPoint: newAudioPoint }, { at: path });
-    }
+    setUpdateSlate(true);
   }, [position]);
+
+  React.useEffect(() => {
+    if (updateSlate) {
+      const imageNode = Node.get(editor, path) as any;
+      const audioPointIndex = imageNode.audioPoint.findIndex(
+        (point) => point.id === id
+      );
+
+      if (audioPointIndex !== -1) {
+        const newAudioPoint = [...imageNode.audioPoint];
+        newAudioPoint[audioPointIndex] = {
+          ...newAudioPoint[audioPointIndex],
+          x: position.x,
+          y: position.y,
+        };
+
+        Transforms.setNodes(
+          editor,
+          { audioPoint: newAudioPoint },
+          { at: path }
+        );
+      }
+
+      setUpdateSlate(false);
+    }
+  }, [updateSlate]);
 
   React.useEffect(() => {
     document.addEventListener("mousemove", handleMouseMove);

@@ -34,6 +34,7 @@ import { blobToBase64, urlToBlob } from "@/utils/helpers";
 import { supabaseClient } from "@/utils/supabaseClient";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio";
 
 import {
   Form,
@@ -60,12 +61,93 @@ import { nanoid } from "nanoid";
 import { useResizeBlock, Position } from "@/hooks/useResizeBlock";
 import { UserContext } from "@/contexts/UserContext";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
+import { Portal } from "react-portal";
 
 function generateRandomFilename(file) {
   const extension = file.name.split(".").pop();
   const id = nanoid();
   return `${id}.${extension}`;
 }
+
+const ItemType = {
+  RADIO: "radio",
+};
+
+export const useDraggable = (initialPosition = { x: 0, y: 0 }, imageRef) => {
+  const AudioPointref = React.useRef(null);
+  const [position, setPosition] = React.useState(initialPosition);
+  let dragStart = { x: 0, y: 0 };
+  const dragging = useRef(false);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    dragging.current = true;
+    dragStart = {
+      x: e.clientX - AudioPointref.current.offsetLeft,
+      y: e.clientY - AudioPointref.current.offsetTop,
+    };
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (dragging.current && imageRef.current && AudioPointref.current) {
+      const maxDragX =
+        imageRef.current.width - AudioPointref.current.offsetWidth - 10;
+      const maxDragY =
+        imageRef.current.height - AudioPointref.current.offsetHeight - 5;
+
+      const newPositionX = e.clientX - dragStart.x - window.pageXOffset;
+      const newPositionY = e.clientY - dragStart.y - window.pageYOffset;
+
+      setPosition({
+        x: Math.min(Math.max(10, newPositionX), maxDragX),
+        y: Math.min(Math.max(10, newPositionY), maxDragY),
+      });
+      e.preventDefault();
+    }
+  };
+
+  const handleMouseUp = () => {
+    dragging.current = false;
+  };
+
+  React.useEffect(() => {
+    if (dragging) {
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [dragging]);
+
+  return { AudioPointref, position, handleMouseDown };
+};
+const DraggableRadioGroupItem = ({ value, id, imageRef }) => {
+  const { AudioPointref, position, handleMouseDown } = useDraggable(
+    {
+      x: 10,
+      y: 10,
+    },
+    imageRef
+  );
+
+  return (
+    <div
+      ref={AudioPointref}
+      className="absolute cursor-pointer"
+      style={{ left: position.x, top: position.y }}
+      onMouseDown={handleMouseDown}
+    >
+      <RadioGroupItem
+        value={value}
+        id={id}
+        className="border border-white text-white"
+      />
+    </div>
+  );
+};
 
 export const ImageElement = React.memo(
   (props: { attributes: any; children: any; element: any }) => {
@@ -94,34 +176,19 @@ export const ImageElement = React.memo(
     );
     const [align, setAlign] = useState(element.align || "start");
 
-    const { handleMouseDown, setPos, ref, blockWidth } = useResizeBlock(
-      element,
-      editor,
-      path
-    );
+    const {
+      handleMouseDown,
+      setPos,
+      ref: imageRef,
+      blockWidth,
+    } = useResizeBlock(element, editor, path);
+
+    const audioPoint = element.audioPoint;
 
     const selected = useSelected();
     const [hasFetched, setHasFetched] = useState(false);
 
     const [tempURL, setTempURL] = useState(element.tempURL);
-
-    // api.gpt.getAIImage.useQuery(
-    //   { fileName: element.file_name, workspaceId },
-    //   {
-    //     enabled: true,
-    //     onSuccess: async (data) => {
-    //       const currentElement = Node.get(editor, path);
-    //       const blob = await urlToBlob(data.signedURL);
-    //       const base64Image = await blobToBase64(blob);
-    //       setBase64URL(base64Image);
-    //       console.log("get ai image");
-
-    //       setHasFetched(true); // set hasFetched to true after the first successful fetch
-    //     },
-    //     cacheTime: 5 * 60 * 1000,
-    //     staleTime: 5 * 60 * 1000,
-    //   }
-    // );
 
     useEffect(() => {
       if (selected) {
@@ -189,7 +256,7 @@ export const ImageElement = React.memo(
                 src={base64URL}
                 width={blockWidth}
                 height={imageHeight}
-                ref={ref}
+                ref={imageRef}
                 className={`rounded-md ${
                   selected &&
                   "ring-2 ring-brand ring-offset-2 ring-offset-white "
@@ -251,6 +318,19 @@ export const ImageElement = React.memo(
                 <OptionMenu element={element} />
               </div>
             </div>
+            <RadioGroup className="">
+              {audioPoint &&
+                audioPoint.map((el, i) => {
+                  return (
+                    <DraggableRadioGroupItem
+                      key={i}
+                      value="default"
+                      id="r1"
+                      imageRef={imageRef}
+                    />
+                  );
+                })}
+            </RadioGroup>
             {children}
           </div>
         )}

@@ -19,10 +19,11 @@ import { useContext, useEffect, useState } from "react";
 import { EditorContext } from "@/contexts/EditorContext";
 import LoadingSpinner from "@/icons/LoadingSpinner";
 import { Button } from "../ui/button";
-import { Search } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { useClipboard } from "@/hooks/useClipboard";
 import { debounce } from "lodash";
 import { ReactEditor } from "slate-react";
+import { genNodeId } from "@/hoc/withID";
 
 export const ImageSettings = ({ element }) => {
   const { editor, activePath } = useContext(EditorContext);
@@ -40,9 +41,29 @@ export const ImageSettings = ({ element }) => {
     Transforms.setNodes(editor, { altText: e.target.value }, { at: path });
   };
 
-  if (element.type !== "image") {
-    return <div></div>;
-  }
+  const addAudioButton = () => {
+    // If audioPoint is not defined or null, default to an empty array
+    const currentAudioPoints = element.audioPoint || [];
+
+    // Create a new audio point
+    const newAudioPoint = {
+      id: genNodeId(),
+      url: "",
+      link: "",
+      x: 30,
+      y: 30,
+    };
+
+    // Combine current audio points with the new one
+    const updatedAudioPoints = [...currentAudioPoints, newAudioPoint];
+
+    // Update the node in the editor with the new audio points
+    Transforms.setNodes(
+      editor,
+      { audioPoint: updatedAudioPoints },
+      { at: path }
+    );
+  };
 
   return (
     <div className="p-4">
@@ -58,6 +79,17 @@ export const ImageSettings = ({ element }) => {
           onChange={editAltText}
         />
       </div>
+
+      <h3 className="text-bold mb-3 mt-4 text-sm text-gray-500 dark:text-gray-400">
+        Insert Audio in Image
+      </h3>
+
+      <Button
+        className="h-[36px] w-[36px] border border-gray-300 bg-transparent p-0 text-foreground hover:bg-gray-200"
+        onClick={addAudioButton}
+      >
+        <Plus />
+      </Button>
     </div>
   );
 };

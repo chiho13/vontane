@@ -62,6 +62,7 @@ import { useResizeBlock, Position } from "@/hooks/useResizeBlock";
 import { UserContext } from "@/contexts/UserContext";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { Portal } from "react-portal";
+import { relative } from "path";
 
 function generateRandomFilename(file) {
   const extension = file.name.split(".").pop();
@@ -90,17 +91,14 @@ export const useDraggable = (initialPosition = { x: 0, y: 0 }, imageRef) => {
 
   const handleMouseMove = (e: MouseEvent) => {
     if (dragging.current && imageRef.current && AudioPointref.current) {
-      const maxDragX =
-        imageRef.current.width - AudioPointref.current.offsetWidth - 10;
-      const maxDragY =
-        imageRef.current.height - AudioPointref.current.offsetHeight - 5;
-
-      const newPositionX = e.clientX - dragStart.x - window.pageXOffset;
-      const newPositionY = e.clientY - dragStart.y - window.pageYOffset;
+      const deltaX = e.clientX - dragStart.x;
+      const deltaY = e.clientY - dragStart.y;
+      const percentX = (deltaX / imageRef.current.width) * 100;
+      const percentY = (deltaY / imageRef.current.height) * 100;
 
       setPosition({
-        x: Math.min(Math.max(10, newPositionX), maxDragX),
-        y: Math.min(Math.max(10, newPositionY), maxDragY),
+        x: percentX,
+        y: percentY,
       });
       e.preventDefault();
     }
@@ -124,7 +122,13 @@ export const useDraggable = (initialPosition = { x: 0, y: 0 }, imageRef) => {
 
   return { AudioPointref, position, handleMouseDown };
 };
-const DraggableRadioGroupItem = ({ value, id, imageRef, initialPosition }) => {
+const DraggableRadioGroupItem = ({
+  value,
+  element,
+  id,
+  imageRef,
+  initialPosition,
+}) => {
   const { AudioPointref, position, handleMouseDown } = useDraggable(
     {
       x: initialPosition.x,
@@ -133,17 +137,25 @@ const DraggableRadioGroupItem = ({ value, id, imageRef, initialPosition }) => {
     imageRef
   );
 
+  const aspectRatio = imageRef.current?.height / imageRef.current?.width;
+  const originalWidth = element.width;
+  const originalHeight = element.height;
+
+  // Calculate the relative position as percentages
+  const originalX = (position.x / originalWidth) * 100;
+  const originalY = (position.y / originalHeight) * 100;
+
   return (
     <div
       ref={AudioPointref}
       className="absolute cursor-pointer"
-      style={{ left: position.x, top: position.y }}
+      style={{ left: `${position.x}%`, top: `${position.y}%` }}
       onMouseDown={handleMouseDown}
     >
       <RadioGroupItem
         value={value}
         id={id}
-        className="h-8 w-8 border-2 border-white text-white"
+        className="z-100 h-8 w-8 border-2 border-white text-white"
         indicatorClassName={"h-5 w-5"}
       />
     </div>
@@ -318,24 +330,26 @@ export const ImageElement = React.memo(
                 )}
                 <OptionMenu element={element} />
               </div>
+              <RadioGroup>
+                {audioPoint &&
+                  audioPoint.map((el, i) => {
+                    return (
+                      <DraggableRadioGroupItem
+                        key={i}
+                        value={el.id}
+                        element={element}
+                        id={el.id}
+                        imageRef={imageRef}
+                        initialPosition={{
+                          x: el.x,
+                          y: el.y,
+                        }}
+                      />
+                    );
+                  })}
+              </RadioGroup>
             </div>
-            <RadioGroup className="">
-              {audioPoint &&
-                audioPoint.map((el, i) => {
-                  return (
-                    <DraggableRadioGroupItem
-                      key={i}
-                      value={el.id}
-                      id={el.id}
-                      imageRef={imageRef}
-                      initialPosition={{
-                        x: el.x,
-                        y: el.y,
-                      }}
-                    />
-                  );
-                })}
-            </RadioGroup>
+
             {children}
           </div>
         )}

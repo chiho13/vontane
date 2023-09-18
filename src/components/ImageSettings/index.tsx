@@ -45,13 +45,16 @@ export const ImageSettings = ({ element }) => {
     // If audioPoint is not defined or null, default to an empty array
     const currentAudioPoints = element.audioPoint || [];
 
+    const randomX = Math.floor(Math.random() * element.width);
+    const randomY = Math.floor(Math.random() * element.height);
+
     // Create a new audio point
     const newAudioPoint = {
       id: genNodeId(),
       url: "",
       link: "",
-      x: 30,
-      y: 30,
+      x: randomX,
+      y: randomY,
     };
 
     // Combine current audio points with the new one

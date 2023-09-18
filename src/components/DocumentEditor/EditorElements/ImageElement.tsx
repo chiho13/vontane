@@ -124,11 +124,11 @@ export const useDraggable = (initialPosition = { x: 0, y: 0 }, imageRef) => {
 
   return { AudioPointref, position, handleMouseDown };
 };
-const DraggableRadioGroupItem = ({ value, id, imageRef }) => {
+const DraggableRadioGroupItem = ({ value, id, imageRef, initialPosition }) => {
   const { AudioPointref, position, handleMouseDown } = useDraggable(
     {
-      x: 10,
-      y: 10,
+      x: initialPosition.x,
+      y: initialPosition.y,
     },
     imageRef
   );
@@ -143,7 +143,8 @@ const DraggableRadioGroupItem = ({ value, id, imageRef }) => {
       <RadioGroupItem
         value={value}
         id={id}
-        className="border border-white text-white"
+        className="h-8 w-8 border-2 border-white text-white"
+        indicatorClassName={"h-5 w-5"}
       />
     </div>
   );
@@ -324,9 +325,13 @@ export const ImageElement = React.memo(
                   return (
                     <DraggableRadioGroupItem
                       key={i}
-                      value="default"
-                      id="r1"
+                      value={el.id}
+                      id={el.id}
                       imageRef={imageRef}
+                      initialPosition={{
+                        x: el.x,
+                        y: el.y,
+                      }}
                     />
                   );
                 })}

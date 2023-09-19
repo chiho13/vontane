@@ -12,6 +12,8 @@ type AudioData = {
   content: string;
 };
 interface TextSpeechContextType {
+  audioPointData: any;
+  setAudioPointData: (value: any) => void;
   elementData: any;
   setElementData: (value: any) => void;
   audioData: AudioData;
@@ -35,6 +37,8 @@ interface TextSpeechContextType {
 }
 // Create the context with default values
 const TextSpeechContext = createContext<TextSpeechContextType>({
+  audioPointData: null,
+  setAudioPointData: () => {},
   elementData: null,
   setElementData: () => {},
   audioData: {
@@ -83,7 +87,7 @@ const RightSideBarProvider = ({
     file_name: "",
     content: "",
   });
-
+  const [audioPointData, setAudioPointData] = useState(null);
   const [elementData, setElementData] = useState(null);
 
   const [showRightSidebar, setShowRightSidebar] = useLocalStorage(
@@ -109,6 +113,8 @@ const RightSideBarProvider = ({
   return (
     <TextSpeechContext.Provider
       value={{
+        audioPointData,
+        setAudioPointData,
         elementData,
         setElementData,
         audioData,

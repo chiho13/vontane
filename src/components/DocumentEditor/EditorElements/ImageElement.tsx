@@ -37,6 +37,12 @@ import "react-toastify/dist/ReactToastify.css";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio";
 
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
+import {
   Form,
   FormControl,
   FormDescription,
@@ -80,8 +86,7 @@ export const useDraggable = (
   imageRef,
   editor,
   id,
-  path,
-  activeAudioPoint
+  path
 ) => {
   const AudioPointref = React.useRef(null);
   const [position, setPosition] = React.useState(initialPosition);
@@ -91,6 +96,7 @@ export const useDraggable = (
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
+
     dragging.current = true;
 
     // Set drag start for the current audio point
@@ -166,13 +172,13 @@ export const useDraggable = (
 const DraggableRadioGroupItem = ({
   value,
   editor,
+  label,
   id,
   imageRef,
   initialPosition,
   path,
+  setAudioRadioValue,
 }) => {
-  const activeAudioPoint = useRef(null);
-
   const { AudioPointref, position, handleMouseDown } = useDraggable(
     {
       x: initialPosition.x,
@@ -181,9 +187,10 @@ const DraggableRadioGroupItem = ({
     imageRef,
     editor,
     id,
-    path,
-    activeAudioPoint
+    path
   );
+
+  const { setAudioPointData } = useTextSpeech();
 
   return (
     <div
@@ -193,7 +200,7 @@ const DraggableRadioGroupItem = ({
       onMouseDown={handleMouseDown}
     >
       <RadioGroupItem
-        value={value}
+        value={id}
         id={id}
         className="z-100 h-8 w-8 border-2 border-white text-white"
         indicatorClassName={"h-5 w-5"}
@@ -243,11 +250,18 @@ export const ImageElement = React.memo(
 
     const [tempURL, setTempURL] = useState(element.tempURL);
 
-    useEffect(() => {
-      if (selected) {
-        setElementData(element);
-      }
-    }, [selected]);
+    const [audioRadioValue, setAudioRadioValue] = useState(element.activeId);
+    const { setAudioPointData } = useTextSpeech();
+
+    const onValueChange = (value) => {
+      setAudioRadioValue(value);
+      setAudioPointData(value);
+      Transforms.setNodes(
+        editor,
+        { activeId: value }, // set the activeId to the new value
+        { at: path }
+      );
+    };
 
     return (
       <div data-id={element.id} data-path={JSON.stringify(path)}>
@@ -370,8 +384,9 @@ export const ImageElement = React.memo(
                 )}
                 <OptionMenu element={element} />
               </div>
-              <RadioGroup>
+              <RadioGroup value={audioRadioValue} onValueChange={onValueChange}>
                 {audioPoint &&
+                  selected &&
                   audioPoint.map((el, i) => {
                     return (
                       <DraggableRadioGroupItem
@@ -380,7 +395,9 @@ export const ImageElement = React.memo(
                         editor={editor}
                         id={el.id}
                         imageRef={imageRef}
+                        label={el.content}
                         path={path}
+                        setAudioRadioValue={setAudioRadioValue}
                         initialPosition={{
                           x: el.x,
                           y: el.y,

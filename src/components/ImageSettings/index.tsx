@@ -79,31 +79,40 @@ export const ImageSettings = ({ element }) => {
   };
 
   return (
-    <div className="p-4">
-      <h2 className="text-bold mb-3 text-sm">Image Properties</h2>
+    <div className="">
+      <div className="p-4">
+        <h2 className="text-bold mb-3 text-sm">Image Properties</h2>
 
-      <h3 className="text-bold mb-1 mt-4 text-sm text-gray-500 dark:text-gray-400">
-        Alt Text
-      </h3>
-      <div className="relative flex items-center">
-        <input
-          value={altText}
-          className=" h-[36px]  w-full rounded-md  border border-gray-300  bg-muted  p-2 text-sm  focus:outline-none dark:border-gray-400 dark:text-gray-400"
-          onChange={editAltText}
-        />
+        <h3 className="text-bold mb-1 mt-4 text-sm text-gray-500 dark:text-gray-400">
+          Alt Text
+        </h3>
+        <div className="relative flex items-center">
+          <input
+            value={altText}
+            className=" h-[36px]  w-full rounded-md  border border-gray-300  bg-muted  p-2 text-sm  focus:outline-none dark:border-gray-400 dark:text-gray-400"
+            onChange={editAltText}
+          />
+        </div>
+
+        <h3 className="text-bold mb-3 mt-4 text-sm text-gray-500 dark:text-gray-400">
+          Insert Tag
+        </h3>
+
+        <Button
+          className="h-[32px] w-[32px] border border-gray-300 bg-transparent p-0 text-foreground hover:bg-gray-200"
+          onClick={addAudioButton}
+        >
+          <Plus />
+        </Button>
       </div>
-
-      <h3 className="text-bold mb-3 mt-4 text-sm text-gray-500 dark:text-gray-400">
-        Insert Audio in Image
-      </h3>
-
-      <Button
-        className="h-[32px] w-[32px] border border-gray-300 bg-transparent p-0 text-foreground hover:bg-gray-200"
-        onClick={addAudioButton}
-      >
-        <Plus />
-      </Button>
-      {audioPointData}
+      {audioPointData && (
+        <div className="bg-accent p-4">
+          <h3 className="text-bold mb-3 text-sm text-gray-500 dark:text-gray-400">
+            Link to Content
+          </h3>
+          <span className="text-gray-500">ID: {audioPointData}</span>
+        </div>
+      )}
     </div>
   );
 };

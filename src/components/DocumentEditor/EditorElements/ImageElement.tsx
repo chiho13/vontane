@@ -202,8 +202,8 @@ const DraggableRadioGroupItem = ({
       <RadioGroupItem
         value={id}
         id={id}
-        className="z-100 h-8 w-8 border-2 border-white text-white"
-        indicatorClassName={"h-5 w-5"}
+        className="z-100 duration-400 h-8 w-8 border-4 border-white bg-blue-800/40 text-white shadow-md transition active:scale-110"
+        indicatorClassName={"h-4 w-4"}
       />
     </div>
   );

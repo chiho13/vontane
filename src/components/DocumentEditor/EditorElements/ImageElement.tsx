@@ -190,8 +190,6 @@ const DraggableRadioGroupItem = ({
     path
   );
 
-  const { setAudioPointData } = useTextSpeech();
-
   return (
     <div
       ref={AudioPointref}
@@ -245,23 +243,25 @@ export const ImageElement = React.memo(
 
     const audioPoint = element.audioPoint;
 
+    console.log(element);
     const selected = useSelected();
     const [hasFetched, setHasFetched] = useState(false);
 
     const [tempURL, setTempURL] = useState(element.tempURL);
 
     const [audioRadioValue, setAudioRadioValue] = useState(element.activeId);
-    const { setAudioPointData } = useTextSpeech();
+    const { audioPointData, setAudioPointData } = useTextSpeech();
 
     const onValueChange = (value) => {
-      setAudioRadioValue(value);
+      // setAudioRadioValue(value);
       setAudioPointData(value);
-      Transforms.setNodes(
-        editor,
-        { activeId: value }, // set the activeId to the new value
-        { at: path }
-      );
     };
+
+    useEffect(() => {
+      if (selected) {
+        setElementData(element);
+      }
+    }, [selected]);
 
     return (
       <div data-id={element.id} data-path={JSON.stringify(path)}>
@@ -384,7 +384,7 @@ export const ImageElement = React.memo(
                 )}
                 <OptionMenu element={element} />
               </div>
-              <RadioGroup value={audioRadioValue} onValueChange={onValueChange}>
+              <RadioGroup value={audioPointData} onValueChange={onValueChange}>
                 {audioPoint &&
                   selected &&
                   audioPoint.map((el, i) => {

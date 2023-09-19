@@ -237,9 +237,8 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
               {/* <FontStyle /> */}
 
               {SlateElement.isElement(rootNode) &&
-                rootNode?.type == "image" && (
-                  <ImageSettings element={rootNode} />
-                )}
+                rootNode?.type == "image" &&
+                elementData && <ImageSettings element={elementData} />}
               {SlateElement.isElement(rootNode) &&
                 rootNode?.type == "map" &&
                 elementData && (

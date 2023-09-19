@@ -14,7 +14,7 @@ import {
 import { Input } from "../ui/input";
 import { api } from "@/utils/api";
 import { ToastContainer, toast } from "react-toastify";
-import { Transforms } from "slate";
+import { Transforms, Node } from "slate";
 import { useContext, useEffect, useState } from "react";
 import { EditorContext } from "@/contexts/EditorContext";
 import LoadingSpinner from "@/icons/LoadingSpinner";
@@ -32,6 +32,8 @@ export const ImageSettings = ({ element }) => {
   const { audioPointData } = useTextSpeech();
 
   const [altText, setAltText] = useState(element.altText ?? null);
+
+  const [audioURL, setAudioURL] = useState("");
   const path = ReactEditor.findPath(editor, element);
 
   const audioPointId = element.activeId || "";
@@ -42,9 +44,48 @@ export const ImageSettings = ({ element }) => {
     }
   }, [element.altText]);
 
+  useEffect(() => {
+    // Find the audio point corresponding to the active ID
+    const activeAudioPoint = element.audioPoint.find(
+      (point) => point.id === audioPointData
+    );
+
+    // If an activeAudioPoint is found, log its URL
+    if (activeAudioPoint && activeAudioPoint.url) {
+      console.log(activeAudioPoint.url);
+      setAudioURL(activeAudioPoint.url);
+    }
+
+    // Cleanup: Reset audioURL when the component unmounts or dependencies change
+    return () => {
+      setAudioURL("");
+    };
+  }, [element, audioPointData]);
+
   const editAltText = (e) => {
     setAltText(e.target.value);
     Transforms.setNodes(editor, { altText: e.target.value }, { at: path });
+  };
+
+  const [updateSlate, setUpdateSlate] = useState(false);
+
+  const onChangeAudioURL = (e) => {
+    const newAudioURL = e.target.value;
+    setAudioURL(newAudioURL);
+    const imageNode = Node.get(editor, path) as any;
+    const audioPointIndex = imageNode.audioPoint.findIndex(
+      (point) => point.id === audioPointData
+    );
+
+    if (audioPointIndex !== -1) {
+      const newAudioPoint = [...imageNode.audioPoint];
+      newAudioPoint[audioPointIndex] = {
+        ...newAudioPoint[audioPointIndex],
+        url: e.target.value,
+      };
+
+      Transforms.setNodes(editor, { audioPoint: newAudioPoint }, { at: path });
+    }
   };
 
   // useEffect(() => {
@@ -108,9 +149,17 @@ export const ImageSettings = ({ element }) => {
       {audioPointData && (
         <div className="bg-accent p-4">
           <h3 className="text-bold mb-3 text-sm text-gray-500 dark:text-gray-400">
-            Link to Content
+            Tag Content
           </h3>
-          <span className="text-gray-500">ID: {audioPointData}</span>
+          <div className="text-gray-500">ID: {audioPointData}</div>
+
+          <label className="block pb-2 pt-2 text-sm">Audio URL</label>
+
+          <input
+            value={audioURL}
+            className=" h-[36px]  w-full rounded-md  border border-gray-300  bg-white  p-2 text-sm  focus:outline-none dark:border-gray-400 dark:text-gray-400"
+            onChange={onChangeAudioURL}
+          />
         </div>
       )}
     </div>

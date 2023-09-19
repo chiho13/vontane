@@ -157,6 +157,7 @@ export type CustomElement = {
   width?: any;
   height?: any;
   audioPoint?: any;
+  activeId?: any;
 };
 
 type CustomText = {

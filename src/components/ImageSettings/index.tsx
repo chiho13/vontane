@@ -24,22 +24,32 @@ import { useClipboard } from "@/hooks/useClipboard";
 import { debounce } from "lodash";
 import { ReactEditor } from "slate-react";
 import { genNodeId } from "@/hoc/withID";
+import { useTextSpeech } from "@/contexts/TextSpeechContext";
 
 export const ImageSettings = ({ element }) => {
   const { editor, activePath } = useContext(EditorContext);
 
+  const { audioPointData } = useTextSpeech();
+
   const [altText, setAltText] = useState(element.altText ?? null);
   const path = ReactEditor.findPath(editor, element);
+
+  const audioPointId = element.activeId || "";
+
   useEffect(() => {
     if (element.altText) {
       setAltText(element.altText);
     }
-  }, [element.address]);
+  }, [element.altText]);
 
   const editAltText = (e) => {
     setAltText(e.target.value);
     Transforms.setNodes(editor, { altText: e.target.value }, { at: path });
   };
+
+  // useEffect(() => {
+  //   console.log(audioPointData);
+  // }, []);
 
   const addAudioButton = () => {
     // If audioPoint is not defined or null, default to an empty array
@@ -88,11 +98,12 @@ export const ImageSettings = ({ element }) => {
       </h3>
 
       <Button
-        className="h-[36px] w-[36px] border border-gray-300 bg-transparent p-0 text-foreground hover:bg-gray-200"
+        className="h-[32px] w-[32px] border border-gray-300 bg-transparent p-0 text-foreground hover:bg-gray-200"
         onClick={addAudioButton}
       >
         <Plus />
       </Button>
+      {audioPointData}
     </div>
   );
 };

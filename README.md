@@ -44,8 +44,7 @@ currently under development (April)
 - [x] preview content
 - [x] map block
 - [x] ai integration (wip)
-- [] research music composition block
-- [] mobile cms ?
+- [] hotspot in image
 
 ## Next phase - requirements
 

@@ -117,7 +117,17 @@ const renderElement = (
                           sideOffset={10}
                           className="max-w-[180px] border border-accent bg-white text-foreground"
                         >
-                          {el.label}
+                          {el.link ? (
+                            <a
+                              href={el.link}
+                              className="text-brand underline"
+                              target="_blank"
+                            >
+                              {el.label}
+                            </a>
+                          ) : (
+                            el.label
+                          )}
                         </TooltipContent>
                       )}
                     </Tooltip>

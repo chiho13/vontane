@@ -29,7 +29,7 @@ import { useTextSpeech } from "@/contexts/TextSpeechContext";
 export const ImageSettings = ({ element }) => {
   const { editor, activePath } = useContext(EditorContext);
 
-  const { audioPointData } = useTextSpeech();
+  const { audioPointData, setAudioPointData } = useTextSpeech();
 
   const [altText, setAltText] = useState(element.altText ?? null);
 
@@ -122,7 +122,7 @@ export const ImageSettings = ({ element }) => {
   //   console.log(audioPointData);
   // }, []);
 
-  const addAudioButton = () => {
+  const addHotspotTag = () => {
     // If audioPoint is not defined or null, default to an empty array
     const currentAudioPoints = element.audioPoint || [];
 
@@ -149,6 +149,34 @@ export const ImageSettings = ({ element }) => {
     );
   };
 
+  const deleteHotSpotTag = () => {
+    // Ensure audioPointData exists
+    if (!audioPointData) return;
+
+    // Find the index of the audio point with the matching ID
+    const audioPointIndex = element.audioPoint.findIndex(
+      (point) => point.id === audioPointData
+    );
+
+    // If the audio point exists, remove it from the list
+    if (audioPointIndex !== -1) {
+      // Clone the current audio points
+      const updatedAudioPoints = [...element.audioPoint];
+
+      // Remove the audio point with the matching ID
+      updatedAudioPoints.splice(audioPointIndex, 1);
+
+      // Update the node in the editor with the updated audio points
+      Transforms.setNodes(
+        editor,
+        { audioPoint: updatedAudioPoints },
+        { at: path }
+      );
+
+      setAudioPointData(null);
+    }
+  };
+
   return (
     <div className="">
       <div className="p-4">
@@ -171,13 +199,21 @@ export const ImageSettings = ({ element }) => {
 
         <Button
           className="h-[32px] w-[32px] border border-gray-300 bg-transparent p-0 text-foreground hover:bg-gray-200"
-          onClick={addAudioButton}
+          onClick={addHotspotTag}
         >
           <Plus />
         </Button>
       </div>
       {audioPointData && (
-        <div className="bg-accent p-4">
+        <div className="relative bg-accent p-4">
+          <Button
+            variant="outline"
+            size="sm"
+            className=" absolute right-3 top-3 h-[32px] border-red-400 text-red-500 hover:border-red-600 hover:bg-red-100/50 hover:text-red-600"
+            onClick={deleteHotSpotTag}
+          >
+            Delete
+          </Button>
           <h3 className="text-bold mb-3 text-sm text-gray-500 dark:text-gray-400">
             Tag Content
           </h3>

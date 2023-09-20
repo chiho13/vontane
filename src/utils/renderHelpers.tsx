@@ -9,6 +9,13 @@ import { MCQ } from "@/components/PreviewContent/PreviewElements/MCQ";
 import { MapBlock } from "@/components/PreviewContent/PreviewElements/Map";
 import { cn } from "./cn";
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
 const renderElement = (
   node: {
     id: string;
@@ -19,6 +26,7 @@ const renderElement = (
     url: any;
     checked: boolean;
     latex: any;
+    audioPoint: any;
   },
   children:
     | string
@@ -82,13 +90,41 @@ const renderElement = (
       );
     case "image":
       return (
-        <div className={`flex justify-${node.align} mt-3`}>
+        <div className={`relative flex justify-${node.align} mt-3`}>
           <img
             src={node.url}
             width={node.width}
             height={node.height}
             className="rounded-md shadow-md"
           />
+          {node.audioPoint &&
+            node.audioPoint.map((el, i) => {
+              return (
+                <div
+                  key={i}
+                  className="absolute"
+                  style={{ left: `${el.x}%`, top: `${el.y}%` }}
+                >
+                  <TooltipProvider delayDuration={300}>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <button className="beacon  flex h-[24px] w-[24px]  items-center justify-center rounded-full border-2 border-white shadow-lg">
+                          <div className="h-[12px] w-[12px] rounded-full bg-white"></div>
+                        </button>
+                      </TooltipTrigger>
+                      {el.label && (
+                        <TooltipContent
+                          sideOffset={10}
+                          className="max-w-[180px] border border-accent bg-white text-foreground"
+                        >
+                          {el.label}
+                        </TooltipContent>
+                      )}
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              );
+            })}
         </div>
       );
 

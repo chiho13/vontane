@@ -35,6 +35,8 @@ export const ImageSettings = ({ element }) => {
 
   const [hotspotLabel, setHotspotLabel] = useState("");
   const [audioURL, setAudioURL] = useState("");
+  const [link, setLink] = useState("");
+
   const path = ReactEditor.findPath(editor, element);
 
   const audioPointId = element.activeId || "";
@@ -61,11 +63,16 @@ export const ImageSettings = ({ element }) => {
       console.log(activeAudioPoint.label);
       setHotspotLabel(activeAudioPoint.label);
     }
+    if (activeAudioPoint && activeAudioPoint.link) {
+      console.log(activeAudioPoint.link);
+      setLink(activeAudioPoint.link);
+    }
 
     // Cleanup: Reset audioURL when the component unmounts or dependencies change
     return () => {
       setAudioURL("");
       setHotspotLabel("");
+      setLink("");
     };
   }, [element, audioPointData]);
 
@@ -75,9 +82,8 @@ export const ImageSettings = ({ element }) => {
   };
 
   const [updateSlate, setUpdateSlate] = useState(false);
-  const onChangeHotspotLabel = (e) => {
-    const label = e.target.value;
-    setHotspotLabel(label);
+
+  const updateAudioPoint = (property, value) => {
     const imageNode = Node.get(editor, path) as any;
     const audioPointIndex = imageNode.audioPoint.findIndex(
       (point) => point.id === audioPointData
@@ -87,30 +93,29 @@ export const ImageSettings = ({ element }) => {
       const newAudioPoint = [...imageNode.audioPoint];
       newAudioPoint[audioPointIndex] = {
         ...newAudioPoint[audioPointIndex],
-        label: e.target.value,
+        [property]: value,
       };
 
       Transforms.setNodes(editor, { audioPoint: newAudioPoint }, { at: path });
     }
   };
 
+  const onChangeHotspotLabel = (e) => {
+    const label = e.target.value;
+    setHotspotLabel(label);
+    updateAudioPoint("label", label);
+  };
+
   const onChangeAudioURL = (e) => {
     const newAudioURL = e.target.value;
     setAudioURL(newAudioURL);
-    const imageNode = Node.get(editor, path) as any;
-    const audioPointIndex = imageNode.audioPoint.findIndex(
-      (point) => point.id === audioPointData
-    );
+    updateAudioPoint("url", newAudioURL);
+  };
 
-    if (audioPointIndex !== -1) {
-      const newAudioPoint = [...imageNode.audioPoint];
-      newAudioPoint[audioPointIndex] = {
-        ...newAudioPoint[audioPointIndex],
-        url: e.target.value,
-      };
-
-      Transforms.setNodes(editor, { audioPoint: newAudioPoint }, { at: path });
-    }
+  const onChangeLink = (e) => {
+    const newLink = e.target.value;
+    setLink(newLink);
+    updateAudioPoint("link", newLink);
   };
 
   // useEffect(() => {
@@ -185,6 +190,15 @@ export const ImageSettings = ({ element }) => {
             className=" h-[36px]  w-full rounded-md  border border-gray-300  bg-white  p-2 text-sm  focus:outline-none dark:border-gray-400 dark:text-gray-400"
             onChange={onChangeHotspotLabel}
           />
+
+          <label className="block pb-2 pt-4 text-sm">Label's Link</label>
+
+          <input
+            value={link}
+            className=" h-[36px]  w-full rounded-md  border border-gray-300  bg-white  p-2 text-sm  focus:outline-none dark:border-gray-400 dark:text-gray-400"
+            onChange={onChangeLink}
+          />
+
           <label className="block pb-2 pt-4 text-sm">Audio URL</label>
 
           <input

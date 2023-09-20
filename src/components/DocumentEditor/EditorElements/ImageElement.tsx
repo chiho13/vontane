@@ -212,7 +212,17 @@ const DraggableRadioGroupItem = ({
               sideOffset={10}
               className="max-w-[180px] border border-accent bg-white text-foreground"
             >
-              {element.label}
+              {element.link ? (
+                <a
+                  href={element.link}
+                  className="text-brand underline"
+                  target="_blank"
+                >
+                  {element.label}
+                </a>
+              ) : (
+                element.label
+              )}
             </TooltipContent>
           )}
         </Tooltip>

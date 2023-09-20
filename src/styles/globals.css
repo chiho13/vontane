@@ -207,3 +207,41 @@ body {
 .preview-tts h3 {
   margin: 0;
 }
+
+@keyframes grow {
+  0% {
+    transform: scale(0.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes active {
+  0% {
+    transform: scale(0.1);
+    opacity: 1;
+  }
+  70% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* .beacon {
+  animation: grow 0.4s 1 linear;
+} */
+
+.beacon:before {
+  content: "";
+  position: absolute;
+  height: 35px;
+  width: 35px;
+  background-color: transparent;
+  border-radius: 50%;
+  box-shadow: 0px 0px 2px 2px #ffffff;
+  animation: active 2s infinite linear;
+}

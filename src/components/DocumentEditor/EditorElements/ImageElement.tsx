@@ -172,7 +172,7 @@ export const useDraggable = (
 const DraggableRadioGroupItem = ({
   value,
   editor,
-  label,
+  element,
   id,
   imageRef,
   initialPosition,
@@ -197,12 +197,26 @@ const DraggableRadioGroupItem = ({
       style={{ left: `${position.x}%`, top: `${position.y}%` }}
       onMouseDown={handleMouseDown}
     >
-      <RadioGroupItem
-        value={id}
-        id={id}
-        className="z-100 duration-400 h-8 w-8 border-4 border-white bg-blue-800/40 text-white shadow-md transition active:scale-110"
-        indicatorClassName={"h-4 w-4"}
-      />
+      <TooltipProvider delayDuration={300}>
+        <Tooltip>
+          <TooltipTrigger>
+            <RadioGroupItem
+              value={id}
+              id={id}
+              className="z-100 duration-400 h-8 w-8 border-4 border-white bg-blue-800/40 text-white shadow-md transition active:scale-110"
+              indicatorClassName={"h-4 w-4"}
+            />
+          </TooltipTrigger>
+          {element.label && (
+            <TooltipContent
+              sideOffset={10}
+              className="max-w-[180px] border border-accent bg-white text-foreground"
+            >
+              {element.label}
+            </TooltipContent>
+          )}
+        </Tooltip>
+      </TooltipProvider>
     </div>
   );
 };
@@ -395,7 +409,7 @@ export const ImageElement = React.memo(
                         editor={editor}
                         id={el.id}
                         imageRef={imageRef}
-                        label={el.content}
+                        element={el}
                         path={path}
                         setAudioRadioValue={setAudioRadioValue}
                         initialPosition={{

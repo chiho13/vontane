@@ -33,6 +33,7 @@ export const ImageSettings = ({ element }) => {
 
   const [altText, setAltText] = useState(element.altText ?? null);
 
+  const [hotspotLabel, setHotspotLabel] = useState("");
   const [audioURL, setAudioURL] = useState("");
   const path = ReactEditor.findPath(editor, element);
 
@@ -56,9 +57,15 @@ export const ImageSettings = ({ element }) => {
       setAudioURL(activeAudioPoint.url);
     }
 
+    if (activeAudioPoint && activeAudioPoint.label) {
+      console.log(activeAudioPoint.label);
+      setHotspotLabel(activeAudioPoint.label);
+    }
+
     // Cleanup: Reset audioURL when the component unmounts or dependencies change
     return () => {
       setAudioURL("");
+      setHotspotLabel("");
     };
   }, [element, audioPointData]);
 
@@ -68,6 +75,24 @@ export const ImageSettings = ({ element }) => {
   };
 
   const [updateSlate, setUpdateSlate] = useState(false);
+  const onChangeHotspotLabel = (e) => {
+    const label = e.target.value;
+    setHotspotLabel(label);
+    const imageNode = Node.get(editor, path) as any;
+    const audioPointIndex = imageNode.audioPoint.findIndex(
+      (point) => point.id === audioPointData
+    );
+
+    if (audioPointIndex !== -1) {
+      const newAudioPoint = [...imageNode.audioPoint];
+      newAudioPoint[audioPointIndex] = {
+        ...newAudioPoint[audioPointIndex],
+        label: e.target.value,
+      };
+
+      Transforms.setNodes(editor, { audioPoint: newAudioPoint }, { at: path });
+    }
+  };
 
   const onChangeAudioURL = (e) => {
     const newAudioURL = e.target.value;
@@ -153,7 +178,14 @@ export const ImageSettings = ({ element }) => {
           </h3>
           <div className="text-gray-500">ID: {audioPointData}</div>
 
-          <label className="block pb-2 pt-2 text-sm">Audio URL</label>
+          <label className="block pb-2 pt-2 text-sm">Label</label>
+
+          <input
+            value={hotspotLabel}
+            className=" h-[36px]  w-full rounded-md  border border-gray-300  bg-white  p-2 text-sm  focus:outline-none dark:border-gray-400 dark:text-gray-400"
+            onChange={onChangeHotspotLabel}
+          />
+          <label className="block pb-2 pt-4 text-sm">Audio URL</label>
 
           <input
             value={audioURL}

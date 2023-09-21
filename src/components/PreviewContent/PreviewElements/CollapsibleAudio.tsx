@@ -30,8 +30,9 @@ export const CollapsibleAudioPlayer = ({ node, children, index, nodes }) => {
   const isLastTTS = nodes.length - 1 - lastTTSIndex === nodes.indexOf(node);
   const isNotLastOverall = nodeIndex === nodes.length;
   return (
-    <div
-      className={`preview-tts mb-3 mt-4
+    !JSON.parse(node.audioplayer) && (
+      <div
+        className={`preview-tts mb-3 mt-4
     
        py-3 dark:border-accent 
 
@@ -41,14 +42,14 @@ export const CollapsibleAudioPlayer = ({ node, children, index, nodes }) => {
         `flex items-center gap-[10px] justify-${node.children[0].align}`
       }
       `}
-    >
-      {node.audio_url && !containsMCQ && (
-        <div
-          className={`${
-            node.content && node.content.length < 40 ? "w-[50px] " : ""
-          }`}
-        >
-          {/* <AudioPlayer
+      >
+        {node.audio_url && !containsMCQ && (
+          <div
+            className={`${
+              node.content && node.content.length < 40 ? "w-[50px] " : ""
+            }`}
+          >
+            {/* <AudioPlayer
             id={node.id}
             audioURL={node.audio_url}
             fileName={node.file_name}
@@ -58,15 +59,16 @@ export const CollapsibleAudioPlayer = ({ node, children, index, nodes }) => {
             isPreview={true}
           /> */}
 
-          <PlyrAudioPlayer
-            audioURL={node.audio_url}
-            content={node.content}
-            isPreview={false}
-          />
-        </div>
-      )}
-      {/* {BlockQuote} */}
-      <div>{!JSON.parse(node.audioplayer) && children}</div>
-    </div>
+            <PlyrAudioPlayer
+              audioURL={node.audio_url}
+              content={node.content}
+              isPreview={false}
+            />
+          </div>
+        )}
+        {/* {BlockQuote} */}
+        <div>{children}</div>
+      </div>
+    )
   );
 };

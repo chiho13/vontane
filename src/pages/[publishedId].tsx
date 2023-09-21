@@ -265,9 +265,9 @@ const PublishedPage = ({ workspaceId, workspaceData, font, brandColor }) => {
             ) : null}
             {view === "one-page" ? (
               <div
-                className={`relative  h-[100vh] overflow-y-auto bg-white p-4 dark:bg-[#191919] `}
+                className={`relative  h-[100vh] overflow-y-auto bg-white px-6 dark:bg-[#191919] `}
               >
-                <div className=" relative mx-auto mb-20 max-w-[580px] xl:pt-[60px]">
+                <div className=" relative mx-auto mb-4 max-w-[580px] xl:pt-[60px]">
                   {parseNodes(localValue, font)}
                 </div>
               </div>

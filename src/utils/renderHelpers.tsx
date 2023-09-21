@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Text } from "slate";
 import { BlockMath, InlineMath } from "react-katex";
 import { ListItem } from "@/components/PreviewContent/PreviewElements/ListItem";
@@ -8,6 +8,7 @@ import { CollapsibleAudioPlayer } from "@/components/PreviewContent/PreviewEleme
 import { MCQ } from "@/components/PreviewContent/PreviewElements/MCQ";
 import { MapBlock } from "@/components/PreviewContent/PreviewElements/Map";
 import { cn } from "./cn";
+import LoadingSpinner from "@/icons/LoadingSpinner";
 
 import {
   Tooltip,
@@ -26,6 +27,26 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { PlyrAudioPlayer } from "@/components/PlyrAudio";
+const LazyLoadingIframe = ({ src }) => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  return (
+    <div className="relative">
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <LoadingSpinner width={50} height={50} />
+        </div>
+      )}
+      <iframe
+        src={src}
+        width="100%"
+        height="500"
+        onLoad={() => setIsLoading(false)}
+        style={isLoading ? { visibility: "hidden" } : {}}
+      ></iframe>
+    </div>
+  );
+};
 
 const renderElement = (
   node: {
@@ -54,18 +75,18 @@ const renderElement = (
   hideTitle: boolean
 ) => {
   switch (node.type) {
-    case "title":
-      if (hideTitle) {
-        return null;
-      }
-      return (
-        <h1
-          className={`mb-4 text-[34px] font-bold  dark:text-gray-200 ${fontFam}`}
-          key={key}
-        >
-          {children}
-        </h1>
-      );
+    // case "title":
+    //   if (hideTitle) {
+    //     return null;
+    //   }
+    //   return (
+    //     <h1
+    //       className={`mb-4 text-[34px] font-bold  dark:text-gray-200 ${fontFam}`}
+    //       key={key}
+    //     >
+    //       {children}
+    //     </h1>
+    //   );
     case "paragraph":
       return (
         <p
@@ -110,6 +131,7 @@ const renderElement = (
           />
           {node.audioPoint &&
             node.audioPoint.map((el, i) => {
+              let isLoading = true;
               return (
                 <div
                   key={i}
@@ -123,25 +145,19 @@ const renderElement = (
                       </button>
                     </DialogTrigger>
                     {el.label && (
-                      <DialogContent className="max-w-[180px] border border-accent bg-white text-foreground">
-                        <DialogTitle className="pb-6">{el.label}</DialogTitle>
-                        {el.url && (
+                      <DialogContent className="max-w-[180px] border border-accent bg-white px-1 text-foreground">
+                        <DialogTitle className="px-6 pb-6">
+                          {el.label}
+                        </DialogTitle>
+                        {/* {el.url && (
                           <PlyrAudioPlayer
                             audioURL={el.url}
                             content="kdjfksdjflksjdfkl jsklj fklsdj fklsd jfslk jflksjlskd fjklsjfklsjfkl"
                             isPreview={false}
                           />
-                        )}
+                        )} */}
 
-                        {el.link && (
-                          <a
-                            href={el.link}
-                            target="_blank"
-                            className="text-brand underline"
-                          >
-                            Link
-                          </a>
-                        )}
+                        {el.link && <LazyLoadingIframe src={el.link} />}
                       </DialogContent>
                     )}
                   </Dialog>

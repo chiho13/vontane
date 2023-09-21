@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Plyr from "plyr-react";
 import "plyr-react/plyr.css";
 import styled, { useTheme } from "styled-components";
@@ -92,10 +92,18 @@ const StyledPlyr = styled.div`
   .plyr--full-ui input[type="range"] {
     color: ${(props) => props.theme.brandColor};
   }
+
+  @media (max-width: 767px) {
+    .plyr__time + .plyr__time {
+      display: block;
+    }
+  }
 `;
 
 export const PlyrAudioPlayer = ({ audioURL, content, isPreview = false }) => {
   const theme = useTheme();
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [duration, setDuration] = useState(0);
 
   let controls;
 

@@ -70,6 +70,17 @@ import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { Portal } from "react-portal";
 import { relative } from "path";
 import { debounce } from "lodash";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { PlyrAudioPlayer } from "@/components/PlyrAudio";
 
 function generateRandomFilename(file) {
   const extension = file.name.split(".").pop();
@@ -197,36 +208,12 @@ const DraggableRadioGroupItem = ({
       style={{ left: `${position.x}%`, top: `${position.y}%` }}
       onMouseDown={handleMouseDown}
     >
-      <TooltipProvider delayDuration={300}>
-        <Tooltip>
-          <TooltipTrigger>
-            <RadioGroupItem
-              value={id}
-              id={id}
-              className="z-100 duration-400 h-8 w-8 border-4 border-white bg-blue-800/40 text-white shadow-md transition active:scale-110"
-              indicatorClassName={"h-4 w-4"}
-            />
-          </TooltipTrigger>
-          {element.label && (
-            <TooltipContent
-              sideOffset={10}
-              className="max-w-[180px] border border-accent bg-white text-foreground"
-            >
-              {element.link ? (
-                <a
-                  href={element.link}
-                  className="text-brand underline"
-                  target="_blank"
-                >
-                  {element.label}
-                </a>
-              ) : (
-                element.label
-              )}
-            </TooltipContent>
-          )}
-        </Tooltip>
-      </TooltipProvider>
+      <RadioGroupItem
+        value={id}
+        id={id}
+        className="z-100 duration-400 h-8 w-8 border-4 border-white bg-blue-800/40 text-white shadow-md transition active:scale-110"
+        indicatorClassName={"h-4 w-4"}
+      />
     </div>
   );
 };

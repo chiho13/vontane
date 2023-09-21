@@ -16,6 +16,17 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { PlyrAudioPlayer } from "@/components/PlyrAudio";
+
 const renderElement = (
   node: {
     id: string;
@@ -105,33 +116,35 @@ const renderElement = (
                   className="absolute"
                   style={{ left: `${el.x}%`, top: `${el.y}%` }}
                 >
-                  <TooltipProvider delayDuration={300}>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <button className="beacon  flex h-[24px] w-[24px] items-center justify-center  rounded-full border-2 border-white shadow-lg ring-1 ring-gray-400">
-                          <div className="h-[12px] w-[12px] rounded-full border border-gray-400 bg-white"></div>
-                        </button>
-                      </TooltipTrigger>
-                      {el.label && (
-                        <TooltipContent
-                          sideOffset={10}
-                          className="max-w-[180px] border border-accent bg-white text-foreground"
-                        >
-                          {el.link ? (
-                            <a
-                              href={el.link}
-                              className="text-brand underline"
-                              target="_blank"
-                            >
-                              {el.label}
-                            </a>
-                          ) : (
-                            el.label
-                          )}
-                        </TooltipContent>
-                      )}
-                    </Tooltip>
-                  </TooltipProvider>
+                  <Dialog>
+                    <DialogTrigger>
+                      <button className="beacon  flex h-[24px] w-[24px] items-center justify-center  rounded-full border-2 border-white shadow-lg ring-1 ring-gray-400">
+                        <div className="h-[12px] w-[12px] rounded-full border border-gray-400 bg-white"></div>
+                      </button>
+                    </DialogTrigger>
+                    {el.label && (
+                      <DialogContent className="max-w-[180px] border border-accent bg-white text-foreground">
+                        <DialogTitle className="pb-6">{el.label}</DialogTitle>
+                        {el.url && (
+                          <PlyrAudioPlayer
+                            audioURL={el.url}
+                            content="kdjfksdjflksjdfkl jsklj fklsdj fklsd jfslk jflksjlskd fjklsjfklsjfkl"
+                            isPreview={false}
+                          />
+                        )}
+
+                        {el.link && (
+                          <a
+                            href={el.link}
+                            target="_blank"
+                            className="text-brand underline"
+                          >
+                            Link
+                          </a>
+                        )}
+                      </DialogContent>
+                    )}
+                  </Dialog>
                 </div>
               );
             })}

@@ -91,7 +91,6 @@ export const TextSpeech = ({
   const lastChildIndex = element.children.length - 1;
   const pathToLastChild = [...path, lastChildIndex];
 
-  const endOfTextNode = Editor.end(editor, pathToLastChild);
   const { credits, setCredits }: any = useContext(UserContext);
 
   const createTTSAudio = async () => {
@@ -264,9 +263,6 @@ export const TextSpeech = ({
             <a
               href="#"
               className=" -translate-x-[5px] cursor-pointer text-2xl font-bold text-muted-foreground"
-              onClick={() => {
-                Transforms.select(editor, endOfTextNode);
-              }}
             >
               {" "}
               Text to MP3{" "}
@@ -275,9 +271,6 @@ export const TextSpeech = ({
               variant="outline"
               size="xs"
               className="border text-muted-foreground"
-              onClick={() => {
-                Transforms.select(editor, endOfTextNode);
-              }}
             >
               Edit
             </Button>
@@ -328,7 +321,7 @@ export const TextSpeech = ({
                         htmlFor="airplane-mode"
                         className="font-sans text-xs"
                       >
-                        Audio only
+                        Hide
                       </Label>
                     </div>
                   </TooltipTrigger>

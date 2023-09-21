@@ -7,7 +7,7 @@ import { useTextSpeech } from "@/contexts/TextSpeechContext";
 
 const TitleStyle = styled.div`
   h1 {
-    font-size: 34px;
+    font-size: 24px;
     font-weight: bold;
     letter-spacing: -0.8px;
   }
@@ -27,7 +27,6 @@ const TitleStyle = styled.div`
 export function TitleElement(props) {
   const { editor, showEditBlockPopup, setSelectedElementID } =
     useContext(EditorContext);
-
   const { fontStyle } = useTextSpeech();
   const { attributes, children, element } = props;
   const path = ReactEditor.findPath(editor, element);

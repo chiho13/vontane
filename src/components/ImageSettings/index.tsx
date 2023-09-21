@@ -227,7 +227,7 @@ export const ImageSettings = ({ element }) => {
             onChange={onChangeHotspotLabel}
           />
 
-          <label className="block pb-2 pt-4 text-sm">Label's Link</label>
+          <label className="block pb-2 pt-4 text-sm">Label Link</label>
 
           <input
             value={link}

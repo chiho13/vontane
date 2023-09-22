@@ -206,7 +206,7 @@ export const ImageSettings = ({ element }) => {
         </div>
 
         <h3 className="text-bold mb-3 mt-4 text-sm text-gray-500 dark:text-gray-400">
-          Insert Tag
+          Insert Hotspot
         </h3>
 
         <Button
@@ -227,7 +227,7 @@ export const ImageSettings = ({ element }) => {
             Delete
           </Button>
           <h3 className="text-bold mb-3 text-sm text-gray-500 dark:text-gray-400">
-            Tag Content
+            Hotspot Popup Content
           </h3>
           <div className="text-gray-500">ID: {audioPointData}</div>
 

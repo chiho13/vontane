@@ -54,7 +54,7 @@ export const MoveBlock: React.FC<MoveBlockProps> = ({ editor, path }) => {
                 />
               </button>
             </TooltipTrigger>
-            <TooltipContent side="left" sideOffset={10}>
+            <TooltipContent side="top" sideOffset={10}>
               <p className="text-[12px]">Move up</p>
             </TooltipContent>
           </Tooltip>
@@ -79,7 +79,7 @@ export const MoveBlock: React.FC<MoveBlockProps> = ({ editor, path }) => {
                   />
                 </button>
               </TooltipTrigger>
-              <TooltipContent side="left" sideOffset={10}>
+              <TooltipContent side="bottom" sideOffset={10}>
                 <p className="text-[12px]">Move down</p>
               </TooltipContent>
             </Tooltip>

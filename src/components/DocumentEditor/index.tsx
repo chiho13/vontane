@@ -1309,7 +1309,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         ) : null;
 
       const shouldWrapWithSortableElement =
-        (isRoot && element.type !== "column" && element.type !== "title") ||
+        (isRoot &&
+          element.type !== "column" &&
+          element.type !== "title" &&
+          element.type !== "tts") ||
         isInsideColumnCell;
 
       const content = shouldWrapWithSortableElement ? (

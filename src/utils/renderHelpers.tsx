@@ -34,7 +34,11 @@ const LazyLoadingIframe = ({ src }) => {
     <div className="relative">
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <LoadingSpinner width={50} height={50} />
+          <LoadingSpinner
+            width={70}
+            height={70}
+            strokeColor="stroke-brand dark:stroke-white"
+          />
         </div>
       )}
       <iframe
@@ -42,6 +46,7 @@ const LazyLoadingIframe = ({ src }) => {
         width="100%"
         height="500"
         onLoad={() => setIsLoading(false)}
+        allow-same-origin
         style={isLoading ? { visibility: "hidden" } : {}}
       ></iframe>
     </div>
@@ -145,7 +150,7 @@ const renderElement = (
                       </button>
                     </DialogTrigger>
                     {el.label && (
-                      <DialogContent className="max-w-[180px] border border-accent bg-white px-1 text-foreground">
+                      <DialogContent className="max-w-[180px] border border-accent  px-1 text-foreground dark:bg-[#191919] ">
                         <DialogTitle className="px-6 pb-6">
                           {el.label}
                         </DialogTitle>

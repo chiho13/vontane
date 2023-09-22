@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Text } from "slate";
 import { BlockMath, InlineMath } from "react-katex";
 import { ListItem } from "@/components/PreviewContent/PreviewElements/ListItem";
@@ -9,6 +9,7 @@ import { MCQ } from "@/components/PreviewContent/PreviewElements/MCQ";
 import { MapBlock } from "@/components/PreviewContent/PreviewElements/Map";
 import { cn } from "./cn";
 import LoadingSpinner from "@/icons/LoadingSpinner";
+import { api } from "@/utils/api";
 
 import {
   Tooltip,
@@ -26,29 +27,44 @@ import {
   DialogTrigger,
   DialogClose,
 } from "@/components/ui/dialog";
-import { PlyrAudioPlayer } from "@/components/PlyrAudio";
-const LazyLoadingIframe = ({ src }) => {
-  const [isLoading, setIsLoading] = useState(true);
+import { WidgetRenderer } from "@/components/WidgetRender";
 
+const LazyLoadingWidget = ({ src }) => {
+  const [workspaceData, setWorkspaceData] = useState(null);
+  const { data, error, isLoading, refetch } =
+    api.workspace.getWorkspace.useQuery({ id: src });
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (data) {
+        console.log(data);
+        setWorkspaceData(data.workspace);
+      }
+    }
+  }, [data, isLoading]);
+
+  if (isLoading) {
+    return (
+      <div className="absolute inset-0 flex items-center justify-center">
+        <LoadingSpinner
+          width={50}
+          height={50}
+          strokeColor="stroke-brand dark:stroke-white"
+        />
+      </div>
+    );
+  }
   return (
-    <div className="relative">
-      {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <LoadingSpinner
-            width={70}
-            height={70}
-            strokeColor="stroke-brand dark:stroke-white"
-          />
-        </div>
+    <div className="relative h-[410px] w-[360px] overflow-y-auto px-6 sm:w-[610px]">
+      {workspaceData && (
+        <WidgetRenderer
+          key={src}
+          workspaceData={workspaceData.slate_value}
+          font={workspaceData.font_style}
+          brandColor={workspaceData.brand_color}
+          isWidget={true}
+        />
       )}
-      <iframe
-        src={src}
-        width="100%"
-        height="500"
-        onLoad={() => setIsLoading(false)}
-        allow-same-origin
-        style={isLoading ? { visibility: "hidden" } : {}}
-      ></iframe>
     </div>
   );
 };
@@ -150,19 +166,11 @@ const renderElement = (
                       </button>
                     </DialogTrigger>
                     {el.label && (
-                      <DialogContent className="max-w-[180px] border border-accent  px-1 text-foreground dark:bg-[#191919] ">
-                        <DialogTitle className="px-6 pb-6">
+                      <DialogContent className="max-h-[500px]  max-w-[380px] border  border-accent px-1 text-foreground dark:bg-[#191919] sm:max-w-[620px]">
+                        <DialogTitle className="px-6 pb-6 text-3xl">
                           {el.label}
                         </DialogTitle>
-                        {/* {el.url && (
-                          <PlyrAudioPlayer
-                            audioURL={el.url}
-                            content="kdjfksdjflksjdfkl jsklj fklsdj fklsd jfslk jflksjlskd fjklsjfklsjfkl"
-                            isPreview={false}
-                          />
-                        )} */}
-
-                        {el.link && <LazyLoadingIframe src={el.link} />}
+                        {el.link && <LazyLoadingWidget src={el.link} />}
                       </DialogContent>
                     )}
                   </Dialog>
@@ -188,7 +196,7 @@ const renderElement = (
     case "heading-one":
       return (
         <h1
-          className={`mb-3 mt-3   text-4xl font-bold lg:text-5xl text-${
+          className={`mt-3 pb-4   text-4xl font-bold lg:text-5xl text-${
             alignMap[node.align] || node.align
           }
             ${fontFam}

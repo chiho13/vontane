@@ -3,14 +3,15 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/Form";
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 import { Input } from "../ui/input";
 import { api } from "@/utils/api";
 import { ToastContainer, toast } from "react-toastify";
@@ -25,21 +26,32 @@ import { debounce } from "lodash";
 import { ReactEditor } from "slate-react";
 import { genNodeId } from "@/hoc/withID";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
+import { LayoutContext } from "../Layouts/AccountLayout";
+import { useRouter } from "next/router";
+import { parse } from "path";
+import { useWorkspaceTitleUpdate } from "@/contexts/WorkspaceTitleContext";
 
 export const ImageSettings = ({ element }) => {
+  const router = useRouter();
+  const { updatedWorkspace } = useWorkspaceTitleUpdate();
+  const workspaceId = router.query.workspaceId as string;
   const { editor, activePath } = useContext(EditorContext);
-
+  const { allWorkspaces } = useContext(LayoutContext);
   const { audioPointData, setAudioPointData } = useTextSpeech();
 
   const [altText, setAltText] = useState(element.altText ?? null);
 
   const [hotspotLabel, setHotspotLabel] = useState("");
   const [audioURL, setAudioURL] = useState("");
-  const [link, setLink] = useState("");
+  const [link, setLink] = useState(null);
 
   const path = ReactEditor.findPath(editor, element);
 
-  const audioPointId = element.activeId || "";
+  const filteredWorkspaces = allWorkspaces.filter(
+    (workspace) => workspace.id !== workspaceId
+  );
+
+  console.log(filteredWorkspaces);
 
   useEffect(() => {
     if (element.altText) {
@@ -112,10 +124,10 @@ export const ImageSettings = ({ element }) => {
     updateAudioPoint("url", newAudioURL);
   };
 
-  const onChangeLink = (e) => {
-    const newLink = e.target.value;
-    setLink(newLink);
-    updateAudioPoint("link", newLink);
+  const onChangeWidget = (value) => {
+    console.log(value);
+    setLink(value);
+    updateAudioPoint("link", value);
   };
 
   // useEffect(() => {
@@ -219,29 +231,67 @@ export const ImageSettings = ({ element }) => {
           </h3>
           <div className="text-gray-500">ID: {audioPointData}</div>
 
-          <label className="block pb-2 pt-2 text-sm">Label</label>
+          <label className="block pb-2 pt-2 text-sm  font-semibold">
+            Title
+          </label>
 
-          <input
+          <Input
             value={hotspotLabel}
-            className=" h-[36px]  w-full rounded-md  border border-gray-300  bg-white  p-2 text-sm  focus:outline-none dark:border-gray-400 dark:text-gray-400"
+            className=" h-[36px]  w-full rounded-md  border border-gray-300 bg-muted p-2 text-sm  focus:outline-none dark:border-gray-400 dark:text-gray-400"
             onChange={onChangeHotspotLabel}
           />
 
-          <label className="block pb-2 pt-4 text-sm">Embed Link</label>
+          <label className="block pb-2 pt-4 text-sm font-semibold">
+            Embed Widget
+          </label>
 
-          <input
+          {/* <input
             value={link}
             className=" h-[36px]  w-full rounded-md  border border-gray-300  bg-white  p-2 text-sm  focus:outline-none dark:border-gray-400 dark:text-gray-400"
             onChange={onChangeLink}
-          />
+          /> */}
 
-          <label className="block pb-2 pt-4 text-sm">Audio URL</label>
+          <Select onValueChange={onChangeWidget} value={link}>
+            <SelectTrigger className="h-[36px] w-[180px]">
+              {link ? (
+                <SelectValue />
+              ) : (
+                <span className="placeholder">Select a Widget</span>
+              )}
+            </SelectTrigger>
+            <SelectContent className="max-h-[200px] overflow-y-auto">
+              <SelectGroup>
+                {filteredWorkspaces.map((workspace) => {
+                  const parsedSlateValue = JSON.parse(
+                    workspace.slate_value as any
+                  );
+
+                  const workspaceName = parsedSlateValue[0].children[0].text;
+                  const displayName =
+                    updatedWorkspace && updatedWorkspace.id === workspace.id
+                      ? updatedWorkspace.title
+                      : workspaceName;
+                  return (
+                    <SelectItem
+                      key={workspace.id}
+                      value={workspace.id}
+                      className="w-[300px]"
+                    >
+                      {displayName}
+                    </SelectItem>
+                  );
+                })}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+
+          {/* <label className="block pb-2 pt-4 text-sm">Audio URL</label>
 
           <input
             value={audioURL}
             className=" h-[36px]  w-full rounded-md  border border-gray-300  bg-white  p-2 text-sm  focus:outline-none dark:border-gray-400 dark:text-gray-400"
             onChange={onChangeAudioURL}
-          />
+          /> */}
         </div>
       )}
     </div>

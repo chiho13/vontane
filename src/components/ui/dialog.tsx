@@ -14,7 +14,7 @@ const DialogPortal = ({
   ...props
 }: DialogPrimitive.DialogPortalProps) => (
   <DialogPrimitive.Portal className={cn(className)} {...props}>
-    <div className="fixed inset-0 z-50 flex items-start justify-center sm:items-center">
+    <div className="fixed inset-0 z-50 flex items-start items-center justify-center">
       {children}
     </div>
   </DialogPrimitive.Portal>
@@ -45,7 +45,7 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "animate-in data-[state=open]:fade-in-90 data-[state=open]:slide-in-from-bottom-10 sm:zoom-in-90 data-[state=open]:sm:slide-in-from-bottom-0 fixed z-50 grid w-full gap-4 rounded-b-lg border bg-background p-6 shadow-lg dark:border-accent sm:max-w-lg sm:rounded-lg",
+        "animate-in data-[state=open]:fade-in-90 data-[state=open]:slide-in-from-bottom-10 sm:zoom-in-90 data-[state=open]:sm:slide-in-from-bottom-0 fixed z-50 grid w-full gap-4 rounded-lg border bg-background p-6 shadow-lg dark:border-accent sm:max-w-lg ",
         className
       )}
       {...props}
@@ -58,10 +58,10 @@ const DialogContent = React.forwardRef<
           transition={{ duration: 0.3 }}
         >
           {children}
-          <DialogPrimitive.Close className="z-100 fixed right-10 top-10 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+          {/* <DialogPrimitive.Close className="z-100 fixed right-10 top-10 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
             <X className="h-9 w-9 stroke-white" />
             <span className="sr-only">Close</span>
-          </DialogPrimitive.Close>
+          </DialogPrimitive.Close> */}
         </motion.div>
       </AnimatePresence>
     </DialogPrimitive.Content>

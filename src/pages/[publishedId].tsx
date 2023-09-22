@@ -42,7 +42,7 @@ const PublishedPage = ({ workspaceData, font, brandColor }) => {
   const router = useRouter();
   const workspaceId = router.query.workspaceId as string;
   return (
-    <div className="h-[100vh] overflow-y-auto px-6 pt-[30px] xl:pt-[60px]">
+    <div className="h-[100vh] overflow-y-auto px-6 pt-[30px] dark:bg-[#191919] xl:pt-[60px]">
       <WidgetRenderer
         key={workspaceId}
         workspaceData={workspaceData}

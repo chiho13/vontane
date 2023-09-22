@@ -32,9 +32,9 @@ export const CollapsibleAudioPlayer = ({ node, children, index, nodes }) => {
   return (
     !JSON.parse(node.audioplayer) && (
       <div
-        className={`preview-tts mb-3 mt-4
+        className={`preview-tts mb-3 mt-2
     
-       py-3 dark:border-accent 
+       py-2 dark:border-accent 
 
       ${
         node.content &&

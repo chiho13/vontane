@@ -211,6 +211,7 @@ interface LayoutContextType {
   setIsLocked: (value: boolean) => void;
   setIsOpen: (value: boolean) => void;
   workspaces: any;
+  allWorkspaces: any;
 }
 
 export const LayoutContext = createContext<LayoutContextType>({
@@ -218,6 +219,7 @@ export const LayoutContext = createContext<LayoutContextType>({
   setIsLocked: () => {},
   setIsOpen: () => {},
   workspaces: {},
+  allWorkspaces: {},
 });
 
 const Layout: React.FC<LayoutProps> = ({
@@ -525,7 +527,7 @@ const Layout: React.FC<LayoutProps> = ({
   return (
     <>
       <LayoutContext.Provider
-        value={{ isLocked, workspaces, setIsLocked, setIsOpen }}
+        value={{ isLocked, workspaces, allWorkspaces, setIsLocked, setIsOpen }}
       >
         <Head>
           <title>Vontane</title>

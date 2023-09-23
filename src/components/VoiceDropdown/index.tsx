@@ -515,7 +515,18 @@ function VoiceDropdown({
             {desktopbreakpoint && (
               <div>
                 {filters.length > 0 && (
-                  <div className="filter_label inline-flex justify-center bg-white px-4 py-2 text-sm font-medium  text-gray-700 dark:bg-background ">
+                  <div className="filter_label inline-flex gap-4 bg-white px-4 py-2 text-sm font-medium  text-gray-700 dark:bg-background ">
+                    <button
+                      className="filter_reset inline-flex justify-center rounded-md border-2 border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm outline-none hover:bg-gray-50 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50 dark:border-accent dark:bg-accent dark:text-foreground"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        clearFilters();
+                      }}
+                      aria-label="Clear Filters"
+                      title="Click to clear all applied filters"
+                    >
+                      Clear Filters
+                    </button>
                     <div>
                       <span className="dark:text-muted-foreground">
                         Filters:
@@ -556,18 +567,6 @@ function VoiceDropdown({
                         );
                       })}
                     </div>
-
-                    <button
-                      className="filter_reset inline-flex justify-center rounded-md border-2 border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm outline-none hover:bg-gray-50 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-opacity-50 dark:border-accent dark:bg-accent dark:text-foreground"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        clearFilters();
-                      }}
-                      aria-label="Clear Filters"
-                      title="Click to clear all applied filters"
-                    >
-                      Clear Filters
-                    </button>
                   </div>
                 )}
               </div>

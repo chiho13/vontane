@@ -61,6 +61,7 @@ export const ImageSettings = ({ element }) => {
 
   useEffect(() => {
     // Find the audio point corresponding to the active ID
+    if (!element.audioPoint) return;
     const activeAudioPoint = element.audioPoint.find(
       (point) => point.id === audioPointData
     );

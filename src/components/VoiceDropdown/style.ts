@@ -7,7 +7,6 @@ export const VoiceDropdownStyle = styled.div`
   .filter_label {
     font-weight: 600;
     display: flex;
-    justify-content: space-between;
     align-items: center;
     padding-top: 20px;
     padding-bottom: 0;

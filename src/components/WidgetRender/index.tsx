@@ -1,6 +1,4 @@
-import { EditorContext, EditorProvider } from "@/contexts/EditorContext";
 import React, { useContext, useEffect, useMemo, useState, useRef } from "react";
-import { Path, Text, Node } from "slate";
 import Link from "next/link";
 
 import { useRouter } from "next/router";
@@ -10,10 +8,8 @@ import { Button } from "@/components/ui/button";
 import { parseNodes, splitIntoSlides } from "@/utils/renderHelpers";
 
 import { SlideBreak } from "@/icons/SlideBreak";
-import { useLocalStorage } from "usehooks-ts";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { cn } from "@/utils/cn";
-import { ViewToggle } from "@/components/view-toggle";
 import { ThemeProvider } from "styled-components";
 
 export const WidgetRenderer = ({

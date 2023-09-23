@@ -237,7 +237,7 @@ export const ImageSettings = ({ element }) => {
 
           <Input
             value={hotspotLabel}
-            className=" h-[36px]  w-full rounded-md  border border-gray-300 bg-muted p-2 text-sm  focus:outline-none dark:border-gray-400 dark:text-gray-400"
+            className=" h-[36px]  w-full rounded-md  border border-gray-300 bg-white p-2 text-sm focus:outline-none  dark:border-gray-400 dark:bg-muted dark:text-gray-400"
             onChange={onChangeHotspotLabel}
           />
 

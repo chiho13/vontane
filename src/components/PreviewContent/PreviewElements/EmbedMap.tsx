@@ -5,12 +5,9 @@ import { useTheme } from "next-themes";
 import { Map, Marker, ZoomControl } from "pigeon-maps";
 import { maptiler } from "pigeon-maps/providers";
 import { MapPin, Settings, Map as MapIcon } from "lucide-react";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
-import Link from "next/link";
-
-export function MapBlock(props) {
+export const EmbedMapBlock = (props) => {
   const { element } = props;
 
   const { theme, resolvedTheme } = useTheme();
@@ -20,7 +17,7 @@ export function MapBlock(props) {
 
   const isDarkMode = currentTheme === "dark";
 
-  const MAPTILER_ACCESS_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+  const MAPTILER_ACCESS_TOKEN = "EeJqZWmMwWuKBDTgCto5";
   const MAP_ID = isDarkMode ? "streets-v2-dark" : "streets-v2";
 
   const maptilerProvider = maptiler(MAPTILER_ACCESS_TOKEN, MAP_ID);
@@ -67,14 +64,14 @@ export function MapBlock(props) {
             rel="noopener noreferrer"
             className="absolute bottom-0 left-0"
           >
-            <Image
+            <img
               src={`/images/maptiler-logo${isDarkMode ? "-white" : ""}.png`}
               width={100}
               height={40}
               alt="map tiler"
             />
           </a>
-          <Link
+          <a
             href={`https://www.google.com/maps/?q=${element.latLng[0]},${element.latLng[1]}`}
             target="_blank"
           >
@@ -85,9 +82,9 @@ export function MapBlock(props) {
             >
               <MapIcon className="w-5" />
             </Button>
-          </Link>
+          </a>
         </Map>
       </div>
     </div>
   );
-}
+};

@@ -2,22 +2,56 @@ import React, { useEffect, useState } from "react";
 
 import { ModeToggle } from "@/components/mode-toggle";
 import { AudioManagerProvider } from "@/contexts/PreviewAudioContext";
-import { parseNodes } from "@/utils/renderHelpers";
+import { parseNodes } from "@/utils/embedRenderHelper";
 
 import { ThemeProvider } from "styled-components";
 
 export const EmbedWidget = ({ widgetId }) => {
+  const [localValue, setLocalValue] = useState(null);
+  const [currentTheme, setCurrentTheme] = useState({
+    brandColor: "#0E78EF", // initial default value
+    accentColor: "#e9e9e9",
+  });
+  const [font, setFont] = useState("font-sans");
   useEffect(() => {
     fetch(`http://localhost:3000/api/widget?id=${widgetId}`)
       .then((response) => response.json()) // Parsing the JSON data to JavaScript object
       .then((data) => {
-        console.log(data); // Access your data here
+        console.log(JSON.parse(data.workspace.slate_value));
+
+        const parsedSlateValue = JSON.parse(data.workspace.slate_value);
+        setCurrentTheme({
+          brandColor: data.workspace.brand_color,
+          accentColor: "#e9e9e9",
+        });
+        setLocalValue(parsedSlateValue);
+        setFont(data.workspace.font_style);
       })
       .catch((error) => {
         console.error("There was an error!", error);
       });
-  }, []);
-  return <div className="mt-5 p-4 text-2xl">Hello World</div>;
+  }, [widgetId]);
+  return (
+    localValue && (
+      <ThemeProvider theme={currentTheme}>
+        <AudioManagerProvider>
+          <div className="published">
+            <div
+              className={`relative  overflow-y-auto bg-white  dark:bg-[#191919] `}
+            >
+              <div className=" relative mx-auto mb-4 max-w-[580px]">
+                {parseNodes(localValue, font)}
+              </div>
+            </div>
+
+            <div className="fixed right-4 top-4  z-10  hidden gap-2 xl:flex">
+              {/* <button onClick={handleToggleView}>Toggle View</button> */}
+            </div>
+          </div>
+        </AudioManagerProvider>
+      </ThemeProvider>
+    )
+  );
 };
 
 // export const EmbedWidget = ({

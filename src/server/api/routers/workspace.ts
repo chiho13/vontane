@@ -8,8 +8,7 @@ import { observable } from "@trpc/server/observable";
 import { EventEmitter } from "events";
 import { Prisma, workspace } from "@prisma/client";
 import { nanoid } from "nanoid";
-import { Ratelimit } from "@upstash/ratelimit";
-import { Redis } from "@upstash/redis";
+
 import { TRPCError } from "@trpc/server";
 import puppeteer from "puppeteer";
 

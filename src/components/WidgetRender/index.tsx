@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useMemo, useState, useRef } from "react";
-import Link from "next/link";
 
 import { useRouter } from "next/router";
 import { ModeToggle } from "@/components/mode-toggle";
@@ -11,6 +10,7 @@ import { SlideBreak } from "@/icons/SlideBreak";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { ThemeProvider } from "styled-components";
+import { ViewToggle } from "../view-toggle";
 
 export const WidgetRenderer = ({
   workspaceData,
@@ -27,6 +27,7 @@ export const WidgetRenderer = ({
     brandColor: "#0E78EF", // initial default value
     accentColor: "#e9e9e9",
   });
+
   console.log(workspaceData);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
 
@@ -185,9 +186,9 @@ export const WidgetRenderer = ({
         <div className="text-bold mb-2 text-8xl">404</div>
         <p className="text-2xl">Workspace not found</p>
 
-        <Link href="/">
+        <a href="/">
           <Button className="mt-4 ">Go Home</Button>
-        </Link>
+        </a>
       </div>
     );
   }
@@ -256,7 +257,7 @@ export const WidgetRenderer = ({
             <div className="fixed right-4 top-4  z-10  hidden gap-2 xl:flex">
               {/* <button onClick={handleToggleView}>Toggle View</button> */}
 
-              {/* {slides && slides.length !== 0 ? <ViewToggle /> : null} */}
+              {slides && slides.length !== 0 ? <ViewToggle /> : null}
               {!isWidget && <ModeToggle side="bottom" />}
             </div>
 

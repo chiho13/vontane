@@ -1,12 +1,27 @@
 const path = require("path");
 
 module.exports = {
-  entry: "./src/components/WidgetRender/index.tsx", // Make sure the path is correct
+  mode: "production",
+  entry: "./src/components/WidgetRender/index.tsx",
+  //   entry: "./src/components/Test/index.tsx",
   output: {
-    filename: "widget-render.js",
+    filename: "widget.js",
+    // filename: "test.js",
     path: path.resolve(__dirname, "dist"),
+    library: {
+      name: "Embed",
+      //   name: "Test",
+      type: "var",
+    },
   },
   resolve: {
+    fallback: {
+      path: require.resolve("path-browserify"),
+      zlib: require.resolve("browserify-zlib"),
+      fs: false,
+      util: false,
+      assert: false,
+    },
     alias: {
       "@": path.resolve(__dirname, "src/"),
     },
@@ -26,7 +41,17 @@ module.exports = {
           },
         ],
       },
-      // Add other loaders as needed (e.g., for CSS, images)
+      {
+        test: /\.css$/, // Test for CSS files
+        use: [
+          "style-loader", // Inject styles into DOM
+          "css-loader", // Translates CSS into CommonJS modules
+        ],
+      },
+      // Add other loaders as needed (e.g., for images)
     ],
+  },
+  externals: {
+    react: "React",
   },
 };

@@ -2,6 +2,7 @@ import { WidgetRenderer } from "@/components/WidgetRender";
 import { createInnerTRPCContext } from "@/server/api/trpc";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
+import React from "react";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   // get the entire URL path

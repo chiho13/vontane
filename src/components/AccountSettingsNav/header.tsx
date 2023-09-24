@@ -2,7 +2,7 @@ interface DashboardHeaderProps {
   heading: string;
   text?: string;
 }
-
+import React from "react";
 export function DashboardHeader({ heading, text }: DashboardHeaderProps) {
   return (
     <div className="flex items-center justify-between">

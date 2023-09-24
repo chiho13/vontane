@@ -1,5 +1,6 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Editor, Path, Transforms } from "slate";
+import React from "react";
 import {
   Tooltip,
   TooltipContent,

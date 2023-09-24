@@ -7,7 +7,7 @@ import { Transforms, Path, BaseEditor } from "slate";
 import { ReactEditor } from "slate-react";
 import { ErrorAlert } from "../ErrorAlert";
 import { genNodeId, addRandomIds } from "@/hoc/withID";
-
+import React from "react";
 export const MathQuestionGenerator = () => {
   const [mathQuestions, setQuestions] = useState("");
   const [isLoading, setIsLoading] = useState(false);

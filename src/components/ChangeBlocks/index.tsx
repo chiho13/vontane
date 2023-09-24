@@ -9,6 +9,7 @@ import Dropdown, { DropdownProvider } from "../Dropdown";
 import { useArrowNavigation } from "@/hooks/useArrowNavigation";
 import { FaCaretDown } from "react-icons/fa";
 import { TbBlockquote } from "react-icons/tb";
+import React from "react";
 import {
   toggleBlock,
   isBlockActive,

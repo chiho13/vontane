@@ -2,7 +2,7 @@ import Link from "next/link";
 import styled, { keyframes, useTheme } from "styled-components";
 import Dropdown, { DropdownProvider } from "../Dropdown";
 import Head from "next/head";
-
+import React from "react";
 import {
   useRef,
   useState,

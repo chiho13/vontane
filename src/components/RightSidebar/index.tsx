@@ -76,6 +76,7 @@ import { LayoutContext } from "../Layouts/AccountLayout";
 import { DownloadButton } from "../DownloadButton";
 import { PlyrAudioPlayer } from "../PlyrAudio";
 import { WorkspaceSetting } from "../WorkspaceSetting";
+import { Hello } from "../Test";
 interface RightSideBarProps {
   setRightSideBarWidth: any;
   showRightSidebar: boolean;
@@ -234,6 +235,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                 height: `calc(100vh - ${openChat ? "460" : "200"}px)`,
               }}
             >
+              <Hello />
               {/* <FontStyle /> */}
 
               {SlateElement.isElement(rootNode) &&

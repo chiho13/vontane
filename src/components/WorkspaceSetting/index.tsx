@@ -5,7 +5,7 @@ import {
 } from "@/components/ui/popover";
 import { MoreHorizontal } from "lucide-react";
 import { Export } from "../Export";
-
+import React from "react";
 import { FontStyle } from "../FontStyle";
 import { Button } from "../ui/button";
 

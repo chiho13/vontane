@@ -9,7 +9,7 @@ import { WorkspaceTitleUpdateProvider } from "@/contexts/WorkspaceTitleContext";
 import "@/styles/globals.css";
 import "@stripe/stripe-js";
 import { ThemeProvider } from "@/components/theme-provider";
-
+import React from "react";
 const MyApp: AppType = ({ Component, pageProps }) => {
   const [supabaseClient] = useState(() => createBrowserSupabaseClient());
 

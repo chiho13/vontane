@@ -2,15 +2,15 @@ const path = require("path");
 
 module.exports = {
   mode: "production",
-  entry: "./src/components/WidgetRender/index.tsx",
+  entry: "./src/components/EmbedWidget/index.tsx",
   //   entry: "./src/components/Test/index.tsx",
   output: {
+    // filename: "embedwidget.js",
     filename: "widget.js",
-    // filename: "test.js",
     path: path.resolve(__dirname, "dist"),
     library: {
+      //   name: "EmbedWidget",
       name: "Embed",
-      //   name: "Test",
       type: "var",
     },
   },
@@ -53,5 +53,6 @@ module.exports = {
   },
   externals: {
     react: "React",
+    "react-dom": "ReactDOM",
   },
 };

@@ -5,9 +5,11 @@ import { AudioManagerProvider } from "@/contexts/PreviewAudioContext";
 import { parseNodes } from "@/utils/embedRenderHelper";
 
 import { ThemeProvider } from "styled-components";
+import LoadingSpinner from "@/icons/LoadingSpinner";
 
 export const EmbedWidget = ({ widgetId }) => {
   const [localValue, setLocalValue] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [currentTheme, setCurrentTheme] = useState({
     brandColor: "#0E78EF", // initial default value
     accentColor: "#e9e9e9",
@@ -25,32 +27,40 @@ export const EmbedWidget = ({ widgetId }) => {
           accentColor: "#e9e9e9",
         });
         setLocalValue(parsedSlateValue);
+        setLoading(false);
         setFont(data.workspace.font_style);
       })
       .catch((error) => {
         console.error("There was an error!", error);
       });
   }, [widgetId]);
-  return (
-    localValue && (
-      <ThemeProvider theme={currentTheme}>
-        <AudioManagerProvider>
-          <div className="published">
-            <div
-              className={`relative  overflow-y-auto bg-white  dark:bg-[#191919] `}
-            >
-              <div className=" relative mx-auto mb-4 max-w-[580px]">
-                {parseNodes(localValue, font)}
-              </div>
-            </div>
 
-            <div className="fixed right-4 top-4  z-10  hidden gap-2 xl:flex">
-              {/* <button onClick={handleToggleView}>Toggle View</button> */}
+  return localValue ? (
+    <ThemeProvider theme={currentTheme}>
+      <AudioManagerProvider>
+        <div className="published">
+          <div
+            className={`relative  overflow-y-auto bg-white  dark:bg-[#191919] `}
+          >
+            <div className=" relative mx-auto mb-4 max-w-[580px]">
+              {parseNodes(localValue, font)}
             </div>
           </div>
-        </AudioManagerProvider>
-      </ThemeProvider>
-    )
+
+          <div className="fixed right-4 top-4  z-10  hidden gap-2 xl:flex">
+            {/* <button onClick={handleToggleView}>Toggle View</button> */}
+          </div>
+        </div>
+      </AudioManagerProvider>
+    </ThemeProvider>
+  ) : (
+    <div className="absolute inset-0 flex -translate-y-[30px] items-center justify-center">
+      <LoadingSpinner
+        width={50}
+        height={50}
+        strokeColor="stroke-blue-500 dark:stroke-white"
+      />
+    </div>
   );
 };
 

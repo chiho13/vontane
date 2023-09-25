@@ -27,38 +27,9 @@ import { MapBlock } from "@/components/PreviewContent/PreviewElements/Map";
 import { EmbedMapBlock } from "@/components/PreviewContent/PreviewElements/EmbedMap";
 
 const LazyLoadingWidget = ({ src }) => {
-  const [workspaceData, setWorkspaceData] = useState(null);
-  const [isLoading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch(`http://localhost:3000/api/widget?id=${src}`)
-      .then((response) => response.json()) // Parsing the JSON data to JavaScript object
-      .then((data) => {
-        console.log(JSON.parse(data.workspace.slate_value));
-
-        const parsedSlateValue = JSON.parse(data.workspace.slate_value);
-        setLoading(false);
-        setWorkspaceData(parsedSlateValue);
-      })
-      .catch((error) => {
-        console.error("There was an error!", error);
-      });
-  }, [isLoading]);
-
-  if (isLoading) {
-    return (
-      <div className="absolute inset-0 flex items-center justify-center">
-        <LoadingSpinner
-          width={50}
-          height={50}
-          strokeColor="stroke-blue-500 dark:stroke-white"
-        />
-      </div>
-    );
-  }
   return (
     <div className="relative h-[410px] w-[360px] overflow-y-auto px-6 sm:w-[610px]">
-      {workspaceData && <EmbedWidget widgetId={src} />}
+      <EmbedWidget widgetId={src} />
     </div>
   );
 };

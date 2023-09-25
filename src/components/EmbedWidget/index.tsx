@@ -16,7 +16,7 @@ export const EmbedWidget = ({ widgetId }) => {
   });
   const [font, setFont] = useState("font-sans");
   useEffect(() => {
-    fetch(`http://localhost:3000/api/widget?id=${widgetId}`)
+    fetch(`https://app.vontane.com/api/widget?id=${widgetId}`)
       .then((response) => response.json()) // Parsing the JSON data to JavaScript object
       .then((data) => {
         console.log(JSON.parse(data.workspace.slate_value));

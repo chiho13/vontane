@@ -1,29 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { Text } from "slate";
 // import { BlockMath, InlineMath } from "react-katex";
-// import { ListItem } from "@/components/PreviewContent/PreviewElements/ListItem";
-// import { Checkbox } from "@/components/ui/checkbox";
+import { ListItem } from "@/components/PreviewContent/PreviewElements/ListItem";
+import { Checkbox } from "@/components/ui/checkbox";
 import { alignMap } from "@/components/DocumentEditor/helpers/toggleBlock";
-// import { CollapsibleAudioPlayer } from "@/components/PreviewContent/PreviewElements/CollapsibleAudio";
-// import { MCQ } from "@/components/PreviewContent/PreviewElements/MCQ";
-// import { MapBlock } from "@/components/PreviewContent/PreviewElements/Map";
+
 import { cn } from "./cn";
-import LoadingSpinner from "@/icons/LoadingSpinner";
-// import { api } from "@/utils/api";
 
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
-  DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogClose,
 } from "@/components/ui/dialog";
-import { WidgetRenderer } from "@/components/WidgetRender";
 import { CollapsibleAudioPlayer } from "@/components/PreviewContent/PreviewElements/CollapsibleAudio";
 import { EmbedWidget } from "@/components/EmbedWidget";
-import { MapBlock } from "@/components/PreviewContent/PreviewElements/Map";
 import { EmbedMapBlock } from "@/components/PreviewContent/PreviewElements/EmbedMap";
 
 const LazyLoadingWidget = ({ src }) => {
@@ -61,18 +52,6 @@ const renderElement = (
   hideTitle: boolean
 ) => {
   switch (node.type) {
-    // case "title":
-    //   if (hideTitle) {
-    //     return null;
-    //   }
-    //   return (
-    //     <h1
-    //       className={`mb-4 text-[34px] font-bold  dark:text-gray-200 ${fontFam}`}
-    //       key={key}
-    //     >
-    //       {children}
-    //     </h1>
-    //   );
     case "paragraph":
       return (
         <p
@@ -89,6 +68,13 @@ const renderElement = (
           {children}
         </p>
       );
+    case "bulleted-list":
+      return (
+        <li className={`mt-2 list-inside list-disc  ${fontFam}`} key={key}>
+          {children}
+        </li>
+      );
+
     case "heading-one":
       return (
         <h1
@@ -192,6 +178,17 @@ const renderElement = (
               );
             })}
         </div>
+      );
+
+    case "link":
+      return (
+        <a
+          href={node.url}
+          target="_blank"
+          className="inline text-blue-400 underline dark:text-blue-400"
+        >
+          {children}
+        </a>
       );
 
     default:

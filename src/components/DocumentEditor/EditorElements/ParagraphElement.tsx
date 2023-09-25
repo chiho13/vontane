@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, useRef } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor, useFocused, useSelected } from "slate-react";
 import { Editor, Path, Node, Transforms, Range, Text } from "slate";
@@ -41,6 +41,7 @@ export function ParagraphElement(props) {
 
   const { fontStyle } = useTextSpeech();
 
+  console.log(element);
   const { setElementData, showRightSidebar } = useTextSpeech();
 
   useEffect(() => {

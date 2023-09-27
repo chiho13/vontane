@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Text } from "slate";
 // import { BlockMath, InlineMath } from "react-katex";
-import { ListItem } from "@/components/PreviewContent/PreviewElements/ListItem";
-import { Checkbox } from "@/components/ui/checkbox";
+// import { ListItem } from "@/components/PreviewContent/PreviewElements/ListItem";
+// import { Checkbox } from "@/components/ui/checkbox";
 import { alignMap } from "@/components/DocumentEditor/helpers/toggleBlock";
 
 import { cn } from "./cn";
@@ -68,12 +68,6 @@ const renderElement = (
           {children}
         </p>
       );
-    case "bulleted-list":
-      return (
-        <li className={`mt-2 list-inside list-disc  ${fontFam}`} key={key}>
-          {children}
-        </li>
-      );
 
     case "heading-one":
       return (
@@ -130,6 +124,14 @@ const renderElement = (
           {children}
         </blockquote>
       );
+
+    case "bulleted-list":
+      return (
+        <li className={`mt-2 list-inside list-disc  ${fontFam}`} key={key}>
+          {children}
+        </li>
+      );
+
     case "tts":
       return (
         <CollapsibleAudioPlayer
@@ -180,17 +182,6 @@ const renderElement = (
         </div>
       );
 
-    case "link":
-      return (
-        <a
-          href={node.url}
-          target="_blank"
-          className="inline text-blue-400 underline dark:text-blue-400"
-        >
-          {children}
-        </a>
-      );
-
     default:
       return <div></div>;
   }
@@ -200,6 +191,7 @@ export const parseNodes = (nodes: any[], fontFam, hideTitle = false) => {
   return (
     nodes &&
     nodes.map((node: any, index: any) => {
+      console.log(node.type);
       if (Text.isText(node)) {
         let customNode = node as any; // assert that node could be any type
 

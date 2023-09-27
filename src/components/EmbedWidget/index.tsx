@@ -22,6 +22,7 @@ export const EmbedWidget = ({ widgetId }) => {
         console.log(JSON.parse(data.workspace.slate_value));
 
         const parsedSlateValue = JSON.parse(data.workspace.slate_value);
+        console.log(parsedSlateValue);
         setCurrentTheme({
           brandColor: data.workspace.brand_color,
           accentColor: "#e9e9e9",

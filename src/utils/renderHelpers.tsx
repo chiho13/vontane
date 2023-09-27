@@ -74,7 +74,7 @@ const LazyLoadingWidget = ({ src }) => {
 
   if (isLoading) {
     return (
-      <div className="flex h-[410px] items-center justify-center">
+      <div className="flex h-[410px] -translate-y-[30px] items-center justify-center">
         <LoadingSpinner
           width={50}
           height={50}

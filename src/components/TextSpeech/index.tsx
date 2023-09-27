@@ -328,7 +328,7 @@ export const TextSpeech = ({
                         htmlFor="airplane-mode"
                         className="font-sans text-xs"
                       >
-                        Hide
+                        Audio Player Only
                       </Label>
                     </div>
                   </TooltipTrigger>

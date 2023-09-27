@@ -79,7 +79,9 @@ export const PublishButton = () => {
     .split(" ")
     .join("_")}-${workspaceId}`;
 
-  const iframeEmbed = `<iframe src="${publicURL}" width="100%" height="500" style="border:0" allowfullscreen loading="lazy"></iframe>`;
+  const iframeEmbed = `<div data-widget="${workspaceId}"></div>
+  <script src="https://cdn.vontane.com/embed.js"></script>
+  `;
   return (
     <>
       {!published ? (
@@ -148,7 +150,7 @@ export const PublishButton = () => {
             <div className="relative mb-4 flex items-center">
               <textarea
                 defaultValue={iframeEmbed}
-                className=" h-[120px]  w-full resize-none rounded-md border border-gray-300  bg-muted  p-2  pr-[40px]  font-mono text-sm  focus:outline-none dark:border-accent dark:border-gray-400 dark:text-gray-400"
+                className=" h-[140px]  w-full resize-none rounded-md border border-gray-300 bg-muted  p-2  pr-[40px]  font-mono  text-xs  focus:outline-none dark:border-accent dark:border-gray-400 dark:text-gray-400"
                 readOnly={true}
               />
 

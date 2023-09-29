@@ -72,25 +72,25 @@ const Home: NextPage<HomeProps> = ({ session }) => {
   const [status, setStatus] = useState<string>("");
   const [audioUrl, setAudioUrl] = useState<string>("");
 
-  const { profile, workspaces }: any = useUserContext();
+  const { profile }: any = useUserContext();
   const router = useRouter();
 
   // const dummyAudioElement = new Audio(
   //   "https://peregrine-samples.s3.amazonaws.com/editor-samples/anny.wav"
   // );
 
-  // const [workspaces, setWorkspaces] = useState<workspace[]>([]);
-  // const { data: workspacesData, refetch: refetchWorkspaces } =
-  //   api.workspace.getWorkspaces.useQuery({ id: "sdfdsf" }, { enabled: false });
+  const [workspaces, setWorkspaces] = useState<workspace[]>([]);
+  const { data: workspacesData } =
+    api.workspace.getFolderAndWorkspaces.useQuery();
 
-  // useEffect(() => {
-  //   if (workspacesData) {
-  //     const response = workspacesData.workspaces;
+  useEffect(() => {
+    if (workspacesData) {
+      const response = workspacesData.rootLevelworkspaces;
 
-  //     console.log(response);
-  //     setWorkspaces(response);
-  //   }
-  // }, [workspacesData, session]);
+      console.log(response);
+      setWorkspaces(response);
+    }
+  }, [workspacesData, session]);
   useEffect(() => {
     if (session) {
       // refetchWorkspaces();
@@ -101,7 +101,7 @@ const Home: NextPage<HomeProps> = ({ session }) => {
   useEffect(() => {
     if (session && workspaces && workspaces.length > 0) {
       const nextPath = sessionStorage.getItem("next");
-      const defaultWorkspaceId = workspaces[0].id;
+      const defaultWorkspaceId = workspaces[workspaces.length - 1].id;
       const redirectToPath = nextPath
         ? `/${nextPath}`
         : `/docs/${defaultWorkspaceId}`;

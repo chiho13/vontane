@@ -79,7 +79,7 @@ export const PublishButton = () => {
     .split(" ")
     .join("_")}-${workspaceId}`;
 
-  const iframeEmbed = `<div data-widget="${workspaceId}"></div>
+  const iframeEmbed = `<div data-vontane-widget="${workspaceId}"></div>
   <script src="https://cdn.vontane.com/embed.js"></script>
   `;
   return (

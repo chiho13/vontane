@@ -44,7 +44,7 @@ currently under development (April)
 - [x] preview content
 - [x] map block
 - [x] ai integration (wip)
-- [] hotspot in image
+- [x] hotspot in image
 
 ## Next phase - requirements
 

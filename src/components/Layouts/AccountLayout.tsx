@@ -296,9 +296,14 @@ const Layout: React.FC<LayoutProps> = ({
   const createWorkspaceMutation = api.workspace.createWorkspace.useMutation();
   const handleWorkspaceRoute = (workspaceId: string) => {
     router.push(`/docs/${workspaceId}`);
-    refetchFolderWorkspaceData();
-    refetchWorkspaceData();
   };
+
+  useEffect(() => {
+    if (router.asPath.startsWith("/docs/")) {
+      refetchFolderWorkspaceData();
+      refetchWorkspaceData();
+    }
+  }, [router.asPath]);
 
   const createWorkspace = async (folderId) => {
     const _folderId = folderId;

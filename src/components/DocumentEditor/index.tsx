@@ -2114,7 +2114,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                             renderElement={renderElement as any}
                             renderLeaf={Leaf as any}
                             onMouseUp={(event) => {
-                              handleEditorMouseUp(event, editor);
+                              // handleEditorMouseUp(event, editor);
                               handleSelectedText(event, editor);
                             }}
                             scrollSelectionIntoView={() => {}}

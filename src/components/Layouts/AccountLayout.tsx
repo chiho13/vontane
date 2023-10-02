@@ -234,7 +234,7 @@ const Layout: React.FC<LayoutProps> = ({
   const { updatedWorkspace } = useWorkspaceTitleUpdate();
   const [isLocked, setIsLocked] = useLocalStorage("isLocked", false);
   const [isOpen, setIsOpen] = useLocalStorage("isOpen", false);
-  const [isExpanded, setIsExpanded] = useLocalStorage("isExpanded", {});
+  const [isExpanded, setIsExpanded] = useState({});
 
   const desktopbreakpoint = window.screen.width > breakpoints.lg;
 

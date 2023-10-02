@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useLayoutEffect, useState } from "react";
 import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor, useFocused, useSelected } from "slate-react";
 import { TextSpeech } from "@/components/TextSpeech";
@@ -93,7 +93,7 @@ const ElevenTTSWrapperBase = (props: {
   } = useTextSpeech();
 
   const extractedText = extractTextValues(element.children).join(" ");
-  useEffect(() => {
+  useLayoutEffect(() => {
     const extractedText = extractTextValues(element.children).join(" ");
 
     const extractedTextNoJoin = extractTextValues(element.children);

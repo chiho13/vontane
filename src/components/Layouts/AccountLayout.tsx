@@ -273,6 +273,8 @@ const Layout: React.FC<LayoutProps> = ({
     useSensor(KeyboardSensor)
   );
 
+  console.log(allWorkspaces);
+
   useEffect(() => {
     if (workspacesData) {
       const response = workspacesData.workspaces;
@@ -280,6 +282,13 @@ const Layout: React.FC<LayoutProps> = ({
       const trash = workspacesData.trash;
       setAllWorkspaces(response);
       setTrashWorkspace(trash);
+      const currentWorkspace = response.find((el) => {
+        return el.id == currentWorkspaceId;
+      });
+
+      setIsExpanded({
+        [currentWorkspace.folder_id]: true,
+      });
     }
   }, [workspacesData]);
 

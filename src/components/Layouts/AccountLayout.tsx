@@ -298,12 +298,12 @@ const Layout: React.FC<LayoutProps> = ({
     router.push(`/docs/${workspaceId}`);
   };
 
-  // useEffect(() => {
-  //   if (router.asPath.startsWith("/docs/")) {
-  //     refetchFolderWorkspaceData();
-  //     refetchWorkspaceData();
-  //   }
-  // }, [router.asPath]);
+  useEffect(() => {
+    if (router.asPath.startsWith("/docs/")) {
+      refetchFolderWorkspaceData();
+      refetchWorkspaceData();
+    }
+  }, [router.asPath]);
 
   const createWorkspace = async (folderId) => {
     const _folderId = folderId;

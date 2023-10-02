@@ -93,7 +93,7 @@ const ElevenTTSWrapperBase = (props: {
   } = useTextSpeech();
 
   const extractedText = extractTextValues(element.children).join(" ");
-  useLayoutEffect(() => {
+  useEffect(() => {
     const extractedText = extractTextValues(element.children).join(" ");
 
     const extractedTextNoJoin = extractTextValues(element.children);

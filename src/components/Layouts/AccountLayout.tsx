@@ -286,7 +286,7 @@ const Layout: React.FC<LayoutProps> = ({
         return el.id == currentWorkspaceId;
       });
 
-      if (currentWorkspace.folder_id) {
+      if (currentWorkspace && currentWorkspace.folder_id) {
         setIsExpanded({
           ...isExpanded,
           [currentWorkspace.folder_id]: true,

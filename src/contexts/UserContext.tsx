@@ -57,7 +57,9 @@ export function UserContextProvider({
 export const useUserContext = () => useContext(UserContext);
 
 function useUserProfile(userId: string | undefined) {
-  const queryResult = api.profile.getProfile.useQuery();
+  const queryResult = api.profile.getProfile.useQuery(null, {
+    enabled: !!userId,
+  });
 
   const { data, isLoading } = queryResult;
   const profile: any = data?.profile;

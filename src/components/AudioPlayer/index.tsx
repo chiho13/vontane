@@ -30,7 +30,6 @@ import {
 } from "@/components/ui/tooltip";
 import { useLocalStorage } from "usehooks-ts";
 import { AudioManagerContext } from "@/contexts/PreviewAudioContext";
-import { A } from "million/dist/types-0b3c4385";
 import { FaPause, FaPlay } from "react-icons/fa";
 
 interface Props {

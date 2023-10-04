@@ -61,7 +61,7 @@ const Hotspot = styled.div`
 const LazyLoadingWidget = ({ src }) => {
   const [workspaceData, setWorkspaceData] = useState(null);
   const { data, error, isLoading, refetch } =
-    api.workspace.getWorkspace.useQuery({ id: src });
+    api.workspace.getPublicWorkspace.useQuery({ id: src });
 
   useEffect(() => {
     if (!isLoading) {
@@ -194,14 +194,13 @@ const renderElement = (
                         <div className="h-[12px] w-[12px] rounded-full border border-gray-400 bg-white"></div>
                       </button>
                     </DialogTrigger>
-                    {el.label && (
-                      <DialogContent className="max-h-[500px]  max-w-[380px] border  border-accent px-1 text-foreground dark:bg-[#191919] sm:max-w-[620px]">
-                        <DialogTitle className="px-6 pb-6 text-3xl">
-                          {el.label}
-                        </DialogTitle>
-                        {el.link && <LazyLoadingWidget src={el.link} />}
-                      </DialogContent>
-                    )}
+
+                    <DialogContent className="max-h-[500px]  max-w-[380px] border  border-accent px-1 text-foreground dark:bg-[#191919] sm:max-w-[620px]">
+                      <DialogTitle className="px-6 pb-6 text-3xl">
+                        {el.label}
+                      </DialogTitle>
+                      {el.link && <LazyLoadingWidget src={el.link} />}
+                    </DialogContent>
                   </Dialog>
                 </Hotspot>
               );

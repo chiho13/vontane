@@ -153,6 +153,19 @@ export const workspaceRouter = createTRPCRouter({
       }
       return { workspace };
     }),
+  getPublicWorkspace: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input, ctx }) => {
+      const workspace = await ctx.prisma.workspace.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!workspace) {
+        throw new Error("workspace  not found");
+      }
+
+      return { workspace };
+    }),
 
   updateWorkspace: protectedProcedure
     .input(

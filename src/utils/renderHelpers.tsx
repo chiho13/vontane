@@ -31,7 +31,11 @@ import { WidgetRenderer } from "@/components/WidgetRender";
 
 import styled from "styled-components";
 
-const Hotspot = styled.div`
+interface HotspotProps {
+  colour: string;
+}
+
+const Hotspot = styled.div<HotspotProps>`
   @keyframes active {
     0% {
       transform: scale(0.1);
@@ -51,7 +55,7 @@ const Hotspot = styled.div`
     position: absolute;
     height: 30px;
     width: 30px;
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: ${(props) => props.colour};
     border-radius: 50%;
     box-shadow: 0px 0px 2px 2px #ffffff;
     animation: active 2s infinite linear;
@@ -187,11 +191,22 @@ const renderElement = (
                   key={i}
                   className="absolute"
                   style={{ left: `${el.x}%`, top: `${el.y}%` }}
+                  colour={el.colour}
                 >
                   <Dialog>
                     <DialogTrigger>
-                      <button className="beacon flex h-[24px] w-[24px] items-center justify-center  rounded-full border-2 border-white shadow-lg ring-1 ring-gray-400">
-                        <div className="h-[12px] w-[12px] rounded-full border border-gray-400 bg-white"></div>
+                      <button
+                        className="beacon flex h-[24px] w-[24px] items-center justify-center  rounded-full border-2 shadow-lg ring-1 ring-gray-400"
+                        style={{
+                          borderColor: el.colour,
+                        }}
+                      >
+                        <div
+                          className="h-[12px] w-[12px] rounded-full border border-gray-400"
+                          style={{
+                            backgroundColor: el.colour,
+                          }}
+                        ></div>
                       </button>
                     </DialogTrigger>
 

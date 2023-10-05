@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-
+import { ArrowUpRight } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -30,6 +30,7 @@ import { LayoutContext } from "../Layouts/AccountLayout";
 import { useRouter } from "next/router";
 import { parse } from "path";
 import { useWorkspaceTitleUpdate } from "@/contexts/WorkspaceTitleContext";
+import Link from "next/link";
 
 export const ImageSettings = ({ element }) => {
   const router = useRouter();
@@ -252,39 +253,52 @@ export const ImageSettings = ({ element }) => {
             onChange={onChangeLink}
           /> */}
 
-          <Select onValueChange={onChangeWidget} value={link}>
-            <SelectTrigger className="h-[36px] w-[180px]">
-              {link ? (
-                <SelectValue />
-              ) : (
-                <span className="placeholder">Select a Widget</span>
-              )}
-            </SelectTrigger>
-            <SelectContent className="max-h-[200px] overflow-y-auto">
-              <SelectGroup>
-                {filteredWorkspaces.map((workspace) => {
-                  const parsedSlateValue = JSON.parse(
-                    workspace.slate_value as any
-                  );
+          <div className="flex gap-4">
+            <Select onValueChange={onChangeWidget} value={link}>
+              <SelectTrigger className="h-[36px] w-[180px]">
+                {link ? (
+                  <SelectValue />
+                ) : (
+                  <span className="placeholder">Select a Widget</span>
+                )}
+              </SelectTrigger>
+              <SelectContent className="max-h-[200px] overflow-y-auto dark:border-neutral-800 dark:bg-background">
+                <SelectGroup>
+                  {filteredWorkspaces.map((workspace) => {
+                    const parsedSlateValue = JSON.parse(
+                      workspace.slate_value as any
+                    );
 
-                  const workspaceName = parsedSlateValue[0].children[0].text;
-                  const displayName =
-                    updatedWorkspace && updatedWorkspace.id === workspace.id
-                      ? updatedWorkspace.title
-                      : workspaceName;
-                  return (
-                    <SelectItem
-                      key={workspace.id}
-                      value={workspace.id}
-                      className="w-[300px]"
-                    >
-                      {displayName}
-                    </SelectItem>
-                  );
-                })}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+                    const workspaceName = parsedSlateValue[0].children[0].text;
+                    const displayName =
+                      updatedWorkspace && updatedWorkspace.id === workspace.id
+                        ? updatedWorkspace.title
+                        : workspaceName;
+                    return (
+                      <SelectItem
+                        key={workspace.id}
+                        value={workspace.id}
+                        className="w-[300px]"
+                      >
+                        {displayName}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            {link && (
+              <Link href={`/docs/${link}`} target="_blank">
+                <Button
+                  className="flex h-[36px] gap-1 border border-input bg-white hover:bg-gray-100 dark:border-gray-700 dark:bg-background dark:hover:bg-muted"
+                  size="sm"
+                  variant="outline"
+                >
+                  Edit <ArrowUpRight />
+                </Button>
+              </Link>
+            )}
+          </div>
 
           {/* <label className="block pb-2 pt-4 text-sm">Audio URL</label>
 

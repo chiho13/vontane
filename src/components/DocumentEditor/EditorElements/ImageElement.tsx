@@ -190,6 +190,7 @@ const DraggableRadioGroupItem = ({
   path,
   setAudioRadioValue,
 }) => {
+  const [colour, _] = useState(element.colour);
   const { AudioPointref, position, handleMouseDown } = useDraggable(
     {
       x: initialPosition.x,
@@ -201,6 +202,8 @@ const DraggableRadioGroupItem = ({
     path
   );
 
+  console.log(colour);
+
   return (
     <div
       ref={AudioPointref}
@@ -211,8 +214,11 @@ const DraggableRadioGroupItem = ({
       <RadioGroupItem
         value={id}
         id={id}
-        className="z-100 duration-400 h-8 w-8 border-4 border-white bg-blue-800/40 text-white shadow-md transition active:scale-110"
-        indicatorClassName={"h-4 w-4"}
+        className={`z-100 duration-400 h-8 w-8 border-4 bg-blue-800/40 text-white shadow-md transition active:scale-110`}
+        style={{
+          borderColor: element.colour,
+        }}
+        indicatorClassName={`h-4 w-4`}
       />
     </div>
   );

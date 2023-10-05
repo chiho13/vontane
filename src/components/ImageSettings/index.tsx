@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, ChevronDown } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -31,6 +31,13 @@ import { useRouter } from "next/router";
 import { parse } from "path";
 import { useWorkspaceTitleUpdate } from "@/contexts/WorkspaceTitleContext";
 import Link from "next/link";
+import { HexColorPicker, HexColorInput } from "react-colorful";
+
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 export const ImageSettings = ({ element }) => {
   const router = useRouter();
@@ -45,6 +52,8 @@ export const ImageSettings = ({ element }) => {
   const [hotspotLabel, setHotspotLabel] = useState("");
   const [audioURL, setAudioURL] = useState("");
   const [link, setLink] = useState(null);
+
+  const [hotspotColor, setHotspotColor] = useState("#ffffff");
 
   const path = ReactEditor.findPath(editor, element);
 
@@ -82,6 +91,10 @@ export const ImageSettings = ({ element }) => {
       setLink(activeAudioPoint.link);
     }
 
+    if (activeAudioPoint && activeAudioPoint.colour) {
+      console.log(activeAudioPoint.colour);
+      setHotspotColor(activeAudioPoint.colour);
+    }
     // Cleanup: Reset audioURL when the component unmounts or dependencies change
     return () => {
       setAudioURL("");
@@ -130,6 +143,12 @@ export const ImageSettings = ({ element }) => {
     console.log(value);
     setLink(value);
     updateAudioPoint("link", value);
+  };
+
+  const onChangeHotspotColour = (value) => {
+    const newColor = value;
+    setHotspotColor(newColor);
+    updateAudioPoint("colour", newColor);
   };
 
   // useEffect(() => {
@@ -232,6 +251,43 @@ export const ImageSettings = ({ element }) => {
             Hotspot Popup Content
           </h3>
           <div className="text-gray-500">ID: {audioPointData}</div>
+
+          <div className="mt-4">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="gap-2 border border-gray-300  bg-white px-[6px] text-gray-700 dark:border-accent dark:bg-muted  dark:text-gray-200 "
+                >
+                  <span
+                    className="h-[24px] w-[24px] rounded-md"
+                    style={{
+                      backgroundColor: hotspotColor,
+                    }}
+                  ></span>
+                  Hotspot Colour <ChevronDown className="w-4" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent
+                align="start"
+                sideOffset={10}
+                className=" w-auto border border-gray-300 bg-background  p-2 dark:border-gray-700  dark:bg-muted "
+              >
+                <HexColorPicker
+                  color={hotspotColor}
+                  onChange={onChangeHotspotColour}
+                />
+                {/* <div className="mb-1 mt-2 w-full">
+                  <HexColorInput
+                    color={hotspotColor}
+                    onChange={debounce(onChangeHotspotColour, 400)}
+                    className="h-[32px] w-full rounded-md  border border-neutral-300 px-1"
+                  />
+                </div> */}
+              </PopoverContent>
+            </Popover>
+          </div>
 
           <label className="block pb-2 pt-2 text-sm  font-semibold">
             Title

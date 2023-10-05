@@ -119,9 +119,9 @@ export const PlyrAudioPlayer = ({ audioURL, content, isPreview = false }) => {
     <StyledPlyr
       theme={theme}
       className={`${
-        !isPreview &&
-        content.length > 40 &&
-        "mb-4 rounded-lg border border-gray-200 shadow-sm dark:border-neutral-800"
+        !isPreview && content.length > 40
+          ? "rounded-lg border border-gray-200 shadow-sm dark:border-neutral-800"
+          : "mb-4"
       }`}
     >
       <Plyr

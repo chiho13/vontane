@@ -17,27 +17,12 @@ import { EditorContext } from "@/contexts/EditorContext";
 import * as marked from "marked";
 import { alignMap } from "../DocumentEditor/helpers/toggleBlock";
 
-import {
-  Element as SlateElement,
-  Descendant,
-  Editor,
-  Node,
-  Path,
-  Text,
-  Transforms,
-  Range,
-} from "slate";
-import LoadingSpinner from "@/icons/LoadingSpinner";
-import { extractTextValues } from "../DocumentEditor/helpers/extractText";
-import { root } from "postcss";
-import { Check, ChevronUp, Info, ListEnd, Send } from "lucide-react";
-import { api } from "@/utils/api";
+import { Element as SlateElement, Descendant, Editor, Node, Path } from "slate";
+
 import { useRouter } from "next/router";
-import { ChevronDown, Link, Copy } from "lucide-react";
-import { Input } from "@/components/ui/input";
+
 import { AudioManagerProvider } from "@/contexts/PreviewAudioContext";
 import { Button } from "@/components/ui/button";
-import { debounce } from "lodash";
 import { saveAs } from "file-saver";
 
 import { DocsPreview } from "../PreviewContent/docs";
@@ -46,36 +31,19 @@ import { PublishButton } from "../PublishButton";
 import { useClipboard } from "@/hooks/useClipboard";
 import { MapSettings } from "../MapSettings";
 import { ImageSettings } from "../ImageSettings";
-import { deserialize } from "@/hoc/withPasting";
-
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 import { Portal } from "react-portal";
-import { Label } from "../ui/label";
-import { ReactEditor } from "slate-react";
 
-import { getHtmlFromSelection } from "@/utils/htmlSerialiser";
 import { cn } from "@/utils/cn";
-import { UserContext } from "@/contexts/UserContext";
 import { AIAssist } from "../AIAssist";
-import { FontStyle } from "../FontStyle";
-import { Export } from "../Export";
+
 import { LayoutContext } from "../Layouts/AccountLayout";
 import { DownloadButton } from "../DownloadButton";
 import { PlyrAudioPlayer } from "../PlyrAudio";
 import { WorkspaceSetting } from "../WorkspaceSetting";
+
+import { PlyrYoutubePlayer } from "../PlyrVideo";
+import { Link } from "lucide-react";
 interface RightSideBarProps {
   setRightSideBarWidth: any;
   showRightSidebar: boolean;

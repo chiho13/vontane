@@ -261,7 +261,7 @@ export const ImageSettings = ({ element }) => {
                   className="gap-2 border border-gray-300  bg-white px-[6px] text-gray-700 dark:border-accent dark:bg-muted  dark:text-gray-200 "
                 >
                   <span
-                    className="h-[24px] w-[24px] rounded-md"
+                    className="h-[24px] w-[24px] rounded-md border"
                     style={{
                       backgroundColor: hotspotColor,
                     }}

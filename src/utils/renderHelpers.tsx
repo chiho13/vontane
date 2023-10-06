@@ -198,13 +198,13 @@ const renderElement = (
                       <button
                         className="beacon flex h-[24px] w-[24px] items-center justify-center  rounded-full border-2 shadow-lg ring-1 ring-gray-400"
                         style={{
-                          borderColor: el.colour,
+                          borderColor: el.colour || "#ffffff",
                         }}
                       >
                         <div
                           className="h-[12px] w-[12px] rounded-full border border-gray-400"
                           style={{
-                            backgroundColor: el.colour,
+                            backgroundColor: el.colour || "#ffffff",
                           }}
                         ></div>
                       </button>

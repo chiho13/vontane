@@ -216,7 +216,7 @@ const DraggableRadioGroupItem = ({
         id={id}
         className={`z-100 duration-400 h-8 w-8 border-4 bg-blue-800/40 text-white shadow-md transition active:scale-110`}
         style={{
-          borderColor: element.colour,
+          borderColor: element.colour || "#ffffff",
         }}
         indicatorClassName={`h-4 w-4 dark:fill-muted dark:text-muted`}
       />

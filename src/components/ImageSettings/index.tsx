@@ -94,6 +94,8 @@ export const ImageSettings = ({ element }) => {
     if (activeAudioPoint && activeAudioPoint.colour) {
       console.log(activeAudioPoint.colour);
       setHotspotColor(activeAudioPoint.colour);
+    } else {
+      setHotspotColor("#ffffff");
     }
     // Cleanup: Reset audioURL when the component unmounts or dependencies change
     return () => {

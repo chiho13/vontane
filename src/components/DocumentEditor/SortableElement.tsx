@@ -132,7 +132,8 @@ export function SortableElement({
           </div>
         </div>
 
-        {element.type !== "image" &&
+        {element.type !== "embed" &&
+          element.type !== "image" &&
           element.type !== "tts" &&
           element.type !== "map" && (
             <div className="ml-2 opacity-0 group-hover:opacity-100">

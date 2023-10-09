@@ -41,7 +41,14 @@ export const Embed = React.memo(
       useContext(EditorContext);
 
     const path = ReactEditor.findPath(editor, element);
-    const [embedLink, setEmbedLink] = useState(element.embedLink);
+    const iframeSrcRef = useRef<string>("");
+    const [embedLink, setEmbedLink] = useState<string>(element.embedLink);
+
+    useEffect(() => {
+      if (element.embedLink) {
+        iframeSrcRef.current = element.embedLink;
+      }
+    }, [element.embedLink]);
 
     return (
       <div data-id={element.id} data-path={JSON.stringify(path)}>
@@ -75,7 +82,29 @@ export const Embed = React.memo(
             </div>
           </div>
         ) : (
-          <div>lol</div>
+          <div>
+            {/* {element.thumbnail} */}
+
+            <img
+              src={element.thumbnail}
+              width={element.width}
+              className={`rounded-md ${
+                selected && "ring-2 ring-brand ring-offset-2 ring-offset-white "
+              }`}
+              tabIndex={-1}
+            />
+            {/* <iframe
+              width={element.width}
+              height={element.height}
+              src={embedLink}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            /> */}
+
+            <div className="absolute  right-1 top-1 z-10 flex opacity-0 group-hover:opacity-100 ">
+              <OptionMenu element={element} />
+            </div>
+          </div>
         )}
       </div>
     );
@@ -114,26 +143,28 @@ export const EmbedLink = () => {
       ),
   });
 
+  const extractVideoID = (url: string) => {
+    const videoIDRegex =
+      /(?:www\.youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+    const matches = url.match(videoIDRegex);
+    return matches ? matches[1] : "";
+  };
+
   async function onSubmit(values: z.infer<typeof embedLinkFormSchema>) {
     const currentElement = Node.get(editor, JSON.parse(activePath));
 
     let newUrl = values.url;
-    try {
-      // Attempt to fetch the image to see if it is valid.
-      const response = await fetch(values.url, { method: "HEAD" });
-      if (!response.ok) {
-        throw new Error("Invalid image URL");
-      }
-    } catch (error) {
-      // If fetching the image fails, use a fallback URL.
-      newUrl = "/images/imagenotfound.png";
-    }
 
+    const videoId = extractVideoID(values.url);
+    newUrl = `https://www.youtube.com/embed/${videoId}`;
+
+    const thumbnail = `https://img.youtube.com/vi/${videoId}/0.jpg`;
     const newElement = {
       ...currentElement,
       embedLink: newUrl,
+      thumbnail,
       align: "start",
-      width: 700,
+      width: 680,
       height: 400,
     };
     Transforms.setNodes(editor, newElement, { at: JSON.parse(activePath) });
@@ -176,8 +207,7 @@ export const EmbedLink = () => {
           />
           <div className="flex w-full items-center justify-center">
             <Button
-              variant="outline"
-              className="h-[36px] border border-gray-300 bg-white dark:text-background dark:hover:bg-foreground/90"
+              className="h-[36px] w-full border border-gray-300  "
               type="submit"
             >
               Embed Link

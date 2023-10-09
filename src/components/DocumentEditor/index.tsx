@@ -92,7 +92,7 @@ import {
 
 import { ActiveElementProvider } from "@/contexts/ActiveElementContext";
 import { SortableElement } from "./SortableElement";
-import { ElementSelector } from "./EditorElements";
+import { ElementSelector, EmbedLink } from "./EditorElements";
 import { DragOverlayContent } from "./DragOverlayContent";
 import { RightSideBar } from "@/components/RightSidebar";
 
@@ -1210,7 +1210,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         }
 
         if (showEditBlockPopup.element === "embed") {
-          dropdownHeight = 260;
+          dropdownHeight = 230;
         }
         if (spaceBelowTarget < dropdownHeight) {
           topOffset = -(dropdownHeight - targetRect.height) + 30;
@@ -2338,9 +2338,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                       {showEditBlockPopup.element === "embed" && (
                         <div
                           ref={editBlockDropdownRef}
-                          className="z-100 h-[150px] rounded-lg border border-gray-400 bg-background p-2 shadow-md dark:border-accent  dark:border-accent dark:bg-muted dark:text-foreground "
+                          className="z-100 h-[120px] rounded-lg border border-gray-400 bg-background p-2 shadow-md dark:border-accent  dark:border-accent dark:bg-muted dark:text-foreground "
                         >
-                          <div className=" block w-full">hello</div>
+                          {/* <div className=" block w-full">hello</div> */}
+                          <EmbedLink />
                         </div>
                       )}
                     </motion.div>

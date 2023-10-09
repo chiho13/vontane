@@ -13,6 +13,7 @@ export * from "./TitleElement";
 export * from "./SlideBreak";
 export * from "./HeadingElement";
 export * from "./ImageElement";
+export * from "./EmbedElement";
 export * from "./LinkElement";
 export * from "./ElevenTTSWrapperElement";
 export * from "./BlockquoteElement";

@@ -13,6 +13,7 @@ import {
   ListChecks,
   LayoutList,
   CheckSquare,
+  Youtube,
 } from "lucide-react";
 import { EditorContext } from "@/contexts/EditorContext";
 import { Element as SlateElement, Editor, Path, Transforms } from "slate";
@@ -30,6 +31,7 @@ import { addTTSBlock } from "./helpers/addTTSBlock";
 import { TbBlockquote } from "react-icons/tb";
 import { TfiMapAlt } from "react-icons/tfi";
 import { MdChecklist } from "react-icons/md";
+import { addEmbedBlock } from "./helpers/addEmbedBlock";
 
 interface MiniDropdownProps {
   isOpen: boolean;
@@ -139,6 +141,16 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
             height={44}
             className="rounded-md border  border-gray-300 dark:border-secondary"
           />
+        ),
+      },
+      {
+        name: "Embed Video",
+        description: "Embed Youtube Video",
+        action: addEmbedHandler,
+        icon: (
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
+            <Youtube className="stroke-darkergray" />
+          </div>
         ),
       },
       {
@@ -335,6 +347,25 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
       setShowEditBlockPopup({
         open: true,
         element: "image",
+        path: JSON.stringify(addedPath),
+      });
+      setActivePath(JSON.stringify(addedPath));
+    }
+
+    function addEmbedHandler() {
+      console.log("add video");
+      const { newPath: addedPath, id } = addEmbedBlock(
+        editor,
+        JSON.parse(activePath)
+      );
+      setShowDropdown(false);
+      Transforms.select(editor, Editor.start(editor, Path.next(addedPath)));
+      ReactEditor.focus(editor);
+
+      setSelectedElementID(id);
+      setShowEditBlockPopup({
+        open: true,
+        element: "embed",
         path: JSON.stringify(addedPath),
       });
       setActivePath(JSON.stringify(addedPath));

@@ -15,6 +15,7 @@ import {
   QuestionItem,
   TitleElement,
   ImageElement,
+  Embed,
   SlideBreak,
   ListItem,
   ElevenTTSWrapper,
@@ -47,6 +48,8 @@ export function ElementSelector(props: {
       return <Mapbox {...props} />;
     case "image":
       return <ImageElement {...props} />;
+    case "embed":
+      return <Embed {...props} />;
     case "heading-one":
       return <HeadingElement {...props} tag="h1" />;
     case "heading-two":

@@ -67,20 +67,6 @@ import { nanoid } from "nanoid";
 import { useResizeBlock, Position } from "@/hooks/useResizeBlock";
 import { UserContext } from "@/contexts/UserContext";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
-import { Portal } from "react-portal";
-import { relative } from "path";
-import { debounce } from "lodash";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogClose,
-} from "@/components/ui/dialog";
-import { PlyrAudioPlayer } from "@/components/PlyrAudio";
 
 function generateRandomFilename(file) {
   const extension = file.name.split(".").pop();
@@ -202,8 +188,6 @@ const DraggableRadioGroupItem = ({
     path
   );
 
-  console.log(colour);
-
   return (
     <div
       ref={AudioPointref}
@@ -262,7 +246,6 @@ export const ImageElement = React.memo(
 
     console.log(element);
     const selected = useSelected();
-    const [hasFetched, setHasFetched] = useState(false);
 
     const [tempURL, setTempURL] = useState(element.tempURL);
 

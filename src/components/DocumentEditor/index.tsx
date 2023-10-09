@@ -1208,6 +1208,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
         if (showEditBlockPopup.element === "image") {
           dropdownHeight = 380;
         }
+
+        if (showEditBlockPopup.element === "embed") {
+          dropdownHeight = 260;
+        }
         if (spaceBelowTarget < dropdownHeight) {
           topOffset = -(dropdownHeight - targetRect.height) + 30;
           showDropdownAbove = true;
@@ -2334,9 +2338,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                       {showEditBlockPopup.element === "embed" && (
                         <div
                           ref={editBlockDropdownRef}
-                          className="z-100 h-[270px] rounded-lg border border-gray-400 bg-background p-2 shadow-md dark:border-accent  dark:border-accent dark:bg-muted dark:text-foreground lg:w-[400px]  lg:w-[500px]"
+                          className="z-100 h-[150px] rounded-lg border border-gray-400 bg-background p-2 shadow-md dark:border-accent  dark:border-accent dark:bg-muted dark:text-foreground "
                         >
-                          hello
+                          <div className=" block w-full">hello</div>
                         </div>
                       )}
                     </motion.div>

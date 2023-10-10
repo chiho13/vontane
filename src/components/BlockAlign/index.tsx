@@ -44,6 +44,7 @@ export function BlockAlign({ element, className }: any) {
         if (
           SlateElement.isElement(node) &&
           node.type !== "image" &&
+          node.type !== "embed" &&
           node.type !== "map"
         ) {
           const newElement = { ...node, align: position };
@@ -53,7 +54,11 @@ export function BlockAlign({ element, className }: any) {
     }
 
     // Preserve previous logic for images and maps
-    if (element.type === "image" || element.type === "map") {
+    if (
+      element.type === "image" ||
+      element.type === "map" ||
+      element.type === "embed"
+    ) {
       const newElement = { ...element, align: position };
       Transforms.setNodes(editor, newElement, { at: path });
     }

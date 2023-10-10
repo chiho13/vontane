@@ -30,8 +30,9 @@ import { Youtube, Play } from "lucide-react";
 import { OptionMenu } from "../OptionMenu";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useResizeBlock } from "@/hooks/useResizeBlock";
+import { useResizeBlock, Position } from "@/hooks/useResizeBlock";
 import styled from "styled-components";
+import { BlockAlign } from "@/components/BlockAlign";
 
 const YoutubePlayButton = styled.div`
   background: red;
@@ -46,6 +47,7 @@ const YoutubePlayButton = styled.div`
   text-indent: 0.1em;
   transition: all 150ms ease-out;
   width: 58px;
+  opacity: 0.9;
 
   &:before {
     background: inherit;
@@ -94,6 +96,7 @@ export const Embed = React.memo(
       setPos,
       ref: imageRef,
       blockWidth,
+      blockHeight,
     } = useResizeBlock(element, editor, path);
 
     useEffect(() => {
@@ -142,14 +145,13 @@ export const Embed = React.memo(
 
             {!showIframe ? (
               <div
-                className={`flex items-center justify-center ${
+                className={`relative  flex items-center justify-center ${
                   selected &&
                   "rounded-md ring-2 ring-brand ring-offset-2 ring-offset-white "
                 }`}
                 style={{
-                  position: "relative",
-                  width: "100%",
-                  paddingTop: "56.25%" /* 100% / (16/9) */,
+                  width: blockWidth,
+                  paddingTop: blockWidth * 0.5625,
                   overflow: "hidden",
                 }}
               >
@@ -159,11 +161,13 @@ export const Embed = React.memo(
                     position: "absolute",
                     top: 0,
                     left: 0,
-                    width: element.width,
+                    width: "100%",
                     height: "100%",
                     objectFit: "cover",
                   }}
-                  className={`rounded-md`}
+                  width={blockWidth}
+                  ref={imageRef}
+                  className="rounded-md"
                   alt="alt"
                   tabIndex={-1}
                   onMouseDown={() => {
@@ -176,24 +180,57 @@ export const Embed = React.memo(
                 >
                   <YoutubePlayButton />
                 </button>
+                <div
+                  className={`absolute -right-[3px] top-0 flex h-full items-center`}
+                  onMouseDown={() => {
+                    handleMouseDown();
+                    setPos(Position.Right);
+                  }}
+                >
+                  <div
+                    className={`  flex h-full  w-[18px] items-center opacity-0  lg:group-hover:opacity-100 xl:pointer-events-auto `}
+                  >
+                    <div className="mx-auto block h-[60px] w-[6px]  cursor-col-resize rounded-lg border border-white bg-[#191919] opacity-70 dark:bg-background"></div>
+                  </div>
+                </div>
+                <div
+                  className={`absolute -left-[3px] top-0 flex h-full items-center`}
+                  onMouseDown={() => {
+                    handleMouseDown();
+                    setPos(Position.Left);
+                  }}
+                >
+                  <div
+                    className={`  flex h-full  w-[18px] items-center opacity-0  lg:group-hover:opacity-100 xl:pointer-events-auto `}
+                  >
+                    <div className="mx-auto block h-[60px] w-[6px]  cursor-col-resize rounded-lg border border-white bg-[#191919] opacity-70 dark:bg-background"></div>
+                  </div>
+                </div>
+
+                <div className="absolute  right-1 top-1 z-10 flex gap-1">
+                  <BlockAlign element={element} />
+                  <OptionMenu element={element} />
+                </div>
               </div>
             ) : (
-              <iframe
-                width={element.width}
-                height={element.height}
-                src={iframeSrcRef.current}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full rounded-md bg-black"
-              />
+              <div className="relative">
+                <iframe
+                  width={element.width}
+                  height={element.width * 0.5625}
+                  src={iframeSrcRef.current}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="rounded-md bg-black"
+                />
+                <div className="absolute  right-1 top-1 z-10 flex ">
+                  <OptionMenu element={element} />
+                </div>
+              </div>
             )}
 
             {children}
           </div>
         )}
-        <div className="absolute  right-3 top-1 z-10 flex ">
-          <OptionMenu element={element} />
-        </div>
       </div>
     );
   }

@@ -30,6 +30,7 @@ import { Youtube } from "lucide-react";
 import { OptionMenu } from "../OptionMenu";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useResizeBlock } from "@/hooks/useResizeBlock";
 
 export const Embed = React.memo(
   (props: { attributes: any; children: any; element: any }) => {
@@ -43,6 +44,14 @@ export const Embed = React.memo(
     const path = ReactEditor.findPath(editor, element);
     const iframeSrcRef = useRef<string>("");
     const [embedLink, setEmbedLink] = useState<string>(element.embedLink);
+    const [align, setAlign] = useState(element.align || "start");
+
+    const {
+      handleMouseDown,
+      setPos,
+      ref: imageRef,
+      blockWidth,
+    } = useResizeBlock(element, editor, path);
 
     useEffect(() => {
       if (element.embedLink) {
@@ -82,17 +91,43 @@ export const Embed = React.memo(
             </div>
           </div>
         ) : (
-          <div>
+          <div
+            className={` flex pr-2 justify-${align} `}
+            {...attributes}
+            contentEditable={false}
+          >
             {/* {element.thumbnail} */}
 
-            <img
-              src={element.thumbnail}
-              width={element.width}
-              className={`rounded-md ${
-                selected && "ring-2 ring-brand ring-offset-2 ring-offset-white "
-              }`}
-              tabIndex={-1}
-            />
+            <div
+              style={{
+                position: "relative",
+                width: "100%",
+                paddingTop: "56.25%" /* 100% / (16/9) */,
+                overflow: "hidden",
+              }}
+            >
+              <img
+                src={element.thumbnail}
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+                className={`rounded-md ${
+                  selected &&
+                  "ring-2 ring-brand ring-offset-2 ring-offset-white "
+                }`}
+                tabIndex={-1}
+              />
+
+              <div className="absolute  right-1 top-1 z-10 flex ">
+                <OptionMenu element={element} />
+              </div>
+            </div>
+
             {/* <iframe
               width={element.width}
               height={element.height}
@@ -100,10 +135,7 @@ export const Embed = React.memo(
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             /> */}
-
-            <div className="absolute  right-1 top-1 z-10 flex opacity-0 group-hover:opacity-100 ">
-              <OptionMenu element={element} />
-            </div>
+            {children}
           </div>
         )}
       </div>

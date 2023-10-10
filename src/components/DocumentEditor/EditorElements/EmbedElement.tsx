@@ -26,11 +26,52 @@ import {
 import { EditorContext } from "@/contexts/EditorContext";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { ReactEditor, useSelected } from "slate-react";
-import { Youtube } from "lucide-react";
+import { Youtube, Play } from "lucide-react";
 import { OptionMenu } from "../OptionMenu";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useResizeBlock } from "@/hooks/useResizeBlock";
+import styled from "styled-components";
+
+const YoutubePlayButton = styled.div`
+  background: red;
+  border-radius: 50% / 10%;
+  color: #ffffff;
+  font-size: 2em; /* change this to change size */
+  height: 48px;
+  margin: 20px auto;
+  padding: 0;
+  position: relative;
+  text-align: center;
+  text-indent: 0.1em;
+  transition: all 150ms ease-out;
+  width: 58px;
+
+  &:before {
+    background: inherit;
+    border-radius: 10% / 25%;
+    bottom: 9%;
+    content: "";
+    left: -5%;
+    position: absolute;
+    right: -5%;
+    top: 9%;
+    scale: 1.03;
+  }
+
+  &:after {
+    border-style: solid;
+    border-width: 10px 0 10px 17.712px; /* Converted from 1em and 1.732em respectively */
+    border-color: transparent transparent transparent rgba(255, 255, 255, 0.9);
+    content: " ";
+    font-size: 12px;
+    height: 0;
+    margin: -10px 0 0 -10px; /* Converted from -1em and -0.75em respectively */
+    top: 50%;
+    position: absolute;
+    width: 0;
+  }
+`;
 
 export const Embed = React.memo(
   (props: { attributes: any; children: any; element: any }) => {
@@ -46,6 +87,8 @@ export const Embed = React.memo(
     const [embedLink, setEmbedLink] = useState<string>(element.embedLink);
     const [align, setAlign] = useState(element.align || "start");
 
+    const [showIframe, setShowIframe] = useState(false); // New state to toggle iframe
+
     const {
       handleMouseDown,
       setPos,
@@ -55,7 +98,7 @@ export const Embed = React.memo(
 
     useEffect(() => {
       if (element.embedLink) {
-        iframeSrcRef.current = element.embedLink;
+        iframeSrcRef.current = element.embedLink + "?autoplay=1";
       }
     }, [element.embedLink]);
 
@@ -63,7 +106,6 @@ export const Embed = React.memo(
       <div data-id={element.id} data-path={JSON.stringify(path)}>
         {!element.embedLink ? (
           <div
-            tabIndex={-1}
             className={`hover:bg-gray-muted relative  mr-2 flex  cursor-pointer items-center rounded-md bg-gray-100 p-2 transition dark:bg-secondary dark:hover:bg-background/70 
         hover:dark:bg-accent
         `}
@@ -98,46 +140,60 @@ export const Embed = React.memo(
           >
             {/* {element.thumbnail} */}
 
-            <div
-              style={{
-                position: "relative",
-                width: "100%",
-                paddingTop: "56.25%" /* 100% / (16/9) */,
-                overflow: "hidden",
-              }}
-            >
-              <img
-                src={element.thumbnail}
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
-                className={`rounded-md ${
+            {!showIframe ? (
+              <div
+                className={`flex items-center justify-center ${
                   selected &&
-                  "ring-2 ring-brand ring-offset-2 ring-offset-white "
+                  "rounded-md ring-2 ring-brand ring-offset-2 ring-offset-white "
                 }`}
-                tabIndex={-1}
-              />
-
-              <div className="absolute  right-1 top-1 z-10 flex ">
-                <OptionMenu element={element} />
+                style={{
+                  position: "relative",
+                  width: "100%",
+                  paddingTop: "56.25%" /* 100% / (16/9) */,
+                  overflow: "hidden",
+                }}
+              >
+                <img
+                  src={element.thumbnail}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: element.width,
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                  className={`rounded-md`}
+                  alt="alt"
+                  tabIndex={-1}
+                  onMouseDown={() => {
+                    Transforms.select(editor, path);
+                  }}
+                />
+                <button
+                  className="absolute top-1/2  flex -translate-y-[44px]"
+                  onClick={() => setShowIframe(true)}
+                >
+                  <YoutubePlayButton />
+                </button>
               </div>
-            </div>
+            ) : (
+              <iframe
+                width={element.width}
+                height={element.height}
+                src={iframeSrcRef.current}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="w-full rounded-md bg-black"
+              />
+            )}
 
-            {/* <iframe
-              width={element.width}
-              height={element.height}
-              src={embedLink}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            /> */}
             {children}
           </div>
         )}
+        <div className="absolute  right-3 top-1 z-10 flex ">
+          <OptionMenu element={element} />
+        </div>
       </div>
     );
   }

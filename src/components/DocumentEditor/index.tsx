@@ -158,6 +158,7 @@ export type CustomElement = {
   height?: any;
   audioPoint?: any;
   activeId?: any;
+  embedLink?: any;
 };
 
 type CustomText = {

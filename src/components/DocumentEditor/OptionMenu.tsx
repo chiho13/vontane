@@ -96,6 +96,7 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
             element.type === "slide" ||
             element.type === "image" ||
             element.type === "map" ||
+            element.type === "embed" ||
             isParentTTS(editor, element)
           ) {
             return false;

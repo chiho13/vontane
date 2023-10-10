@@ -76,6 +76,7 @@ import { LayoutContext } from "../Layouts/AccountLayout";
 import { DownloadButton } from "../DownloadButton";
 import { PlyrAudioPlayer } from "../PlyrAudio";
 import { WorkspaceSetting } from "../WorkspaceSetting";
+import { EmbedVideoSettings } from "../EmbedVideoSettings";
 interface RightSideBarProps {
   setRightSideBarWidth: any;
   showRightSidebar: boolean;
@@ -239,6 +240,10 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
               {SlateElement.isElement(rootNode) &&
                 rootNode?.type == "image" &&
                 elementData && <ImageSettings element={elementData} />}
+
+              {SlateElement.isElement(rootNode) &&
+                rootNode?.type == "embed" &&
+                elementData && <EmbedVideoSettings element={elementData} />}
               {SlateElement.isElement(rootNode) &&
                 rootNode?.type == "map" &&
                 elementData && (

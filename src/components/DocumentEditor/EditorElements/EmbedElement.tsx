@@ -33,10 +33,11 @@ import { Button } from "@/components/ui/button";
 import { useResizeBlock, Position } from "@/hooks/useResizeBlock";
 import styled from "styled-components";
 import { BlockAlign } from "@/components/BlockAlign";
+import { cn } from "@/utils/cn";
 
 const YoutubePlayButton = styled.div`
   background: red;
-  border-radius: 50% / 10%;
+  border-radius: 52% / 10%;
   color: #ffffff;
   font-size: 2em; /* change this to change size */
   height: 48px;
@@ -57,7 +58,7 @@ const YoutubePlayButton = styled.div`
     left: -5%;
     position: absolute;
     right: -5%;
-    top: 9%;
+    top: 8%;
     scale: 1.03;
   }
 
@@ -105,6 +106,12 @@ export const Embed = React.memo(
       }
     }, [element.embedLink]);
 
+    useEffect(() => {
+      if (selected) {
+        setElementData(element);
+      }
+    }, [selected]);
+
     return (
       <div data-id={element.id} data-path={JSON.stringify(path)}>
         {!element.embedLink ? (
@@ -145,10 +152,13 @@ export const Embed = React.memo(
 
             {!showIframe ? (
               <div
-                className={`relative  flex items-center justify-center ${
-                  selected &&
-                  "rounded-md ring-2 ring-brand ring-offset-2 ring-offset-white "
-                }`}
+                className={cn(
+                  `relative  flex items-center justify-center rounded-md  ${
+                    selected
+                      ? "ring-2 ring-brand  ring-offset-2 ring-offset-white dark:ring-white dark:ring-offset-0 "
+                      : "ring-black/40 ring-offset-white hover:ring-2 hover:ring-offset-2 dark:ring-offset-gray-300 "
+                  }`
+                )}
                 style={{
                   width: blockWidth,
                   paddingTop: blockWidth * 0.5625,
@@ -277,7 +287,7 @@ export const EmbedLink = () => {
 
   async function onSubmit(values: z.infer<typeof embedLinkFormSchema>) {
     const currentElement = Node.get(editor, JSON.parse(activePath));
-
+    const actualLink = values.url;
     let newUrl = values.url;
 
     const videoId = extractVideoID(values.url);
@@ -287,6 +297,7 @@ export const EmbedLink = () => {
     const newElement = {
       ...currentElement,
       embedLink: newUrl,
+      actualLink: actualLink,
       thumbnail,
       align: "start",
       width: 680,
@@ -299,7 +310,7 @@ export const EmbedLink = () => {
       element: null,
     });
 
-    setActivePath("");
+    // Transforms.select(editor, JSON.parse(activePath));
   }
 
   const form = useForm<z.infer<typeof embedLinkFormSchema>>({
@@ -322,6 +333,7 @@ export const EmbedLink = () => {
                 {/* <FormLabel>Embed link</FormLabel> */}
                 <FormControl>
                   <Input
+                    autoFocus
                     placeholder="Paste the youtube link"
                     {...form.register("url")}
                   />

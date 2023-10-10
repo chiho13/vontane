@@ -67,6 +67,7 @@ import { nanoid } from "nanoid";
 import { useResizeBlock, Position } from "@/hooks/useResizeBlock";
 import { UserContext } from "@/contexts/UserContext";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
+import { cn } from "@/utils/cn";
 
 function generateRandomFilename(file) {
   const extension = file.name.split(".").pop();
@@ -324,10 +325,13 @@ export const ImageElement = React.memo(
                 width={blockWidth}
                 height={imageHeight}
                 ref={imageRef}
-                className={`rounded-md ${
-                  selected &&
-                  "ring-2 ring-brand ring-offset-2 ring-offset-white "
-                }`}
+                className={cn(
+                  `rounded-md  ${
+                    selected
+                      ? "ring-2 ring-brand  ring-offset-2 ring-offset-white dark:ring-white dark:ring-offset-0 "
+                      : "ring-black/40 ring-offset-white hover:ring-2 hover:ring-offset-2 dark:ring-offset-gray-300  "
+                  }`
+                )}
                 alt="alt"
                 tabIndex={-1}
               />

@@ -2,7 +2,13 @@ import { motion } from "framer-motion";
 import { useTheme } from "styled-components";
 import { forwardRef, useRef, useContext, useEffect, useState } from "react";
 import Image from "next/image";
-import { MoreHorizontal, Trash2, Copy } from "lucide-react";
+import {
+  MoreHorizontal,
+  Trash2,
+  Copy,
+  Settings,
+  Settings2,
+} from "lucide-react";
 import { BsFillCaretDownFill, BsSoundwave } from "react-icons/bs";
 import Dropdown, { DropdownContext, DropdownProvider } from "../Dropdown";
 import { EditorContext } from "@/contexts/EditorContext";
@@ -29,6 +35,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "../ui/button";
+import { useTextSpeech } from "@/contexts/TextSpeechContext";
 
 const isParentTTS = (editor, node) => {
   const path = ReactEditor.findPath(editor, node);
@@ -53,8 +60,10 @@ interface OptionMenuElement {
 export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
   ({ element, className }, ref) => {
     const optionMenuRef = useRef(null);
-    const { editor } = useContext(EditorContext);
+    const { editor, setActivePath } = useContext(EditorContext);
+    const { setElementData } = useTextSpeech();
     const { activeDropdown, toggleDropdown } = useContext(DropdownContext);
+    const path = ReactEditor.findPath(editor, element);
 
     let optionMenuElements: any = [
       {

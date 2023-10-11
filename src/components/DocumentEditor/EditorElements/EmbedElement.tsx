@@ -39,8 +39,8 @@ const YoutubePlayButton = styled.div`
   background: red;
   border-radius: 52% / 10%;
   color: #ffffff;
-  font-size: 2em; /* change this to change size */
-  height: 48px;
+  font-size: 20px;
+  height: 50px;
   margin: 20px auto;
   padding: 0;
   position: relative;
@@ -65,7 +65,7 @@ const YoutubePlayButton = styled.div`
   &:after {
     border-style: solid;
     border-width: 10px 0 10px 17.712px; /* Converted from 1em and 1.732em respectively */
-    border-color: transparent transparent transparent rgba(255, 255, 255, 0.9);
+    border-color: transparent transparent transparent rgb(255, 255, 255);
     content: " ";
     font-size: 12px;
     height: 0;

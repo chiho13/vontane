@@ -22,6 +22,13 @@ import { debounce } from "lodash";
 import { ReactEditor } from "slate-react";
 import { Element as SlateElement, Node, Transforms } from "slate";
 import { Input } from "../ui/input";
+import { api } from "@/utils/api";
+
+type DownloadVideoResponse = {
+  success: boolean;
+  videoId?: string;
+  error?: string;
+};
 
 export const EmbedVideoSettings = ({ element }) => {
   const { editor, activePath } = useContext(EditorContext);
@@ -109,10 +116,24 @@ export const EmbedVideoSettings = ({ element }) => {
     setEmbedLink(e.target.value);
   };
 
+  const downloadVideoMutation = api.workspace.downloadVideo.useMutation();
+
+  const downloadVideoHandler = async () => {
+    try {
+      const response = await downloadVideoMutation.mutateAsync({
+        link: element.actualLink,
+      });
+      if (response && response.success) {
+        console.log(response.success);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   return (
     <div className="p-4">
       <h2 className="mb-3 text-sm font-bold">Embed Video Settings</h2>
-
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -146,6 +167,8 @@ export const EmbedVideoSettings = ({ element }) => {
           </div>
         </form>
       </Form>
+
+      <Button onClick={downloadVideoHandler}>Download</Button>
     </div>
   );
 };

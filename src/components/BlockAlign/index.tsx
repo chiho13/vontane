@@ -72,7 +72,7 @@ export function BlockAlign({ element, className }: any) {
             <DropdownMenuTrigger asChild>
               <Button
                 className={cn(
-                  `flex h-[22px] w-[32px] items-center rounded-md border-0 border-gray-500 bg-white px-1 text-gray-500 hover:bg-gray-200 dark:border-foreground dark:bg-muted dark:text-foreground hover:dark:bg-muted/90`,
+                  `flex h-[22px] w-[32px] items-center rounded-md border border-gray-300 bg-white  px-1 text-gray-500 hover:bg-gray-200 dark:border-foreground dark:border-gray-500 dark:bg-muted dark:text-foreground hover:dark:bg-muted/90`,
                   className
                 )}
               >

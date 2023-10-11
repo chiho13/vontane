@@ -148,8 +148,6 @@ export const Embed = React.memo(
             {...attributes}
             contentEditable={false}
           >
-            {/* {element.thumbnail} */}
-
             {!showIframe ? (
               <div
                 className={cn(

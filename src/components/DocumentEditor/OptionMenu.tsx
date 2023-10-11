@@ -180,7 +180,12 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
               <TooltipProvider delayDuration={300}>
                 <Tooltip>
                   <TooltipTrigger>
-                    <Button className="flex h-[22px] w-[22px] items-center justify-center rounded-md bg-white p-0 outline-none hover:bg-gray-200 dark:bg-muted dark:hover:bg-accent">
+                    <Button
+                      className={cn(
+                        `flex h-[22px] w-[22px] items-center justify-center rounded-md bg-white p-0 outline-none hover:bg-gray-200 dark:bg-muted dark:hover:bg-accent`,
+                        className
+                      )}
+                    >
                       <MoreHorizontal className="option-menu w-[18px] w-[18px] text-darkergray dark:text-foreground" />
                     </Button>
                   </TooltipTrigger>

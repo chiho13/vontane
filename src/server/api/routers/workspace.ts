@@ -13,7 +13,17 @@ import { Redis } from "@upstash/redis";
 import { TRPCError } from "@trpc/server";
 import puppeteer from "puppeteer";
 
+import ytdl from "ytdl-core";
+import { v4 as uuidv4 } from "uuid";
+import { createWriteStream } from "fs";
+import { join } from "path";
+import ffmpeg from "fluent-ffmpeg";
+import { pipeline } from "stream";
+import { promisify } from "util";
+
 const ee = new EventEmitter();
+
+const asyncPipeline = promisify(pipeline);
 
 export const workspaceRouter = createTRPCRouter({
   changeFont: protectedProcedure
@@ -413,5 +423,37 @@ export const workspaceRouter = createTRPCRouter({
       const pdfBase64 = pdf.toString("base64");
 
       return { pdf: pdfBase64 };
+    }),
+  downloadVideo: protectedProcedure
+    .input(z.object({ link: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      try {
+        const videoStream = ytdl(input.link, { quality: "highestvideo" });
+        const audioStream = ytdl(input.link, { quality: "highestaudio" });
+
+        const videoWriteStream = createWriteStream("video.mp4");
+        const audioWriteStream = createWriteStream("audio.mp4");
+
+        // Saving video and audio to disk
+        await Promise.all([
+          asyncPipeline(videoStream, videoWriteStream),
+          asyncPipeline(audioStream, audioWriteStream),
+        ]);
+
+        // Combining video and audio with ffmpeg
+        await new Promise((resolve, reject) => {
+          ffmpeg()
+            .input("video.mp4")
+            .input("audio.mp4")
+            .on("end", resolve)
+            .on("error", reject)
+            .mergeToFile("finalOutput.mp4");
+        });
+
+        return { success: true };
+      } catch (error) {
+        console.error("Error:", error);
+        return { success: false, error: error.message };
+      }
     }),
 });

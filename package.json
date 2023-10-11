@@ -50,6 +50,7 @@
     "clsx": "^1.2.1",
     "cookie": "^0.5.0",
     "file-saver": "^2.0.5",
+    "fluent-ffmpeg": "^2.1.2",
     "framer-motion": "^10.6.0",
     "fs": "^0.0.1-security",
     "fuse.js": "^6.6.2",
@@ -96,6 +97,7 @@
     "tailwindcss-animate": "^1.0.5",
     "twin.macro": "^3.1.0",
     "usehooks-ts": "^2.9.1",
+    "ytdl-core": "^4.11.5",
     "zod": "^3.20.6"
   },
   "devDependencies": {

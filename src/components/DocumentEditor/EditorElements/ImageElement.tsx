@@ -212,7 +212,7 @@ const DraggableRadioGroupItem = ({
 export const ImageElement = React.memo(
   (props: { attributes: any; children: any; element: any }) => {
     const { attributes, children, element } = props;
-    const { setElementData } = useTextSpeech();
+    const { setElementData, setShowRightSidebar, setTab } = useTextSpeech();
     const {
       editor,
       showEditBlockPopup,
@@ -261,6 +261,9 @@ export const ImageElement = React.memo(
     useEffect(() => {
       if (selected) {
         setElementData(element);
+
+        setShowRightSidebar(true);
+        setTab("properties");
       }
     }, [selected]);
 

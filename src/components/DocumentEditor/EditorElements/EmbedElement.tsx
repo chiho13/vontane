@@ -153,15 +153,15 @@ export const Embed = React.memo(
             {!showIframe ? (
               <div
                 className={cn(
-                  `relative  flex items-center justify-center rounded-md  ${
+                  `relative  flex w-full items-center justify-center rounded-md pt-[56.25%] xl:w-[${blockWidth}px] xl:pt-[${
+                    blockWidth * 0.5625
+                  }px]  ${
                     selected
                       ? "ring-2 ring-brand  ring-offset-2 ring-offset-white dark:ring-white dark:ring-offset-0 "
                       : "ring-black/40 ring-offset-white hover:ring-2 hover:ring-offset-2 dark:ring-offset-gray-300 "
                   }`
                 )}
                 style={{
-                  width: blockWidth,
-                  paddingTop: blockWidth * 0.5625,
                   overflow: "hidden",
                 }}
               >
@@ -223,15 +223,27 @@ export const Embed = React.memo(
                 </div>
               </div>
             ) : (
-              <div className="relative">
+              <div className={`relative w-full xl:w-[${element.width}px]`}>
+                <div
+                  style={{
+                    paddingBottom: "56.25%",
+                    height: 0,
+                  }}
+                />
                 <iframe
-                  width={element.width}
-                  height={element.width * 0.5625}
-                  src={iframeSrcRef.current}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                  }}
+                  src={element.embedLink}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
-                  className="rounded-md bg-black"
+                  className="mt-2 rounded-md bg-black"
                 />
+
                 <div className="absolute  right-1 top-1 z-10 flex ">
                   <OptionMenu element={element} />
                 </div>

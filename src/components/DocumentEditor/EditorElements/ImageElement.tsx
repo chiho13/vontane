@@ -261,9 +261,6 @@ export const ImageElement = React.memo(
     useEffect(() => {
       if (selected) {
         setElementData(element);
-
-        setShowRightSidebar(true);
-        setTab("properties");
       }
     }, [selected]);
 
@@ -337,6 +334,10 @@ export const ImageElement = React.memo(
                 )}
                 alt="alt"
                 tabIndex={-1}
+                onMouseDown={() => {
+                  setShowRightSidebar(true);
+                  setTab("properties");
+                }}
               />
               <div
                 className={`absolute -right-[3px] top-0 flex h-full items-center`}

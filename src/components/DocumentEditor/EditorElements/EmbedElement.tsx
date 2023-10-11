@@ -225,11 +225,12 @@ export const Embed = React.memo(
                 </div>
               </div>
             ) : (
-              <div className={`relative w-full xl:w-[${element.width}px]`}>
+              <div
+                className={`relative block w-full xl:w-[${element.width}px]`}
+              >
                 <div
                   style={{
-                    paddingBottom: "56.25%",
-                    height: 0,
+                    paddingTop: "56.25%",
                   }}
                 />
                 <iframe
@@ -243,9 +244,8 @@ export const Embed = React.memo(
                   src={iframeSrcRef.current}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
-                  className="mt-2 rounded-md bg-black"
+                  className="rounded-md bg-black"
                 />
-
                 <div className="absolute  right-1 top-1 z-10 flex ">
                   <OptionMenu element={element} />
                 </div>

@@ -64,7 +64,11 @@ export const ImageSettings = ({ element }) => {
     if (element.altText) {
       setAltText(element.altText);
     }
-  }, [element.altText]);
+
+    return () => {
+      setAltText("");
+    };
+  }, [element]);
 
   useEffect(() => {
     // Find the audio point corresponding to the active ID

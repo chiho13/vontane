@@ -36,7 +36,7 @@ export const YoutubeVideoEmbed = ({ node }) => {
           <div
             className="top-1/2 flex items-center justify-center"
             style={{
-              width: `${node.width}px`,
+              width: "100%",
               position: "absolute",
             }}
           >

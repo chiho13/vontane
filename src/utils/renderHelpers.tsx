@@ -10,6 +10,7 @@ import { MapBlock } from "@/components/PreviewContent/PreviewElements/Map";
 import { cn } from "./cn";
 import LoadingSpinner from "@/icons/LoadingSpinner";
 import { api } from "@/utils/api";
+import { YoutubeVideoEmbed } from "@/components/PreviewContent/PreviewElements/YoutubeVideo";
 
 import {
   Tooltip,
@@ -107,7 +108,8 @@ const renderElement = (
     id: string;
     align: any;
     height: string | number;
-    width: string | number;
+    width: any;
+    embedLink: any;
     type: any;
     url: any;
     checked: boolean;
@@ -225,6 +227,8 @@ const renderElement = (
 
     case "map":
       return <MapBlock element={node} />;
+    case "embed":
+      return <YoutubeVideoEmbed node={node} />;
     case "block-quote":
       return (
         <blockquote

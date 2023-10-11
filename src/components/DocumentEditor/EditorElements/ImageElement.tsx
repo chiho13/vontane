@@ -384,12 +384,14 @@ export const ImageElement = React.memo(
                     <DownloadButton
                       url={element.url}
                       fileName={element.file_name}
-                      className=" h-[22px] w-[22px] rounded-md border-0 p-[4px] dark:bg-muted hover:dark:bg-muted/90 "
+                      className=" h-[22px] w-[22px] rounded-md border border-gray-300 p-[4px] dark:bg-muted hover:dark:bg-muted/90 "
                       iconClassName="dark:stroke-foreground"
                     />
                   </>
                 )}
-                <OptionMenu element={element} />
+                <div className="flex h-[22px] w-[22px] items-center justify-center overflow-hidden rounded-md border border-gray-300 bg-white">
+                  <OptionMenu element={element} />
+                </div>
               </div>
               <RadioGroup value={audioPointData} onValueChange={onValueChange}>
                 {audioPoint &&

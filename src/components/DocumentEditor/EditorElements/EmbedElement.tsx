@@ -79,7 +79,7 @@ const YoutubePlayButton = styled.div`
 export const Embed = React.memo(
   (props: { attributes: any; children: any; element: any }) => {
     const { attributes, children, element } = props;
-    const { setElementData } = useTextSpeech();
+    const { setElementData, setShowRightSidebar, setTab } = useTextSpeech();
     const selected = useSelected();
 
     const { editor, setActivePath, setShowEditBlockPopup } =
@@ -182,6 +182,8 @@ export const Embed = React.memo(
                   tabIndex={-1}
                   onMouseDown={() => {
                     Transforms.select(editor, path);
+                    setShowRightSidebar(true);
+                    setTab("properties");
                   }}
                 />
                 <button
@@ -238,7 +240,7 @@ export const Embed = React.memo(
                     width: "100%",
                     height: "100%",
                   }}
-                  src={element.embedLink}
+                  src={iframeSrcRef.current}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                   className="mt-2 rounded-md bg-black"

@@ -38,7 +38,9 @@ export const EmbedVideoSettings = ({ element }) => {
 
   const getVideoDetailsMutation = api.workspace.getVideoDetails.useMutation();
 
-  const videoDuration = JSON.parse(element.videoDetails).lengthSeconds;
+  const videoDuration =
+    (element.videoDetails && JSON.parse(element.videoDetails).lengthSeconds) ||
+    0;
 
   const [loading, setLoading] = useState(false);
   const [startTimeError, setStartTimeError] = useState<string | null>(null);

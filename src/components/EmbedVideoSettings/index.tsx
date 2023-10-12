@@ -110,42 +110,48 @@ export const EmbedVideoSettings = ({ element }) => {
   };
 
   return (
-    <div className="p-4">
-      <h2 className="mb-3 text-sm font-bold">Embed Video Settings</h2>
+    <>
+      <div className="border-b p-4">
+        <h2 className="mb-3 text-sm font-bold">Embed Video Settings</h2>
 
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="z-100 space-y-3 pb-2"
-        >
-          <FormField
-            control={form.control}
-            name="url"
-            render={() => (
-              <FormItem>
-                {/* <FormLabel>Embed link</FormLabel> */}
-                <FormControl>
-                  <Input
-                    autoFocus
-                    defaultValue={embedLink}
-                    placeholder="Paste the youtube link"
-                    {...form.register("url")}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="flex w-full items-center justify-center">
-            <Button
-              className="h-[36px] w-full border border-gray-300  "
-              type="submit"
-            >
-              Embed Link
-            </Button>
-          </div>
-        </form>
-      </Form>
-    </div>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="z-100 space-y-3 pb-2"
+          >
+            <FormField
+              control={form.control}
+              name="url"
+              render={() => (
+                <FormItem>
+                  {/* <FormLabel>Embed link</FormLabel> */}
+                  <FormControl>
+                    <Input
+                      autoFocus
+                      defaultValue={embedLink}
+                      placeholder="Paste the youtube link"
+                      {...form.register("url")}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="flex w-full items-center justify-center">
+              <Button
+                className="h-[36px] w-full border border-gray-300  "
+                type="submit"
+              >
+                Update Link
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </div>
+
+      <div className="p-4">
+        <h2 className="mb-3 text-sm font-bold">Playback Settings</h2>
+      </div>
+    </>
   );
 };

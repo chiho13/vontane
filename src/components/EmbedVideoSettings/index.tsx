@@ -24,6 +24,7 @@ import { Element as SlateElement, Node, Transforms } from "slate";
 import { Input } from "../ui/input";
 import { api } from "@/utils/api";
 import { Label } from "../ui/label";
+import { extractVideoID } from "@/utils/helpers";
 
 export const EmbedVideoSettings = ({ element }) => {
   const { editor, activePath } = useContext(EditorContext);
@@ -42,6 +43,7 @@ export const EmbedVideoSettings = ({ element }) => {
   const [loading, setLoading] = useState(false);
   const [startTimeError, setStartTimeError] = useState<string | null>(null);
 
+  console.log(JSON.parse(element.videoDetails).videoId);
   useEffect(() => {
     if (element.actualLink) {
       setEmbedLink(element.actualLink);
@@ -112,13 +114,6 @@ export const EmbedVideoSettings = ({ element }) => {
     return true;
   };
 
-  const extractVideoID = (url: string) => {
-    const videoIDRegex =
-      /(?:www\.youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-    const matches = url.match(videoIDRegex);
-    return matches ? matches[1] : "";
-  };
-
   async function onSubmit(values: z.infer<typeof embedLinkFormSchema>) {
     setLoading(true);
     const currentElement = Node.get(editor, JSON.parse(activePath));
@@ -148,6 +143,7 @@ export const EmbedVideoSettings = ({ element }) => {
     const newElement = {
       ...currentElement,
       embedLink: newUrl,
+      videoId,
       videoDetails,
       actualLink,
       thumbnail,

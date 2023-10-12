@@ -158,15 +158,15 @@ export const Embed = React.memo(
             {!showIframe ? (
               <div
                 className={cn(
-                  `relative  flex w-full items-center justify-center rounded-md pt-[56.25%] xl:w-[${blockWidth}px] xl:pt-[${
-                    blockWidth * 0.5625
-                  }px]  ${
+                  `relative  flex w-full max-w-[535px] items-center justify-center rounded-md xl:max-w-[680px]  ${
                     selected
                       ? "ring-2 ring-brand  ring-offset-2 ring-offset-white dark:ring-white dark:ring-offset-0 "
                       : "ring-black/40 ring-offset-white hover:ring-2 hover:ring-offset-2 dark:ring-offset-gray-300 "
                   }`
                 )}
                 style={{
+                  width: blockWidth,
+                  height: blockWidth * 0.5625,
                   overflow: "hidden",
                 }}
               >

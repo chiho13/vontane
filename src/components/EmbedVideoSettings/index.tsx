@@ -23,6 +23,7 @@ import { ReactEditor } from "slate-react";
 import { Element as SlateElement, Node, Transforms } from "slate";
 import { Input } from "../ui/input";
 import { api } from "@/utils/api";
+import { Label } from "../ui/label";
 
 export const EmbedVideoSettings = ({ element }) => {
   const { editor, activePath } = useContext(EditorContext);
@@ -39,17 +40,13 @@ export const EmbedVideoSettings = ({ element }) => {
   const videoDuration = JSON.parse(element.videoDetails).lengthSeconds;
 
   const [loading, setLoading] = useState(false);
+  const [startTimeError, setStartTimeError] = useState<string | null>(null);
 
   useEffect(() => {
     if (element.actualLink) {
       setEmbedLink(element.actualLink);
     }
   }, [element.address]);
-
-  const editAddress = (e) => {
-    setEmbedLink(e.target.value);
-    Transforms.setNodes(editor, { embedLink: e.target.value }, { at: path });
-  };
 
   const embedLinkFormSchema = z.object({
     url: z
@@ -79,6 +76,41 @@ export const EmbedVideoSettings = ({ element }) => {
         { message: "Please enter a valid YouTube link" }
       ),
   });
+
+  const validateStartTime = (value: string) => {
+    // Clear previous errors
+    setStartTimeError(null);
+
+    // Convert string to number
+    const numberValue = Number(value);
+
+    // Validate: Ensure input is a number
+    if (isNaN(numberValue)) {
+      setStartTimeError("Start time must be a valid number");
+      return false;
+    }
+
+    // Validate: Ensure number is not negative
+    if (numberValue < 0) {
+      setStartTimeError("Start time cannot be negative");
+      return false;
+    }
+
+    // Validate: Ensure number is an integer
+    if (!Number.isInteger(numberValue)) {
+      setStartTimeError("Start time must be an integer");
+      return false;
+    }
+
+    // Validate: Ensure start time is less than video duration
+    if (numberValue > videoDuration) {
+      setStartTimeError(`Start time cannot be more than ${videoDuration}s`);
+      return false;
+    }
+
+    // Validation passed
+    return true;
+  };
 
   const extractVideoID = (url: string) => {
     const videoIDRegex =
@@ -133,41 +165,23 @@ export const EmbedVideoSettings = ({ element }) => {
     reValidateMode: "onChange",
   });
 
-  const startTimeSchema = z.object({
-    startTime: z
-      .number()
-      .int({ message: "Start time must be an integer" })
-      .positive({ message: "Start time must be greater than zero" })
-      .max(
-        Number(videoDuration),
-        `Start time cannot be more than ${videoDuration}s`
-      ),
-  });
+  const onChangeStartTime = (e) => {
+    const currentElement = Node.get(editor, JSON.parse(activePath));
 
-  const startTimeForm = useForm<z.infer<typeof startTimeSchema>>({
-    resolver: zodResolver(startTimeSchema),
-    defaultValues: {
-      startTime: element.startTime ?? 0,
-    },
-    reValidateMode: "onChange",
-  });
+    const newElement = {
+      ...currentElement,
+      startTime: e.target.value,
+    };
+    const value = e.target.value;
+    setStartTime(value);
 
-  async function onSubmitStartTime(values: z.infer<typeof startTimeSchema>) {
-    try {
-      // Logic to update the editor state.
-      const currentElement = Node.get(editor, JSON.parse(activePath));
-      const newElement = {
-        ...currentElement,
-        startTime: values,
-      };
+    // Validate the input
+    const validated = validateStartTime(value);
 
-      console.log(values);
-      //   Transforms.setNodes(editor, newElement, { at: JSON.parse(activePath) });
-    } catch (error) {
-      // Handle errors here (e.g., show a notification or log to an error reporting service)
-      console.error("Error updating start time:", error);
+    if (validated) {
+      Transforms.setNodes(editor, newElement, { at: JSON.parse(activePath) });
     }
-  }
+  };
 
   return (
     <div>
@@ -213,44 +227,16 @@ export const EmbedVideoSettings = ({ element }) => {
       <div className="p-4">
         <h2 className="mb-3 text-sm font-bold">Playback Settings</h2>
 
-        <Form {...startTimeForm}>
-          <form
-            onSubmit={startTimeForm.handleSubmit(onSubmitStartTime)}
-            className="space-y-3 "
-          >
-            <div className="relative ">
-              <FormField
-                control={startTimeForm.control}
-                name="startTime"
-                render={() => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        {...startTimeForm.register("startTime")}
-                        defaultValue={startTime}
-                        className="w-full pr-5"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="absolute right-0 top-[6px] flex items-center pr-2">
-                s
-              </div>
-            </div>
-
-            <div className="flex  items-center justify-center">
-              <Button
-                className="h-[40px] w-full border border-gray-300"
-                type="submit"
-                size="sm"
-              >
-                Save Start Time
-              </Button>
-            </div>
-          </form>
-        </Form>
+        <Label>Start Time</Label>
+        <Input
+          defaultValue={startTime}
+          type="number"
+          onChange={debounce(onChangeStartTime, 200)}
+          className="mt-2"
+        />
+        {startTimeError && (
+          <p className="mt-1 text-red-500">{startTimeError}</p>
+        )}
       </div>
     </div>
   );

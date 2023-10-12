@@ -39,7 +39,6 @@ export const Export = () => {
   const slides = splitIntoSlides(editor.children);
   const workspaceId = router.query.workspaceId as string;
   const font = workspaceData.workspace.font_style;
-  const pdfMutation = api.workspace.generatePDF.useMutation();
 
   const generateHTMLOnePageContent = (editorContent) => `
 <!DOCTYPE html>

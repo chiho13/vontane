@@ -92,6 +92,7 @@ export const Embed = React.memo(
     const [embedLink, setEmbedLink] = useState<string>(element.embedLink);
     const [align, setAlign] = useState(element.align || "start");
 
+    const startTime = element.startTime || 0;
     const [showIframe, setShowIframe] = useState(false); // New state to toggle iframe
 
     const {
@@ -104,7 +105,8 @@ export const Embed = React.memo(
 
     useEffect(() => {
       if (element.embedLink) {
-        iframeSrcRef.current = element.embedLink + "?autoplay=1";
+        iframeSrcRef.current =
+          element.embedLink + "?autoplay=1" + "&start=" + startTime;
       }
     }, [element.embedLink]);
 
@@ -336,6 +338,7 @@ export const EmbedLink = () => {
       embedLink: newUrl,
       videoDetails,
       actualLink: actualLink,
+      startTime: 0,
       thumbnail,
       align: "start",
       width: 680,

@@ -8,10 +8,8 @@ import { observable } from "@trpc/server/observable";
 import { EventEmitter } from "events";
 import { Prisma, workspace } from "@prisma/client";
 import { nanoid } from "nanoid";
-import { Ratelimit } from "@upstash/ratelimit";
-import { Redis } from "@upstash/redis";
 import { TRPCError } from "@trpc/server";
-import puppeteer from "puppeteer";
+import ytdl from "ytdl-core";
 
 const ee = new EventEmitter();
 
@@ -394,24 +392,17 @@ export const workspaceRouter = createTRPCRouter({
 
       return { workspace: updatedWorkspace };
     }),
-  generatePDF: protectedProcedure
-    .input(z.object({ html: z.string() }))
+  getVideoDetails: protectedProcedure
+    .input(z.object({ link: z.string() }))
     .mutation(async ({ input, ctx }) => {
-      const browser = await puppeteer.connect({
-        browserWSEndpoint: `wss://chrome.browserless.io?token=${process.env.BLESS_TOKEN}`,
-      });
-
-      const page = await browser.newPage();
-      await page.setViewport({ width: 1920, height: 1080 });
-      await page.setContent(input.html);
-
-      const pdf = await page.pdf();
-
-      await browser.close();
-
-      // Convert PDF buffer to a base64 string if you want to return it directly
-      const pdfBase64 = pdf.toString("base64");
-
-      return { pdf: pdfBase64 };
+      try {
+        const info = await ytdl.getInfo(input.link);
+        const videoDetails = info.videoDetails;
+        return { videoDetails };
+      } catch (error) {
+        // Handle error accordingly
+        console.error(error);
+        return { videoDetails: null };
+      }
     }),
 });

@@ -34,6 +34,8 @@ import { useResizeBlock, Position } from "@/hooks/useResizeBlock";
 import styled from "styled-components";
 import { BlockAlign } from "@/components/BlockAlign";
 import { cn } from "@/utils/cn";
+import { api } from "@/utils/api";
+import LoadingSpinner from "@/icons/LoadingSpinner";
 
 const YoutubePlayButton = styled.div`
   background: red;
@@ -115,30 +117,32 @@ export const Embed = React.memo(
     return (
       <div data-id={element.id} data-path={JSON.stringify(path)}>
         {!element.embedLink ? (
-          <div
-            className={`hover:bg-gray-muted relative  mr-2 flex  cursor-pointer items-center rounded-md bg-gray-100 p-2 transition dark:bg-secondary dark:hover:bg-background/70 
+          <div className="flex">
+            <div
+              className={`hover:bg-gray-muted relative mr-2  flex grow  cursor-pointer items-center rounded-md bg-gray-100 p-2 transition dark:bg-secondary dark:hover:bg-background/70 
         hover:dark:bg-accent
         `}
-            contentEditable={false}
-            onMouseDown={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setShowEditBlockPopup({
-                open: true,
-                element: "embed",
-                path: JSON.stringify(path),
-              });
-              setActivePath(JSON.stringify(path));
-            }}
-          >
-            <Youtube
-              width={46}
-              height={46}
-              className="rounded-md opacity-30 dark:bg-transparent"
-            />
-            <span className="ml-4 opacity-30">Embed Youtube Video</span>
-            {children}
-            <div className="absolute  right-1 top-1 z-10 flex opacity-0 group-hover:opacity-100 ">
+              contentEditable={false}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setShowEditBlockPopup({
+                  open: true,
+                  element: "embed",
+                  path: JSON.stringify(path),
+                });
+                setActivePath(JSON.stringify(path));
+              }}
+            >
+              <Youtube
+                width={46}
+                height={46}
+                className="rounded-md opacity-30 dark:bg-transparent"
+              />
+              <span className="ml-4 opacity-30">Embed Youtube Video</span>
+              {children}
+            </div>
+            <div className=" right-1 top-1 z-10 mr-2 flex opacity-0 group-hover:opacity-100 ">
               <OptionMenu element={element} />
             </div>
           </div>
@@ -219,7 +223,9 @@ export const Embed = React.memo(
 
                 <div className="absolute  right-1 top-1 z-10 flex gap-1">
                   <BlockAlign element={element} />
-                  <OptionMenu element={element} />
+                  <div className="flex h-[22px] w-[22px] items-center justify-center overflow-hidden rounded-md border border-gray-300 bg-white">
+                    <OptionMenu element={element} />
+                  </div>
                 </div>
               </div>
             ) : (
@@ -261,6 +267,11 @@ export const Embed = React.memo(
 export const EmbedLink = () => {
   const { editor, activePath, setActivePath, setShowEditBlockPopup } =
     useContext(EditorContext);
+
+  const getVideoDetailsMutation = api.workspace.getVideoDetails.useMutation();
+
+  const [loading, setLoading] = useState(false);
+
   const embedLinkFormSchema = z.object({
     url: z
       .string()
@@ -298,9 +309,23 @@ export const EmbedLink = () => {
   };
 
   async function onSubmit(values: z.infer<typeof embedLinkFormSchema>) {
+    setLoading(true);
     const currentElement = Node.get(editor, JSON.parse(activePath));
     const actualLink = values.url;
     let newUrl = values.url;
+    let videoDetails = "";
+    try {
+      const response = await getVideoDetailsMutation.mutateAsync({
+        link: actualLink,
+      });
+      if (response) {
+        console.log(response.videoDetails);
+        videoDetails = JSON.stringify(response.videoDetails);
+      }
+    } catch (error) {
+      videoDetails = values.url;
+      console.error("error getting details", error);
+    }
 
     const videoId = extractVideoID(values.url);
     newUrl = `https://www.youtube.com/embed/${videoId}`;
@@ -309,6 +334,7 @@ export const EmbedLink = () => {
     const newElement = {
       ...currentElement,
       embedLink: newUrl,
+      videoDetails,
       actualLink: actualLink,
       thumbnail,
       align: "start",
@@ -317,12 +343,11 @@ export const EmbedLink = () => {
     };
     Transforms.setNodes(editor, newElement, { at: JSON.parse(activePath) });
 
+    setLoading(false);
     setShowEditBlockPopup({
       open: false,
       element: null,
     });
-
-    // Transforms.select(editor, JSON.parse(activePath));
   }
 
   const form = useForm<z.infer<typeof embedLinkFormSchema>>({
@@ -356,10 +381,11 @@ export const EmbedLink = () => {
           />
           <div className="flex w-full items-center justify-center">
             <Button
-              className="h-[36px] w-full border border-gray-300  "
+              className="h-[36px] w-full border border-gray-300 disabled:opacity-70  "
               type="submit"
+              disabled={loading}
             >
-              Embed Link
+              {loading ? <LoadingSpinner /> : "Embed Link"}
             </Button>
           </div>
         </form>

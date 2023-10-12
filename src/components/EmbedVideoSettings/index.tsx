@@ -22,6 +22,7 @@ import { debounce } from "lodash";
 import { ReactEditor } from "slate-react";
 import { Element as SlateElement, Node, Transforms } from "slate";
 import { Input } from "../ui/input";
+import { api } from "@/utils/api";
 
 export const EmbedVideoSettings = ({ element }) => {
   const { editor, activePath } = useContext(EditorContext);
@@ -30,6 +31,14 @@ export const EmbedVideoSettings = ({ element }) => {
   const { copied, copyToClipboard } = useClipboard();
 
   const [embedLink, setEmbedLink] = useState(element.actualLink ?? null);
+
+  const [startTime, setStartTime] = useState(0);
+
+  const getVideoDetailsMutation = api.workspace.getVideoDetails.useMutation();
+
+  const videoDuration = JSON.parse(element.videoDetails).lengthSeconds;
+
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (element.actualLink) {
@@ -79,25 +88,44 @@ export const EmbedVideoSettings = ({ element }) => {
   };
 
   async function onSubmit(values: z.infer<typeof embedLinkFormSchema>) {
+    setLoading(true);
     const currentElement = Node.get(editor, JSON.parse(activePath));
 
     const actualLink = values.url;
     let newUrl = values.url;
 
     const videoId = extractVideoID(values.url);
+
+    let videoDetails = "";
+    try {
+      const response = await getVideoDetailsMutation.mutateAsync({
+        link: actualLink,
+      });
+      if (response) {
+        console.log(response.videoDetails);
+        videoDetails = JSON.stringify(response.videoDetails);
+      }
+    } catch (error) {
+      videoDetails = values.url;
+      console.error("error getting details", error);
+    }
+
     newUrl = `https://www.youtube.com/embed/${videoId}`;
 
     const thumbnail = `https://img.youtube.com/vi/${videoId}/0.jpg`;
     const newElement = {
       ...currentElement,
       embedLink: newUrl,
+      videoDetails,
       actualLink,
       thumbnail,
       align: "start",
       width: 680,
-      height: 400,
+      height: 382.5,
     };
     Transforms.setNodes(editor, newElement, { at: JSON.parse(activePath) });
+
+    setLoading(false);
   }
 
   const form = useForm<z.infer<typeof embedLinkFormSchema>>({
@@ -105,12 +133,44 @@ export const EmbedVideoSettings = ({ element }) => {
     reValidateMode: "onChange",
   });
 
-  const onChangeLink = (e) => {
-    setEmbedLink(e.target.value);
-  };
+  const startTimeSchema = z.object({
+    startTime: z
+      .number()
+      .int({ message: "Start time must be an integer" })
+      .positive({ message: "Start time must be greater than zero" })
+      .max(
+        Number(videoDuration),
+        `Start time cannot be more than ${videoDuration}s`
+      ),
+  });
+
+  const startTimeForm = useForm<z.infer<typeof startTimeSchema>>({
+    resolver: zodResolver(startTimeSchema),
+    defaultValues: {
+      startTime: element.startTime ?? 0,
+    },
+    reValidateMode: "onChange",
+  });
+
+  async function onSubmitStartTime(values: z.infer<typeof startTimeSchema>) {
+    try {
+      // Logic to update the editor state.
+      const currentElement = Node.get(editor, JSON.parse(activePath));
+      const newElement = {
+        ...currentElement,
+        startTime: values,
+      };
+
+      console.log(values);
+      //   Transforms.setNodes(editor, newElement, { at: JSON.parse(activePath) });
+    } catch (error) {
+      // Handle errors here (e.g., show a notification or log to an error reporting service)
+      console.error("Error updating start time:", error);
+    }
+  }
 
   return (
-    <>
+    <div>
       <div className="border-b p-4">
         <h2 className="mb-3 text-sm font-bold">Embed Video Settings</h2>
 
@@ -139,10 +199,11 @@ export const EmbedVideoSettings = ({ element }) => {
             />
             <div className="flex w-full items-center justify-center">
               <Button
-                className="h-[36px] w-full border border-gray-300  "
+                className="d h-[36px] w-full border border-gray-300 disabled:opacity-70 "
                 type="submit"
+                disabled={loading}
               >
-                Update Link
+                {loading ? <LoadingSpinner /> : " Update Link"}
               </Button>
             </div>
           </form>
@@ -151,7 +212,46 @@ export const EmbedVideoSettings = ({ element }) => {
 
       <div className="p-4">
         <h2 className="mb-3 text-sm font-bold">Playback Settings</h2>
+
+        <Form {...startTimeForm}>
+          <form
+            onSubmit={startTimeForm.handleSubmit(onSubmitStartTime)}
+            className="space-y-3 "
+          >
+            <div className="relative ">
+              <FormField
+                control={startTimeForm.control}
+                name="startTime"
+                render={() => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        {...startTimeForm.register("startTime")}
+                        defaultValue={startTime}
+                        className="w-full pr-5"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="absolute right-0 top-[6px] flex items-center pr-2">
+                s
+              </div>
+            </div>
+
+            <div className="flex  items-center justify-center">
+              <Button
+                className="h-[40px] w-full border border-gray-300"
+                type="submit"
+                size="sm"
+              >
+                Save Start Time
+              </Button>
+            </div>
+          </form>
+        </Form>
       </div>
-    </>
+    </div>
   );
 };

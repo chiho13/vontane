@@ -36,6 +36,7 @@ import { BlockAlign } from "@/components/BlockAlign";
 import { cn } from "@/utils/cn";
 import { api } from "@/utils/api";
 import LoadingSpinner from "@/icons/LoadingSpinner";
+import { extractVideoID } from "@/utils/helpers";
 
 const YoutubePlayButton = styled.div`
   background: red;
@@ -303,13 +304,6 @@ export const EmbedLink = () => {
       ),
   });
 
-  const extractVideoID = (url: string) => {
-    const videoIDRegex =
-      /(?:www\.youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-    const matches = url.match(videoIDRegex);
-    return matches ? matches[1] : "";
-  };
-
   async function onSubmit(values: z.infer<typeof embedLinkFormSchema>) {
     setLoading(true);
     const currentElement = Node.get(editor, JSON.parse(activePath));
@@ -337,6 +331,7 @@ export const EmbedLink = () => {
       ...currentElement,
       embedLink: newUrl,
       videoDetails,
+      videoId,
       actualLink: actualLink,
       startTime: 0,
       thumbnail,

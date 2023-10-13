@@ -12,7 +12,7 @@ import {
   FormMessage,
 } from "@/components/Form";
 
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef, useCallback } from "react";
 import { EditorContext } from "@/contexts/EditorContext";
 import LoadingSpinner from "@/icons/LoadingSpinner";
 import { Button } from "../ui/button";
@@ -25,6 +25,7 @@ import { Input } from "../ui/input";
 import { api } from "@/utils/api";
 import { Label } from "../ui/label";
 import { extractVideoID } from "@/utils/helpers";
+import { useTextSpeech } from "@/contexts/TextSpeechContext";
 
 export const EmbedVideoSettings = ({ element }) => {
   const { editor, activePath } = useContext(EditorContext);
@@ -36,6 +37,7 @@ export const EmbedVideoSettings = ({ element }) => {
 
   const [startTime, setStartTime] = useState(0);
 
+  const [currentTime, setCurrentTime] = useState(0);
   const getVideoDetailsMutation = api.workspace.getVideoDetails.useMutation();
 
   const videoDuration =
@@ -44,6 +46,31 @@ export const EmbedVideoSettings = ({ element }) => {
 
   const [loading, setLoading] = useState(false);
   const [startTimeError, setStartTimeError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Create a new observer
+    const observer = new MutationObserver((mutationsList) => {
+      // Look through all mutations that just occured
+      for (let mutation of mutationsList) {
+        // If the 'data-current-time' attribute was modified
+        if (mutation.attributeName === "data-current-time") {
+          // Do something in response (like update state)
+          setCurrentTime(
+            Number(
+              (mutation.target as Element).getAttribute("data-current-time")
+            ) || 0
+          );
+        }
+      }
+    });
+
+    // Start observing the target node for configured mutations
+    const targetNode = document.querySelector(`div[data-id='${element.id}']`);
+    observer.observe(targetNode, { attributes: true });
+
+    // Clean up the observer on component unmount
+    return () => observer.disconnect();
+  }, [element]);
 
   useEffect(() => {
     if (element.actualLink) {
@@ -181,7 +208,6 @@ export const EmbedVideoSettings = ({ element }) => {
     <div>
       <div className="border-b p-4">
         <h2 className="mb-3 text-sm font-bold">Embed Video Settings</h2>
-
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -218,10 +244,10 @@ export const EmbedVideoSettings = ({ element }) => {
         </Form>
       </div>
 
-      <div className="p-4">
+      <div className="border-b p-4">
         <h2 className="mb-3 text-sm font-bold">Playback Settings</h2>
-
         <Label>Start Time</Label>
+
         <Input
           defaultValue={startTime}
           type="number"
@@ -231,6 +257,11 @@ export const EmbedVideoSettings = ({ element }) => {
         {startTimeError && (
           <p className="mt-1 text-red-500">{startTimeError}</p>
         )}
+      </div>
+      <div className="border-b p-4">
+        <Label className="font-bold">
+          Current Time: {currentTime} {"s"}
+        </Label>
       </div>
     </div>
   );

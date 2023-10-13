@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, useRef } from "react";
+import { useContext, useEffect, useState, useRef, memo, useMemo } from "react";
 import { EditorContext } from "@/contexts/EditorContext";
 import { ReactEditor, useFocused, useSelected } from "slate-react";
 import { Editor, Path, Node, Transforms, Range, Text } from "slate";
@@ -9,6 +9,13 @@ import { alignMap, isParentMCQ } from "../helpers/toggleBlock";
 
 interface ParagraphElementProps {
   isParentMCQ: boolean;
+  type: string;
+}
+
+interface ParagraphProp {
+  attributes: any; // replace any with the actual type
+  children: React.ReactNode;
+  element: any; // replace any with the actual type
   type: string;
 }
 
@@ -25,14 +32,17 @@ const ParagraphStyle = styled.div<ParagraphElementProps>`
   }
 `;
 
-export function ParagraphElement(props) {
+export const ParagraphElement = memo((prop: ParagraphProp) => {
+  const editorContext = useContext(EditorContext);
   const {
     editor,
     showEditBlockPopup,
     selectedElementID,
     setSelectedElementID,
-  } = useContext(EditorContext);
-  const { attributes, children, element, type } = props;
+  } = useMemo(() => editorContext, [editorContext]);
+
+  const { attributes, children, element, type } = prop;
+
   const path = ReactEditor.findPath(editor, element);
   const [isVisible, setIsVisible] = useState(false);
   const focused = useFocused();
@@ -103,4 +113,4 @@ export function ParagraphElement(props) {
       </p>
     </ParagraphStyle>
   );
-}
+});

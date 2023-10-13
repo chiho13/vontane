@@ -9,9 +9,11 @@ import { default as classNames } from "classnames";
 import { Grip, GripHorizontal, GripVertical, Plus } from "lucide-react";
 import { useTheme } from "styled-components";
 import { EditorContext } from "@/contexts/EditorContext";
-import React, { useContext, useMemo, useState } from "react";
-import { Editor } from "slate";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { Editor, Range } from "slate";
 import { useNewColumn } from "@/contexts/NewColumnContext";
+import { useLocalStorage } from "usehooks-ts";
+import { debounce } from "lodash";
 
 export function SortableElement({
   attributes,
@@ -42,9 +44,32 @@ export function SortableElement({
   } = useSortable({ id: element.id });
 
   const slideBreakListener = element.type === "slide" && listeners;
+  const { editor } = useContext(EditorContext);
 
   const eleventtsListener = element.type === "tts" && listeners;
   const [isHovered, setIsHovered] = useState(false);
+  const handleKeyDown = useRef<() => void>();
+  const handleKeyUp = useRef<() => void>();
+  let timeoutId: NodeJS.Timeout | null = null;
+
+  const [isTyping, setIsTyping] = useState(false);
+
+  const setIsTypingFalse = debounce(() => setIsTyping(false), 1000);
+
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      setIsTyping(true);
+      setIsTypingFalse();
+    };
+
+    const el = ReactEditor.toDOMNode(editor, editor);
+    el.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      el.removeEventListener("keydown", onKeyDown);
+      setIsTypingFalse.cancel(); // Cancel the debounce on unmount
+    };
+  }, [editor]);
 
   return (
     <div>
@@ -68,7 +93,16 @@ export function SortableElement({
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {readOnly ? null : (
+        {isTyping ? (
+          <div
+            className={`group flex h-[24px] w-[46px] justify-end ${
+              element.type === "tts" && " absolute -left-4 top-2"
+            }`}
+            style={{
+              zIndex: 1000,
+            }}
+          ></div>
+        ) : (
           <div
             className={`group flex h-[24px] w-[46px] justify-end ${
               element.type === "tts" && " absolute -left-4 top-2"
@@ -80,7 +114,7 @@ export function SortableElement({
             <div
               className={classNames(
                 classes.addButton,
-                " opacity-0 group-hover:opacity-100"
+                " opacity-0 transition duration-300 group-hover:opacity-100"
               )}
             >
               {addButton}
@@ -90,7 +124,7 @@ export function SortableElement({
               {...listeners}
               className={` ${
                 element.type === "tts" && "h-[18px] p-px"
-              } flex cursor-grab items-center  rounded-md opacity-0 hover:bg-gray-300 group-hover:opacity-100 dark:hover:bg-accent`}
+              } flex cursor-grab items-center  rounded-md opacity-0 transition duration-300 hover:bg-gray-300 group-hover:opacity-100 dark:hover:bg-accent`}
               contentEditable={false}
             >
               {element.type === "tts" ? (

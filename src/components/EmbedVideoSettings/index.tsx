@@ -27,6 +27,7 @@ import { Label } from "../ui/label";
 import { extractVideoID } from "@/utils/helpers";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { genNodeId } from "@/hoc/withID";
+import { sideBarStore } from "@/store/sidebar";
 
 export const EmbedVideoSettings = ({ element }) => {
   const { editor, activePath } = useContext(EditorContext);
@@ -36,11 +37,11 @@ export const EmbedVideoSettings = ({ element }) => {
 
   const [embedLink, setEmbedLink] = useState(element.actualLink ?? null);
 
-  const [startTime, setStartTime] = useState(0);
+  const [startTime, setStartTime] = useState(element.startTime);
 
   const [videoIdLocal, setVideoId] = useState(element.videoId);
 
-  const [currentTime, setCurrentTime] = useState(0);
+  // const [currentTime, setCurrentTime] = useState(0);
   const getVideoDetailsMutation = api.workspace.getVideoDetails.useMutation();
 
   const videoDuration =
@@ -50,47 +51,19 @@ export const EmbedVideoSettings = ({ element }) => {
   const [loading, setLoading] = useState(false);
   const [startTimeError, setStartTimeError] = useState<string | null>(null);
 
-  useEffect(() => {
-    // Reset currentTime
-    setCurrentTime(0);
-
-    const observer = new MutationObserver((mutationsList) => {
-      console.log("mutationsList:", mutationsList);
-      for (let mutation of mutationsList) {
-        console.log("mutation:", mutation);
-        if (mutation.attributeName === "data-current-time") {
-          setCurrentTime(
-            Number(
-              (mutation.target as Element).getAttribute("data-current-time")
-            ) || 0
-          );
-        }
-      }
-    });
-
-    // Start observing the target node for configured mutations
-    const targetNode = document.querySelector(
-      `[data-videoId='${videoIdLocal}']`
-    );
-
-    console.log(targetNode);
-    if (targetNode) {
-      observer.observe(targetNode, { attributes: true });
-      console.log("observing...");
-    }
-
-    // Clean up the observer on component unmount
-    return () => {
-      console.log("Disconnecting observer");
-      observer.disconnect();
-    };
-  }, [element, videoIdLocal]);
+  const { currentTime }: any = sideBarStore((state) => state);
 
   useEffect(() => {
     if (element.actualLink) {
       setEmbedLink(element.actualLink);
     }
   }, [element.actualLink]);
+
+  useEffect(() => {
+    if (element.startTime) {
+      setStartTime(element.startTime);
+    }
+  }, [element.startTime]);
 
   const embedLinkFormSchema = z.object({
     url: z

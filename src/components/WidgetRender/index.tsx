@@ -15,12 +15,14 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { ViewToggle } from "@/components/view-toggle";
 import { ThemeProvider } from "styled-components";
+import classNames from "classnames";
 
 export const WidgetRenderer = ({
   workspaceData,
   font,
   brandColor,
   isWidget = false,
+  widgetWidth = "",
 }) => {
   const router = useRouter();
   const view = router.query.view || "one-page";
@@ -223,7 +225,12 @@ export const WidgetRenderer = ({
               <div
                 className={`relative  overflow-y-auto bg-white  dark:bg-[#191919] `}
               >
-                <div className=" relative mx-auto mb-4 max-w-[580px]">
+                <div
+                  className={cn(
+                    `relative mx-auto mb-4 max-w-[580px]`,
+                    widgetWidth
+                  )}
+                >
                   {parseNodes(localValue, font)}
                 </div>
               </div>

@@ -41,6 +41,8 @@ import { extractVideoID } from "@/utils/helpers";
 import { YoutubeEmbedEdit } from "@/components/YoutubeEmbedEdit";
 import { Settings } from "lucide-react";
 import { genNodeId } from "@/hoc/withID";
+import { sideBarStore } from "@/store/sidebar";
+
 const YoutubePlayButton = styled.div`
   background: red;
   border-radius: 52% / 10%;
@@ -93,6 +95,7 @@ export const Embed = React.memo(
       setCurrentVideoTime,
     } = useTextSpeech();
     const selected = useSelected();
+    const { setCurrentTime, currentTime }: any = sideBarStore((state) => state);
 
     const { editor, setActivePath, setShowEditBlockPopup } =
       useContext(EditorContext);
@@ -114,7 +117,7 @@ export const Embed = React.memo(
       videoPlayerRef.current = event.target;
     };
 
-    const [currentVideoTime, setCurrentTime] = useState(0);
+    // const [currentVideoTime, setCurrentTime] = useState(0);
 
     const onStateChange = useCallback(
       (event) => {
@@ -128,6 +131,7 @@ export const Embed = React.memo(
           intervalRef.current = setInterval(() => {
             const currentTime = Math.round(event.target.getCurrentTime());
             console.log("Current Time:", currentTime);
+            // setCurrentTime(currentTime);
             setCurrentTime(currentTime);
           }, 1000);
         } else {
@@ -175,7 +179,7 @@ export const Embed = React.memo(
       <div
         data-id={element.id}
         data-path={JSON.stringify(path)}
-        data-current-time={currentVideoTime}
+        // data-current-time={currentVideoTime}
         data-videoId={element.videoId}
       >
         {!element.embedLink ? (
@@ -307,18 +311,6 @@ export const Embed = React.memo(
                   }}
                   className="h-[40px] overflow-hidden rounded-md bg-black"
                 />
-                {currentVideoTime}
-                {/* <iframe
-                  style={{
-                    width: element.width,
-                    height: element.width * 0.5625,
-                  }}
-                  src={iframeSrcRef.current}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="rounded-md bg-black"
-                /> */}
-
                 <div className="absolute  right-1 top-1 z-10 flex ">
                   <OptionMenu element={element} />
                 </div>

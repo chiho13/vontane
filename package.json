@@ -98,7 +98,8 @@
     "twin.macro": "^3.1.0",
     "usehooks-ts": "^2.9.1",
     "ytdl-core": "^4.11.5",
-    "zod": "^3.20.6"
+    "zod": "^3.20.6",
+    "zustand": "^4.4.3"
   },
   "devDependencies": {
     "@types/cookie": "^0.5.1",

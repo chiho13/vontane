@@ -48,6 +48,7 @@ const PublishedPage = ({ workspaceData, font, brandColor }) => {
         workspaceData={workspaceData}
         font={font}
         brandColor={brandColor}
+        widgetWidth="max-w-[680px]"
       />
     </div>
   );

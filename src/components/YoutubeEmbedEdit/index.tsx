@@ -19,23 +19,31 @@ export const YoutubeEmbedEdit = memo(
     };
 
     const intervalRef = useRef(null);
-    const onStateChange = useCallback((event) => {
-      console.log("Player State Changed:", event.target.getPlayerState());
 
-      const currentTime = Math.round(event.target.getCurrentTime());
-      console.log("Current Time:", currentTime);
+    useEffect(() => {
+      setCurrentTime(0);
+    }, [videoId]);
 
-      // When video is playing
-      if (event.target.getPlayerState() === 1) {
-        intervalRef.current = setInterval(() => {
-          const currentTime = Math.round(event.target.getCurrentTime());
-          console.log("Current Time:", currentTime);
-          setCurrentTime(currentTime);
-        }, 1000);
-      } else {
-        clearInterval(intervalRef.current);
-      }
-    }, []);
+    const onStateChange = useCallback(
+      (event) => {
+        console.log("Player State Changed:", event.target.getPlayerState());
+
+        const currentTime = Math.round(event.target.getCurrentTime());
+        console.log("Current Time:", currentTime);
+
+        // When video is playing
+        if (event.target.getPlayerState() === 1) {
+          intervalRef.current = setInterval(() => {
+            const currentTime = Math.round(event.target.getCurrentTime());
+            console.log("Current Time:", currentTime);
+            setCurrentTime(currentTime);
+          }, 1000);
+        } else {
+          clearInterval(intervalRef.current);
+        }
+      },
+      [videoId]
+    );
 
     return (
       <YouTube

@@ -26,6 +26,7 @@ import { api } from "@/utils/api";
 import { Label } from "../ui/label";
 import { extractVideoID } from "@/utils/helpers";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
+import { genNodeId } from "@/hoc/withID";
 
 export const EmbedVideoSettings = ({ element }) => {
   const { editor, activePath } = useContext(EditorContext);
@@ -36,6 +37,8 @@ export const EmbedVideoSettings = ({ element }) => {
   const [embedLink, setEmbedLink] = useState(element.actualLink ?? null);
 
   const [startTime, setStartTime] = useState(0);
+
+  const [videoIdLocal, setVideoId] = useState(element.videoId);
 
   const [currentTime, setCurrentTime] = useState(0);
   const getVideoDetailsMutation = api.workspace.getVideoDetails.useMutation();
@@ -48,13 +51,14 @@ export const EmbedVideoSettings = ({ element }) => {
   const [startTimeError, setStartTimeError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Create a new observer
+    // Reset currentTime
+    setCurrentTime(0);
+
     const observer = new MutationObserver((mutationsList) => {
-      // Look through all mutations that just occured
+      console.log("mutationsList:", mutationsList);
       for (let mutation of mutationsList) {
-        // If the 'data-current-time' attribute was modified
+        console.log("mutation:", mutation);
         if (mutation.attributeName === "data-current-time") {
-          // Do something in response (like update state)
           setCurrentTime(
             Number(
               (mutation.target as Element).getAttribute("data-current-time")
@@ -65,18 +69,28 @@ export const EmbedVideoSettings = ({ element }) => {
     });
 
     // Start observing the target node for configured mutations
-    const targetNode = document.querySelector(`div[data-id='${element.id}']`);
-    observer.observe(targetNode, { attributes: true });
+    const targetNode = document.querySelector(
+      `[data-videoId='${videoIdLocal}']`
+    );
+
+    console.log(targetNode);
+    if (targetNode) {
+      observer.observe(targetNode, { attributes: true });
+      console.log("observing...");
+    }
 
     // Clean up the observer on component unmount
-    return () => observer.disconnect();
-  }, [element]);
+    return () => {
+      console.log("Disconnecting observer");
+      observer.disconnect();
+    };
+  }, [element, videoIdLocal]);
 
   useEffect(() => {
     if (element.actualLink) {
       setEmbedLink(element.actualLink);
     }
-  }, [element.address]);
+  }, [element.actualLink]);
 
   const embedLinkFormSchema = z.object({
     url: z
@@ -169,6 +183,7 @@ export const EmbedVideoSettings = ({ element }) => {
 
     const thumbnail = `https://img.youtube.com/vi/${videoId}/0.jpg`;
     const newElement = {
+      id: genNodeId(),
       ...currentElement,
       embedLink: newUrl,
       videoId,
@@ -176,7 +191,12 @@ export const EmbedVideoSettings = ({ element }) => {
       actualLink,
       thumbnail,
     };
+
     Transforms.setNodes(editor, newElement, { at: JSON.parse(activePath) });
+
+    setTimeout(() => {
+      setVideoId(videoId);
+    }, 10);
 
     setLoading(false);
   }

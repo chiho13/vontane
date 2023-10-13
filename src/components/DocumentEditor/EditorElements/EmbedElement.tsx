@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Element as SlateElement, Node, Transforms } from "slate";
+import YouTube from "react-youtube";
 
 import {
   useContext,
@@ -88,6 +89,39 @@ export const Embed = React.memo(
     const { editor, setActivePath, setShowEditBlockPopup } =
       useContext(EditorContext);
 
+    const opts = {
+      width: element.width,
+      height: element.width * 0.5625,
+      playerVars: {
+        // This is where you put parameters like playing state, start time, etc.
+        autoplay: 1,
+        // Add other playerVars here
+      },
+    };
+    const videoPlayerRef = useRef(null);
+    const intervalRef = useRef(null);
+    const onReady = (event) => {
+      console.log("Video Ready:", event.target);
+      videoPlayerRef.current = event.target;
+    };
+
+    const onStateChange = (event) => {
+      console.log("Player State Changed:", event.target.getPlayerState());
+      console.log("Current Time:", event.target.getCurrentTime());
+
+      // When video is playing
+      if (event.target.getPlayerState() === 1) {
+        intervalRef.current = setInterval(() => {
+          console.log("Current Time:", event.target.getCurrentTime());
+        }, 1000);
+      } else {
+        clearInterval(intervalRef.current);
+      }
+    };
+
+    useEffect(() => {
+      return () => clearInterval(intervalRef.current); // Clear interval on component unmount
+    }, []);
     const path = ReactEditor.findPath(editor, element);
     const iframeSrcRef = useRef<string>("");
     const [embedLink, setEmbedLink] = useState<string>(element.embedLink);
@@ -158,7 +192,7 @@ export const Embed = React.memo(
             {!showIframe ? (
               <div
                 className={cn(
-                  `relative  flex w-full max-w-[535px] items-center justify-center rounded-md xl:max-w-[680px]  ${
+                  `relative  flex w-full max-w-[660px]  items-center justify-center  rounded-md lg:max-w-[535px] xl:max-w-[680px]  ${
                     selected
                       ? "ring-2 ring-brand  ring-offset-2 ring-offset-white dark:ring-white dark:ring-offset-0 "
                       : "ring-black/40 ring-offset-white hover:ring-2 hover:ring-offset-2 dark:ring-offset-gray-300 "
@@ -232,27 +266,28 @@ export const Embed = React.memo(
                 </div>
               </div>
             ) : (
-              <div
-                className={`relative block w-full xl:w-[${element.width}px]`}
-              >
-                <div
+              <div className={`relative block`}>
+                <YouTube
+                  videoId={element.videoId} // pass the video id not the whole url
+                  opts={opts}
+                  onReady={onReady}
+                  onStateChange={onStateChange}
                   style={{
-                    paddingTop: "56.25%",
+                    width: element.width,
+                    height: element.width * 0.5625,
                   }}
+                  className="h-[40px] overflow-hidden rounded-md bg-black"
                 />
-                <iframe
+                {/* <iframe
                   style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    height: "100%",
+                    width: element.width,
+                    height: element.width * 0.5625,
                   }}
                   src={iframeSrcRef.current}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                   className="rounded-md bg-black"
-                />
+                /> */}
                 <div className="absolute  right-1 top-1 z-10 flex ">
                   <OptionMenu element={element} />
                 </div>

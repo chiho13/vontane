@@ -45,7 +45,6 @@ export const EmbedVideoSettings = ({ element }) => {
   const [loading, setLoading] = useState(false);
   const [startTimeError, setStartTimeError] = useState<string | null>(null);
 
-  console.log(JSON.parse(element.videoDetails).videoId);
   useEffect(() => {
     if (element.actualLink) {
       setEmbedLink(element.actualLink);
@@ -149,9 +148,6 @@ export const EmbedVideoSettings = ({ element }) => {
       videoDetails,
       actualLink,
       thumbnail,
-      align: "start",
-      width: 680,
-      height: 382.5,
     };
     Transforms.setNodes(editor, newElement, { at: JSON.parse(activePath) });
 

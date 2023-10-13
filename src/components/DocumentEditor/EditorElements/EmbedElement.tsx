@@ -40,6 +40,7 @@ import LoadingSpinner from "@/icons/LoadingSpinner";
 import { extractVideoID } from "@/utils/helpers";
 import { YoutubeEmbedEdit } from "@/components/YoutubeEmbedEdit";
 import { Settings } from "lucide-react";
+import { genNodeId } from "@/hoc/withID";
 const YoutubePlayButton = styled.div`
   background: red;
   border-radius: 52% / 10%;
@@ -114,28 +115,31 @@ export const Embed = React.memo(
 
     const [currentVideoTime, setCurrentTime] = useState(0);
 
-    const onStateChange = useCallback((event) => {
-      console.log("Player State Changed:", event.target.getPlayerState());
+    const onStateChange = useCallback(
+      (event) => {
+        console.log("Player State Changed:", event.target.getPlayerState());
 
-      const currentTime = Math.round(event.target.getCurrentTime());
-      console.log("Current Time:", currentTime);
+        const currentTime = Math.round(event.target.getCurrentTime());
+        console.log("Current Time:", currentTime);
 
-      // When video is playing
-      if (event.target.getPlayerState() === 1) {
-        intervalRef.current = setInterval(() => {
-          const currentTime = Math.round(event.target.getCurrentTime());
-          console.log("Current Time:", currentTime);
-          setCurrentTime(currentTime);
-        }, 1000);
-      } else {
-        clearInterval(intervalRef.current);
-        setCurrentTime(0);
-      }
-    }, []);
+        // When video is playing
+        if (event.target.getPlayerState() === 1) {
+          intervalRef.current = setInterval(() => {
+            const currentTime = Math.round(event.target.getCurrentTime());
+            console.log("Current Time:", currentTime);
+            setCurrentTime(currentTime);
+          }, 1000);
+        } else {
+          clearInterval(intervalRef.current);
+        }
+      },
+      [element.videoId]
+    );
 
     useEffect(() => {
       return () => clearInterval(intervalRef.current); // Clear interval on component unmount
-    }, []);
+    }, [element.videoId]);
+
     const path = ReactEditor.findPath(editor, element);
     const iframeSrcRef = useRef<string>("");
     const [embedLink, setEmbedLink] = useState<string>(element.embedLink);
@@ -171,6 +175,7 @@ export const Embed = React.memo(
         data-id={element.id}
         data-path={JSON.stringify(path)}
         data-current-time={currentVideoTime}
+        data-videoId={element.videoId}
       >
         {!element.embedLink ? (
           <div className="flex">
@@ -301,6 +306,7 @@ export const Embed = React.memo(
                   }}
                   className="h-[40px] overflow-hidden rounded-md bg-black"
                 />
+                {currentVideoTime}
                 {/* <iframe
                   style={{
                     width: element.width,
@@ -387,6 +393,7 @@ export const EmbedLink = () => {
 
     const thumbnail = `https://img.youtube.com/vi/${videoId}/0.jpg`;
     const newElement = {
+      id: genNodeId(),
       ...currentElement,
       embedLink: newUrl,
       videoDetails,

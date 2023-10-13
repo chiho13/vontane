@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode, useRef } from "react";
 
 import React from "react";
 import { useLocalStorage } from "usehooks-ts";
@@ -34,6 +34,9 @@ interface TextSpeechContextType {
   setFontStyle: any;
   scrolltoSlide: any;
   setScrollToSlide: any;
+  currentVideoTime: any;
+  subscribeToVideoTime: any;
+  setCurrentVideoTime: any;
 }
 // Create the context with default values
 const TextSpeechContext = createContext<TextSpeechContextType>({
@@ -63,6 +66,9 @@ const TextSpeechContext = createContext<TextSpeechContextType>({
   setFontStyle: () => {},
   scrolltoSlide: {},
   setScrollToSlide: () => {},
+  currentVideoTime: 0,
+  subscribeToVideoTime: () => {},
+  setCurrentVideoTime: () => {},
 });
 
 // Define the shape of the provider props
@@ -108,6 +114,21 @@ const RightSideBarProvider = ({
     workspaceData.workspace.font_style
   );
 
+  const currentVideoTime = useRef(0);
+  const subscribers = useRef([]);
+
+  const subscribeToVideoTime = (callback) => {
+    subscribers.current.push(callback);
+    return () => {
+      subscribers.current = subscribers.current.filter((cb) => cb !== callback);
+    };
+  };
+
+  const setCurrentVideoTime = (time) => {
+    currentVideoTime.current = time;
+    subscribers.current.forEach((callback) => callback(time));
+  };
+
   const [scrolltoSlide, setScrollToSlide] = useLocalStorage("slide-number", 1);
 
   return (
@@ -135,6 +156,9 @@ const RightSideBarProvider = ({
         setFontStyle,
         scrolltoSlide,
         setScrollToSlide,
+        currentVideoTime,
+        subscribeToVideoTime,
+        setCurrentVideoTime,
       }}
     >
       {children}

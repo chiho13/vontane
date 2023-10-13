@@ -38,7 +38,8 @@ import { cn } from "@/utils/cn";
 import { api } from "@/utils/api";
 import LoadingSpinner from "@/icons/LoadingSpinner";
 import { extractVideoID } from "@/utils/helpers";
-
+import { YoutubeEmbedEdit } from "@/components/YoutubeEmbedEdit";
+import { Settings } from "lucide-react";
 const YoutubePlayButton = styled.div`
   background: red;
   border-radius: 52% / 10%;
@@ -83,7 +84,13 @@ const YoutubePlayButton = styled.div`
 export const Embed = React.memo(
   (props: { attributes: any; children: any; element: any }) => {
     const { attributes, children, element } = props;
-    const { setElementData, setShowRightSidebar, setTab } = useTextSpeech();
+    const {
+      elementData,
+      setElementData,
+      setShowRightSidebar,
+      setTab,
+      setCurrentVideoTime,
+    } = useTextSpeech();
     const selected = useSelected();
 
     const { editor, setActivePath, setShowEditBlockPopup } =
@@ -105,19 +112,26 @@ export const Embed = React.memo(
       videoPlayerRef.current = event.target;
     };
 
-    const onStateChange = (event) => {
+    const [currentVideoTime, setCurrentTime] = useState(0);
+
+    const onStateChange = useCallback((event) => {
       console.log("Player State Changed:", event.target.getPlayerState());
-      console.log("Current Time:", event.target.getCurrentTime());
+
+      const currentTime = Math.round(event.target.getCurrentTime());
+      console.log("Current Time:", currentTime);
 
       // When video is playing
       if (event.target.getPlayerState() === 1) {
         intervalRef.current = setInterval(() => {
-          console.log("Current Time:", event.target.getCurrentTime());
+          const currentTime = Math.round(event.target.getCurrentTime());
+          console.log("Current Time:", currentTime);
+          setCurrentTime(currentTime);
         }, 1000);
       } else {
         clearInterval(intervalRef.current);
+        setCurrentTime(0);
       }
-    };
+    }, []);
 
     useEffect(() => {
       return () => clearInterval(intervalRef.current); // Clear interval on component unmount
@@ -142,6 +156,7 @@ export const Embed = React.memo(
       if (element.embedLink) {
         iframeSrcRef.current =
           element.embedLink + "?autoplay=1" + "&start=" + startTime;
+        setCurrentTime(0);
       }
     }, [element.embedLink]);
 
@@ -152,7 +167,11 @@ export const Embed = React.memo(
     }, [selected]);
 
     return (
-      <div data-id={element.id} data-path={JSON.stringify(path)}>
+      <div
+        data-id={element.id}
+        data-path={JSON.stringify(path)}
+        data-current-time={currentVideoTime}
+      >
         {!element.embedLink ? (
           <div className="flex">
             <div
@@ -179,6 +198,7 @@ export const Embed = React.memo(
               <span className="ml-4 opacity-30">Embed Youtube Video</span>
               {children}
             </div>
+
             <div className=" right-1 top-1 z-10 mr-2 flex opacity-0 group-hover:opacity-100 ">
               <OptionMenu element={element} />
             </div>
@@ -225,9 +245,12 @@ export const Embed = React.memo(
                     setTab("properties");
                   }}
                 />
+
                 <button
                   className="absolute top-1/2  flex -translate-y-[44px]"
-                  onClick={() => setShowIframe(true)}
+                  onClick={(e) => {
+                    setShowIframe(true);
+                  }}
                 >
                   <YoutubePlayButton />
                 </button>
@@ -268,13 +291,13 @@ export const Embed = React.memo(
             ) : (
               <div className={`relative block`}>
                 <YouTube
-                  videoId={element.videoId} // pass the video id not the whole url
+                  videoId={element.videoId}
                   opts={opts}
                   onReady={onReady}
                   onStateChange={onStateChange}
                   style={{
-                    width: element.width,
-                    height: element.width * 0.5625,
+                    width: opts.width,
+                    height: opts.height,
                   }}
                   className="h-[40px] overflow-hidden rounded-md bg-black"
                 />
@@ -288,6 +311,7 @@ export const Embed = React.memo(
                   allowFullScreen
                   className="rounded-md bg-black"
                 /> */}
+
                 <div className="absolute  right-1 top-1 z-10 flex ">
                   <OptionMenu element={element} />
                 </div>

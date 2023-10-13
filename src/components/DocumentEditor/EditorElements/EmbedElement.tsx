@@ -103,6 +103,7 @@ export const Embed = React.memo(
       playerVars: {
         // This is where you put parameters like playing state, start time, etc.
         autoplay: 1,
+        start: element.startTime,
         // Add other playerVars here
       },
     };

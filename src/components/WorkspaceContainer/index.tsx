@@ -129,6 +129,28 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = ({
     }
   };
 
+  const debouncedUpdate = useCallback(
+    debounce((value: any[]) => {
+      updateWorkspace(value);
+      setUpdatedWorkspace({
+        title: value[0].children[0].text,
+        id: workspaceId,
+      });
+    }, 200),
+    [updateWorkspace, setUpdatedWorkspace, workspaceId]
+  );
+
+  const handleTextChange = useCallback(
+    (value: any[]) => {
+      updateWorkspace(value);
+      setUpdatedWorkspace({
+        title: value[0].children[0].text,
+        id: workspaceId,
+      });
+    },
+    [updateWorkspace, setUpdatedWorkspace, workspaceId]
+  );
+
   if (isLoading) {
     return (
       <Layout
@@ -150,16 +172,6 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = ({
         <p className="text-2xl">Workspace not found</p>
       </div>
     );
-  }
-
-  function handleTextChange(value: any[]) {
-    // const extractedText = extractTextValues(value);
-    // setTextSpeech(extractedText);
-    updateWorkspace(value);
-
-    // setInitialSlateValue(value);
-    // console.log(extractedText);
-    setUpdatedWorkspace({ title: value[0].children[0].text, id: workspaceId });
   }
 
   return (
@@ -184,7 +196,7 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = ({
                   syncStatus={syncStatus}
                   workspaceId={workspaceId}
                   credits={credits}
-                  handleTextChange={debounce(handleTextChange, 400)}
+                  handleTextChange={handleTextChange}
                   initialSlateValue={initialSlateValue}
                   setFetchWorkspaceIsLoading={setFetchWorkspaceIsLoading}
                 />

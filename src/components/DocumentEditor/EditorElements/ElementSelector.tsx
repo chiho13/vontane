@@ -59,7 +59,14 @@ export function ElementSelector(props: {
     case "block-quote":
       return <BlockQuoteElement {...props} />;
     case "paragraph":
-      return <ParagraphElement {...props} />;
+      return (
+        <ParagraphElement
+          attributes={props.attributes}
+          children={props.children}
+          element={props.element}
+          type={props.element.type}
+        />
+      );
     case "link":
       return <LinkElement {...props} />;
     case "bulleted-list":

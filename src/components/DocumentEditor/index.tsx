@@ -220,6 +220,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   const { upgrade, ...rest } = router.query;
   const { isLocked } = useContext(LayoutContext);
+
   const {
     editor,
     showEditBlockPopup,
@@ -1246,8 +1247,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     }
   }, [showEditBlockPopup, selectedElementID]);
 
-  const [isTyping, setIsTyping] = useState("");
-  const debouncedSetIsTyping = debounce(setIsTyping, 1000);
   const MemoizedElementSelector = React.memo(ElementSelector);
 
   const elementRefs = new WeakMap();
@@ -2127,7 +2126,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                             onKeyDown={handleKeyDown}
                             onKeyUp={(event) => {
                               handleSelectedText(event, editor);
-                              debouncedSetIsTyping("");
 
                               const { selection } = editor;
                               if (!selection) return;

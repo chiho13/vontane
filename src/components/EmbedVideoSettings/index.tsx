@@ -250,7 +250,7 @@ export const EmbedVideoSettings = ({ element }) => {
           defaultValue={startTime}
           type="number"
           onChange={debounce(onChangeStartTime, 200)}
-          className="mt-2"
+          className="mt-2 w-[50%]"
         />
         {startTimeError && (
           <p className="mt-1 text-red-500">{startTimeError}</p>

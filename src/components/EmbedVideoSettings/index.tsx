@@ -154,7 +154,7 @@ export const EmbedVideoSettings = ({ element }) => {
 
     newUrl = `https://www.youtube.com/embed/${videoId}`;
 
-    const thumbnail = `https://img.youtube.com/vi/${videoId}/0.jpg`;
+    const thumbnail = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
     const newElement = {
       id: genNodeId(),
       ...currentElement,
@@ -163,6 +163,7 @@ export const EmbedVideoSettings = ({ element }) => {
       videoDetails,
       actualLink,
       thumbnail,
+      startTime: 0,
     };
 
     Transforms.setNodes(editor, newElement, { at: JSON.parse(activePath) });
@@ -199,7 +200,7 @@ export const EmbedVideoSettings = ({ element }) => {
 
   return (
     <div>
-      <div className="border-b p-4">
+      <div className="border-b p-4 dark:border-input">
         <h2 className="mb-3 text-sm font-bold">Embed Video Settings</h2>
         <Form {...form}>
           <form
@@ -230,14 +231,18 @@ export const EmbedVideoSettings = ({ element }) => {
                 type="submit"
                 disabled={loading}
               >
-                {loading ? <LoadingSpinner /> : " Update Link"}
+                {loading ? (
+                  <LoadingSpinner strokeColor="stroke-gray-200 dark:stroke-brand" />
+                ) : (
+                  " Update Link"
+                )}
               </Button>
             </div>
           </form>
         </Form>
       </div>
 
-      <div className="border-b p-4">
+      <div className="border-b p-4 dark:border-input">
         <h2 className="mb-3 text-sm font-bold">Playback Settings</h2>
         <Label>Start Time</Label>
 
@@ -251,7 +256,7 @@ export const EmbedVideoSettings = ({ element }) => {
           <p className="mt-1 text-red-500">{startTimeError}</p>
         )}
       </div>
-      <div className="border-b p-4">
+      <div className="border-b p-4 dark:border-input">
         <Label className="font-bold">
           Current Time: {currentTime} {"s"}
         </Label>

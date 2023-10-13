@@ -84,6 +84,10 @@ const YoutubePlayButton = styled.div`
   }
 `;
 
+const ASPECT_RATIO = 0.5625;
+const DEFAULT_WIDTH = 680;
+const DEFAULT_HEIGHT = 400;
+
 export const Embed = React.memo(
   (props: { attributes: any; children: any; element: any }) => {
     const { attributes, children, element } = props;
@@ -102,7 +106,7 @@ export const Embed = React.memo(
 
     const opts = {
       width: element.width,
-      height: element.width * 0.5625,
+      height: element.width * ASPECT_RATIO,
       playerVars: {
         // This is where you put parameters like playing state, start time, etc.
         autoplay: 1,
@@ -230,7 +234,7 @@ export const Embed = React.memo(
                 )}
                 style={{
                   width: blockWidth,
-                  height: blockWidth * 0.5625,
+                  height: blockWidth * ASPECT_RATIO,
                   overflow: "hidden",
                 }}
               >
@@ -309,9 +313,9 @@ export const Embed = React.memo(
                     width: opts.width,
                     height: opts.height,
                   }}
-                  className="h-[40px] overflow-hidden rounded-md bg-black"
+                  className="h-[40px] overflow-hidden rounded-md bg-black dark:bg-black"
                 />
-                <div className="absolute  right-1 top-1 z-10 flex ">
+                <div className="absolute  right-1 top-1 z-10 flex flex h-[22px] w-[22px] items-center justify-center overflow-hidden rounded-md border border-gray-300 dark:border-gray-500">
                   <OptionMenu element={element} />
                 </div>
               </div>
@@ -384,7 +388,7 @@ export const EmbedLink = () => {
     const videoId = extractVideoID(values.url);
     newUrl = `https://www.youtube.com/embed/${videoId}`;
 
-    const thumbnail = `https://img.youtube.com/vi/${videoId}/0.jpg`;
+    const thumbnail = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
     const newElement = {
       id: genNodeId(),
       ...currentElement,
@@ -395,8 +399,8 @@ export const EmbedLink = () => {
       startTime: 0,
       thumbnail,
       align: "start",
-      width: 680,
-      height: 400,
+      width: DEFAULT_WIDTH,
+      height: DEFAULT_HEIGHT,
     };
     Transforms.setNodes(editor, newElement, { at: JSON.parse(activePath) });
 
@@ -442,7 +446,11 @@ export const EmbedLink = () => {
               type="submit"
               disabled={loading}
             >
-              {loading ? <LoadingSpinner /> : "Embed Link"}
+              {loading ? (
+                <LoadingSpinner strokeColor="stroke-gray-200 dark:stroke-brand" />
+              ) : (
+                "Embed Link"
+              )}
             </Button>
           </div>
         </form>

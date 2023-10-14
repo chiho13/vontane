@@ -315,7 +315,7 @@ export const Embed = React.memo(
                   }}
                   className="h-[40px] overflow-hidden rounded-md bg-black dark:bg-black"
                 />
-                <div className="absolute  right-1 top-1 z-10 flex flex h-[22px] w-[22px] items-center justify-center overflow-hidden rounded-md border border-gray-300 dark:border-gray-500">
+                <div className="absolute right-1  top-1 z-10 ">
                   <OptionMenu element={element} />
                 </div>
               </div>

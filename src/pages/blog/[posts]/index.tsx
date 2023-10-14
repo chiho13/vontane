@@ -104,7 +104,7 @@ const PublishedPage = ({ font, brandColor, published_at, workspaceData }) => {
   if (!workspaceData) {
     // Show 404 page if workspaceId is not found
     return (
-      <div className="flex h-[100vh] w-full flex-col items-center justify-center">
+      <div className="flex h-[100svh] w-full flex-col items-center justify-center">
         <div className="text-bold mb-2 text-8xl">404</div>
         <p className="text-2xl">Boo</p>
       </div>
@@ -133,7 +133,7 @@ const PublishedPage = ({ font, brandColor, published_at, workspaceData }) => {
       <ThemeProvider theme={currentTheme}>
         <AudioManagerProvider>
           <div
-            className={`relative  h-[100vh] overflow-y-auto rounded-md bg-white p-4 dark:bg-[#191919] `}
+            className={`relative  h-[100svh] overflow-y-auto rounded-md bg-white p-4 dark:bg-[#191919] `}
           >
             <div className="blog-content relative mx-auto mb-20 max-w-[700px] xl:mt-[100px]">
               <div className="mb-2 flex justify-between ">

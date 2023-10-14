@@ -167,7 +167,7 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = ({
   if (error) {
     // Show 404 page if workspaceId is not found
     return (
-      <div className="flex h-[100vh] w-full flex-col items-center justify-center">
+      <div className="flex h-[100svh] w-full flex-col items-center justify-center">
         <div className="text-bold mb-2 text-6xl">404</div>
         <p className="text-2xl">Workspace not found</p>
       </div>

@@ -86,7 +86,7 @@ const BlogPage = ({ blogs }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main
-        className={`relative  h-[100vh] overflow-y-auto rounded-md bg-white p-4 dark:bg-[#191919] `}
+        className={`relative  h-[100svh] overflow-y-auto rounded-md bg-white p-4 dark:bg-[#191919] `}
       >
         <div className="mx-auto mt-4 max-w-[700px] lg:mt-20">
           <h1 className="mb-4 flex items-center text-[36px] font-bold text-gray-700 dark:text-gray-200">

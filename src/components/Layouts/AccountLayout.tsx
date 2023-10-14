@@ -648,7 +648,7 @@ const Layout: React.FC<LayoutProps> = ({
                 <ul
                   className="mb-10 mt-4  overflow-y-auto"
                   style={{
-                    height: `calc(100vh - ${!isLocked ? "370px" : "200px"})`,
+                    height: `calc(100svh - ${!isLocked ? "370px" : "200px"})`,
                   }}
                 >
                   <div className="mb-4">

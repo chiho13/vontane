@@ -211,7 +211,7 @@ body {
   .slide-container {
     position: relative;
     overflow-x: hidden;
-    height: calc(100vh - 65px);
+    height: calc(100svh - 65px);
   }
 
   .slide-wrapper {

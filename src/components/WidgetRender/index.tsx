@@ -84,7 +84,7 @@ export const WidgetRenderer = ({
     flexBasis: `${totalSlidesWidth}%`,
     transform: `translateX(${slideTranslateValue}%)`,
     transition: "transform 300ms ease-in-out",
-    height: "calc(100vh - 65px)",
+    height: "calc(100svh - 65px)",
   };
 
   const individualSlideStyle = {
@@ -171,7 +171,7 @@ export const WidgetRenderer = ({
 
   if (slides && slides.length === 0 && view === "slides") {
     return (
-      <div className="flex h-[100vh] w-full items-center justify-center">
+      <div className="flex h-[100svh] w-full items-center justify-center">
         <div className=" flex flex-col  items-center gap-4  p-7  ">
           <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
             <SlideBreak />
@@ -187,7 +187,7 @@ export const WidgetRenderer = ({
   if (!workspaceData) {
     // Show 404 page if workspaceId is not found
     return (
-      <div className="flex h-[100vh] w-full flex-col items-center justify-center">
+      <div className="flex h-[100svh] w-full flex-col items-center justify-center">
         <div className="text-bold mb-2 text-8xl">404</div>
         <p className="text-2xl">Workspace not found</p>
 
@@ -239,7 +239,7 @@ export const WidgetRenderer = ({
                 ref={slidesContainer}
                 className={`relative  overflow-y-auto  overflow-x-hidden bg-white p-6 pb-[100px] dark:bg-[#191919] `}
                 // style={{
-                //   height: "calc(100vh - 65px)",
+                //   height: "calc(100svh - 65px)",
                 // }}
               >
                 <div

@@ -119,7 +119,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     transform: `translateX(${
       showRightSidebar ? "0px" : `${rightSideBarWidth * 0.8}px`
     })`,
-    height: `calc(100vh - ${openChat ? "415" : "157"}px)`,
+    height: `calc(100svh - ${openChat ? "415" : "157"}px)`,
     flexBasis: "390px",
     opacity: showRightSidebar ? "1" : "0",
     maxWidth: "390px",
@@ -232,7 +232,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
               className="scrollbar flex-grow  overflow-y-auto pb-5 "
               style={{
                 top: -8,
-                height: `calc(100vh - ${openChat ? "460" : "200"}px)`,
+                height: `calc(100svh - ${openChat ? "460" : "200"}px)`,
               }}
             >
               {/* <FontStyle /> */}
@@ -328,7 +328,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
               className="scrollbar relative overflow-y-auto pb-5 outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
               style={{
                 top: -8,
-                height: `calc(100vh - ${openChat ? "460" : "200"}px)`,
+                height: `calc(100svh - ${openChat ? "460" : "200"}px)`,
               }}
             >
               <SlidesPreview />
@@ -338,7 +338,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
               className="scrollbar relative overflow-y-auto pb-5"
               style={{
                 top: -8,
-                height: `calc(100vh - ${openChat ? "460" : "200"}px)`,
+                height: `calc(100svh - ${openChat ? "460" : "200"}px)`,
               }}
             >
               {/* <div className="flex justify-end gap-3">

@@ -40,7 +40,7 @@ export const EditorSkeleton = () => {
           <div
             className="relative z-0  block w-[90vw] rounded-md  border border-gray-300 bg-white  px-2 dark:border-accent  dark:bg-muted/70 lg:max-w-[800px] lg:px-0 xl:w-[780px]"
             style={{
-              height: "calc(100vh - 100px)",
+              height: "calc(100svh - 100px)",
               right: !showRightSidebar ? -rightSideBarWidth / 2 : 0,
               // width: "1190px",
               width:
@@ -76,7 +76,7 @@ export const EditorSkeleton = () => {
             <div
               className=" hidden grow rounded-md border border-gray-300 bg-white dark:border-accent  dark:bg-muted/70  lg:block  lg:w-[400px]"
               style={{
-                height: "calc(100vh - 100px)",
+                height: "calc(100svh - 100px)",
                 minWidth: "340px",
                 opacity: 1,
                 transition:

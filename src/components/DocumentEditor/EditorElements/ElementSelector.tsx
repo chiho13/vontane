@@ -21,6 +21,7 @@ import {
   ElevenTTSWrapper,
   BlockQuoteElement,
   Mapbox,
+  DataVisBlock,
 } from "./index";
 
 export function ElementSelector(props: {
@@ -50,6 +51,8 @@ export function ElementSelector(props: {
       return <ImageElement {...props} />;
     case "embed":
       return <Embed {...props} />;
+    case "datavis":
+      return <DataVisBlock {...props} />;
     case "heading-one":
       return <HeadingElement {...props} tag="h1" />;
     case "heading-two":

@@ -101,6 +101,7 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
 
         if (item.name === "Text to MP3") {
           if (
+            element.type === "datavis" ||
             element.type === "tts" ||
             element.type === "slide" ||
             element.type === "image" ||

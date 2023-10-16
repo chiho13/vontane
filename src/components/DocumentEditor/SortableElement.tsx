@@ -58,8 +58,11 @@ export function SortableElement({
 
   useEffect(() => {
     const onKeyDown = (event) => {
-      setIsTyping(true);
-      setIsTypingFalse();
+      // Check if the key pressed is not an arrow key
+      if (![37, 38, 39, 40].includes(event.keyCode)) {
+        setIsTyping(true);
+        setIsTypingFalse();
+      }
     };
 
     const el = ReactEditor.toDOMNode(editor, editor);
@@ -166,7 +169,8 @@ export function SortableElement({
           </div>
         </div>
 
-        {element.type !== "embed" &&
+        {element.type !== "datavis" &&
+          element.type !== "embed" &&
           element.type !== "image" &&
           element.type !== "tts" &&
           element.type !== "map" && (

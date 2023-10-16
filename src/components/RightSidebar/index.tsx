@@ -16,6 +16,7 @@ import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { EditorContext } from "@/contexts/EditorContext";
 import * as marked from "marked";
 import { alignMap } from "../DocumentEditor/helpers/toggleBlock";
+import { ReactGrid, TextCell, CellChange } from "@silevis/reactgrid";
 
 import {
   Element as SlateElement,
@@ -47,7 +48,7 @@ import { useClipboard } from "@/hooks/useClipboard";
 import { MapSettings } from "../MapSettings";
 import { ImageSettings } from "../ImageSettings";
 import { deserialize } from "@/hoc/withPasting";
-
+import { DataSheet } from "@/components/DataSheet";
 import {
   Tooltip,
   TooltipContent,
@@ -186,6 +187,19 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     }
   }, [showRightSidebar]);
 
+  const columns = [
+    { key: "id", name: "ID" },
+    { key: "value", name: "Value" },
+  ];
+
+  const data = [
+    { id: 0, value: 0 },
+    { id: 1, value: 3 },
+    { id: 2, value: 5 },
+    { id: 3, value: 4 },
+    { id: 4, value: 7 },
+  ];
+
   return (
     <AudioManagerProvider>
       <Portal>
@@ -236,6 +250,8 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
               }}
             >
               {/* <FontStyle /> */}
+
+              {/* <DataSheet rows={rows} columns={columns} setRows={setRows} /> */}
 
               {SlateElement.isElement(rootNode) &&
                 rootNode?.type == "image" &&

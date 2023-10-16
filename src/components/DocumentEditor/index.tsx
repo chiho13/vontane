@@ -115,6 +115,7 @@ import { HOTKEYS } from "@/config/hotkeys";
 import isHotkey from "is-hotkey";
 
 import Upgrade from "@/components/Upgrade";
+import { SelectDataVis } from "./EditorElements";
 
 interface DocumentEditorProps {
   workspaceId: string;
@@ -205,6 +206,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Export } from "../Export";
+import { cn } from "@/utils/cn";
 
 export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   workspaceId,
@@ -1207,7 +1209,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           dropdownHeight = 255;
         }
 
-        if (showEditBlockPopup.element === "image") {
+        if (
+          showEditBlockPopup.element === "image" ||
+          showEditBlockPopup.element === "datavis"
+        ) {
           dropdownHeight = 380;
         }
 
@@ -1238,6 +1243,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
         if (currentNode.type === "image") {
           popupLeft = targetCenter - 500 / 2;
+        }
+
+        if (currentNode.type === "datavis") {
+          popupLeft = targetCenter - 480 / 2;
         }
 
         setDropdownEditBlockLeft(popupLeft);
@@ -2260,7 +2269,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     <div className="closeOutside z-1  fixed left-0 top-0 h-full w-screen  opacity-50"></div>
                     <motion.div
                       {...y_animation_props}
-                      className="fixed  z-10 z-10 mx-auto mt-2 mt-2 w-[380px]"
+                      className={cn(
+                        `fixed  z-10 z-10 mx-auto mt-2 mt-2 w-[380px]`,
+                        showEditBlockPopup.element === "datavis" && "w-[450px]"
+                      )}
                       style={{
                         top: `${dropdownEditBlockTop}px`,
                         left: `${dropdownEditBlockLeft}px`,
@@ -2341,6 +2353,19 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                         >
                           {/* <div className=" block w-full">hello</div> */}
                           <EmbedLink />
+                        </div>
+                      )}
+
+                      {showEditBlockPopup.element === "datavis" && (
+                        <div
+                          ref={editBlockDropdownRef}
+                          className="z-100 h-[270px] rounded-lg border border-gray-400 bg-background p-2 shadow-md dark:border-accent  dark:border-accent dark:bg-muted dark:text-foreground "
+                        >
+                          <h3 className="mb-2 mt-2 pl-2 font-bold text-muted-foreground ">
+                            Line, Bar, Pie Charts
+                          </h3>
+                          {/* <div className=" block w-full">hello</div> */}
+                          <SelectDataVis />
                         </div>
                       )}
                     </motion.div>

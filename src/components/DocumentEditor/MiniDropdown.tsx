@@ -14,6 +14,7 @@ import {
   LayoutList,
   CheckSquare,
   Youtube,
+  LineChart,
 } from "lucide-react";
 import { EditorContext } from "@/contexts/EditorContext";
 import { Element as SlateElement, Editor, Path, Transforms } from "slate";
@@ -31,7 +32,7 @@ import { addTTSBlock } from "./helpers/addTTSBlock";
 import { TbBlockquote } from "react-icons/tb";
 import { TfiMapAlt } from "react-icons/tfi";
 import { MdChecklist } from "react-icons/md";
-import { addEmbedBlock } from "./helpers/addEmbedBlock";
+import { addEmbedBlock, addDataVisBlock } from "./helpers/addEmbedBlock";
 
 interface MiniDropdownProps {
   isOpen: boolean;
@@ -90,9 +91,19 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         ),
       },
       {
+        name: "Data Visualisation",
+        description: "Add Chart, Pie, Scatterplot etc",
+        action: () => addBlockHandler("datavis"),
+        icon: (
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
+            <LineChart className="stroke-darkergray" />
+          </div>
+        ),
+      },
+      {
         name: "Text to MP3",
         description: "Ultra-realistic AI Text to Speech",
-        action: addTTSHandler,
+        action: () => addBlockHandler("tts"),
         icon: (
           <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
             <BsSoundwave className="h-[30px] w-[30px] text-darkergray dark:text-darkergray" />
@@ -132,7 +143,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
       {
         name: "Image",
         description: "Embed with a link",
-        action: addImageHandler,
+        action: () => addBlockHandler("image"),
         icon: (
           <Image
             src="/images/sunandmountain.png"
@@ -146,7 +157,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
       {
         name: "Embed Video",
         description: "Embed Youtube Video",
-        action: addEmbedHandler,
+        action: () => addBlockHandler("embed"),
         icon: (
           <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
             <Youtube className="stroke-darkergray" />
@@ -156,7 +167,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
       {
         name: "Map",
         description: "Embed a Map",
-        action: addMapBlockHandler,
+        action: () => addBlockHandler("map"),
         icon: (
           <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-90">
             <TfiMapAlt className="h-[30px] w-[30px] text-darkergray dark:text-darkergray" />
@@ -167,7 +178,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
       {
         name: "Slide Break",
         description: "Create multi-page slide navigation",
-        action: addSlideBreakHandler,
+        action: () => addBlockHandler("slide"),
         icon: (
           <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
             <SlideBreak />
@@ -333,72 +344,58 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
       }
     }
 
-    function addImageHandler() {
-      console.log("add image");
-      const { newPath: addedPath, id } = addImageBlock(
-        editor,
-        JSON.parse(activePath)
-      );
+    function addBlockHandler(blockType: string) {
+      let addedPath, id;
+      switch (blockType) {
+        case "image":
+          ({ newPath: addedPath, id } = addImageBlock(
+            editor,
+            JSON.parse(activePath)
+          ));
+          break;
+        case "embed":
+          ({ newPath: addedPath, id } = addEmbedBlock(
+            editor,
+            JSON.parse(activePath)
+          ));
+          break;
+        case "datavis":
+          ({ newPath: addedPath, id } = addDataVisBlock(
+            editor,
+            JSON.parse(activePath)
+          ));
+          break;
+        case "map":
+          ({ newPath: addedPath, id } = addMapBlock(
+            editor,
+            JSON.parse(activePath)
+          ));
+          break;
+        case "tts":
+          ({ newPath: addedPath, id } = addTTSBlock(
+            editor,
+            JSON.parse(activePath)
+          ));
+          break;
+        case "slideBreak":
+          addedPath = addSlideBreak(editor, JSON.parse(activePath));
+          break;
+        default:
+          return;
+      }
       setShowDropdown(false);
       Transforms.select(editor, Editor.start(editor, Path.next(addedPath)));
       ReactEditor.focus(editor);
 
-      setSelectedElementID(id);
-      setShowEditBlockPopup({
-        open: true,
-        element: "image",
-        path: JSON.stringify(addedPath),
-      });
-      setActivePath(JSON.stringify(addedPath));
-    }
-
-    function addEmbedHandler() {
-      console.log("add video");
-      const { newPath: addedPath, id } = addEmbedBlock(
-        editor,
-        JSON.parse(activePath)
-      );
-      setShowDropdown(false);
-      Transforms.select(editor, Editor.start(editor, Path.next(addedPath)));
-      ReactEditor.focus(editor);
-
-      setSelectedElementID(id);
-      setShowEditBlockPopup({
-        open: true,
-        element: "embed",
-        path: JSON.stringify(addedPath),
-      });
-      setActivePath(JSON.stringify(addedPath));
-    }
-
-    function addMapBlockHandler() {
-      const { newPath: addedPath, id } = addMapBlock(
-        editor,
-        JSON.parse(activePath)
-      );
-      setShowDropdown(false);
-      Transforms.select(editor, Editor.start(editor, addedPath));
-      ReactEditor.focus(editor);
-      setActivePath(JSON.stringify(addedPath));
-    }
-
-    function addTTSHandler() {
-      const { newPath: addedPath, id } = addTTSBlock(
-        editor,
-        JSON.parse(activePath)
-      );
-      setShowDropdown(false);
-      Transforms.select(editor, Editor.start(editor, addedPath));
-      ReactEditor.focus(editor);
-    }
-
-    function addSlideBreakHandler() {
-      console.log("add slide break");
-      const newPath = addSlideBreak(editor, JSON.parse(activePath));
-      setShowDropdown(false);
-      Transforms.select(editor, Editor.start(editor, newPath));
-
-      ReactEditor.focus(editor);
+      if (["image", "embed", "datavis"].includes(blockType)) {
+        setSelectedElementID(id);
+        setShowEditBlockPopup({
+          open: true,
+          element: blockType,
+          path: JSON.stringify(addedPath),
+        });
+        setActivePath(JSON.stringify(addedPath));
+      }
     }
 
     const listRefs: any = useRef(null);

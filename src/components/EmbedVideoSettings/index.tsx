@@ -156,7 +156,6 @@ export const EmbedVideoSettings = ({ element }) => {
 
     const thumbnail = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
     const newElement = {
-      id: genNodeId(),
       ...currentElement,
       embedLink: newUrl,
       videoId,

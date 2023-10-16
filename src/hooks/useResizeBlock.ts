@@ -55,7 +55,11 @@ export const useResizeBlock = (
               ? (ref.current?.getBoundingClientRect().right || 0) - e.clientX
               : e.clientX - (ref.current?.getBoundingClientRect().left || 0);
 
-          setWidth(Math.min(Math.max(newWidth, 150), 675));
+          if (element.type === "datavis") {
+            setWidth(Math.min(Math.max(newWidth, 220), 675));
+          } else {
+            setWidth(Math.min(Math.max(newWidth, 150), 675));
+          }
         }
       }
     },

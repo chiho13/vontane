@@ -48,7 +48,6 @@ import { useClipboard } from "@/hooks/useClipboard";
 import { MapSettings } from "../MapSettings";
 import { ImageSettings } from "../ImageSettings";
 import { deserialize } from "@/hoc/withPasting";
-import { DataSheet } from "@/components/DataSheet";
 import {
   Tooltip,
   TooltipContent,

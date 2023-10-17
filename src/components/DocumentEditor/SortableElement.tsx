@@ -59,6 +59,7 @@ export function SortableElement({
   useEffect(() => {
     const onKeyDown = (event) => {
       // Check if the key pressed is not an arrow key
+      if (element.type === "datavis") return;
       if (![37, 38, 39, 40].includes(event.keyCode)) {
         setIsTyping(true);
         setIsTypingFalse();

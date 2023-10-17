@@ -26,7 +26,7 @@ import { cn } from "@/utils/cn";
 import { TbChartDonut2 } from "react-icons/tb";
 import { useLocalStorage } from "usehooks-ts";
 
-import Spreadsheet from "react-spreadsheet";
+import Spreadsheet from "@/plugins/spreadsheet";
 import { debounce } from "lodash";
 import { Button } from "@/components/ui/button";
 import { FaPencilAlt } from "react-icons/fa";
@@ -42,6 +42,24 @@ declare module "slate" {
   interface CustomTypes {
     SlateElement: DataVisBlockElement;
   }
+}
+
+/** Gets the count of rows of given matrix */
+export function getRowsCount(matrix): number {
+  return matrix.length;
+}
+
+/** Gets the count of columns of given matrix */
+export function getColumnsCount(matrix): number {
+  const firstRow = matrix[0];
+  return firstRow ? firstRow.length : 0;
+}
+
+export function getSize(matrix) {
+  return {
+    columns: getColumnsCount(matrix),
+    rows: getRowsCount(matrix),
+  };
 }
 
 export const DataVisBlock = React.memo(
@@ -85,8 +103,10 @@ export const DataVisBlock = React.memo(
 
     const [data, setData] = useState(element.data);
 
+    const [addingRowColumn, setAddingRowColumn] = useState(false);
+
     const transformedData = element.data.map((row, index) => {
-      return { x: index, y: Number(row[1].value) };
+      return { x: index, y: row[1] ? Number(row[1].value) : 0 };
     });
 
     const handleDataChange = debounce((changes) => {
@@ -98,8 +118,59 @@ export const DataVisBlock = React.memo(
       //   Transforms.setNodes(editor, newElement, { at: path });
     }, 700);
 
+    const addColumn = React.useCallback(() => {
+      setData((data) =>
+        data.map((row) => {
+          const nextRow = [...row];
+          nextRow.length += 1;
+          return nextRow;
+        })
+      );
+      setAddingRowColumn(true);
+    }, [setData]);
+
+    const removeColumn = React.useCallback(() => {
+      setData((data) =>
+        data.map((row) => {
+          return row.slice(0, row.length - 1);
+        })
+      );
+      setAddingRowColumn(true);
+    }, [setData]);
+
+    const addRow = React.useCallback(() => {
+      setData((data) => {
+        const { columns } = getSize(data);
+        return [...data, Array(columns)];
+      });
+      setAddingRowColumn(true);
+    }, [setData]);
+
+    const removeRow = React.useCallback(() => {
+      setData((data) => {
+        return data.slice(0, data.length - 1);
+      });
+
+      setAddingRowColumn(true);
+    }, [setData]);
+
+    useEffect(() => {
+      Transforms.setNodes(
+        editor,
+        {
+          ...element,
+          data,
+        },
+        { at: path }
+      );
+    }, [addingRowColumn]);
+
     return (
-      <div data-id={element.id} data-path={JSON.stringify(path)}>
+      <div
+        data-id={element.id}
+        data-path={JSON.stringify(path)}
+        className="mt-[5px]"
+      >
         {!element.chartType ? (
           <div className="flex">
             <div
@@ -182,12 +253,12 @@ export const DataVisBlock = React.memo(
               >
                 <TabsList
                   className={cn(
-                    `ring-gray z-1000  ring-red  z-10 mx-auto  mt-2 grid h-10 w-[200px] grid-cols-2  rounded-md bg-gray-200 dark:bg-accent`
+                    `ring-gray z-1000 ring-red absolute -top-[4px] left-0 right-0 z-10  mx-auto mt-2 grid   h-7 w-[200px] grid-cols-2 rounded-t-md  bg-gray-200 p-0 dark:bg-accent`
                   )}
                 >
                   <TabsTrigger
                     value="preview"
-                    className={` text-xs data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-gray-400 dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
+                    className={`  text-xs data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-gray-400 dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
                   >
                     Preview
                   </TabsTrigger>
@@ -202,10 +273,9 @@ export const DataVisBlock = React.memo(
 
                 <TabsContent value="preview">
                   <div
-                    className="absolute top-0 w-full"
+                    className="absolute top-0 w-full bg-white"
                     style={{
-                      height: blockHeight - 60,
-                      marginTop: 60,
+                      height: blockHeight,
                     }}
                   >
                     {element.chartType === "bar" && (
@@ -217,11 +287,11 @@ export const DataVisBlock = React.memo(
                     {!selected && (
                       <div
                         className={cn(
-                          `absolute bottom-0 left-0 right-0 top-0 flex -translate-y-[60px] cursor-pointer items-center justify-center rounded-md  bg-slate-500 bg-opacity-30 opacity-0 transition-opacity hover:opacity-100`
+                          `absolute bottom-0 left-0 right-0 top-0 flex cursor-pointer items-center justify-center rounded-md  bg-slate-700 bg-opacity-30 opacity-0 transition-opacity hover:opacity-100`
                         )}
                         style={{
                           width: blockWidth - 2,
-                          height: blockHeight,
+                          height: blockHeight - 2,
                         }}
                       >
                         <FaPencilAlt className="text-6xl text-white" />
@@ -231,20 +301,34 @@ export const DataVisBlock = React.memo(
                 </TabsContent>
                 <TabsContent
                   value="data"
-                  className="scrollbar  flex-grow overflow-y-auto p-5 "
+                  className="scrollbar  mt-[40px] flex-grow overflow-y-auto p-5 "
                 >
                   <div className={`${!selected && "pointer-events-none"}`}>
+                    <div className="mb-2 flex gap-2">
+                      <Button size="sm" onClick={addColumn}>
+                        Add column
+                      </Button>
+                      <Button size="sm" onClick={addRow}>
+                        Add row
+                      </Button>
+                      <Button size="sm" onClick={removeColumn}>
+                        Remove column
+                      </Button>
+                      <Button size="sm" onClick={removeRow}>
+                        Remove row
+                      </Button>
+                    </div>
                     <Spreadsheet data={data} onChange={handleDataChange} />
                   </div>
 
                   {!selected && (
                     <div
                       className={cn(
-                        `absolute bottom-0 left-0 right-0 top-0 flex cursor-pointer items-center justify-center rounded-md  bg-black bg-opacity-20 opacity-0 transition-opacity hover:opacity-100`
+                        `absolute bottom-0 left-0 right-0 top-0 flex cursor-pointer items-center justify-center rounded-md  bg-slate-700  bg-opacity-30 opacity-0 transition-opacity hover:opacity-100`
                       )}
                       style={{
                         width: blockWidth - 2,
-                        height: blockHeight,
+                        height: blockHeight - 2,
                       }}
                     >
                       <FaPencilAlt className="text-6xl text-white" />

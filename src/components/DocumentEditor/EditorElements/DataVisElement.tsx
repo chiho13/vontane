@@ -30,6 +30,7 @@ import Spreadsheet from "@/plugins/spreadsheet";
 import { debounce } from "lodash";
 import { Button } from "@/components/ui/button";
 import { FaPencilAlt } from "react-icons/fa";
+import { useTheme } from "next-themes";
 
 interface DataVisBlockElement {
   type: "dataVisBlock";
@@ -69,6 +70,13 @@ export const DataVisBlock = React.memo(
       useTextSpeech();
     const selected = useSelected();
 
+    const { theme, resolvedTheme } = useTheme();
+
+    // Default theme to 'system' and resolve to either 'light' or 'dark' based on system preference
+    let currentTheme = theme === "system" ? resolvedTheme : theme;
+
+    const isDarkMode = currentTheme === "dark";
+
     const [tab, setDataVisTab] = useLocalStorage(
       `tab-${element.id}`,
       element.tab
@@ -106,7 +114,7 @@ export const DataVisBlock = React.memo(
     const [addingRowColumn, setAddingRowColumn] = useState(false);
 
     const transformedData = element.data.map((row, index) => {
-      return { x: index, y: row[1] ? Number(row[1].value) : 0 };
+      return { x: row[0].value, y: row[1] ? Number(row[1].value) : 0 };
     });
 
     const handleDataChange = debounce((changes) => {
@@ -318,7 +326,11 @@ export const DataVisBlock = React.memo(
                         Remove row
                       </Button>
                     </div>
-                    <Spreadsheet data={data} onChange={handleDataChange} />
+                    <Spreadsheet
+                      data={data}
+                      onChange={handleDataChange}
+                      darkMode={isDarkMode}
+                    />
                   </div>
 
                   {!selected && (

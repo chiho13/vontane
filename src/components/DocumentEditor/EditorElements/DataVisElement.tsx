@@ -18,12 +18,12 @@ import {
   PieChart,
   ScatterChart,
 } from "lucide-react";
+import { TbChartDonut2 } from "react-icons/tb";
 import { OptionMenu } from "../OptionMenu";
 import { useResizeBlock, Position } from "@/hooks/useResizeBlock";
 import styled from "styled-components";
 import { BlockAlign } from "@/components/BlockAlign";
 import { cn } from "@/utils/cn";
-import { TbChartDonut2 } from "react-icons/tb";
 import { useLocalStorage } from "usehooks-ts";
 
 import Spreadsheet from "@/plugins/spreadsheet";
@@ -62,6 +62,15 @@ export function getSize(matrix) {
     rows: getRowsCount(matrix),
   };
 }
+
+const chartTypes = [
+  { type: "bar", label: "Bar Chart", Icon: BarChartBig },
+  { type: "line", label: "Line Chart", Icon: LineChart },
+  { type: "pie", label: "Pie Chart", Icon: PieChart },
+  { type: "area", label: "Area Chart", Icon: AreaChart },
+  { type: "donut", label: "Donut", Icon: TbChartDonut2 },
+  { type: "scatterplot", label: "Scatterplot", Icon: ScatterChart },
+];
 
 export const DataVisBlock = React.memo(
   (props: { attributes: any; children: any; element: any }) => {
@@ -433,49 +442,16 @@ export const SelectDataVis = () => {
 
   return (
     <div className="grid grid-cols-3 gap-4 p-2">
-      <button
-        className="flex flex-col items-center  rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-        onClick={() => handleChartTypeChange("bar")}
-      >
-        <BarChartBig className="mb-2 mb-2 mt-1 h-8 w-8" />
-        Bar Chart
-      </button>
-      <button
-        className="flex flex-col items-center rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-        onClick={() => handleChartTypeChange("line")}
-      >
-        <LineChart className="mb-2 mt-1 h-8 w-8" />
-        Line Chart
-      </button>
-      <button
-        className="flex flex-col items-center  rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-        onClick={() => handleChartTypeChange("pie")}
-      >
-        <PieChart className="mb-2 mb-2 mt-1 h-8 w-8" />
-        Pie Chart
-      </button>
-
-      <button
-        className=" flex flex-col items-center  rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-        onClick={() => handleChartTypeChange("area")}
-      >
-        <AreaChart className="mb-2 mb-2 mt-1 h-8 w-8" />
-        Area Chart
-      </button>
-      <button
-        className="flex flex-col items-center  rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-        onClick={() => handleChartTypeChange("donut")}
-      >
-        <TbChartDonut2 className="mb-2 mb-2 mt-1 h-8 w-8" />
-        Donut
-      </button>
-      <button
-        className="flex flex-col items-center rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-        onClick={() => handleChartTypeChange("scatterplot")}
-      >
-        <ScatterChart className="mb-2 mb-2 mt-1 h-8 w-8" />
-        Scatterplot
-      </button>
+      {chartTypes.map(({ type, label, Icon }) => (
+        <button
+          key={type}
+          className="flex flex-col items-center rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+          onClick={() => handleChartTypeChange(type)}
+        >
+          <Icon className="mb-2 mt-1 h-8 w-8" />
+          {label}
+        </button>
+      ))}
     </div>
   );
 };

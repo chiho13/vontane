@@ -248,7 +248,7 @@ export const DataVisBlock = React.memo(
           >
             <div
               className={cn(
-                `relative  flex w-full max-w-[660px] items-center  justify-center rounded-md  rounded-md border lg:max-w-[535px] xl:max-w-[680px]  ${
+                `relative rounded-md border ${
                   selected
                     ? "ring-2 ring-brand  ring-offset-2 ring-offset-white dark:ring-white dark:ring-offset-0 "
                     : "ring-black/40 ring-offset-white hover:ring-2 hover:ring-offset-2 dark:ring-offset-gray-300 "
@@ -287,11 +287,11 @@ export const DataVisBlock = React.memo(
               <Tabs
                 value={tab}
                 onValueChange={handleTabChange}
-                className=" absolute top-0 mx-auto mb-0 w-full"
+                className=" mb-0 w-full"
               >
                 <TabsList
                   className={cn(
-                    `ring-gray z-1000 ring-red absolute -top-[4px] left-0 right-0 z-10  mx-auto mt-2 grid   h-7 w-[200px] grid-cols-2 rounded-t-md  bg-gray-200 p-0 dark:bg-accent`
+                    `ring-gray z-1000 ring-red absolute left-1 top-1 z-10  grid   h-7 w-[200px] grid-cols-2 rounded-t-md  bg-gray-200 p-0 dark:bg-accent`
                   )}
                 >
                   <TabsTrigger

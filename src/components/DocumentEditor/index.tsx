@@ -243,7 +243,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     debounce((value) => {
       setValue(value);
       handleTextChange(value);
-    }, 500),
+    }, 700),
     []
   );
 

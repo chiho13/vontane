@@ -5,7 +5,15 @@ import * as z from "zod";
 import { Descendant, Element as SlateElement, Node, Transforms } from "slate";
 
 import { useContext, useState, useEffect } from "react";
-import { VictoryBar, VictoryChart, VictoryAxis } from "victory";
+import {
+  VictoryBar,
+  VictoryLine,
+  VictoryArea,
+  VictoryScatter,
+  VictoryChart,
+  VictoryAxis,
+  VictoryPie,
+} from "victory";
 
 import { EditorContext } from "@/contexts/EditorContext";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
@@ -64,7 +72,7 @@ export function getSize(matrix) {
   };
 }
 
-const chartTypes = [
+export const chartTypes = [
   { type: "bar", label: "Bar Chart", Icon: BarChartBig },
   { type: "line", label: "Line Chart", Icon: LineChart },
   { type: "pie", label: "Pie Chart", Icon: PieChart },
@@ -118,6 +126,17 @@ export const DataVisBlock = React.memo(
       [{ value: "2" }, { value: "5" }],
       [{ value: "3" }, { value: "4" }],
       [{ value: "4" }, { value: "7" }],
+    ];
+
+    const colorScale = [
+      "#FF3333", // Pyro: Vibrant Red
+      "#3366FF", // Hydro: Deep Blue
+      "#FFCC33", // Electro: Bright Yellow
+      "#33FF66", // Dendro: Lush Green
+      "#CC33FF", // Cryo: Cool Purple
+      "#FF9933", // Geo: Earthy Orange
+      "#66FFFF", // Anemo: Light Cyan
+      "#FF9933", // Geo: Pure White
     ];
 
     const [data, setData] = useState(element.data);
@@ -304,6 +323,49 @@ export const DataVisBlock = React.memo(
                           style={{ data: { fill: styledTheme.brandColor } }}
                         />
                       </VictoryChart>
+                    )}
+
+                    {element.chartType === "line" && (
+                      <VictoryChart domainPadding={20}>
+                        <VictoryLine
+                          data={transformedData}
+                          style={{ data: { stroke: styledTheme.brandColor } }}
+                        />
+                      </VictoryChart>
+                    )}
+
+                    {element.chartType === "area" && (
+                      <VictoryChart domainPadding={20}>
+                        <VictoryArea
+                          data={transformedData}
+                          style={{ data: { fill: styledTheme.brandColor } }}
+                        />
+                      </VictoryChart>
+                    )}
+
+                    {element.chartType === "scatterplot" && (
+                      <VictoryChart domainPadding={20}>
+                        <VictoryScatter
+                          data={transformedData}
+                          style={{ data: { fill: styledTheme.brandColor } }}
+                        />
+                      </VictoryChart>
+                    )}
+
+                    {element.chartType === "pie" && (
+                      <VictoryPie
+                        data={transformedData}
+                        colorScale={colorScale}
+                        // style={{ data: { fill: styledTheme.brandColor } }}
+                      />
+                    )}
+
+                    {element.chartType === "donut" && (
+                      <VictoryPie
+                        data={transformedData}
+                        innerRadius={60} // This creates a hole in the middle to make it a donut chart
+                        colorScale={colorScale}
+                      />
                     )}
 
                     {!selected && (

@@ -25,6 +25,8 @@ import { ReactEditor } from "slate-react";
 import { useRouter } from "next/router";
 import { useWorkspaceTitleUpdate } from "@/contexts/WorkspaceTitleContext";
 import Link from "next/link";
+import { chartTypes } from "../DocumentEditor/EditorElements";
+import { Transforms } from "slate";
 
 export const DataVisSettings = ({ element }) => {
   const router = useRouter();
@@ -48,13 +50,14 @@ export const DataVisSettings = ({ element }) => {
 
   const onChangeChartType = (value) => {
     console.log(value);
+    Transforms.setNodes(editor, { ...element, chartType: value }, { at: path });
   };
 
   return (
     <div>
       <div className="relative bg-accent p-4">
-        <h3 className="text-bold mb-3 text-sm text-gray-500 dark:text-gray-400">
-          Line, Bar and Pie Charts
+        <h3 className="mb-3 text-sm font-bold text-gray-500 dark:text-gray-400">
+          Chart Type
         </h3>
 
         <div className="flex gap-4">
@@ -64,23 +67,14 @@ export const DataVisSettings = ({ element }) => {
             </SelectTrigger>
             <SelectContent className="max-h-[200px] overflow-y-auto dark:border-neutral-800 dark:bg-background">
               <SelectGroup>
-                {filteredWorkspaces.map((workspace) => {
-                  const parsedSlateValue = JSON.parse(
-                    workspace.slate_value as any
-                  );
-
-                  const workspaceName = parsedSlateValue[0].children[0].text;
-                  const displayName =
-                    updatedWorkspace && updatedWorkspace.id === workspace.id
-                      ? updatedWorkspace.title
-                      : workspaceName;
+                {chartTypes.map((chartType, index) => {
                   return (
                     <SelectItem
-                      key={workspace.id}
-                      value={workspace.id}
+                      key={index}
+                      value={chartType.type}
                       className="w-[300px]"
                     >
-                      {displayName}
+                      {chartType.label}
                     </SelectItem>
                   );
                 })}

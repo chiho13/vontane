@@ -31,6 +31,7 @@ import { debounce } from "lodash";
 import { Button } from "@/components/ui/button";
 import { FaPencilAlt } from "react-icons/fa";
 import { useTheme } from "next-themes";
+import { useTheme as useStyledTheme } from "styled-components";
 
 interface DataVisBlockElement {
   type: "dataVisBlock";
@@ -81,6 +82,7 @@ export const DataVisBlock = React.memo(
 
     const { theme, resolvedTheme } = useTheme();
 
+    const styledTheme = useStyledTheme();
     // Default theme to 'system' and resolve to either 'light' or 'dark' based on system preference
     let currentTheme = theme === "system" ? resolvedTheme : theme;
 
@@ -297,7 +299,10 @@ export const DataVisBlock = React.memo(
                   >
                     {element.chartType === "bar" && (
                       <VictoryChart domainPadding={20}>
-                        <VictoryBar data={transformedData} />
+                        <VictoryBar
+                          data={transformedData}
+                          style={{ data: { fill: styledTheme.brandColor } }}
+                        />
                       </VictoryChart>
                     )}
 

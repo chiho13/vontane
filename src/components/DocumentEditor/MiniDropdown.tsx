@@ -377,7 +377,7 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
             JSON.parse(activePath)
           ));
           break;
-        case "slideBreak":
+        case "slide":
           addedPath = addSlideBreak(editor, JSON.parse(activePath));
           break;
         default:

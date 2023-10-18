@@ -207,6 +207,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Export } from "../Export";
 import { cn } from "@/utils/cn";
+import { splitIntoSlides } from "@/utils/renderHelpers";
 
 export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   workspaceId,
@@ -1913,7 +1914,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     };
   }, []);
 
-  const { showRightSidebar, setShowRightSidebar, scrolltoSlide } =
+  const { showRightSidebar, setShowRightSidebar, scrolltoSlide, tab } =
     useTextSpeech();
 
   const [rightSideBarWidth, setRightSideBarWidth] = useLocalStorage(
@@ -1939,7 +1940,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     }
   }, [elementWidth, windowSize]);
 
+  const slides = splitIntoSlides(slatevalue);
   useLayoutEffect(() => {
+    if (slides.length === 0) return;
+
     const editorDiv = textEditorRef.current;
     if (!editorDiv) return;
 
@@ -1968,10 +1972,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       );
     }
 
-    targetElement?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
+    if (tab === "bookView") {
+      targetElement?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
   }, [scrolltoSlide]);
 
   const [lastChild, setLastChild] = useState<Node | null>(null);
@@ -2046,13 +2052,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
           >
             <div className="absolute -top-[40px] left-0 flex w-full items-center justify-between ">
               <div className="flex items-center">
-                <Dialog open={openUpgrade} onOpenChange={onOpenChangeUpgrade}>
+                {/* <Dialog open={openUpgrade} onOpenChange={onOpenChangeUpgrade}>
                   <DialogTrigger asChild>
                     <Button
                       variant="outline"
                       size="xs"
                       className=" border px-1 ring-brand focus-visible:ring-2 dark:ring-white"
-                      // onClick={upgradeAccount}
                     >
                       <span className=" ml-1 mr-2 text-xs text-foreground  dark:text-foreground ">
                         Shop Credits
@@ -2066,11 +2071,11 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                   <DialogContent className="absolute max-h-[650px]  overflow-y-auto overflow-x-hidden p-0 sm:max-w-[990px]">
                     <Upgrade />
                   </DialogContent>
-                </Dialog>
-                <span className="ml-4 rounded-md  p-1  px-2 text-sm dark:border-white">
+                </Dialog> */}
+                <span className="rounded-md  px-2 py-1 text-sm dark:border-white">
                   Credits:
                 </span>
-                <span className="text-bold text-sm">
+                <span className="text-sm font-bold">
                   {" "}
                   {credits && String(credits)}
                 </span>

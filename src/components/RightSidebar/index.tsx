@@ -48,19 +48,6 @@ import { useClipboard } from "@/hooks/useClipboard";
 import { MapSettings } from "../MapSettings";
 import { ImageSettings } from "../ImageSettings";
 import { deserialize } from "@/hoc/withPasting";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 import { Portal } from "react-portal";
 import { Label } from "../ui/label";
@@ -77,6 +64,8 @@ import { DownloadButton } from "../DownloadButton";
 import { PlyrAudioPlayer } from "../PlyrAudio";
 import { WorkspaceSetting } from "../WorkspaceSetting";
 import { EmbedVideoSettings } from "../EmbedVideoSettings";
+import { DataVisSettings } from "../DataVisSettings";
+import { splitIntoSlides } from "@/utils/renderHelpers";
 interface RightSideBarProps {
   setRightSideBarWidth: any;
   showRightSidebar: boolean;
@@ -112,6 +101,8 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     height: 844,
   });
 
+  const slides = splitIntoSlides(editor.children);
+
   const [openChat, setOpenChat] = useLocalStorage("openChat", false);
   const { copied, copyToClipboard: copyLink } = useClipboard();
 
@@ -119,7 +110,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     transform: `translateX(${
       showRightSidebar ? "0px" : `${rightSideBarWidth * 0.8}px`
     })`,
-    height: `calc(100svh - ${openChat ? "415" : "157"}px)`,
+    height: `calc(100svh - 100px)`,
     flexBasis: "390px",
     opacity: showRightSidebar ? "1" : "0",
     maxWidth: "390px",
@@ -151,32 +142,6 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     });
   };
 
-  const concatAudio = async () => {
-    console.log(editor.children);
-    // Assuming editor.children is an array of objects
-    let audioUrls: any[] = [];
-    editor.children.forEach((child: Descendant) => {
-      if ("children" in child && "audio_url" in child) {
-        audioUrls.push(child.audio_url);
-      }
-    });
-
-    // Assuming audioUrls is an array of URLs for audio files
-    const blobs = await Promise.all(
-      audioUrls.map(async (audioUrl) => {
-        const response = await fetch(audioUrl);
-        const blob = await response.blob();
-        return blob;
-      })
-    );
-
-    // Concatenate the blobs
-    const concatenatedBlob = new Blob(blobs, { type: "audio/mpeg" }); // adjust the MIME type as needed
-
-    // Save concatenated blob
-    saveAs(concatenatedBlob, "concatenatedAudio.mp3");
-  };
-
   useEffect(() => {
     if (showRightSidebar) {
       setTimeout(() => {
@@ -186,18 +151,11 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     }
   }, [showRightSidebar]);
 
-  const columns = [
-    { key: "id", name: "ID" },
-    { key: "value", name: "Value" },
-  ];
-
-  const data = [
-    { id: 0, value: 0 },
-    { id: 1, value: 3 },
-    { id: 2, value: 5 },
-    { id: 3, value: 4 },
-    { id: 4, value: 7 },
-  ];
+  useEffect(() => {
+    if (slides.length === 0) {
+      setTab("properties");
+    }
+  }, [slides.length]);
 
   return (
     <AudioManagerProvider>
@@ -216,7 +174,8 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
           <Tabs value={tab} onValueChange={handleTabChange} className="mb-0">
             <TabsList
               className={cn(
-                `ring-gray ring-red  z-10  grid h-10 w-full grid-cols-3  rounded-none rounded-t-md  bg-gray-200 dark:bg-accent`
+                `ring-gray ring-red  z-10  grid h-10 w-full  rounded-none rounded-t-md  bg-gray-200 dark:bg-accent`,
+                slides.length > 0 ? "grid-cols-3" : "grid-cols-2"
               )}
             >
               <TabsTrigger
@@ -226,17 +185,19 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                 Properties
               </TabsTrigger>
 
-              <TabsTrigger
-                value="bookView"
-                className={` text-xs data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-gray-400 dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
-              >
-                Slides View
-              </TabsTrigger>
+              {slides.length > 0 && (
+                <TabsTrigger
+                  value="bookView"
+                  className={` text-xs data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-gray-400 dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
+                >
+                  Slides View
+                </TabsTrigger>
+              )}
               <TabsTrigger
                 value="docsView"
                 className={` text-xs data-[state=active]:bg-brand data-[state=active]:text-white dark:text-gray-400 dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
               >
-                One Page View
+                Preview
               </TabsTrigger>
             </TabsList>
 
@@ -245,12 +206,12 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
               className="scrollbar flex-grow  overflow-y-auto pb-5 "
               style={{
                 top: -8,
-                height: `calc(100svh - ${openChat ? "460" : "200"}px)`,
+                height: `calc(100svh - 145px)`,
               }}
             >
-              {/* <FontStyle /> */}
-
-              {/* <DataSheet rows={rows} columns={columns} setRows={setRows} /> */}
+              {SlateElement.isElement(rootNode) &&
+                rootNode?.type == "datavis" &&
+                elementData && <DataVisSettings element={elementData} />}
 
               {SlateElement.isElement(rootNode) &&
                 rootNode?.type == "image" &&
@@ -338,22 +299,24 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                   </div>
                 ))}
             </TabsContent>
-            <TabsContent
-              value="bookView"
-              className="scrollbar relative overflow-y-auto pb-5 outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
-              style={{
-                top: -8,
-                height: `calc(100svh - ${openChat ? "460" : "200"}px)`,
-              }}
-            >
-              <SlidesPreview />
-            </TabsContent>
+            {slides.length > 0 && (
+              <TabsContent
+                value="bookView"
+                className="scrollbar relative overflow-y-auto pb-5 outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                style={{
+                  top: -8,
+                  height: `calc(100svh - ${openChat ? "460" : "200"}px)`,
+                }}
+              >
+                <SlidesPreview />
+              </TabsContent>
+            )}
             <TabsContent
               value="docsView"
               className="scrollbar relative overflow-y-auto pb-5"
               style={{
                 top: -8,
-                height: `calc(100svh - ${openChat ? "460" : "200"}px)`,
+                height: `calc(100svh - 145px)`,
               }}
             >
               {/* <div className="flex justify-end gap-3">
@@ -371,7 +334,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
           </Tabs>
         </div>
 
-        <AIAssist openChat={openChat} setOpenChat={setOpenChat} />
+        {/* <AIAssist openChat={openChat} setOpenChat={setOpenChat} /> */}
       </div>
     </AudioManagerProvider>
   );

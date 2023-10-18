@@ -79,7 +79,7 @@ const LazyLoadingWidget = ({ src }) => {
 
   if (isLoading) {
     return (
-      <div className="flex h-[410px] -translate-y-[30px] items-center justify-center">
+      <div className="flex h-[348px] -translate-y-[30px] items-center justify-center">
         <LoadingSpinner
           width={50}
           height={50}
@@ -89,7 +89,7 @@ const LazyLoadingWidget = ({ src }) => {
     );
   }
   return (
-    <div className="relative h-[410px] w-[360px] overflow-y-auto px-6 sm:w-[610px]">
+    <div className="relative max-h-[410px] w-[360px] overflow-y-auto px-6 sm:w-[610px]">
       {workspaceData && (
         <WidgetRenderer
           key={src}
@@ -213,9 +213,11 @@ const renderElement = (
                     </DialogTrigger>
 
                     <DialogContent className="max-h-[500px]  max-w-[380px] border  border-accent px-1 text-foreground dark:bg-[#191919] sm:max-w-[620px]">
-                      <DialogTitle className="px-6 pb-6 text-3xl">
-                        {el.label}
-                      </DialogTitle>
+                      {el.label && (
+                        <DialogTitle className="px-6 pb-6 text-3xl">
+                          {el.label}
+                        </DialogTitle>
+                      )}
                       {el.link && <LazyLoadingWidget src={el.link} />}
                     </DialogContent>
                   </Dialog>

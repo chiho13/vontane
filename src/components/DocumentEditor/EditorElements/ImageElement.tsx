@@ -68,6 +68,7 @@ import { useResizeBlock, Position } from "@/hooks/useResizeBlock";
 import { UserContext } from "@/contexts/UserContext";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { cn } from "@/utils/cn";
+import { sideBarStore } from "@/store/sidebar";
 
 function generateRandomFilename(file) {
   const extension = file.name.split(".").pop();
@@ -213,6 +214,8 @@ export const ImageElement = React.memo(
   (props: { attributes: any; children: any; element: any }) => {
     const { attributes, children, element } = props;
     const { setElementData, setShowRightSidebar, setTab } = useTextSpeech();
+
+    // const { setElementData }: any = sideBarStore((state) => state);
     const {
       editor,
       showEditBlockPopup,
@@ -261,11 +264,16 @@ export const ImageElement = React.memo(
     useEffect(() => {
       if (selected) {
         setElementData(element);
+        setActivePath(JSON.stringify(path));
       }
     }, [selected]);
 
     return (
-      <div data-id={element.id} data-path={JSON.stringify(path)}>
+      <div
+        data-id={element.id}
+        data-path={JSON.stringify(path)}
+        className="mb-2 mt-2"
+      >
         {!element.file_name ? (
           <>
             <div

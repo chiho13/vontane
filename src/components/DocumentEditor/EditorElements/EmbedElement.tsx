@@ -176,6 +176,7 @@ export const Embed = React.memo(
     useEffect(() => {
       if (selected) {
         setElementData(element);
+        setActivePath(JSON.stringify(path));
       }
     }, [selected]);
 
@@ -183,8 +184,8 @@ export const Embed = React.memo(
       <div
         data-id={element.id}
         data-path={JSON.stringify(path)}
-        // data-current-time={currentVideoTime}
         data-videoId={element.videoId}
+        className="mb-2 mt-2"
       >
         {!element.embedLink ? (
           <div className="flex">

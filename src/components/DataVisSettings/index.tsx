@@ -27,6 +27,9 @@ import { useWorkspaceTitleUpdate } from "@/contexts/WorkspaceTitleContext";
 import Link from "next/link";
 import { chartTypes } from "../DocumentEditor/EditorElements";
 import { Transforms } from "slate";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
+import { debounce } from "lodash";
 
 export const DataVisSettings = ({ element }) => {
   const router = useRouter();
@@ -36,15 +39,34 @@ export const DataVisSettings = ({ element }) => {
 
   const [chartType, setChartType] = useState(element.chartType);
 
+  const [xaxis, setxaxis] = useState(element.xlabel);
+  const [yaxis, setyaxis] = useState(element.ylabel);
+
   const path = ReactEditor.findPath(editor, element);
+  const [chartTitle, setChartTitle] = useState(element.setChartTitle);
 
   useEffect(() => {
     if (element.chartType) {
       setChartType(element.chartType);
     }
 
+    if (element.chartTitle) {
+      setChartTitle(element.chartTitle);
+    }
+
+    if (element.yaxis) {
+      setyaxis(element.ylabel);
+    }
+
+    if (element.xaxis) {
+      setxaxis(element.xlabel);
+    }
+
     return () => {
       setChartType("");
+      setChartTitle("");
+      setyaxis("");
+      setxaxis("");
     };
   }, [element]);
 
@@ -53,10 +75,34 @@ export const DataVisSettings = ({ element }) => {
     Transforms.setNodes(editor, { ...element, chartType: value }, { at: path });
   };
 
+  const onChangeChartTitle = (e) => {
+    Transforms.setNodes(
+      editor,
+      { ...element, chartTitle: e.target.value },
+      { at: path }
+    );
+  };
+
+  const onChangeChartXLabel = (e) => {
+    Transforms.setNodes(
+      editor,
+      { ...element, xlabel: e.target.value },
+      { at: path }
+    );
+  };
+
+  const onChangeChartYLabel = (e) => {
+    Transforms.setNodes(
+      editor,
+      { ...element, ylabel: e.target.value },
+      { at: path }
+    );
+  };
+
   return (
     <div>
-      <div className="relative bg-accent p-4">
-        <h3 className="mb-3 text-sm font-bold text-gray-500 dark:text-gray-400">
+      <div className="relative border-b p-4">
+        <h3 className="mb-2 text-sm font-bold text-gray-500 dark:text-gray-400">
           Chart Type
         </h3>
 
@@ -81,6 +127,43 @@ export const DataVisSettings = ({ element }) => {
               </SelectGroup>
             </SelectContent>
           </Select>
+        </div>
+      </div>
+      <div className="border-b p-4 dark:border-input">
+        <h3 className="mb-2 text-sm font-bold text-gray-500 dark:text-gray-400">
+          Title
+        </h3>
+
+        <Input
+          defaultValue={chartTitle}
+          type="text"
+          onChange={onChangeChartTitle}
+          className="mt-2 "
+        />
+      </div>
+      <div className="border-b p-4 dark:border-input">
+        <h3 className="mb-2 mb-3 text-sm font-bold text-gray-500 dark:text-gray-400">
+          Bar, Line, Scatter Chart Labels
+        </h3>
+
+        <div className="mb-4">
+          <Label className="mt-2 font-bold">X-Axis label</Label>
+          <Input
+            defaultValue={xaxis}
+            type="text"
+            onChange={onChangeChartXLabel}
+            className="mt-2 "
+          />
+        </div>
+
+        <div>
+          <Label className="mt-2 font-bold">Y-Axis label</Label>
+          <Input
+            defaultValue={yaxis}
+            type="text"
+            onChange={onChangeChartYLabel}
+            className="mt-2 "
+          />
         </div>
       </div>
     </div>

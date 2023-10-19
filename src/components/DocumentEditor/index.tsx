@@ -160,6 +160,7 @@ export type CustomElement = {
   audioPoint?: any;
   activeId?: any;
   embedLink?: any;
+  data?: any;
 };
 
 type CustomText = {

@@ -13,6 +13,7 @@ import {
   VictoryChart,
   VictoryAxis,
   VictoryPie,
+  VictoryLabel,
 } from "victory";
 
 import { EditorContext } from "@/contexts/EditorContext";
@@ -44,6 +45,7 @@ import { useTheme as useStyledTheme } from "styled-components";
 interface DataVisBlockElement {
   type: "dataVisBlock";
   chartType: string;
+  data: any;
   children: Descendant[];
 }
 
@@ -84,6 +86,7 @@ export const chartTypes = [
 export const DataVisBlock = React.memo(
   (props: { attributes: any; children: any; element: any }) => {
     const { attributes, children, element } = props;
+
     const { elementData, setElementData, setShowRightSidebar, setTab } =
       useTextSpeech();
     const selected = useSelected();
@@ -113,6 +116,7 @@ export const DataVisBlock = React.memo(
     useEffect(() => {
       if (selected) {
         setElementData(element);
+        setActivePath(JSON.stringify(path));
       }
     }, [selected]);
 
@@ -143,9 +147,14 @@ export const DataVisBlock = React.memo(
 
     const [addingRowColumn, setAddingRowColumn] = useState(false);
 
-    const transformedData = element.data.map((row, index) => {
-      return { x: row[0].value, y: row[1] ? Number(row[1].value) : 0 };
-    });
+    const transformedData =
+      element.data &&
+      element.data.map((row, index) => {
+        return {
+          x: row[0] ? row[0].value : 0,
+          y: row[1] ? Number(row[1].value) : 0,
+        };
+      });
 
     const handleDataChange = debounce((changes) => {
       const newElement = {
@@ -196,7 +205,6 @@ export const DataVisBlock = React.memo(
       Transforms.setNodes(
         editor,
         {
-          ...element,
           data,
         },
         { at: path }
@@ -266,7 +274,6 @@ export const DataVisBlock = React.memo(
                 Transforms.setNodes(
                   editor,
                   {
-                    ...element,
                     data,
                   },
                   { at: path }
@@ -276,7 +283,6 @@ export const DataVisBlock = React.memo(
                 Transforms.setNodes(
                   editor,
                   {
-                    ...element,
                     data,
                   },
                   { at: path }
@@ -318,36 +324,140 @@ export const DataVisBlock = React.memo(
                   >
                     {element.chartType === "bar" && (
                       <VictoryChart domainPadding={20}>
+                        <VictoryLabel
+                          text={element.chartTitle}
+                          x={225}
+                          y={30}
+                          textAnchor="middle"
+                          style={{ fontSize: 18 }}
+                        />
                         <VictoryBar
                           data={transformedData}
                           style={{ data: { fill: styledTheme.brandColor } }}
+                        />
+                        <VictoryAxis
+                          label={element.xlabel}
+                          style={{
+                            tickLabels: {
+                              fontSize: 10,
+                              textAnchor: "start",
+                            },
+                            axisLabel: {
+                              padding: 30,
+                            },
+                          }}
+                        />
+                        <VictoryAxis
+                          dependentAxis
+                          style={{
+                            axisLabel: { padding: 50 },
+                            tickLabels: { fontSize: 10 },
+                          }}
+                          label={element.ylabel}
                         />
                       </VictoryChart>
                     )}
 
                     {element.chartType === "line" && (
                       <VictoryChart domainPadding={20}>
+                        <VictoryLabel
+                          text={element.chartTitle}
+                          x={225}
+                          y={30}
+                          textAnchor="middle"
+                          style={{ fontSize: 18 }}
+                        />
                         <VictoryLine
                           data={transformedData}
                           style={{ data: { stroke: styledTheme.brandColor } }}
+                        />
+                        <VictoryAxis
+                          label={element.xlabel}
+                          style={{
+                            tickLabels: {
+                              fontSize: 10,
+                              textAnchor: "start",
+                            }, // Adjust fontSize and angle as needed
+                          }}
+                        />
+                        <VictoryAxis
+                          dependentAxis
+                          style={{
+                            tickLabels: { fontSize: 10 },
+                          }}
+                          label={element.ylabel}
                         />
                       </VictoryChart>
                     )}
 
                     {element.chartType === "area" && (
                       <VictoryChart domainPadding={20}>
+                        <VictoryLabel
+                          text={element.chartTitle}
+                          x={225}
+                          y={30}
+                          textAnchor="middle"
+                          style={{ fontSize: 18 }}
+                        />
                         <VictoryArea
                           data={transformedData}
                           style={{ data: { fill: styledTheme.brandColor } }}
+                        />
+                        <VictoryAxis
+                          label={element.xlabel}
+                          style={{
+                            tickLabels: {
+                              fontSize: 10,
+                              textAnchor: "start",
+                            },
+                            axisLabel: {
+                              padding: 30,
+                            },
+                          }}
+                        />
+                        <VictoryAxis
+                          dependentAxis
+                          style={{
+                            axisLabel: { padding: 50 },
+                            tickLabels: { fontSize: 10 },
+                          }}
+                          label={element.ylabel}
                         />
                       </VictoryChart>
                     )}
 
                     {element.chartType === "scatterplot" && (
                       <VictoryChart domainPadding={20}>
+                        <VictoryLabel
+                          text={element.chartTitle}
+                          x={225}
+                          y={30}
+                          textAnchor="middle"
+                          style={{ fontSize: 18 }}
+                        />
                         <VictoryScatter
                           data={transformedData}
                           style={{ data: { fill: styledTheme.brandColor } }}
+                        />
+                        <VictoryAxis
+                          label={element.xlabel}
+                          style={{
+                            tickLabels: {
+                              fontSize: 10,
+                              textAnchor: "start",
+                            },
+                            axisLabel: {
+                              padding: 30,
+                            },
+                          }}
+                        />
+                        <VictoryAxis
+                          dependentAxis
+                          style={{
+                            axisLabel: { padding: 50 },
+                            tickLabels: { fontSize: 10 },
+                          }}
+                          label={element.ylabel}
                         />
                       </VictoryChart>
                     )}
@@ -499,7 +609,11 @@ export const SelectDataVis = () => {
       tab: "preview",
       data: initialData,
       chartType,
+      chartTitle: `${chartType} chart`,
+      xlabel: "x-axis label",
+      ylabel: "y-axis label",
     };
+
     Transforms.setNodes(editor, newElement, { at: JSON.parse(activePath) });
     setShowEditBlockPopup({
       open: false,

@@ -259,6 +259,7 @@ export const Embed = React.memo(
                     setShowRightSidebar(true);
                     setTab("properties");
                   }}
+                  onDragStart={(e) => e.preventDefault()}
                 />
 
                 <button

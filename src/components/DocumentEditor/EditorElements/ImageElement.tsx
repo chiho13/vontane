@@ -35,6 +35,7 @@ import { supabaseClient } from "@/utils/supabaseClient";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio";
+import { Hotspot } from "@/utils/renderHelpers";
 
 import {
   Popover,
@@ -95,6 +96,7 @@ export const useDraggable = (
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
+    e.stopPropagation();
 
     dragging.current = true;
 
@@ -176,9 +178,9 @@ const DraggableRadioGroupItem = ({
   imageRef,
   initialPosition,
   path,
-  setAudioRadioValue,
 }) => {
   const [colour, _] = useState(element.colour);
+  const { audioPointData, setAudioPointData } = useTextSpeech();
   const { AudioPointref, position, handleMouseDown } = useDraggable(
     {
       x: initialPosition.x,
@@ -190,22 +192,42 @@ const DraggableRadioGroupItem = ({
     path
   );
 
+  console.log(element.type);
+
   return (
     <div
       ref={AudioPointref}
-      className="absolute cursor-pointer"
-      style={{ left: `${position.x}%`, top: `${position.y}%` }}
-      onMouseDown={handleMouseDown}
+      className={`absolute cursor-pointer rounded-md  p-1  ${
+        audioPointData === element.id
+          ? "bg-gray-500/20 shadow-md ring-2 ring-brand"
+          : ""
+      }`}
+      style={{
+        left: `${position.x}%`,
+        top: `${position.y}%`,
+      }}
+      onMouseDown={(e) => {
+        handleMouseDown(e);
+      }}
+      onClick={() => {
+        setAudioPointData(element.id);
+      }}
     >
-      <RadioGroupItem
-        value={id}
-        id={id}
-        className={`z-100 duration-400 h-8 w-8 border-4 bg-blue-800/40 text-white shadow-md transition active:scale-110`}
-        style={{
-          borderColor: element.colour || "#ffffff",
-        }}
-        indicatorClassName={`h-4 w-4 dark:fill-muted dark:text-muted`}
-      />
+      <Hotspot colour={element.colour}>
+        <button
+          className="beacon flex h-[24px] w-[24px] items-center justify-center  rounded-full border-2 shadow-lg"
+          style={{
+            borderColor: element.colour,
+          }}
+        >
+          <div
+            className="h-[12px] w-[12px] rounded-full shadow-lg"
+            style={{
+              backgroundColor: element.colour,
+            }}
+          ></div>
+        </button>
+      </Hotspot>
     </div>
   );
 };
@@ -237,7 +259,7 @@ export const ImageElement = React.memo(
     const [base64URL, setBase64URL] = useState(
       tempBase64[element.id] || element.url
     );
-    const [align, setAlign] = useState(element.align || "start");
+    const align = element.align || "start";
 
     const {
       handleMouseDown,
@@ -248,18 +270,9 @@ export const ImageElement = React.memo(
 
     const audioPoint = element.audioPoint;
 
-    console.log(element);
     const selected = useSelected();
 
     const [tempURL, setTempURL] = useState(element.tempURL);
-
-    const [audioRadioValue, setAudioRadioValue] = useState(element.activeId);
-    const { audioPointData, setAudioPointData } = useTextSpeech();
-
-    const onValueChange = (value) => {
-      // setAudioRadioValue(value);
-      setAudioPointData(value);
-    };
 
     useEffect(() => {
       if (selected) {
@@ -346,6 +359,7 @@ export const ImageElement = React.memo(
                   setShowRightSidebar(true);
                   setTab("properties");
                 }}
+                onDragStart={(e) => e.preventDefault()}
               />
               <div
                 className={`absolute -right-[3px] top-0 flex h-full items-center`}
@@ -402,28 +416,26 @@ export const ImageElement = React.memo(
                   <OptionMenu element={element} />
                 </div>
               </div>
-              <RadioGroup value={audioPointData} onValueChange={onValueChange}>
-                {audioPoint &&
-                  selected &&
-                  audioPoint.map((el, i) => {
-                    return (
-                      <DraggableRadioGroupItem
-                        key={i}
-                        value={el.id}
-                        editor={editor}
-                        id={el.id}
-                        imageRef={imageRef}
-                        element={el}
-                        path={path}
-                        setAudioRadioValue={setAudioRadioValue}
-                        initialPosition={{
-                          x: el.x,
-                          y: el.y,
-                        }}
-                      />
-                    );
-                  })}
-              </RadioGroup>
+
+              {audioPoint &&
+                selected &&
+                audioPoint.map((el, i) => {
+                  return (
+                    <DraggableRadioGroupItem
+                      key={i}
+                      value={el.id}
+                      editor={editor}
+                      id={el.id}
+                      imageRef={imageRef}
+                      element={el}
+                      path={path}
+                      initialPosition={{
+                        x: el.x,
+                        y: el.y,
+                      }}
+                    />
+                  );
+                })}
             </div>
 
             {children}

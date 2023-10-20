@@ -55,8 +55,6 @@ export const ImageSettings = ({ element }) => {
     (workspace) => workspace.id !== workspaceId
   );
 
-  console.log(filteredWorkspaces);
-
   useEffect(() => {
     if (element.altText) {
       setAltText(element.altText);
@@ -159,12 +157,14 @@ export const ImageSettings = ({ element }) => {
     // If audioPoint is not defined or null, default to an empty array
     const currentAudioPoints = element.audioPoint || [];
 
-    const randomX = Math.floor(Math.random() * 100);
-    const randomY = Math.floor(Math.random() * 100);
+    const randomX = Math.floor(Math.random() * 61) + 20;
+    const randomY = Math.floor(Math.random() * 61) + 20;
 
     // Create a new audio point
     const newAudioPoint = {
       id: genNodeId(),
+      type: "original",
+      colour: "#ffffff",
       url: "",
       link: "",
       x: randomX,

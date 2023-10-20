@@ -36,7 +36,7 @@ interface HotspotProps {
   colour: string;
 }
 
-const Hotspot = styled.div<HotspotProps>`
+export const Hotspot = styled.div<HotspotProps>`
   @keyframes active {
     0% {
       transform: scale(0.1);
@@ -198,13 +198,13 @@ const renderElement = (
                   <Dialog>
                     <DialogTrigger>
                       <button
-                        className="beacon flex h-[24px] w-[24px] items-center justify-center  rounded-full border-2 shadow-lg ring-1 ring-gray-400"
+                        className="beacon flex h-[24px] w-[24px] items-center justify-center  rounded-full border-2 shadow-lg"
                         style={{
                           borderColor: el.colour || "#ffffff",
                         }}
                       >
                         <div
-                          className="h-[12px] w-[12px] rounded-full border border-gray-400"
+                          className="h-[12px] w-[12px] rounded-full shadow-lg"
                           style={{
                             backgroundColor: el.colour || "#ffffff",
                           }}

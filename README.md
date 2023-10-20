@@ -45,6 +45,7 @@ currently under development (April)
 - [x] map block
 - [x] ai integration (wip)
 - [x] hotspot in image
+- [x] data visualisation - bar chart, pie, scatter
 
 ## Next phase - requirements
 

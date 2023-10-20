@@ -180,7 +180,7 @@ const DraggableRadioGroupItem = ({
   path,
 }) => {
   const [colour, _] = useState(element.colour);
-  const { audioPointData, setAudioPointData } = useTextSpeech();
+  const { audioPointData, setAudioPointData } = sideBarStore();
   const { AudioPointref, position, handleMouseDown } = useDraggable(
     {
       x: initialPosition.x,

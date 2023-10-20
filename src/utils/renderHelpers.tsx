@@ -40,7 +40,7 @@ export const Hotspot = styled.div<HotspotProps>`
   @keyframes active {
     0% {
       transform: scale(0.1);
-      opacity: 1;
+      opacity: 0.9;
     }
     70% {
       transform: scale(1.5);
@@ -58,7 +58,7 @@ export const Hotspot = styled.div<HotspotProps>`
     width: 30px;
     background-color: ${(props) => props.colour};
     border-radius: 50%;
-    box-shadow: 0px 0px 2px 2px #ffffff;
+    box-shadow: 0px 0px 2px 2px ${(props) => props.colour};
     animation: active 2s infinite linear;
   }
 `;
@@ -200,26 +200,27 @@ const renderElement = (
                       <button
                         className="beacon flex h-[24px] w-[24px] items-center justify-center  rounded-full border-2 shadow-lg"
                         style={{
-                          borderColor: el.colour || "#ffffff",
+                          borderColor: el.colour,
                         }}
                       >
                         <div
                           className="h-[12px] w-[12px] rounded-full shadow-lg"
                           style={{
-                            backgroundColor: el.colour || "#ffffff",
+                            backgroundColor: el.colour,
                           }}
                         ></div>
                       </button>
                     </DialogTrigger>
-
-                    <DialogContent className="max-h-[500px]  max-w-[380px] border  border-accent px-1 text-foreground dark:bg-[#191919] sm:max-w-[620px]">
-                      {el.label && (
-                        <DialogTitle className="px-6 pb-6 text-3xl">
-                          {el.label}
-                        </DialogTitle>
-                      )}
-                      {el.link && <LazyLoadingWidget src={el.link} />}
-                    </DialogContent>
+                    {el.link && (
+                      <DialogContent className="max-h-[500px]  max-w-[380px] border  border-accent px-1 text-foreground dark:bg-[#191919] sm:max-w-[620px]">
+                        {el.label && (
+                          <DialogTitle className="px-6 pb-6 text-3xl">
+                            {el.label}
+                          </DialogTitle>
+                        )}
+                        {el.link && <LazyLoadingWidget src={el.link} />}
+                      </DialogContent>
+                    )}
                   </Dialog>
                 </Hotspot>
               );

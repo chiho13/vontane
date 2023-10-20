@@ -32,6 +32,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { sideBarStore } from "@/store/sidebar";
 
 export const ImageSettings = ({ element }) => {
   const router = useRouter();
@@ -39,7 +40,8 @@ export const ImageSettings = ({ element }) => {
   const workspaceId = router.query.workspaceId as string;
   const { editor, activePath } = useContext(EditorContext);
   const { allWorkspaces } = useContext(LayoutContext);
-  const { audioPointData, setAudioPointData } = useTextSpeech();
+  // const { audioPointData, setAudioPointData } = useTextSpeech();
+  const { audioPointData, setAudioPointData } = sideBarStore();
 
   const [altText, setAltText] = useState(element.altText ?? null);
 

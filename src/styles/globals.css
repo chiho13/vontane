@@ -217,6 +217,11 @@ body {
   }
 }
 
+.ring-dashed:focus {
+  outline: 2px dashed #2563eb; /* Color of your choice */
+  outline-offset: 2px;
+}
+
 /* .beacon {
   animation: grow 0.4s 1 linear;
 } */

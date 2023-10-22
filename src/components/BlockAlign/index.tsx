@@ -21,7 +21,10 @@ import {
 import { Icons } from "@/components/Icons";
 import { AlignLeft, AlignCenter, AlignRight, ChevronDown } from "lucide-react";
 import { ReactEditor } from "slate-react";
-import { EditorContext } from "../../contexts/EditorContext";
+import {
+  EditorContext,
+  SlateEditorContext,
+} from "../../contexts/EditorContext";
 import { Transforms, Element as SlateElement, Editor, Range } from "slate";
 import { cn } from "@/utils/cn";
 import { BiCaretDown } from "react-icons/bi";
@@ -29,7 +32,8 @@ import { FaCaretDown } from "react-icons/fa";
 
 export function BlockAlign({ element, className }: any) {
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
-  const { editor, activePath } = React.useContext(EditorContext);
+  const { activePath } = React.useContext(EditorContext);
+  const { editor } = React.useContext(SlateEditorContext);
 
   const path = ReactEditor.findPath(editor, element);
 

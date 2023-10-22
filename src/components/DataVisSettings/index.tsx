@@ -18,7 +18,7 @@ import {
 import { TbChartDonut2 } from "react-icons/tb";
 
 import { useContext, useEffect, useState } from "react";
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 
 import { ReactEditor } from "slate-react";
 
@@ -35,7 +35,7 @@ export const DataVisSettings = ({ element }) => {
   const router = useRouter();
   const { updatedWorkspace } = useWorkspaceTitleUpdate();
   const workspaceId = router.query.workspaceId as string;
-  const { editor, activePath } = useContext(EditorContext);
+  const { editor } = useContext(SlateEditorContext);
 
   const [chartType, setChartType] = useState(element.chartType);
 

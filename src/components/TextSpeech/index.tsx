@@ -15,7 +15,7 @@ import { genNodeId } from "@/hoc/withID";
 import { useRouter } from "next/router";
 import { Mirt } from "@/plugins/audioTrimmer";
 import { Transforms, Editor, Node } from "slate";
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import { ReactEditor, useSelected } from "slate-react";
 import AudioPLayer from "@/components/AudioPlayer";
 import { extractTextValues } from "../DocumentEditor/helpers/extractText";
@@ -86,7 +86,9 @@ export const TextSpeech = ({
   const startTTS = api.texttospeech.startConversion.useMutation();
   const deleteTTS = api.texttospeech.deleteAudio.useMutation();
   const selected = useSelected();
-  const { editor } = useContext(EditorContext);
+
+  const { editor } = useContext(SlateEditorContext);
+
   const path = ReactEditor.findPath(editor, element);
   const lastChildIndex = element.children.length - 1;
   const pathToLastChild = [...path, lastChildIndex];

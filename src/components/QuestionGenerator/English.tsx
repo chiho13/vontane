@@ -2,7 +2,7 @@ import { PromptSelector } from "../PromptSelector";
 import { englishQuestionTopics } from "@/data/englishQuestionTopics";
 import { useContext, useEffect, useState } from "react";
 import { api } from "@/utils/api";
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import { Transforms, Path, BaseEditor } from "slate";
 import { ReactEditor } from "slate-react";
 import { ErrorAlert } from "../ErrorAlert";
@@ -53,7 +53,8 @@ const processNode = (node) => {
 export const EnglishQuestionGenerator = () => {
   const [englishQuestions, setQuestions] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { editor, activePath } = useContext(EditorContext);
+  const { activePath } = useContext(EditorContext);
+  const { editor } = useContext(SlateEditorContext);
   const [showErrorAlert, setShowErrorAlert] = useState<boolean>(false);
   const [triggerRefetch, setTriggerRefetch] = useState(false);
 

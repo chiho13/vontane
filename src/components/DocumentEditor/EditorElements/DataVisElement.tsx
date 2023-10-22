@@ -16,7 +16,7 @@ import {
   VictoryLabel,
 } from "victory";
 
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { ReactEditor, useSelected } from "slate-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -104,8 +104,8 @@ export const DataVisBlock = React.memo(
       element.tab
     );
 
-    const { editor, setActivePath, setShowEditBlockPopup } =
-      useContext(EditorContext);
+    const { setActivePath, setShowEditBlockPopup } = useContext(EditorContext);
+    const { editor } = useContext(SlateEditorContext);
 
     const path = ReactEditor.findPath(editor, element);
     const [align, setAlign] = useState(element.align || "start");
@@ -215,7 +215,7 @@ export const DataVisBlock = React.memo(
       <div
         data-id={element.id}
         data-path={JSON.stringify(path)}
-        className="mt-[5px]"
+        className="mb-2 mt-2"
       >
         {!element.chartType ? (
           <div className="flex">
@@ -591,8 +591,8 @@ export const DataVisBlock = React.memo(
 );
 
 export const SelectDataVis = () => {
-  const { editor, activePath, setShowEditBlockPopup } =
-    useContext(EditorContext);
+  const { activePath, setShowEditBlockPopup } = useContext(EditorContext);
+  const { editor } = useContext(SlateEditorContext);
   const handleChartTypeChange = (chartType: string) => {
     const currentElement = Node.get(editor, JSON.parse(activePath));
 

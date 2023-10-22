@@ -1,11 +1,11 @@
 import { useContext } from "react";
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import { ReactEditor } from "slate-react";
 
 export function ColumnElement(props: any) {
   const { attributes, children, element } = props;
 
-  const { editor } = useContext(EditorContext);
+  const { editor } = useContext(SlateEditorContext);
   const path = ReactEditor.findPath(editor, element);
   return (
     <div

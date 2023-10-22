@@ -1,10 +1,10 @@
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import React, { useContext, useEffect, useState } from "react";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { parseNodes } from "@/utils/renderHelpers";
 
 export const DocsPreview = () => {
-  const { editor: fromEditor, activePath } = useContext(EditorContext);
+  const { editor: fromEditor } = React.useContext(SlateEditorContext);
   const [localValue, setLocalValue] = useState(fromEditor.children);
 
   const { workspaceData } = useTextSpeech();

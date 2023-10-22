@@ -26,14 +26,15 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useContext, useEffect, useState } from "react";
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { api } from "@/utils/api";
 
 export const PublishButton = () => {
   const router = useRouter();
   const workspaceId = router.query.workspaceId as string;
-  const { editor, activePath } = useContext(EditorContext);
+  const { activePath } = useContext(EditorContext);
+  const { editor } = useContext(SlateEditorContext);
 
   const { workspaceData, refetchWorkspaceData } = useTextSpeech();
   const { copied: linkCopied, copyToClipboard: copyLink } = useClipboard();

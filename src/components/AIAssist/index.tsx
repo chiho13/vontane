@@ -14,7 +14,7 @@ import {
 import { Input } from "../ui/input";
 import { api } from "@/utils/api";
 import { useContext, useEffect, useRef, useState } from "react";
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import { UserContext } from "@/contexts/UserContext";
 
 import { Editor, Path, Range, Transforms } from "slate";
@@ -107,7 +107,8 @@ const renderMathInHtmlString = (htmlString) => {
 };
 
 export const AIAssist = ({ openChat, setOpenChat }) => {
-  const { editor, setLastActiveSelection } = useContext(EditorContext);
+  const { setLastActiveSelection } = useContext(EditorContext);
+  const { editor } = useContext(SlateEditorContext);
   const { credits, setCredits }: any = useContext(UserContext);
 
   const router = useRouter();

@@ -13,7 +13,7 @@ import { TextSpeech } from "../TextSpeech";
 import { useLocalStorage } from "usehooks-ts";
 import AudioPlayer from "../AudioPlayer";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import * as marked from "marked";
 import { alignMap } from "../DocumentEditor/helpers/toggleBlock";
 import { ReactGrid, TextCell, CellChange } from "@silevis/reactgrid";
@@ -85,7 +85,8 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
   const router = useRouter();
   const { setIsOpen, setIsLocked } = useContext(LayoutContext);
 
-  const { editor, activePath } = useContext(EditorContext);
+  const { activePath } = useContext(EditorContext);
+  const { editor } = useContext(SlateEditorContext);
   const rootNode = useMemo(() => {
     let path = activePath ? JSON.parse(activePath) : [];
     while (path && path.length > 1) {

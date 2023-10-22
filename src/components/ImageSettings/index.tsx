@@ -14,7 +14,7 @@ import { api } from "@/utils/api";
 import { ToastContainer, toast } from "react-toastify";
 import { Transforms, Node } from "slate";
 import { useContext, useEffect, useState } from "react";
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import LoadingSpinner from "@/icons/LoadingSpinner";
 import { Button } from "../ui/button";
 import { Plus, Search } from "lucide-react";
@@ -38,7 +38,7 @@ export const ImageSettings = ({ element }) => {
   const router = useRouter();
   const { updatedWorkspace } = useWorkspaceTitleUpdate();
   const workspaceId = router.query.workspaceId as string;
-  const { editor, activePath } = useContext(EditorContext);
+  const { editor } = useContext(SlateEditorContext);
   const { allWorkspaces } = useContext(LayoutContext);
   // const { audioPointData, setAudioPointData } = useTextSpeech();
   const { audioPointData, setAudioPointData } = sideBarStore();

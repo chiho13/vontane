@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { useContext } from "react";
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import { useWorkspaceTitleUpdate } from "@/contexts/WorkspaceTitleContext";
 import { useRouter } from "next/router";
 import { api } from "@/utils/api";
@@ -32,7 +32,8 @@ import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { splitIntoSlides } from "@/utils/renderHelpers";
 
 export const Export = () => {
-  const { editor } = useContext(EditorContext);
+  const { editor } = useContext(SlateEditorContext);
+
   const router = useRouter();
   const { workspaceData } = useTextSpeech();
 

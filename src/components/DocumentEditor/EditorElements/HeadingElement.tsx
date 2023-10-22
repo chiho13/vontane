@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState, useRef } from "react";
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import { ReactEditor, useFocused, useSelected } from "slate-react";
 import { Editor, Path, Node, Range } from "slate";
 import styled from "styled-components";
@@ -27,12 +27,11 @@ const HeadingElementStyle = styled.div<HeadingElementProps>`
 `;
 
 export function HeadingElement(props) {
-  const {
-    editor,
-    showEditBlockPopup,
-    selectedElementID,
-    setSelectedElementID,
-  } = useContext(EditorContext);
+  const { showEditBlockPopup, selectedElementID, setSelectedElementID } =
+    useContext(EditorContext);
+
+  const { editor } = useContext(SlateEditorContext);
+
   const { attributes, children, element, tag } = props;
   const { fontStyle } = useTextSpeech();
 

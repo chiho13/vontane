@@ -16,7 +16,7 @@ import { api } from "@/utils/api";
 import { ToastContainer, toast } from "react-toastify";
 import { Transforms } from "slate";
 import { useContext, useEffect, useState } from "react";
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import LoadingSpinner from "@/icons/LoadingSpinner";
 import { Button } from "../ui/button";
 import { Search } from "lucide-react";
@@ -24,7 +24,7 @@ import { useClipboard } from "@/hooks/useClipboard";
 import { debounce } from "lodash";
 
 export const MapSettings = ({ element, path }) => {
-  const { editor, activePath } = useContext(EditorContext);
+  const { editor } = useContext(SlateEditorContext);
 
   const { copied, copyToClipboard } = useClipboard();
 

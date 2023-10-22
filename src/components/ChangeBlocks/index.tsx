@@ -1,4 +1,4 @@
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import { SetStateAction, useContext, useEffect, useRef, useState } from "react";
 import { FaBold } from "react-icons/fa";
 import { FiItalic, FiUnderline } from "react-icons/fi";
@@ -31,7 +31,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export const ChangeBlocks = ({ openLink }: any) => {
-  const { editor } = useContext(EditorContext);
+  const { editor } = useContext(SlateEditorContext);
 
   const theme = useTheme();
 

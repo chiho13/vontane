@@ -1,7 +1,7 @@
 import { useContext, useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import { BlockMath } from "react-katex";
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import { ReactEditor, useSelected } from "slate-react";
 import { Editor } from "slate";
 import { OptionMenu } from "../OptionMenu";
@@ -9,8 +9,10 @@ import { cn } from "@/utils/cn";
 
 export function EquationElement(props) {
   const { attributes, children, element } = props;
-  const { editor, showEditBlockPopup, selectedElementID, activePath } =
+  const { showEditBlockPopup, selectedElementID, activePath } =
     useContext(EditorContext);
+
+  const { editor } = useContext(SlateEditorContext);
   const path = ReactEditor.findPath(editor, element);
 
   return (

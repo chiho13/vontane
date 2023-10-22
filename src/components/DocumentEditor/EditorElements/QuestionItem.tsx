@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState, useRef } from "react";
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import { ReactEditor, useFocused, useSelected } from "slate-react";
 import { Editor, Path, Transforms } from "slate";
 import styled from "styled-components";
@@ -15,7 +15,7 @@ const ListItemStyle = styled.div`
 `;
 
 export function QuestionItem(props) {
-  const { editor } = useContext(EditorContext);
+  const { editor } = useContext(SlateEditorContext);
   const { attributes, children, element } = props;
   const path = ReactEditor.findPath(editor, element);
   const focused = useFocused();

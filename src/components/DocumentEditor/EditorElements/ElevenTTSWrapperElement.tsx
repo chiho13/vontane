@@ -1,5 +1,5 @@
 import { useContext, useEffect, useLayoutEffect, useState } from "react";
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import { ReactEditor, useFocused, useSelected } from "slate-react";
 import { TextSpeech } from "@/components/TextSpeech";
 import { OptionMenu } from "../OptionMenu";
@@ -47,7 +47,7 @@ const findAllSimilarElements = (nodes: any) => {
 const withConsecutiveGrouping = (Component: any) => {
   return (props: any) => {
     const { element } = props;
-    const { editor } = useContext(EditorContext);
+    const { editor } = useContext(SlateEditorContext);
 
     if (!editor) {
       return <Component {...props} />;
@@ -72,7 +72,8 @@ const ElevenTTSWrapperBase = (props: {
   isFirstInGroup: any;
 }) => {
   const { attributes, children, element, isFirstInGroup } = props;
-  const { editor, activePath } = useContext(EditorContext);
+  const { activePath } = useContext(EditorContext);
+  const { editor } = useContext(SlateEditorContext);
   const path = ReactEditor.findPath(editor, element);
 
   const [selectedVoiceId, setSelectedVoiceId] = useState<string>(

@@ -16,7 +16,7 @@ import {
   Youtube,
   LineChart,
 } from "lucide-react";
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import { Element as SlateElement, Editor, Path, Transforms } from "slate";
 import { ReactEditor } from "slate-react";
 import { TextIcon } from "@/icons/Text";
@@ -71,12 +71,10 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
     const searchInputRef: any = useRef(null);
     const searchBottomInputRef: any = useRef(null);
 
-    const {
-      editor,
-      setActivePath,
-      setShowEditBlockPopup,
-      setSelectedElementID,
-    } = useContext(EditorContext);
+    const { setActivePath, setShowEditBlockPopup, setSelectedElementID } =
+      useContext(EditorContext);
+    const { editor } = useContext(SlateEditorContext);
+
     const [currentNode] = Editor.node(editor, JSON.parse(activePath));
     const [isKeyboardNav, setIsKeyboardNav] = useState(false);
     const customElements = [

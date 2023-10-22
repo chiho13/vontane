@@ -14,7 +14,6 @@ import { useEditor } from "@/hooks/useEditor";
 
 // Create the EditorContext with the correct function signature
 const EditorContext = createContext<{
-  editor: any;
   showEditBlockPopup: any;
   setShowEditBlockPopup: Dispatch<SetStateAction<any>>;
   selectedElementID: string;
@@ -26,7 +25,6 @@ const EditorContext = createContext<{
   lastActiveSelection: any;
   setLastActiveSelection: Dispatch<SetStateAction<any>>;
 }>({
-  editor: null as any,
   showEditBlockPopup: false,
   setShowEditBlockPopup: () => {},
   selectedElementID: "",
@@ -58,7 +56,6 @@ const EditorProvider: React.FC<EquationProviderProps> = ({ children }) => {
   return (
     <EditorContext.Provider
       value={{
-        editor,
         showEditBlockPopup,
         setShowEditBlockPopup,
         selectedElementID,
@@ -76,5 +73,30 @@ const EditorProvider: React.FC<EquationProviderProps> = ({ children }) => {
   );
 };
 
+// Create the EditorContext
+const SlateEditorContext = createContext<{
+  editor: any;
+}>({
+  editor: null,
+});
+
+// Define the ProviderProps type
+type ProviderProps = PropsWithChildren<{}>;
+
+// Create the EditorProvider
+const SlateEditorProvider: React.FC<ProviderProps> = ({ children }) => {
+  const editor = useEditor();
+  return (
+    <SlateEditorContext.Provider value={{ editor }}>
+      {children}
+    </SlateEditorContext.Provider>
+  );
+};
+
 // Export the EquationProvider and the EditorContext
-export { EditorProvider, EditorContext };
+export {
+  EditorProvider,
+  EditorContext,
+  SlateEditorProvider,
+  SlateEditorContext,
+};

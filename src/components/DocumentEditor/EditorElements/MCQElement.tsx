@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { ReactEditor } from "slate-react";
 import { Transforms } from "slate";
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import { OptionMenu } from "../OptionMenu";
 import { hasSlideElement } from "@/utils/helpers";
 interface MCQElementProps {
@@ -25,7 +25,8 @@ const findMCQElements = (nodes) => {
 const withQuestionNumbering = (Component) => {
   return (props) => {
     const { element } = props;
-    const { editor } = useContext(EditorContext);
+
+    const { editor } = useContext(SlateEditorContext);
 
     if (!editor) {
       return <Component {...props} questionNumber={null} />;
@@ -44,7 +45,7 @@ const withQuestionNumbering = (Component) => {
 
 export const MCQElement: React.FC<MCQElementProps> = withQuestionNumbering(
   ({ element, attributes, children, questionNumber }) => {
-    const { editor } = useContext(EditorContext);
+    const { editor } = useContext(SlateEditorContext);
     const path = ReactEditor.findPath(editor, element);
     const hasSlide = hasSlideElement(editor.children);
 

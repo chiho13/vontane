@@ -8,7 +8,7 @@ import classes from "./styles/SortableElement.module.css";
 import { default as classNames } from "classnames";
 import { Grip, GripHorizontal, GripVertical, Plus } from "lucide-react";
 import { useTheme } from "styled-components";
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Editor, Range } from "slate";
 import { useNewColumn } from "@/contexts/NewColumnContext";
@@ -44,7 +44,8 @@ export function SortableElement({
   } = useSortable({ id: element.id });
 
   const slideBreakListener = element.type === "slide" && listeners;
-  const { editor } = useContext(EditorContext);
+
+  const { editor } = useContext(SlateEditorContext);
 
   const eleventtsListener = element.type === "tts" && listeners;
   const [isHovered, setIsHovered] = useState(false);
@@ -118,7 +119,7 @@ export function SortableElement({
             <div
               className={classNames(
                 classes.addButton,
-                " opacity-0 transition duration-300 group-hover:opacity-100"
+                " opacity-0  group-hover:opacity-100"
               )}
             >
               {addButton}
@@ -128,7 +129,7 @@ export function SortableElement({
               {...listeners}
               className={` ${
                 element.type === "tts" && "h-[18px] p-px"
-              } flex cursor-grab items-center  rounded-md opacity-0 transition duration-300 hover:bg-gray-300 group-hover:opacity-100 dark:hover:bg-accent`}
+              } flex cursor-grab items-center  rounded-md opacity-0  hover:bg-gray-300 group-hover:opacity-100 dark:hover:bg-accent`}
               contentEditable={false}
             >
               {element.type === "tts" ? (

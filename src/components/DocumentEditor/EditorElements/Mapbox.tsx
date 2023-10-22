@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState, useRef, useCallback } from "react";
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import { ReactEditor, useFocused, useSelected } from "slate-react";
 
 import { useTheme } from "next-themes";
@@ -19,7 +19,9 @@ import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { api } from "@/utils/api";
 
 export function Mapbox(props) {
-  const { editor, activePath, setActivePath } = useContext(EditorContext);
+  const { activePath, setActivePath } = useContext(EditorContext);
+
+  const { editor } = useContext(SlateEditorContext);
 
   const { setElementData, setShowRightSidebar, setTab, showRightSidebar } =
     useTextSpeech();

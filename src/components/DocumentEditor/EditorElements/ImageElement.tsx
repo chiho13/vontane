@@ -8,7 +8,7 @@ import {
   useLayoutEffect,
 } from "react";
 import Image from "next/image";
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import { ReactEditor, useFocused, useSelected } from "slate-react";
 import { Editor, Transforms } from "slate";
 import { OptionMenu } from "../OptionMenu";
@@ -239,7 +239,6 @@ export const ImageElement = React.memo(
 
     // const { setElementData }: any = sideBarStore((state) => state);
     const {
-      editor,
       showEditBlockPopup,
       selectedElementID,
       activePath,
@@ -249,6 +248,8 @@ export const ImageElement = React.memo(
       setTempBase64,
       tempBase64,
     } = useContext(EditorContext);
+
+    const { editor } = useContext(SlateEditorContext);
 
     const path = ReactEditor.findPath(editor, element);
     const router = useRouter();
@@ -443,6 +444,10 @@ export const ImageElement = React.memo(
         )}
       </div>
     );
+  },
+  (prevProps, nextProps) => {
+    // Only re-render if the node has changed
+    return prevProps.element === nextProps.element;
   }
 );
 
@@ -508,13 +513,13 @@ export const ImageEmbedLink = () => {
   });
 
   const {
-    editor,
     activePath,
     setActivePath,
     showEditBlockPopup,
     setShowEditBlockPopup,
     setTempBase64,
   } = useContext(EditorContext);
+  const { editor } = useContext(SlateEditorContext);
 
   const aiImageFormSchema = z.object({
     prompt: z.string().nonempty("Please enter a description"),

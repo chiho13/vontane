@@ -24,7 +24,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/Form";
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { ReactEditor, useSelected } from "slate-react";
 import { Youtube, Play } from "lucide-react";
@@ -101,9 +101,9 @@ export const Embed = React.memo(
     const selected = useSelected();
     const { setCurrentTime, currentTime }: any = sideBarStore((state) => state);
 
-    const { editor, setActivePath, setShowEditBlockPopup } =
-      useContext(EditorContext);
+    const { setActivePath, setShowEditBlockPopup } = useContext(EditorContext);
 
+    const { editor } = useContext(SlateEditorContext);
     const opts = {
       width: element.width,
       height: element.width * ASPECT_RATIO,
@@ -332,8 +332,9 @@ export const Embed = React.memo(
 );
 
 export const EmbedLink = () => {
-  const { editor, activePath, setActivePath, setShowEditBlockPopup } =
+  const { activePath, setActivePath, setShowEditBlockPopup } =
     useContext(EditorContext);
+  const { editor } = useContext(SlateEditorContext);
 
   const getVideoDetailsMutation = api.workspace.getVideoDetails.useMutation();
 

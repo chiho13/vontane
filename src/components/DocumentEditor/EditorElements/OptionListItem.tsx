@@ -7,7 +7,7 @@ import {
   Path,
   Node,
 } from "slate";
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import { ReactEditor, useFocused } from "slate-react";
 import { Check } from "lucide-react";
 import styled from "styled-components";
@@ -58,7 +58,8 @@ export const findAllNumberedLists = (nodes) => {
 const withListNumbering = (Component) => {
   return (props) => {
     const { element } = props;
-    const { editor } = useContext(EditorContext);
+
+    const { editor } = useContext(SlateEditorContext);
 
     if (!editor) {
       return <Component {...props} questionNumber={null} />;
@@ -85,7 +86,7 @@ const withListNumbering = (Component) => {
 // Custom List Item component
 export const OptionListItem = withListNumbering(
   ({ attributes, children, element, listNumber }) => {
-    const { editor } = useContext(EditorContext);
+    const { editor } = useContext(SlateEditorContext);
     const [checked, setChecked] = useState(element.correctAnswer || false);
     const focused = useFocused();
 

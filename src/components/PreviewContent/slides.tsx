@@ -1,4 +1,4 @@
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { parseNodes, splitIntoSlides } from "@/utils/renderHelpers";
@@ -14,7 +14,7 @@ export const SlidesPreview = () => {
 
   const workspaceId = router.query.workspaceId;
 
-  const { editor: fromEditor, activePath } = useContext(EditorContext);
+  const { editor: fromEditor } = useContext(SlateEditorContext);
   const [localValue, setLocalValue] = useState(fromEditor.children);
   const [currentSlideIndex, setCurrentSlideIndex] = useLocalStorage(
     `currentSlideIndex-${workspaceId}`,

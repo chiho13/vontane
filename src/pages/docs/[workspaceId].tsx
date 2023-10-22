@@ -7,6 +7,7 @@ import Layout from "@/components/Layouts/AccountLayout";
 import { NextPage } from "next";
 import { GetServerSideProps } from "next";
 import { createInnerTRPCContext } from "@/server/api/trpc";
+import { api } from "@/utils/api";
 
 type WorkspaceProps = {
   session: any; // Replace 'any' with your actual Session type.
@@ -17,6 +18,7 @@ const Workspace: NextPage<WorkspaceProps> = ({ session }) => {
 
   const workspaceId = router.query.workspaceId as string;
   const [loading, setLoading] = useState(true);
+  const updateWorkspaceMutation = api.workspace.updateWorkspace.useMutation();
 
   useEffect(() => {
     if (session && loading) {
@@ -28,11 +30,7 @@ const Workspace: NextPage<WorkspaceProps> = ({ session }) => {
     return <div></div>;
   }
 
-  return session ? (
-    <WorkspaceContainer workspaceId={workspaceId} />
-  ) : (
-    <div></div>
-  );
+  return <WorkspaceContainer workspaceId={workspaceId} />;
 };
 
 export const getServerSideProps: GetServerSideProps<WorkspaceProps> = async (

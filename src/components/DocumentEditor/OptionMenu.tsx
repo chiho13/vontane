@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { BsFillCaretDownFill, BsSoundwave } from "react-icons/bs";
 import Dropdown, { DropdownContext, DropdownProvider } from "../Dropdown";
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import { ReactEditor } from "slate-react";
 import { Element as SlateElement, Editor, Path, Transforms } from "slate";
 import { genNodeId } from "@/hoc/withID";
@@ -60,7 +60,8 @@ interface OptionMenuElement {
 export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
   ({ element, className }, ref) => {
     const optionMenuRef = useRef(null);
-    const { editor, setActivePath } = useContext(EditorContext);
+
+    const { editor } = useContext(SlateEditorContext);
     const { setElementData } = useTextSpeech();
     const { activeDropdown, toggleDropdown } = useContext(DropdownContext);
     const path = ReactEditor.findPath(editor, element);

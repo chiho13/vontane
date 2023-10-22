@@ -1,4 +1,4 @@
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import { useContext, useEffect, useRef, useState } from "react";
 import { FaBold } from "react-icons/fa";
 import { FiItalic, FiUnderline } from "react-icons/fi";
@@ -69,13 +69,14 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   setShowMiniToolbar,
 }) => {
   const {
-    editor,
     activePath,
     setShowEditBlockPopup,
     setSelectedElementID,
     setActivePath,
     setLastActiveSelection,
   } = useContext(EditorContext);
+
+  const { editor } = useContext(SlateEditorContext);
 
   const { isInline } = editor;
 

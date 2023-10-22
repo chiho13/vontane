@@ -37,7 +37,7 @@ import { Voice } from "../../types/voice";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { Button } from "../ui/button";
 import { ReactEditor } from "slate-react";
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import { Transforms } from "slate";
 import { useLocalStorage } from "usehooks-ts";
 
@@ -109,7 +109,8 @@ function VoiceDropdown({
   const [selectedItemText, setSelectedItemText] = useState<string>(
     element.name || ""
   );
-  const { editor } = useContext(EditorContext);
+
+  const { editor } = useContext(SlateEditorContext);
   const [voices, setVoices] = useState<Voice[]>([]);
   const path = ReactEditor.findPath(editor, element);
   const [voiceStyles, setVoiceStyles] = useState<Filter[]>([]);

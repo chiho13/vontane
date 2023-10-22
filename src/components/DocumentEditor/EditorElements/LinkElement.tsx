@@ -1,4 +1,4 @@
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import React, { useContext, useState } from "react";
 import { ReactEditor, useSelected } from "slate-react";
 
@@ -22,7 +22,9 @@ export const LinkElement = (props: {
 }) => {
   const { attributes, children, element } = props;
   const selected = useSelected();
-  const { editor } = useContext(EditorContext);
+
+  const { editor } = useContext(SlateEditorContext);
+
   const path = ReactEditor.findPath(editor, element);
 
   return (

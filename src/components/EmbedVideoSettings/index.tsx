@@ -13,7 +13,7 @@ import {
 } from "@/components/Form";
 
 import { useContext, useEffect, useState, useRef, useCallback } from "react";
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import LoadingSpinner from "@/icons/LoadingSpinner";
 import { Button } from "../ui/button";
 import { Search } from "lucide-react";
@@ -30,7 +30,8 @@ import { genNodeId } from "@/hoc/withID";
 import { sideBarStore } from "@/store/sidebar";
 
 export const EmbedVideoSettings = ({ element }) => {
-  const { editor, activePath } = useContext(EditorContext);
+  const { activePath } = useContext(EditorContext);
+  const { editor } = useContext(SlateEditorContext);
   const path = ReactEditor.findPath(editor, element);
 
   const { copied, copyToClipboard } = useClipboard();

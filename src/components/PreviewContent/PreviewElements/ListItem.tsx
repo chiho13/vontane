@@ -6,7 +6,7 @@ import {
   useMemo,
   useCallback,
 } from "react";
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import { ReactEditor, useFocused, useSelected } from "slate-react";
 import { Text } from "slate";
 import styled from "styled-components";
@@ -94,12 +94,10 @@ const withListNumbering = (Component) => {
 };
 
 export const ListItem = withListNumbering((props) => {
-  const {
-    editor,
-    showEditBlockPopup,
-    selectedElementID,
-    setSelectedElementID,
-  } = useContext(EditorContext);
+  const { showEditBlockPopup, selectedElementID, setSelectedElementID } =
+    useContext(EditorContext);
+
+  const { editor } = useContext(SlateEditorContext);
   const {
     nodes,
     children,

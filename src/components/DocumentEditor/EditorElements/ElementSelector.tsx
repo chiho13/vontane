@@ -1,4 +1,4 @@
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import React, { memo, useCallback, useContext, useState } from "react";
 import { ReactEditor } from "slate-react";
 import {
@@ -27,7 +27,7 @@ import {
 export const ElementSelector = memo(
   (props: { attributes: any; children: any; element: any }) => {
     const { element, attributes, children } = props;
-    const { editor } = useContext(EditorContext);
+    const { editor } = useContext(SlateEditorContext);
     const path = ReactEditor.findPath(editor, element);
     const [selectedOption, setSelectedOption] = useState(null);
 

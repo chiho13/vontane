@@ -1,5 +1,5 @@
 // SlideBreak.js
-import { EditorContext } from "@/contexts/EditorContext";
+import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import React, { useContext, useEffect, useState } from "react";
 import { ReactEditor } from "slate-react";
 import { ChevronDown, ChevronUp } from "lucide-react";
@@ -21,7 +21,8 @@ const findSlideBreakElements = (nodes: any[]) => {
 const withSlideNumbering = (Component) => {
   return (props) => {
     const { element } = props;
-    const { editor } = useContext(EditorContext);
+
+    const { editor } = useContext(SlateEditorContext);
 
     if (!editor) {
       return <Component {...props} slideNumbers={null} />;
@@ -43,7 +44,7 @@ const withSlideNumbering = (Component) => {
 
 export const SlideBreak = withSlideNumbering(
   ({ attributes, children, element, slideNumber }) => {
-    const { editor } = useContext(EditorContext);
+    const { editor } = useContext(SlateEditorContext);
     const path = ReactEditor.findPath(editor, element);
 
     const theme = useTheme();

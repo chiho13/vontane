@@ -197,10 +197,10 @@ const DraggableRadioGroupItem = ({
   return (
     <div
       ref={AudioPointref}
-      className={`absolute cursor-pointer rounded-md  p-1  ${
+      className={`border-box absolute cursor-pointer  rounded-md border-2 p-1  ${
         audioPointData === element.id
-          ? "bg-gray-500/20 shadow-md ring-2 ring-brand"
-          : ""
+          ? " border-dashed border-brand bg-gray-500/20  shadow-md"
+          : "border-transparent"
       }`}
       style={{
         left: `${position.x}%`,
@@ -215,7 +215,7 @@ const DraggableRadioGroupItem = ({
     >
       <Hotspot colour={element.colour}>
         <button
-          className="beacon flex h-[24px] w-[24px] items-center justify-center  rounded-full border-2 shadow-lg"
+          className="beacon  flex h-[24px] w-[24px] items-center  justify-center rounded-full border-2 shadow-lg"
           style={{
             borderColor: element.colour,
           }}

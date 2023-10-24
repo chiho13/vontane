@@ -30,6 +30,7 @@ import { Button } from "../ui/button";
 import Layout from "../Layouts/AccountLayout";
 import { ThemeProvider } from "styled-components";
 import { debounce, words } from "lodash";
+import { syncStatusStore } from "@/store/sync";
 
 // import "react-mirt/dist/css/react-mirt.css";
 type WorkspaceProps = {
@@ -43,6 +44,8 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = memo(
     const [fetchWorkspaceIsLoading, setFetchWorkspaceIsLoading] =
       useState(true);
 
+    const { syncStatus, setSyncStatus } = syncStatusStore();
+
     const { setUpdatedWorkspace } = useWorkspaceTitleUpdate();
     const { profile, credits }: any = useUserContext();
 
@@ -54,9 +57,9 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = memo(
       accentColor: "#e9e9e9",
     });
 
-    const [syncStatus, setSyncStatus] = useState<"idle" | "syncing" | "synced">(
-      "idle"
-    );
+    // const [syncStatus, setSyncStatus] = useState<"idle" | "syncing" | "synced">(
+    //   "idle"
+    // );
     const {
       data: workspaceData,
       refetch: refetchWorkspaceData,
@@ -115,20 +118,22 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = memo(
 
     const updateWorkspaceMutation = api.workspace.updateWorkspace.useMutation();
 
-    const updateWorkspace = async (newSlateValue: any) => {
-      setSyncStatus("syncing");
-      try {
-        await updateWorkspaceMutation.mutateAsync({
-          id: workspaceId,
-          slate_value: JSON.stringify(newSlateValue),
-        });
-
-        setSyncStatus("synced");
-      } catch (error) {
-        console.error("Error updating workspace:", error);
-        setSyncStatus("idle"); // Rollback on error
-      }
-    };
+    const updateWorkspace = useCallback(
+      async (newSlateValue: any) => {
+        setSyncStatus("syncing");
+        try {
+          const response = await updateWorkspaceMutation.mutateAsync({
+            id: workspaceId,
+            slate_value: JSON.stringify(newSlateValue),
+          });
+          setSyncStatus("synced");
+        } catch (error) {
+          console.error("Error updating workspace:", error);
+          setSyncStatus("idle"); // Rollback on error
+        }
+      },
+      [workspaceId, updateWorkspaceMutation, setSyncStatus]
+    );
 
     const debouncedUpdate = useCallback(
       debounce((value: any[]) => {
@@ -195,15 +200,13 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = memo(
                   >
                     <DocumentEditor
                       key={workspaceId}
-                      setSyncStatus={setSyncStatus}
-                      syncStatus={syncStatus}
                       workspaceId={workspaceId}
                       credits={credits}
                       handleTextChange={handleTextChange}
                       initialSlateValue={initialSlateValue}
                       setFetchWorkspaceIsLoading={setFetchWorkspaceIsLoading}
                     />
-                    <AlertDialog open={open && paymentSuccess}>
+                    {/* <AlertDialog open={open && paymentSuccess}>
                       <AlertDialogContent>
                         <AlertDialogHeader>
                           <AlertDialogTitle>
@@ -224,7 +227,7 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = memo(
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
-                    </AlertDialog>
+                    </AlertDialog> */}
                   </RightSideBarProvider>
                 </EditorProvider>
               </SlateEditorProvider>

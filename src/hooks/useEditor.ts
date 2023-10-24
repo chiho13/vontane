@@ -19,7 +19,6 @@ import { genNodeId } from "@/hoc/withID";
 import isUrl from "is-url";
 import { withPasting } from "@/hoc/withPasting";
 import { withImages } from "@/hoc/withImages";
-import { editorStore } from "@/store/editor";
 interface CustomEditor extends ReactEditor {
   undo: () => void;
   redo: () => void;
@@ -41,15 +40,4 @@ export const useEditor = () => {
     []
   );
   return editor;
-};
-
-export const useEditorWithStore = () => {
-  const editor = useEditor();
-  const set = editorStore((state) => state.set);
-
-  useEffect(() => {
-    set({ editor });
-  }, [editor, set]);
-
-  return { editor };
 };

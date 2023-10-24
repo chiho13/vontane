@@ -70,6 +70,7 @@ import { UserContext } from "@/contexts/UserContext";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { cn } from "@/utils/cn";
 import { sideBarStore } from "@/store/sidebar";
+import { isEqual } from "lodash";
 
 function generateRandomFilename(file) {
   const extension = file.name.split(".").pop();
@@ -82,6 +83,7 @@ const ItemType = {
 };
 
 export const useDraggable = (
+  element,
   initialPosition = { x: 0, y: 0 },
   imageRef,
   editor,
@@ -139,18 +141,27 @@ export const useDraggable = (
       );
 
       if (audioPointIndex !== -1) {
-        const newAudioPoint = [...imageNode.audioPoint];
-        newAudioPoint[audioPointIndex] = {
-          ...newAudioPoint[audioPointIndex],
+        const oldAudioPoint = imageNode.audioPoint[audioPointIndex];
+        const newAudioPoint = {
+          ...oldAudioPoint,
           x: position.x,
           y: position.y,
         };
 
-        Transforms.setNodes(
-          editor,
-          { audioPoint: newAudioPoint },
-          { at: path }
-        );
+        // Only update the node if the position has changed
+        if (
+          oldAudioPoint.x !== newAudioPoint.x ||
+          oldAudioPoint.y !== newAudioPoint.y
+        ) {
+          const updatedAudioPoints = [...imageNode.audioPoint];
+          updatedAudioPoints[audioPointIndex] = newAudioPoint;
+
+          Transforms.setNodes(
+            editor,
+            { ...element, audioPoint: updatedAudioPoints },
+            { at: path }
+          );
+        }
       }
 
       setUpdateSlate(false);
@@ -170,67 +181,83 @@ export const useDraggable = (
   return { AudioPointref, position, handleMouseDown };
 };
 
-const DraggableRadioGroupItem = ({
-  value,
-  editor,
-  element,
-  id,
-  imageRef,
-  initialPosition,
-  path,
-}) => {
-  const [colour, _] = useState(element.colour);
-  const { audioPointData, setAudioPointData } = sideBarStore();
-  const { AudioPointref, position, handleMouseDown } = useDraggable(
-    {
-      x: initialPosition.x,
-      y: initialPosition.y,
-    },
-    imageRef,
-    editor,
-    id,
-    path
-  );
-
-  console.log(element.type);
-
-  return (
-    <div
-      ref={AudioPointref}
-      className={`border-box absolute cursor-pointer  rounded-md border-2 p-1  ${
-        audioPointData === element.id
-          ? " border-dashed border-brand bg-gray-500/20  shadow-md"
-          : "border-transparent"
-      }`}
-      style={{
-        left: `${position.x}%`,
-        top: `${position.y}%`,
-      }}
-      onMouseDown={(e) => {
-        handleMouseDown(e);
-      }}
-      onClick={() => {
-        setAudioPointData(element.id);
-      }}
-    >
-      <Hotspot colour={element.colour}>
-        <button
-          className="beacon  flex h-[24px] w-[24px] items-center  justify-center rounded-full border-2 shadow-lg"
-          style={{
-            borderColor: element.colour,
-          }}
-        >
-          <div
-            className="h-[12px] w-[12px] rounded-full shadow-lg"
-            style={{
-              backgroundColor: element.colour,
-            }}
-          ></div>
-        </button>
-      </Hotspot>
-    </div>
-  );
+type DraggableRadioGroupItemProps = {
+  value: any;
+  editor: any;
+  imageElement: any;
+  element: any;
+  id: any;
+  imageRef: any;
+  initialPosition: any;
+  path: any;
 };
+
+const DraggableRadioGroupItem = React.memo(
+  (props: DraggableRadioGroupItemProps) => {
+    const {
+      value,
+      editor,
+      element,
+      imageElement,
+      id,
+      imageRef,
+      initialPosition,
+      path,
+    } = props;
+    const [colour, _] = useState(element.colour);
+    const { audioPointData, setAudioPointData } = sideBarStore();
+    const { AudioPointref, position, handleMouseDown } = useDraggable(
+      imageElement,
+      {
+        x: initialPosition.x,
+        y: initialPosition.y,
+      },
+      imageRef,
+      editor,
+      id,
+      path
+    );
+
+    console.log(element.type);
+
+    return (
+      <div
+        ref={AudioPointref}
+        className={`border-box absolute cursor-pointer  rounded-md border-2 p-1  ${
+          audioPointData === element.id
+            ? " border-dashed border-brand bg-gray-500/20  shadow-md"
+            : "border-transparent"
+        }`}
+        style={{
+          left: `${position.x}%`,
+          top: `${position.y}%`,
+        }}
+        onMouseDown={(e) => {
+          handleMouseDown(e);
+        }}
+        onClick={() => {
+          setAudioPointData(element.id);
+        }}
+      >
+        <Hotspot colour={element.colour}>
+          <button
+            className="beacon  flex h-[24px] w-[24px] items-center  justify-center rounded-full border-2 shadow-lg"
+            style={{
+              borderColor: element.colour,
+            }}
+          >
+            <div
+              className="h-[12px] w-[12px] rounded-full shadow-lg"
+              style={{
+                backgroundColor: element.colour,
+              }}
+            ></div>
+          </button>
+        </Hotspot>
+      </div>
+    );
+  }
+);
 
 export const ImageElement = React.memo(
   (props: { attributes: any; children: any; element: any }) => {
@@ -269,8 +296,7 @@ export const ImageElement = React.memo(
       blockWidth,
     } = useResizeBlock(element, editor, path);
 
-    const audioPoint = element.audioPoint;
-
+    const audioPoint = useMemo(() => element.audioPoint, [element, isEqual]);
     const selected = useSelected();
 
     const [tempURL, setTempURL] = useState(element.tempURL);
@@ -418,25 +444,24 @@ export const ImageElement = React.memo(
                 </div>
               </div>
 
-              {audioPoint &&
-                selected &&
-                audioPoint.map((el, i) => {
-                  return (
-                    <DraggableRadioGroupItem
-                      key={i}
-                      value={el.id}
-                      editor={editor}
-                      id={el.id}
-                      imageRef={imageRef}
-                      element={el}
-                      path={path}
-                      initialPosition={{
-                        x: el.x,
-                        y: el.y,
-                      }}
-                    />
-                  );
-                })}
+              {audioPoint.map((el, i) => {
+                return (
+                  <DraggableRadioGroupItem
+                    key={i}
+                    value={el.id}
+                    editor={editor}
+                    id={el.id}
+                    imageRef={imageRef}
+                    element={el}
+                    imageElement={element}
+                    path={path}
+                    initialPosition={{
+                      x: el.x,
+                      y: el.y,
+                    }}
+                  />
+                );
+              })}
             </div>
 
             {children}
@@ -444,10 +469,6 @@ export const ImageElement = React.memo(
         )}
       </div>
     );
-  },
-  (prevProps, nextProps) => {
-    // Only re-render if the node has changed
-    return prevProps.element === nextProps.element;
   }
 );
 

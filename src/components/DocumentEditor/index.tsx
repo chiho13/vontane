@@ -123,8 +123,6 @@ interface DocumentEditorProps {
   credits: Number;
   handleTextChange?: (value: any) => void;
   initialSlateValue?: any;
-  setSyncStatus: (value: any) => void;
-  syncStatus: string;
   setFetchWorkspaceIsLoading: (value: any) => void;
 }
 
@@ -210,13 +208,12 @@ import { z } from "zod";
 import { Export } from "../Export";
 import { cn } from "@/utils/cn";
 import { splitIntoSlides } from "@/utils/renderHelpers";
+import { syncStatusStore } from "@/store/sync";
 
 export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
   ({
     workspaceId,
     credits,
-    setSyncStatus,
-    syncStatus,
     handleTextChange,
     initialSlateValue,
     setFetchWorkspaceIsLoading,
@@ -226,6 +223,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
 
     const { upgrade, ...rest } = router.query;
     const { isLocked } = useContext(LayoutContext);
+
+    const { syncStatus } = syncStatusStore();
 
     const {
       showEditBlockPopup,

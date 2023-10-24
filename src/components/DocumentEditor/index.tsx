@@ -47,24 +47,10 @@ import { y_animation_props } from "../Dropdown";
 
 import { findElementInSlateValue } from "./helpers/findElementInSlate";
 import { MathQuestionGenerator } from "../QuestionGenerator/Math";
-import { extractTextValues } from "@/components/DocumentEditor/helpers/extractText";
 import { useRouter } from "next/router";
-import { DraggableCore } from "react-draggable";
-import Draggable from "react-draggable";
 import { Portal } from "react-portal";
 import { Toolbar } from "@/components/Toolbar";
 import { up_animation_props } from "@/config/framer";
-
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogClose,
-} from "@/components/ui/dialog";
 
 import { slightbouncey } from "@/config/framer";
 import {
@@ -85,9 +71,7 @@ import {
 import { genNodeId } from "@/hoc/withID";
 
 import {
-  useSortable,
   SortableContext,
-  sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 
@@ -107,7 +91,6 @@ import { Leaf } from "./LeafElements/TextLeaf";
 import { MiniDropdown } from "./MiniDropdown";
 import { OptionMenu } from "./OptionMenu";
 import { useTextSpeech } from "../../contexts/TextSpeechContext";
-import { TextSpeech } from "@/components/TextSpeech";
 import { textRegex } from "./helpers/textRegex";
 import { addMCQBlock } from "./helpers/addMCQBlock";
 import { breakpoints } from "@/utils/breakpoints";
@@ -199,13 +182,6 @@ import { EnglishQuestionGenerator } from "../QuestionGenerator/English";
 import { addEditableEquationBlock } from "./helpers/addEquationBlock";
 import useResizeSidebar from "@/hooks/useResizeSidebar";
 import { debounce } from "lodash";
-import { DOMRange } from "slate-react/dist/utils/dom";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { Export } from "../Export";
 import { cn } from "@/utils/cn";
 import { splitIntoSlides } from "@/utils/renderHelpers";
 import { syncStatusStore } from "@/store/sync";

@@ -78,7 +78,7 @@ export const ParagraphElement = memo(
         editor.selection &&
         Range.isCollapsed(editor.selection));
 
-    let placeholder = "Press '/' for commands";
+    let placeholder = "Press '/' for options";
     const isFirstNode = path[path.length - 1] === 0;
 
     // Check if the node is empty

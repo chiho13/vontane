@@ -17,7 +17,7 @@ import { useContext, useEffect, useState } from "react";
 import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
 import LoadingSpinner from "@/icons/LoadingSpinner";
 import { Button } from "../ui/button";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Trash } from "lucide-react";
 import { ReactEditor } from "slate-react";
 import { genNodeId } from "@/hoc/withID";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
@@ -33,6 +33,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { sideBarStore } from "@/store/sidebar";
+import { IconPicker } from "../IconPicker";
 
 export const ImageSettings = ({ element }) => {
   const router = useRouter();
@@ -244,15 +245,15 @@ export const ImageSettings = ({ element }) => {
           <Button
             variant="outline"
             size="sm"
-            className=" absolute right-3 top-3 h-[32px] border-red-400 text-red-500 hover:border-red-600 hover:bg-red-100/50 hover:text-red-600"
+            className=" absolute right-3 top-3 h-[32px] w-[32px]  border border-red-400 px-1 text-red-500 hover:border-red-600 hover:bg-red-100/50 hover:text-red-600"
             onClick={deleteHotSpotTag}
           >
-            Delete
+            <Trash className="w-[18px]" />
           </Button>
-          <h3 className="text-bold mb-3 text-sm text-gray-500 dark:text-gray-400">
+          <h3 className="mb-3 text-sm font-bold text-gray-500 dark:text-gray-400">
             Hotspot Popup Content
           </h3>
-          <div className="text-gray-500">ID: {audioPointData}</div>
+          {/* <div className="text-gray-500">ID: {audioPointData}</div> */}
 
           <div className="mt-4">
             <Popover>
@@ -290,6 +291,12 @@ export const ImageSettings = ({ element }) => {
               </PopoverContent>
             </Popover>
           </div>
+
+          <label className="block pb-2 pt-4 text-sm  font-semibold">
+            Change Icon
+          </label>
+
+          <IconPicker />
 
           <label className="block pb-2 pt-2 text-sm  font-semibold">
             Title

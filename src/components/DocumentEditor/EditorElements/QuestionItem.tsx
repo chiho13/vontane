@@ -43,7 +43,7 @@ export function QuestionItem(props) {
           className="text-[18px]"
           data-placeholder={
             shouldShowPlaceholder
-              ? "Enter question - Press '/' for commands"
+              ? "Enter question - Press '/' for options"
               : ""
           }
         >

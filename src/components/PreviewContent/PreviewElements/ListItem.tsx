@@ -128,7 +128,7 @@ export const ListItem = withListNumbering((props) => {
 
   if (isEmpty) {
     placeholderText = selected
-      ? "Press '/' for commands"
+      ? "Press '/' for options"
       : isCheckedList
       ? "To-do"
       : "List";

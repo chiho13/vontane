@@ -481,7 +481,7 @@ export const DataVisBlock = React.memo(
                     {!selected && (
                       <div
                         className={cn(
-                          `absolute bottom-0 left-0 right-0 top-0 flex cursor-pointer items-center justify-center rounded-md  bg-slate-700 bg-opacity-30 opacity-0 transition-opacity hover:opacity-100`
+                          `absolute bottom-0 left-0 right-0 top-0 flex cursor-pointer items-center justify-center rounded-md  bg-slate-700 bg-opacity-30 opacity-0  hover:opacity-100`
                         )}
                         style={{
                           width: blockWidth - 2,

@@ -349,6 +349,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
 
       return true;
     };
+
+    const [forceUpdate, setForceUpdate] = useState(false);
+
     const openMiniDropdown = useCallback(
       (path: Path) => {
         const currentpathString = JSON.stringify(path);
@@ -378,14 +381,17 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
           currentNode.type !== "equation" &&
           currentNode.type !== "mcq" &&
           currentNode.type !== "image" &&
+          currentNode.type !== "datavis" &&
+          currentNode.type !== "embed" &&
           currentNode.type !== "slide";
         console.log(targetRect.height);
         if (!isEmpty) {
           insertNewParagraph(editor, Path.next(path));
           setActivePath(JSON.stringify(Path.next(path)));
+          setForceUpdate((prev) => !prev);
         }
         console.log(isEmpty);
-        let topOffset = isEmpty ? 15 : 50;
+        let topOffset = isEmpty ? 15 : 45;
 
         let showDropdownAbove = false;
 
@@ -393,7 +399,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
           topOffset = -(
             dropdownHeight -
             targetRect.height +
-            (isEmpty ? 2 : -25)
+            (isEmpty ? 2 : -40)
           );
           showDropdownAbove = true;
         }
@@ -404,10 +410,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
             ? targetRect.top + topOffset
             : targetRect.bottom + topOffset
         );
-        setDropdownLeft(targetRect.left);
+        setDropdownLeft(targetRect.left - 10);
         setShowDropdown((prevState) => !prevState);
       },
-      [dropdownPositions, isLocked, showDropdown, activePath]
+      [dropdownPositions, isLocked, showDropdown, activePath, forceUpdate]
     );
 
     function splitTitleNode(newPath: Path) {

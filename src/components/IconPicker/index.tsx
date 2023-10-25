@@ -35,6 +35,14 @@ export const IconPicker = () => {
   function pascalToSpaces(str) {
     return str.replace(/([A-Z])/g, " $1").trim();
   }
+
+  const Beacon = (
+    <button className=" h-[32px] w-[32px] rounded-md p-1 transition duration-200 hover:bg-gray-200 dark:hover:bg-accent ">
+      <div className="beacon flex h-[24px] w-[24px] items-center justify-center  rounded-full border-2 border-foreground shadow-lg">
+        <div className="h-[12px] w-[12px] rounded-full bg-foreground shadow-lg"></div>
+      </div>
+    </button>
+  );
   return (
     <div>
       {/* <input
@@ -59,19 +67,16 @@ export const IconPicker = () => {
           <div className="px-4 py-4">
             <Input className="mb-2 w-[240px]" placeholder="Search Icons" />
           </div>
-          <div className=" grid max-h-[500px] grid-cols-10  gap-4  overflow-y-auto px-4 ">
-            <button className=" h-[32px] w-[32px] rounded-md p-1 transition duration-300 hover:bg-gray-200 dark:hover:bg-accent ">
-              <div className="beacon flex h-[24px] w-[24px] items-center justify-center  rounded-full border-2 border-foreground shadow-lg">
-                <div className="h-[12px] w-[12px] rounded-full bg-foreground shadow-lg"></div>
-              </div>
-            </button>
-            {filteredIconNames.map((icon) => {
+          <div className=" grid max-h-[500px] grid-cols-10  gap-4 overflow-y-auto  border-t p-4">
+            {["Beacon", ...filteredIconNames].map((icon) => {
               const IconComponent = Icons[icon];
               const iconLabel = pascalToSpaces(icon);
-              return (
+              return icon === "Beacon" ? (
+                Beacon
+              ) : (
                 <button
                   key={icon}
-                  className="h-[32px] w-[32px]  rounded-md p-1 p-1 transition duration-300 hover:bg-gray-200 dark:hover:bg-accent"
+                  className="h-[32px] w-[32px] rounded-md p-1 transition duration-200 hover:bg-gray-200 dark:hover:bg-accent"
                 >
                   <IconComponent size={24} />
                   <span className="sr-only">{iconLabel}</span>

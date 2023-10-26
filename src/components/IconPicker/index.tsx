@@ -44,12 +44,14 @@ export const IconPicker = ({ onChangeIconType, iconType }) => {
   };
 
   const allIconNames = Object.keys(Icons);
-  const filteredIconNames = allIconNames.filter(
-    (iconName) =>
-      iconName !== "createLucideIcon" &&
-      iconName !== "icons" &&
-      !iconName.endsWith("Icon")
-  );
+  const filteredIconNames = allIconNames
+    .filter(
+      (iconName) =>
+        iconName !== "createLucideIcon" &&
+        iconName !== "icons" &&
+        !iconName.endsWith("Icon")
+    )
+    .sort((a, b) => (b.startsWith("Circle") || b.endsWith("Circle") ? 1 : -1));
   console.log(filteredIconNames);
 
   const DisplayIcon = Icons[iconType];
@@ -94,19 +96,24 @@ export const IconPicker = ({ onChangeIconType, iconType }) => {
       tooltipSide = "bottom";
     }
     return (
-      <div style={style}>
+      <div style={style} className="flex items-center justify-center ">
         <TooltipProvider delayDuration={100}>
           <Tooltip>
             <TooltipTrigger
               key={icon}
-              className="z-1000 h-[32px] w-[32px] rounded-md p-1 transition duration-200 hover:bg-gray-200 dark:hover:bg-accent"
+              className="z-1000 rounded-md"
               onClick={() => {
                 onChangeIconType(icon);
                 setOpenIconPickerDialog(false);
               }}
             >
-              {icon === "Beacon" ? <Beacon /> : <IconComponent size={24} />}
-              <span className="sr-only">{iconLabel}</span>
+              <a
+                href="#"
+                className="block  h-[32px] w-[32px]  rounded-md p-1 transition duration-200 hover:bg-gray-200 dark:hover:bg-accent"
+              >
+                <IconComponent size={24} />
+                <span className="sr-only">{iconLabel}</span>
+              </a>
             </TooltipTrigger>
 
             <TooltipContent
@@ -136,8 +143,8 @@ export const IconPicker = ({ onChangeIconType, iconType }) => {
           </Button>
         </DialogTrigger>
 
-        <DialogContent className="  max-w-[380px] border border-accent p-0 pb-0 text-foreground dark:bg-[#191919] sm:max-w-[640px]">
-          <div className="px-4 py-4">
+        <DialogContent className="  max-w-[380px] border border-accent p-0 pb-0 text-foreground dark:bg-[#191919] sm:max-w-[641px]">
+          <div className="w-full  px-4 py-4">
             <Input
               className="mb-2 w-[240px]"
               placeholder="Search Icons"
@@ -145,14 +152,14 @@ export const IconPicker = ({ onChangeIconType, iconType }) => {
               onChange={onChangeSearchIcon}
             />
           </div>
-          <div className="p-4">
+          <div className="w-full  border-t pb-0">
             <Grid
               columnCount={8}
               columnWidth={80}
-              height={360}
+              height={400}
               rowCount={Math.ceil(searchFilter.length / 10)}
               rowHeight={80}
-              width={620}
+              width={640}
               itemData={searchFilter}
             >
               {Cell}

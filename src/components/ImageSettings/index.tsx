@@ -222,14 +222,14 @@ export const ImageSettings = ({ element }) => {
           Alt Text
         </h3>
         <div className="relative flex items-center">
-          <input
+          <Input
             value={altText}
             className=" h-[36px]  w-full rounded-md  border border-gray-300  bg-muted  p-2 text-sm  focus:outline-none dark:border-gray-400 dark:text-gray-400"
             onChange={editAltText}
           />
         </div>
 
-        <h3 className="text-bold mb-3 mt-4 text-sm text-gray-500 dark:text-gray-400">
+        <h3 className="mb-3 mt-4 text-sm font-bold text-gray-500 dark:text-gray-400">
           Insert Hotspot
         </h3>
 
@@ -298,7 +298,7 @@ export const ImageSettings = ({ element }) => {
 
           <IconPicker />
 
-          <label className="block pb-2 pt-2 text-sm  font-semibold">
+          <label className="block pb-2 pt-4 text-sm  font-semibold">
             Title
           </label>
 

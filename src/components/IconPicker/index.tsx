@@ -27,10 +27,21 @@ import {
 } from "@/components/ui/tooltip";
 
 import { Button } from "../ui/button";
-import { Portal } from "react-portal";
 
-export const IconPicker = () => {
+export const Beacon = () => (
+  <div className="beacon flex h-[24px] w-[24px] items-center justify-center  rounded-full border-2 border-foreground">
+    <div className="h-[12px] w-[12px] rounded-full bg-foreground"></div>
+  </div>
+);
+
+export const IconPicker = ({ onChangeIconType, iconType }) => {
   const [search, setSearch] = useState("");
+
+  const [openIconPickerDialog, setOpenIconPickerDialog] = useState(false);
+
+  const onOpenChange = (value) => {
+    setOpenIconPickerDialog(value);
+  };
 
   const allIconNames = Object.keys(Icons);
   const filteredIconNames = allIconNames.filter(
@@ -41,8 +52,10 @@ export const IconPicker = () => {
   );
   console.log(filteredIconNames);
 
+  const DisplayIcon = Icons[iconType];
+
   const searchFilter = useMemo(() => {
-    return ["Beacon", ...filteredIconNames].filter((icon) =>
+    return [...filteredIconNames].filter((icon) =>
       icon.toLowerCase().includes(search.toLowerCase())
     );
   }, [search, filteredIconNames]);
@@ -54,11 +67,6 @@ export const IconPicker = () => {
   const onChangeSearchIcon = (e) => {
     setSearch(e.target.value);
   };
-  const Beacon = (
-    <div className="beacon flex h-[24px] w-[24px] items-center justify-center  rounded-full border-2 border-foreground">
-      <div className="h-[12px] w-[12px] rounded-full bg-foreground"></div>
-    </div>
-  );
 
   function Cell({ columnIndex, rowIndex, data, style }) {
     const icon = data[rowIndex * 8 + columnIndex]; // Assuming 10 columns
@@ -92,8 +100,12 @@ export const IconPicker = () => {
             <TooltipTrigger
               key={icon}
               className="z-1000 h-[32px] w-[32px] rounded-md p-1 transition duration-200 hover:bg-gray-200 dark:hover:bg-accent"
+              onClick={() => {
+                onChangeIconType(icon);
+                setOpenIconPickerDialog(false);
+              }}
             >
-              {icon === "Beacon" ? Beacon : <IconComponent size={24} />}
+              {icon === "Beacon" ? <Beacon /> : <IconComponent size={24} />}
               <span className="sr-only">{iconLabel}</span>
             </TooltipTrigger>
 
@@ -112,13 +124,14 @@ export const IconPicker = () => {
   }
   return (
     <div>
-      <Dialog>
+      <Dialog open={openIconPickerDialog} onOpenChange={onOpenChange}>
         <DialogTrigger asChild>
           <Button
-            className="flex h-[36px] gap-1 border border-input bg-white hover:bg-gray-100 dark:border-gray-700 dark:bg-background dark:hover:bg-muted"
+            className="flex h-[36px] gap-2 border border-input bg-white hover:bg-gray-100 dark:border-gray-700 dark:bg-background dark:hover:bg-muted"
             size="sm"
             variant="outline"
           >
+            <DisplayIcon />
             Select Icon
           </Button>
         </DialogTrigger>

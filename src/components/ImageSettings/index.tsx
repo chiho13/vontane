@@ -26,14 +26,14 @@ import { useRouter } from "next/router";
 import { useWorkspaceTitleUpdate } from "@/contexts/WorkspaceTitleContext";
 import Link from "next/link";
 import { HexColorPicker, HexColorInput } from "react-colorful";
-
+import * as Icons from "lucide-react";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { sideBarStore } from "@/store/sidebar";
-import { IconPicker } from "../IconPicker";
+import { IconPicker, Beacon } from "../IconPicker";
 
 export const ImageSettings = ({ element }) => {
   const router = useRouter();
@@ -51,6 +51,8 @@ export const ImageSettings = ({ element }) => {
   const [link, setLink] = useState(null);
 
   const [hotspotColor, setHotspotColor] = useState("#ffffff");
+
+  const [iconType, setIconType] = useState("CircleDot");
 
   const path = ReactEditor.findPath(editor, element);
 
@@ -90,6 +92,11 @@ export const ImageSettings = ({ element }) => {
       setLink(activeAudioPoint.link);
     }
 
+    if (activeAudioPoint && activeAudioPoint.type) {
+      console.log(activeAudioPoint.type);
+      setIconType(activeAudioPoint.type);
+    }
+
     if (activeAudioPoint && activeAudioPoint.colour) {
       console.log(activeAudioPoint.colour);
       setHotspotColor(activeAudioPoint.colour);
@@ -101,6 +108,7 @@ export const ImageSettings = ({ element }) => {
       setAudioURL("");
       setHotspotLabel("");
       setLink("");
+      setIconType("");
     };
   }, [element, audioPointData]);
 
@@ -152,6 +160,12 @@ export const ImageSettings = ({ element }) => {
     updateAudioPoint("colour", newColor);
   };
 
+  const onChangeIconType = (value) => {
+    const type = value;
+    setIconType(type);
+    updateAudioPoint("type", type);
+  };
+
   // useEffect(() => {
   //   console.log(audioPointData);
   // }, []);
@@ -166,7 +180,7 @@ export const ImageSettings = ({ element }) => {
     // Create a new audio point
     const newAudioPoint = {
       id: genNodeId(),
-      type: "original",
+      type: "CircleDot",
       colour: "#ffffff",
       url: "",
       link: "",
@@ -234,7 +248,7 @@ export const ImageSettings = ({ element }) => {
         </h3>
 
         <Button
-          className="h-[32px] w-[32px] border border-gray-300 bg-transparent p-0 text-foreground hover:bg-gray-200"
+          className="h-[32px] w-[32px] border border-gray-300 bg-transparent p-0 text-foreground hover:bg-gray-200 dark:hover:bg-accent"
           onClick={addHotspotTag}
         >
           <Plus />
@@ -296,7 +310,7 @@ export const ImageSettings = ({ element }) => {
             Change Icon
           </label>
 
-          <IconPicker />
+          <IconPicker onChangeIconType={onChangeIconType} iconType={iconType} />
 
           <label className="block pb-2 pt-4 text-sm  font-semibold">
             Title

@@ -36,7 +36,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio";
 import { Hotspot } from "@/utils/renderHelpers";
-
+import * as Icons from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -220,6 +220,8 @@ const DraggableRadioGroupItem = React.memo(
 
     console.log(element.type);
 
+    const HotspotIcon = Icons[element.type];
+
     return (
       <div
         ref={AudioPointref}
@@ -240,19 +242,9 @@ const DraggableRadioGroupItem = React.memo(
         }}
       >
         <Hotspot colour={element.colour}>
-          <button
-            className="beacon  flex h-[24px] w-[24px] items-center  justify-center rounded-full border-2 shadow-lg"
-            style={{
-              borderColor: element.colour,
-            }}
-          >
-            <div
-              className="h-[12px] w-[12px] rounded-full shadow-lg"
-              style={{
-                backgroundColor: element.colour,
-              }}
-            ></div>
-          </button>
+          <div className="beacon">
+            <HotspotIcon size={28} color={element.colour} />
+          </div>
         </Hotspot>
       </div>
     );
@@ -444,24 +436,25 @@ export const ImageElement = React.memo(
                 </div>
               </div>
 
-              {audioPoint.map((el, i) => {
-                return (
-                  <DraggableRadioGroupItem
-                    key={i}
-                    value={el.id}
-                    editor={editor}
-                    id={el.id}
-                    imageRef={imageRef}
-                    element={el}
-                    imageElement={element}
-                    path={path}
-                    initialPosition={{
-                      x: el.x,
-                      y: el.y,
-                    }}
-                  />
-                );
-              })}
+              {audioPoint &&
+                audioPoint.map((el, i) => {
+                  return (
+                    <DraggableRadioGroupItem
+                      key={el.id}
+                      value={el.id}
+                      editor={editor}
+                      id={el.id}
+                      imageRef={imageRef}
+                      element={el}
+                      imageElement={element}
+                      path={path}
+                      initialPosition={{
+                        x: el.x,
+                        y: el.y,
+                      }}
+                    />
+                  );
+                })}
             </div>
 
             {children}

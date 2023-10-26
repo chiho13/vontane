@@ -256,7 +256,7 @@ export const DataVisBlock = React.memo(
           >
             <div
               className={cn(
-                `relative rounded-md border ${
+                `relative overflow-hidden rounded-md border ${
                   selected
                     ? "ring-2 ring-brand  ring-offset-2 ring-offset-white dark:ring-white dark:ring-offset-0 "
                     : "ring-black/40 ring-offset-white hover:ring-2 hover:ring-offset-2 dark:ring-offset-gray-300 "
@@ -481,7 +481,7 @@ export const DataVisBlock = React.memo(
                     {!selected && (
                       <div
                         className={cn(
-                          `absolute bottom-0 left-0 right-0 top-0 flex cursor-pointer items-center justify-center rounded-md  bg-slate-700 bg-opacity-30 opacity-0  hover:opacity-100`
+                          `absolute bottom-0 left-0 right-0 top-0 flex cursor-pointer items-center justify-center  bg-slate-700 bg-opacity-30 opacity-0  hover:opacity-100`
                         )}
                         style={{
                           width: blockWidth - 2,

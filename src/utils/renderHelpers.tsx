@@ -11,6 +11,7 @@ import { cn } from "./cn";
 import LoadingSpinner from "@/icons/LoadingSpinner";
 import { api } from "@/utils/api";
 import { YoutubeVideoEmbed } from "@/components/PreviewContent/PreviewElements/YoutubeVideo";
+import * as Icons from "lucide-react";
 
 import {
   Tooltip,
@@ -51,15 +52,23 @@ export const Hotspot = styled.div<HotspotProps>`
     }
   }
 
+  .beacon {
+    &:before {
+      content: "";
+      position: absolute;
+      height: 28px;
+      width: 28px;
+      background-color: ${(props) => props.colour};
+      border-radius: 50%;
+      box-shadow: 0px 0px 2px 2px ${(props) => props.colour};
+      animation: active 2s infinite linear;
+    }
+  }
+`;
+
+const ModifiedHotspot = styled(Hotspot)`
   .beacon:before {
-    content: "";
-    position: absolute;
-    height: 30px;
-    width: 30px;
-    background-color: ${(props) => props.colour};
-    border-radius: 50%;
-    box-shadow: 0px 0px 2px 2px ${(props) => props.colour};
-    animation: active 2s infinite linear;
+    left: 0;
   }
 `;
 
@@ -188,28 +197,18 @@ const renderElement = (
           {node.audioPoint &&
             node.audioPoint.map((el, i) => {
               let isLoading = true;
+              const HotspotIcon = Icons[el.type];
+
               return (
-                <Hotspot
+                <ModifiedHotspot
                   key={i}
                   className="absolute"
                   style={{ left: `${el.x}%`, top: `${el.y}%` }}
                   colour={el.colour}
                 >
                   <Dialog>
-                    <DialogTrigger>
-                      <button
-                        className="beacon flex h-[24px] w-[24px] items-center justify-center  rounded-full border-2 shadow-lg"
-                        style={{
-                          borderColor: el.colour,
-                        }}
-                      >
-                        <div
-                          className="h-[12px] w-[12px] rounded-full shadow-lg"
-                          style={{
-                            backgroundColor: el.colour,
-                          }}
-                        ></div>
-                      </button>
+                    <DialogTrigger className="beacon">
+                      <HotspotIcon size={28} color={el.colour} />
                     </DialogTrigger>
                     {el.link && (
                       <DialogContent className="max-h-[500px]  max-w-[380px] border  border-accent px-1 text-foreground dark:bg-[#191919] sm:max-w-[620px]">
@@ -222,7 +221,7 @@ const renderElement = (
                       </DialogContent>
                     )}
                   </Dialog>
-                </Hotspot>
+                </ModifiedHotspot>
               );
             })}
         </div>

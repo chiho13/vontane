@@ -32,23 +32,6 @@ export const YoutubeVideoEmbed = ({ node }) => {
           allowFullScreen
           className="mt-2 rounded-md bg-black"
         />
-        {loading && (
-          <div
-            className="top-1/2 flex items-center justify-center"
-            style={{
-              width: "100%",
-              position: "absolute",
-            }}
-          >
-            <div className="z-1000   -translate-y-[18px]">
-              <LoadingSpinner
-                width={50}
-                height={50}
-                strokeColor="stroke-white dark:stroke-white"
-              />
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

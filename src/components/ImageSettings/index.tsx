@@ -306,13 +306,13 @@ export const ImageSettings = ({ element }) => {
             </Popover>
           </div>
 
-          <label className="block pb-2 pt-4 text-sm  font-semibold">
+          <label className="block pb-2 pt-4 text-sm  font-semibold text-gray-500 dark:text-gray-400">
             Change Icon
           </label>
 
           <IconPicker onChangeIconType={onChangeIconType} iconType={iconType} />
 
-          <label className="block pb-2 pt-4 text-sm  font-semibold">
+          <label className="block pb-2 pt-4 text-sm  font-semibold text-gray-500 dark:text-gray-400">
             Title
           </label>
 
@@ -322,7 +322,7 @@ export const ImageSettings = ({ element }) => {
             onChange={onChangeHotspotLabel}
           />
 
-          <label className="block pb-2 pt-4 text-sm font-semibold">
+          <label className="block pb-2 pt-4 text-sm font-semibold text-gray-500 dark:text-gray-400">
             Embed Widget
           </label>
 

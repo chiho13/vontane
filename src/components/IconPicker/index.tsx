@@ -54,7 +54,7 @@ export const IconPicker = ({ onChangeIconType, iconType }) => {
     .sort((a, b) => (b.startsWith("Circle") || b.endsWith("Circle") ? 1 : -1));
   console.log(filteredIconNames);
 
-  const DisplayIcon = Icons[iconType];
+  const DisplayIcon = iconType ? Icons[iconType] : Icons["CircleDot"];
 
   const searchFilter = useMemo(() => {
     return [...filteredIconNames].filter((icon) =>

@@ -50,7 +50,7 @@ export const ImageSettings = ({ element }) => {
   const [audioURL, setAudioURL] = useState("");
   const [link, setLink] = useState(null);
 
-  const [hotspotColor, setHotspotColor] = useState("#ffffff");
+  const [hotspotColor, setHotspotColor] = useState("#0E78EF");
 
   const [iconType, setIconType] = useState("CircleDot");
 
@@ -101,7 +101,7 @@ export const ImageSettings = ({ element }) => {
       console.log(activeAudioPoint.colour);
       setHotspotColor(activeAudioPoint.colour);
     } else {
-      setHotspotColor("#ffffff");
+      setHotspotColor("#0E78EF");
     }
     // Cleanup: Reset audioURL when the component unmounts or dependencies change
     return () => {
@@ -181,7 +181,7 @@ export const ImageSettings = ({ element }) => {
     const newAudioPoint = {
       id: genNodeId(),
       type: "CircleDot",
-      colour: "#ffffff",
+      colour: "#0E78EF",
       url: "",
       link: "",
       x: randomX,

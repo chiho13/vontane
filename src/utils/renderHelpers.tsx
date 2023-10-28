@@ -41,18 +41,23 @@ export const Hotspot = styled.div<HotspotProps>`
   @keyframes active {
     0% {
       transform: scale(0.1);
+      background-color: #ffffff;
       opacity: 0.9;
     }
     70% {
-      transform: scale(1.5);
-      opacity: 0;
+      background-color: ${(props) => props.colour};
+      opacity: 0.4;
     }
     100% {
+      transform: scale(1.5);
+      background-color: ${(props) => props.colour};
       opacity: 0;
     }
   }
 
   .beacon {
+    background: #ffffff;
+    border-radius: 50%;
     &:before {
       content: "";
       position: absolute;

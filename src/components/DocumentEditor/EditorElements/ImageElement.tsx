@@ -220,7 +220,7 @@ const DraggableRadioGroupItem = React.memo(
 
     console.log(element.type);
 
-    const HotspotIcon = Icons[element.type];
+    const HotspotIcon = element.type ? Icons[element.type] : Icons["CircleDot"];
 
     return (
       <div

@@ -166,10 +166,6 @@ export const ImageSettings = ({ element }) => {
     updateAudioPoint("type", type);
   };
 
-  // useEffect(() => {
-  //   console.log(audioPointData);
-  // }, []);
-
   const addHotspotTag = () => {
     // If audioPoint is not defined or null, default to an empty array
     const currentAudioPoints = element.audioPoint || [];
@@ -269,6 +265,11 @@ export const ImageSettings = ({ element }) => {
           </h3>
           {/* <div className="text-gray-500">ID: {audioPointData}</div> */}
 
+          <label className="block pb-2 pt-4 text-sm  font-semibold text-gray-500 dark:text-gray-400">
+            Customise Hotspot Icon
+          </label>
+
+          <IconPicker onChangeIconType={onChangeIconType} iconType={iconType} />
           <div className="mt-4">
             <Popover>
               <PopoverTrigger asChild>
@@ -305,13 +306,6 @@ export const ImageSettings = ({ element }) => {
               </PopoverContent>
             </Popover>
           </div>
-
-          <label className="block pb-2 pt-4 text-sm  font-semibold text-gray-500 dark:text-gray-400">
-            Change Icon
-          </label>
-
-          <IconPicker onChangeIconType={onChangeIconType} iconType={iconType} />
-
           <label className="block pb-2 pt-4 text-sm  font-semibold text-gray-500 dark:text-gray-400">
             Title
           </label>

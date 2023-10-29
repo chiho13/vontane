@@ -109,36 +109,6 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         ),
       },
       {
-        name: "Heading 1",
-        description: "Big Section heading",
-        action: () => addBlock("heading-one"),
-        icon: (
-          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
-            <Heading1 className="stroke-darkergray" />
-          </div>
-        ),
-      },
-      {
-        name: "Heading 2",
-        description: "Medium Section heading",
-        action: () => addBlock("heading-two"),
-        icon: (
-          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
-            <Heading2 className="stroke-darkergray" />
-          </div>
-        ),
-      },
-      {
-        name: "Heading 3",
-        description: "Small Section heading",
-        action: () => addBlock("heading-three"),
-        icon: (
-          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
-            <Heading3 className="stroke-darkergray" />
-          </div>
-        ),
-      },
-      {
         name: "Image",
         description: "Embed with a link",
         action: () => addBlockHandler("image"),
@@ -169,6 +139,36 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
         icon: (
           <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-90">
             <TfiMapAlt className="h-[30px] w-[30px] text-darkergray dark:text-darkergray" />
+          </div>
+        ),
+      },
+      {
+        name: "Heading 1",
+        description: "Big Section heading",
+        action: () => addBlock("heading-one"),
+        icon: (
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
+            <Heading1 className="stroke-darkergray" />
+          </div>
+        ),
+      },
+      {
+        name: "Heading 2",
+        description: "Medium Section heading",
+        action: () => addBlock("heading-two"),
+        icon: (
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
+            <Heading2 className="stroke-darkergray" />
+          </div>
+        ),
+      },
+      {
+        name: "Heading 3",
+        description: "Small Section heading",
+        action: () => addBlock("heading-three"),
+        icon: (
+          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
+            <Heading3 className="stroke-darkergray" />
           </div>
         ),
       },

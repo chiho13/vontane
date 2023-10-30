@@ -265,105 +265,114 @@ export const ImageSettings = ({ element }) => {
         </Button>
       </div>
       {audioPointData && (
-        <div className="relative bg-accent p-4">
-          <Button
-            variant="outline"
-            size="sm"
-            className=" absolute right-3 top-3 h-[32px] w-[32px]  border border-red-400 px-1 text-red-500 hover:border-red-600 hover:bg-red-100/50 hover:text-red-600"
-            onClick={deleteHotSpotTag}
-          >
-            <Trash className="w-[18px]" />
-          </Button>
-          <h3 className="mb-3 text-sm font-bold text-gray-500 dark:text-gray-400">
-            Hotspot Popup Content
-          </h3>
-          {/* <div className="text-gray-500">ID: {audioPointData}</div> */}
+        <div className="relative bg-accent">
+          <div className="border-b border-gray-400 p-4 dark:border-gray-700">
+            <Button
+              variant="outline"
+              size="sm"
+              className=" absolute right-3 top-3 h-[32px] w-[32px]  border border-red-400 px-1 text-red-500 hover:border-red-600 hover:bg-red-100/50 hover:text-red-600"
+              onClick={deleteHotSpotTag}
+            >
+              <Trash className="w-[18px]" />
+            </Button>
 
-          <label className="block pb-2 pt-4 text-sm  font-semibold text-gray-500 dark:text-gray-400">
-            Customise Hotspot Icon
-          </label>
+            {/* <div className="text-gray-500">ID: {audioPointData}</div> */}
 
-          <IconPicker onChangeIconType={onChangeIconType} iconType={iconType} />
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <ColorPicker
-              key="lol1"
-              color={hotspotColor}
-              onChange={onChangeHotspotColour}
-              label="Icon Color"
+            <label className="block pb-2  text-sm  font-bold text-gray-500 dark:text-gray-400">
+              Customise Hotspot Icon
+            </label>
+
+            <IconPicker
+              onChangeIconType={onChangeIconType}
+              iconType={iconType}
             />
-            <ColorPicker
-              key="lol2"
-              color={iconBackgroundColor}
-              onChange={onChangeIconBGColour}
-              label="Icon Fill Color"
-            />
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              <ColorPicker
+                key="lol1"
+                color={hotspotColor}
+                onChange={onChangeHotspotColour}
+                label="Icon Color"
+              />
+              <ColorPicker
+                key="lol2"
+                color={iconBackgroundColor}
+                onChange={onChangeIconBGColour}
+                label="Icon Fill Color"
+              />
+            </div>
           </div>
 
-          <label className="block pb-2 pt-4 text-sm  font-semibold text-gray-500 dark:text-gray-400">
-            Title
-          </label>
+          <div className=" p-4 ">
+            <label className="block pb-3 text-sm  font-bold text-gray-500 dark:text-gray-400">
+              Popup Content
+            </label>
+            <label className="block pb-1 text-xs  font-semibold text-gray-500 dark:text-gray-400">
+              Title
+            </label>
 
-          <Input
-            value={hotspotLabel}
-            className=" h-[36px]  w-full rounded-md  border border-gray-300 bg-white p-2 text-sm focus:outline-none  dark:border-gray-400 dark:bg-muted dark:text-gray-400"
-            onChange={onChangeHotspotLabel}
-          />
+            <Input
+              value={hotspotLabel}
+              className=" h-[36px]  w-full rounded-md  border border-gray-300 bg-white p-2 text-sm focus:outline-none  dark:border-gray-400 dark:bg-muted dark:text-gray-400"
+              onChange={onChangeHotspotLabel}
+            />
 
-          <label className="block pb-2 pt-4 text-sm font-semibold text-gray-500 dark:text-gray-400">
-            Embed Widget
-          </label>
+            <label className="block pb-1 pt-4 text-xs font-semibold text-gray-500 dark:text-gray-400">
+              Embed Widget
+            </label>
 
-          {/* <input
+            {/* <input
             value={link}
             className=" h-[36px]  w-full rounded-md  border border-gray-300  bg-white  p-2 text-sm  focus:outline-none dark:border-gray-400 dark:text-gray-400"
             onChange={onChangeLink}
           /> */}
 
-          <div className="flex gap-4">
-            <Select onValueChange={onChangeWidget} value={link}>
-              <SelectTrigger className="h-[36px] w-[180px]">
-                {link ? (
-                  <SelectValue />
-                ) : (
-                  <span className="placeholder">Select a Widget</span>
-                )}
-              </SelectTrigger>
-              <SelectContent className="max-h-[200px] overflow-y-auto dark:border-neutral-800 dark:bg-background">
-                <SelectGroup>
-                  {filteredWorkspaces.map((workspace) => {
-                    const parsedSlateValue = JSON.parse(
-                      workspace.slate_value as any
-                    );
+            <div className="flex gap-4">
+              <Select onValueChange={onChangeWidget} value={link}>
+                <SelectTrigger className="h-[36px] w-[180px]">
+                  {link ? (
+                    <SelectValue />
+                  ) : (
+                    <span className="placeholder">Select a Widget</span>
+                  )}
+                </SelectTrigger>
+                <SelectContent className="max-h-[200px] overflow-y-auto dark:border-neutral-800 dark:bg-background">
+                  <SelectGroup>
+                    {filteredWorkspaces.map((workspace) => {
+                      const parsedSlateValue = JSON.parse(
+                        workspace.slate_value as any
+                      );
 
-                    const workspaceName = parsedSlateValue[0].children[0].text;
-                    const displayName =
-                      updatedWorkspace && updatedWorkspace.id === workspace.id
-                        ? updatedWorkspace.title
-                        : workspaceName;
-                    return (
-                      <SelectItem
-                        key={workspace.id}
-                        value={workspace.id}
-                        className="w-[300px]"
-                      >
-                        {displayName}
-                      </SelectItem>
-                    );
-                  })}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-            {link && (
-              <Link href={`/docs/${link}`} target="_blank">
-                <Button
-                  className="flex h-[36px] gap-1 border border-input bg-white hover:bg-gray-100 dark:border-gray-700 dark:bg-background dark:hover:bg-muted"
-                  size="sm"
-                  variant="outline"
-                >
-                  Edit <ArrowUpRight />
-                </Button>
-              </Link>
-            )}
+                      const workspaceName =
+                        parsedSlateValue[0].children[0].text;
+                      const displayName =
+                        updatedWorkspace && updatedWorkspace.id === workspace.id
+                          ? updatedWorkspace.title
+                          : workspaceName;
+                      return (
+                        <SelectItem
+                          key={workspace.id}
+                          value={workspace.id}
+                          className="w-[300px]"
+                        >
+                          {displayName}
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              {link && (
+                <Link href={`/docs/${link}`} target="_blank">
+                  <Button
+                    className="flex h-[36px] gap-1 border border-input bg-white hover:bg-gray-100 dark:border-gray-700 dark:bg-background dark:hover:bg-muted"
+                    size="sm"
+                    variant="outline"
+                  >
+                    Edit <ArrowUpRight />
+                  </Button>
+                </Link>
+              )}
+            </div>
           </div>
 
           {/* <label className="block pb-2 pt-4 text-sm">Audio URL</label>

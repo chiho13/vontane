@@ -15,15 +15,18 @@ export const ColorPicker = ({ color, onChange, label }) => {
           <Button
             variant="secondary"
             size="sm"
-            className="gap-2 border border-gray-300  bg-white px-[6px] text-gray-700 dark:border-accent dark:bg-muted  dark:text-gray-200 "
+            className="flex w-full  justify-between gap-2 border border-gray-300  bg-white px-[6px] text-gray-700 dark:border-accent dark:bg-muted  dark:text-gray-200 "
           >
-            <span
-              className="h-[24px] w-[24px] rounded-md border"
-              style={{
-                backgroundColor: color,
-              }}
-            ></span>
-            {label} <ChevronDown className="w-4" />
+            <div className="flex items-center gap-2">
+              <div
+                className=" block h-[24px] w-[24px] rounded-md border"
+                style={{
+                  backgroundColor: color,
+                }}
+              ></div>
+              <span>{label}</span>
+            </div>
+            <ChevronDown className="w-4" />
           </Button>
         </PopoverTrigger>
         <PopoverContent

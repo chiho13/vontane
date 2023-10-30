@@ -241,7 +241,7 @@ const DraggableRadioGroupItem = React.memo(
           setAudioPointData(element.id);
         }}
       >
-        <Hotspot colour={element.colour}>
+        <Hotspot colour={element.colour} iconFill={element.iconbgcolour}>
           <div className="beacon">
             <HotspotIcon size={28} color={element.colour} />
           </div>

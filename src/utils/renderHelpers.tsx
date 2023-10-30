@@ -35,28 +35,27 @@ import styled from "styled-components";
 
 interface HotspotProps {
   colour: string;
+  iconFill: string;
 }
 
 export const Hotspot = styled.div<HotspotProps>`
   @keyframes active {
     0% {
       transform: scale(0.1);
-      background-color: #ffffff;
       opacity: 0.9;
     }
     70% {
-      background-color: ${(props) => props.colour};
       opacity: 0.4;
     }
     100% {
       transform: scale(1.5);
-      background-color: ${(props) => props.colour};
+
       opacity: 0;
     }
   }
 
   .beacon {
-    background: #ffffff;
+    background: ${(props) => props.iconFill};
     border-radius: 50%;
     box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px,
       rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
@@ -212,6 +211,7 @@ const renderElement = (
                   className="absolute"
                   style={{ left: `${el.x}%`, top: `${el.y}%` }}
                   colour={el.colour}
+                  iconFill={el.iconbgcolour}
                 >
                   <Dialog>
                     <DialogTrigger className="beacon">

@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/popover";
 import { sideBarStore } from "@/store/sidebar";
 import { IconPicker, Beacon } from "../IconPicker";
+import { ColorPicker } from "./ColourPicker";
 
 export const ImageSettings = ({ element }) => {
   const router = useRouter();
@@ -51,6 +52,8 @@ export const ImageSettings = ({ element }) => {
   const [link, setLink] = useState(null);
 
   const [hotspotColor, setHotspotColor] = useState("#0E78EF");
+
+  const [iconBackgroundColor, setIconBackgroundColor] = useState("#FFFFFF");
 
   const [iconType, setIconType] = useState("CircleDot");
 
@@ -100,8 +103,11 @@ export const ImageSettings = ({ element }) => {
     if (activeAudioPoint && activeAudioPoint.colour) {
       console.log(activeAudioPoint.colour);
       setHotspotColor(activeAudioPoint.colour);
-    } else {
-      setHotspotColor("#0E78EF");
+    }
+
+    if (activeAudioPoint && activeAudioPoint.iconbgcolour) {
+      console.log("iconbg", activeAudioPoint.iconbgcolour);
+      setIconBackgroundColor(activeAudioPoint.iconbgcolour);
     }
     // Cleanup: Reset audioURL when the component unmounts or dependencies change
     return () => {
@@ -109,6 +115,7 @@ export const ImageSettings = ({ element }) => {
       setHotspotLabel("");
       setLink("");
       setIconType("");
+      setIconBackgroundColor("");
     };
   }, [element, audioPointData]);
 
@@ -160,6 +167,12 @@ export const ImageSettings = ({ element }) => {
     updateAudioPoint("colour", newColor);
   };
 
+  const onChangeIconBGColour = (value) => {
+    const newColor = value;
+    setIconBackgroundColor(newColor);
+    updateAudioPoint("iconbgcolour", newColor);
+  };
+
   const onChangeIconType = (value) => {
     const type = value;
     setIconType(type);
@@ -178,6 +191,7 @@ export const ImageSettings = ({ element }) => {
       id: genNodeId(),
       type: "CircleDot",
       colour: "#0E78EF",
+      iconbgcolour: "#FFFFFF",
       url: "",
       link: "",
       x: randomX,
@@ -270,42 +284,21 @@ export const ImageSettings = ({ element }) => {
           </label>
 
           <IconPicker onChangeIconType={onChangeIconType} iconType={iconType} />
-          <div className="mt-4">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="gap-2 border border-gray-300  bg-white px-[6px] text-gray-700 dark:border-accent dark:bg-muted  dark:text-gray-200 "
-                >
-                  <span
-                    className="h-[24px] w-[24px] rounded-md border"
-                    style={{
-                      backgroundColor: hotspotColor,
-                    }}
-                  ></span>
-                  Hotspot Colour <ChevronDown className="w-4" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                align="start"
-                sideOffset={10}
-                className=" w-auto border border-gray-300 bg-background  p-2 dark:border-gray-700  dark:bg-muted "
-              >
-                <HexColorPicker
-                  color={hotspotColor}
-                  onChange={onChangeHotspotColour}
-                />
-                {/* <div className="mb-1 mt-2 w-full">
-                  <HexColorInput
-                    color={hotspotColor}
-                    onChange={debounce(onChangeHotspotColour, 400)}
-                    className="h-[32px] w-full rounded-md  border border-neutral-300 px-1"
-                  />
-                </div> */}
-              </PopoverContent>
-            </Popover>
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            <ColorPicker
+              key="lol1"
+              color={hotspotColor}
+              onChange={onChangeHotspotColour}
+              label="Icon Color"
+            />
+            <ColorPicker
+              key="lol2"
+              color={iconBackgroundColor}
+              onChange={onChangeIconBGColour}
+              label="Icon Fill Color"
+            />
           </div>
+
           <label className="block pb-2 pt-4 text-sm  font-semibold text-gray-500 dark:text-gray-400">
             Title
           </label>

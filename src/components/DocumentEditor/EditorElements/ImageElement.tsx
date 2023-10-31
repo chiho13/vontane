@@ -243,7 +243,7 @@ const DraggableRadioGroupItem = React.memo(
       >
         <Hotspot colour={element.colour} iconFill={element.iconbgcolour}>
           <div className="beacon">
-            <HotspotIcon size={28} color={element.colour} />
+            <HotspotIcon size={24} color={element.colour} />
           </div>
         </Hotspot>
       </div>
@@ -374,7 +374,8 @@ export const ImageElement = React.memo(
                 )}
                 alt="alt"
                 tabIndex={-1}
-                onMouseDown={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   setShowRightSidebar(true);
                   setTab("properties");
                 }}

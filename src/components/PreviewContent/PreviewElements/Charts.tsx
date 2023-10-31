@@ -63,8 +63,9 @@ export const Charts = ({ element }) => {
   return (
     <div
       ref={containerRef}
-      className="w-full rounded-md bg-white py-1"
+      className={`relative flex justify-${element.align}  rounded-md border border-accent bg-white py-1 pb-2  pt-2 shadow-md`}
       style={{
+        maxWidth: element.width,
         height: `${calculatedHeight}px`,
       }}
     >

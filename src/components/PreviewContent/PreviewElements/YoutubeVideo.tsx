@@ -30,7 +30,7 @@ export const YoutubeVideoEmbed = ({ node }) => {
           src={`${node.embedLink}?start=${node.startTime}`}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
-          className="mt-2 rounded-md bg-black"
+          className="rounded-md bg-black shadow-md"
         />
       </div>
     </div>

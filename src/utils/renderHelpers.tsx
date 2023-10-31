@@ -55,6 +55,7 @@ export const Hotspot = styled.div<HotspotProps>`
   }
 
   .beacon {
+    padding: 2px;
     background: ${(props) => props.iconFill};
     border-radius: 50%;
     box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px,
@@ -62,8 +63,8 @@ export const Hotspot = styled.div<HotspotProps>`
     &:before {
       content: "";
       position: absolute;
-      height: 28px;
-      width: 28px;
+      height: 24px;
+      width: 24px;
       background-color: ${(props) => props.colour};
       border-radius: 50%;
       box-shadow: 0px 0px 2px 2px ${(props) => props.colour};
@@ -215,7 +216,7 @@ const renderElement = (
                 >
                   <Dialog>
                     <DialogTrigger className="beacon">
-                      <HotspotIcon size={28} color={el.colour} />
+                      <HotspotIcon size={24} color={el.colour} />
                     </DialogTrigger>
                     {el.link && (
                       <DialogContent className="max-h-[500px]  max-w-[380px] border  border-accent px-1 text-foreground dark:bg-[#191919] sm:max-w-[620px]">

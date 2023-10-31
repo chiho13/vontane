@@ -11,6 +11,9 @@ import { cn } from "./cn";
 import LoadingSpinner from "@/icons/LoadingSpinner";
 import { api } from "@/utils/api";
 import { YoutubeVideoEmbed } from "@/components/PreviewContent/PreviewElements/YoutubeVideo";
+
+import { Charts } from "@/components/PreviewContent/PreviewElements/Charts";
+
 import * as Icons from "lucide-react";
 
 import {
@@ -75,7 +78,7 @@ export const Hotspot = styled.div<HotspotProps>`
 
 const ModifiedHotspot = styled(Hotspot)`
   .beacon:before {
-    left: 0;
+    left: 2px;
   }
 `;
 
@@ -194,7 +197,7 @@ const renderElement = (
       );
     case "image":
       return (
-        <div className={`relative flex justify-${node.align} mt-3`}>
+        <div className={`relative flex justify-${node.align} pb-3 pt-3`}>
           <img
             src={node.url}
             width={node.width}
@@ -345,6 +348,13 @@ const renderElement = (
             listType="numbered"
             isPreview={true}
           />
+        </div>
+      );
+
+    case "datavis":
+      return (
+        <div className=" pb-2 pt-2">
+          <Charts element={node} />
         </div>
       );
     case "option-list-item":

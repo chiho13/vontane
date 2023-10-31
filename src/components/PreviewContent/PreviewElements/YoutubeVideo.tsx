@@ -5,7 +5,7 @@ export const YoutubeVideoEmbed = ({ node }) => {
   const [loading, setLoading] = useState(true);
 
   return (
-    <div className={`relative flex justify-${node.align} pb-2 pt-2`}>
+    <div className={`relative flex justify-${node.align}  pb-2 pt-2`}>
       <div
         style={{
           width: `${node.width}px`,

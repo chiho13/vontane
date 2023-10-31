@@ -197,7 +197,7 @@ const renderElement = (
       );
     case "image":
       return (
-        <div className={`relative flex justify-${node.align} pb-3 pt-3`}>
+        <div className={`relative flex justify-${node.align} pb-2 pt-2`}>
           <img
             src={node.url}
             width={node.width}

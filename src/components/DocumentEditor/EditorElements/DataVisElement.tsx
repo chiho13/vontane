@@ -258,7 +258,7 @@ export const DataVisBlock = React.memo(
               className={cn(
                 `relative overflow-hidden rounded-md border ${
                   selected
-                    ? "ring-2 ring-brand  ring-offset-2 ring-offset-white dark:ring-white dark:ring-offset-0 "
+                    ? "ring-2 ring-brand  ring-offset-2 ring-offset-white dark:ring-brand dark:ring-offset-muted"
                     : "ring-black/40 ring-offset-white hover:ring-2 hover:ring-offset-2 dark:ring-offset-gray-300 "
                 }`
               )}
@@ -317,7 +317,7 @@ export const DataVisBlock = React.memo(
 
                 <TabsContent value="preview">
                   <div
-                    className="absolute top-0 w-full bg-white"
+                    className="absolute top-0 w-full bg-white py-1"
                     style={{
                       height: blockHeight,
                     }}
@@ -383,6 +383,7 @@ export const DataVisBlock = React.memo(
                         <VictoryAxis
                           dependentAxis
                           style={{
+                            axisLabel: { padding: 50 },
                             tickLabels: { fontSize: 10 },
                           }}
                           label={element.ylabel}

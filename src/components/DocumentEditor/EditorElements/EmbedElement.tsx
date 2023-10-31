@@ -229,7 +229,7 @@ export const Embed = React.memo(
                 className={cn(
                   `relative  flex w-full max-w-[660px]  items-center justify-center  rounded-md lg:max-w-[535px] xl:max-w-[680px]  ${
                     selected
-                      ? "ring-2 ring-brand  ring-offset-2 ring-offset-white dark:ring-white dark:ring-offset-0 "
+                      ? "ring-2 ring-brand  ring-offset-2 ring-offset-white dark:ring-brand dark:ring-offset-muted "
                       : "ring-black/40 ring-offset-white hover:ring-2 hover:ring-offset-2 dark:ring-offset-gray-300 "
                   }`
                 )}

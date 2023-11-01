@@ -78,7 +78,7 @@ export const Hotspot = styled.div<HotspotProps>`
 
 const ModifiedHotspot = styled(Hotspot)`
   .beacon:before {
-    left: 2px;
+    left: 2px !important;
   }
 `;
 

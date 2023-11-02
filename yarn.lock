@@ -952,6 +952,24 @@
     "aria-hidden" "^1.1.1"
     "react-remove-scroll" "2.5.5"
 
+"@radix-ui/react-slider@^1.1.2":
+  "integrity" "sha512-NKs15MJylfzVsCagVSWKhGGLNR1W9qWs+HtgbmjjVUB3B9+lb3PYoXxVju3kOrpf0VKyVCtZp+iTwVoqpa1Chw=="
+  "resolved" "https://registry.npmjs.org/@radix-ui/react-slider/-/react-slider-1.1.2.tgz"
+  "version" "1.1.2"
+  dependencies:
+    "@babel/runtime" "^7.13.10"
+    "@radix-ui/number" "1.0.1"
+    "@radix-ui/primitive" "1.0.1"
+    "@radix-ui/react-collection" "1.0.3"
+    "@radix-ui/react-compose-refs" "1.0.1"
+    "@radix-ui/react-context" "1.0.1"
+    "@radix-ui/react-direction" "1.0.1"
+    "@radix-ui/react-primitive" "1.0.3"
+    "@radix-ui/react-use-controllable-state" "1.0.1"
+    "@radix-ui/react-use-layout-effect" "1.0.1"
+    "@radix-ui/react-use-previous" "1.0.1"
+    "@radix-ui/react-use-size" "1.0.1"
+
 "@radix-ui/react-slot@1.0.2":
   "integrity" "sha512-YeTpuq4deV+6DusvVUW4ivBgnkHwECUu0BiN43L5UCDFgdhsRUWAghhTF5MbvNTPzmiFOx90asDSUjWuCNapwg=="
   "resolved" "https://registry.npmjs.org/@radix-ui/react-slot/-/react-slot-1.0.2.tgz"
@@ -1465,10 +1483,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@^16.8.0 || ^17.0.0 || ^18.0.0", "@types/react@^16.9.0 || ^17.0.0 || ^18.0.0", "@types/react@^18.0.28", "@types/react@>= 16", "@types/react@>=16.8":
-  "integrity" "sha512-A0zjq+QN/O0Kpe30hA1GidzyFjatVvrpIvWLxD+xv67Vt91TWWgco9IvrJBkeyHm1trGaFS/FSGqPlhyeZRm0g=="
-  "resolved" "https://registry.npmjs.org/@types/react/-/react-18.2.14.tgz"
-  "version" "18.2.14"
+"@types/react@*", "@types/react@^16.8.0 || ^17.0.0 || ^18.0.0", "@types/react@^16.9.0 || ^17.0.0 || ^18.0.0", "@types/react@^18.2.34", "@types/react@>= 16", "@types/react@>=16.8":
+  "integrity" "sha512-U6eW/alrRk37FU/MS2RYMjx0Va2JGIVXELTODaTIYgvWGCV4Y4TfTUzG8DdmpDNIT0Xpj/R7GfyHOJJrDttcvg=="
+  "resolved" "https://registry.npmjs.org/@types/react/-/react-18.2.34.tgz"
+  "version" "18.2.34"
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"

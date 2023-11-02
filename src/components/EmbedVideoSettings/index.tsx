@@ -251,7 +251,7 @@ export const EmbedVideoSettings = ({ element }) => {
           value={startTime}
           type="number"
           onChange={(e) => onChangeStartTime(e.target.value)}
-          className="mb-2 mt-2 w-[90px]"
+          className="mb-4 mt-2 w-[90px]"
         />
         <Slider
           value={[startTime]}

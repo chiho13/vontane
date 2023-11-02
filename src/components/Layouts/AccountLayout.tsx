@@ -87,6 +87,7 @@ import { CreateNewFolder } from "../CreateNewFolder";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/utils/cn";
 import { usePopover } from "@/hooks/useSidebarPopover";
+import { useAccountMenuStore } from "@/store/accountmenu";
 
 import debounce from "lodash/debounce";
 
@@ -230,11 +231,14 @@ const Layout: React.FC<LayoutProps> = ({
   isTrashed,
 }) => {
   const router = useRouter();
-
+  const workspaceId = router.query.workspaceId as any;
   const { updatedWorkspace } = useWorkspaceTitleUpdate();
   const [isLocked, setIsLocked] = useLocalStorage("isLocked", false);
   const [isOpen, setIsOpen] = useLocalStorage("isOpen", false);
+
   const [isExpanded, setIsExpanded] = useState({});
+
+  // const { isExpanded, setIsExpanded } = useAccountMenuStore();
 
   const desktopbreakpoint = window.screen.width > breakpoints.lg;
 
@@ -286,14 +290,14 @@ const Layout: React.FC<LayoutProps> = ({
         return el.id == currentWorkspaceId;
       });
 
-      if (currentWorkspace && currentWorkspace.folder_id) {
-        setIsExpanded({
-          ...isExpanded,
-          [currentWorkspace.folder_id]: true,
-        });
-      }
+      // if (currentWorkspace && currentWorkspace.folder_id) {
+      //   setIsExpanded({
+      //     ...isExpanded,
+      //     [currentWorkspace.folder_id]: true,
+      //   });
+      // }
     }
-  }, [workspacesData]);
+  }, []);
 
   useEffect(() => {
     if (folderWorkspaceData) {
@@ -308,8 +312,8 @@ const Layout: React.FC<LayoutProps> = ({
   const createWorkspaceMutation = api.workspace.createWorkspace.useMutation();
   const handleWorkspaceRoute = (workspaceId: string) => {
     router.push(`/docs/${workspaceId}`);
-    refetchFolderWorkspaceData();
-    refetchWorkspaceData();
+    // refetchFolderWorkspaceData();
+    // refetchWorkspaceData();
   };
 
   const createWorkspace = async (folderId) => {
@@ -443,7 +447,7 @@ const Layout: React.FC<LayoutProps> = ({
             </AnimatedIcon>
           </TooltipTrigger>
           <TooltipContent side="left">
-            <p className="text-[12px]">Lock Sidebar Open</p>
+            <p className="text-[12px]">Open Menu</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

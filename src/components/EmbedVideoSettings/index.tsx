@@ -28,6 +28,7 @@ import { extractVideoID } from "@/utils/helpers";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { genNodeId } from "@/hoc/withID";
 import { sideBarStore } from "@/store/sidebar";
+import { Slider } from "../ui/slider";
 
 export const EmbedVideoSettings = ({ element }) => {
   const { activePath } = useContext(EditorContext);
@@ -172,6 +173,7 @@ export const EmbedVideoSettings = ({ element }) => {
       setVideoId(videoId);
     }, 10);
 
+    setStartTime(0);
     setLoading(false);
   }
 
@@ -180,19 +182,18 @@ export const EmbedVideoSettings = ({ element }) => {
     reValidateMode: "onChange",
   });
 
-  const onChangeStartTime = (e) => {
+  const onChangeStartTime = (value) => {
     const currentElement = Node.get(editor, JSON.parse(activePath));
 
     const newElement = {
       ...currentElement,
-      startTime: e.target.value,
+      startTime: value,
     };
-    const value = e.target.value;
-    setStartTime(value);
 
     // Validate the input
     const validated = validateStartTime(value);
 
+    setStartTime(value);
     if (validated) {
       Transforms.setNodes(editor, newElement, { at: JSON.parse(activePath) });
     }
@@ -247,10 +248,16 @@ export const EmbedVideoSettings = ({ element }) => {
         <Label>Start Time</Label>
 
         <Input
-          defaultValue={startTime}
+          value={startTime}
           type="number"
-          onChange={debounce(onChangeStartTime, 200)}
-          className="mt-2 w-[50%]"
+          onChange={(e) => onChangeStartTime(e.target.value)}
+          className="mb-2 mt-2 w-[90px]"
+        />
+        <Slider
+          value={[startTime]}
+          onValueChange={onChangeStartTime}
+          className="w-full"
+          max={videoDuration}
         />
         {startTimeError && (
           <p className="mt-1 text-red-500">{startTimeError}</p>

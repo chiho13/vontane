@@ -116,30 +116,35 @@ export const PlyrAudioPlayer = ({ audioURL, content, isPreview = false }) => {
   }
 
   return (
-    <StyledPlyr
-      theme={theme}
-      className={`${
-        !isPreview &&
-        content.length > 40 &&
-        "rounded-lg border border-gray-200 shadow-sm dark:border-neutral-800"
-      } ${!isPreview && "mb-4"}`}
-    >
-      <Plyr
-        source={{
-          type: "audio",
-          sources: [
-            {
-              src: audioURL,
-              type: "audio/mp3",
-            },
-          ],
-        }}
-        options={{
-          controls,
-          settings: ["speed"],
-          speed: { selected: 1, options: [0.7, 1, 1.25, 1.5, 2] },
-        }}
-      />
-    </StyledPlyr>
+    <div className="relative">
+      {content.length > 40 && (
+        <div className="pb-1 text-xs"> Listen to this article</div>
+      )}
+      <StyledPlyr
+        theme={theme}
+        className={`${
+          !isPreview &&
+          content.length > 40 &&
+          "rounded-lg border border-gray-200 shadow-sm dark:border-neutral-800"
+        } ${!isPreview && "mb-4"}`}
+      >
+        <Plyr
+          source={{
+            type: "audio",
+            sources: [
+              {
+                src: audioURL,
+                type: "audio/mp3",
+              },
+            ],
+          }}
+          options={{
+            controls,
+            settings: ["speed"],
+            speed: { selected: 1, options: [0.7, 1, 1.25, 1.5, 2] },
+          }}
+        />
+      </StyledPlyr>
+    </div>
   );
 };

@@ -1,5 +1,5 @@
 import { Sidebar } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   VscLayoutSidebarRight,
   VscLayoutSidebarRightOff,
@@ -9,12 +9,16 @@ import { useLocalStorage } from "usehooks-ts";
 import { breakpoints } from "@/utils/breakpoints";
 
 import React from "react";
+import { LayoutContext } from "../Layouts/AccountLayout";
 export const EditorSkeleton = () => {
   const [showRightSidebar, setShowRightSidebar] = useState(
     JSON.parse(localStorage.getItem("showRightSidebar") || "true")
   );
 
-  const rightSideBarWidth = 0;
+  const rightSideBarWidth = 398;
+  const { isLocked } = useContext(LayoutContext);
+
+  const sideBarOffset = isLocked ? 240 : 0;
 
   useEffect(() => {
     const sidebar = JSON.parse(
@@ -38,17 +42,13 @@ export const EditorSkeleton = () => {
       <div className="flex justify-center">
         <div className="block">
           <div
-            className="relative z-0  block w-[90vw] rounded-md  border border-gray-300 bg-white  px-2 dark:border-accent  dark:bg-muted/70 lg:max-w-[800px] lg:px-0 xl:w-[780px]"
+            className="relative z-0  block w-[90vw] rounded-md  border border-gray-300 bg-white  px-2 dark:border-accent  dark:bg-muted/70 lg:px-0 "
             style={{
               height: "calc(100svh - 100px)",
-              right: !showRightSidebar ? -rightSideBarWidth / 2 : 0,
               // width: "1190px",
-              width:
-                window.innerWidth > breakpoints.lg
-                  ? showRightSidebar
-                    ? "50vw"
-                    : "100vw"
-                  : "95vw",
+              width: showRightSidebar
+                ? `calc(100vw - ${rightSideBarWidth + 145 + sideBarOffset}px)`
+                : `calc(100vw - ${145 + sideBarOffset}px)`,
               transition: "right 0.3s ease-in-out",
             }}
           >

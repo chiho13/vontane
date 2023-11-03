@@ -77,10 +77,10 @@ export const FontStyle = () => {
       <h4 className="text-sm font-bold text-foreground">Workspace Style</h4>
       <div className="mt-4 grid w-[240px] grid-cols-3 gap-2 ">
         <label
-          className={`cursor-pointer  rounded-lg  p-2 text-center transition duration-200 hover:bg-gray-200  dark:hover:bg-accent ${
+          className={`cursor-pointer  rounded-lg border-2  p-2 text-center transition duration-200 hover:bg-gray-200  dark:hover:bg-accent ${
             fontStyle === "font-sans"
-              ? " bg-gray-200 text-brand dark:bg-accent"
-              : "text-gray-800 dark:text-gray-200"
+              ? " border-brand bg-gray-200 text-brand dark:bg-accent"
+              : " border-transparent text-gray-800 dark:text-gray-200"
           }`}
         >
           <input
@@ -92,13 +92,13 @@ export const FontStyle = () => {
           />
           <div className="text-3xl">Ag</div>
 
-          <div className="text-sm text-muted-foreground">Default</div>
+          <div className="pt-1 text-sm text-muted-foreground">Default</div>
         </label>
         <label
-          className={`cursor-pointer  rounded-lg p-2 text-center transition duration-200 hover:bg-gray-200 dark:hover:bg-accent ${
+          className={`cursor-pointer  rounded-lg  border-2 p-2 text-center transition duration-200 hover:bg-gray-200 dark:hover:bg-accent ${
             fontStyle === "font-serif"
-              ? "bg-gray-200 text-brand dark:bg-accent"
-              : "text-gray-800 dark:text-gray-200"
+              ? "border-brand bg-gray-200 text-brand dark:bg-accent"
+              : "border-transparent text-gray-800 dark:text-gray-200"
           }`}
         >
           <input
@@ -110,13 +110,13 @@ export const FontStyle = () => {
           />
           <div className="font-serif text-3xl">Ag</div>
 
-          <div className="text-sm text-muted-foreground">Serif</div>
+          <div className="pt-1 text-sm text-muted-foreground">Serif</div>
         </label>
         <label
-          className={`cursor-pointer  rounded-lg p-2 text-center transition duration-200 hover:bg-gray-200 dark:hover:bg-accent ${
+          className={`cursor-pointer rounded-lg border-2 p-2 text-center transition duration-200 hover:bg-gray-200 dark:hover:bg-accent ${
             fontStyle === "font-mono"
-              ? "bg-gray-200 text-brand dark:bg-accent"
-              : "text-gray-800 dark:text-gray-200"
+              ? "border-brand bg-gray-200 text-brand dark:bg-accent"
+              : "border-transparent text-gray-800 dark:text-gray-200"
           }`}
         >
           <input
@@ -128,7 +128,7 @@ export const FontStyle = () => {
           />
           <div className="font-mono text-3xl">Ag</div>
 
-          <div className="text-sm text-muted-foreground">Mono</div>
+          <div className="pt-1 text-sm text-muted-foreground">Mono</div>
         </label>
       </div>
       {/* <div className="mt-4">

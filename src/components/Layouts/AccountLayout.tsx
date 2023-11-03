@@ -869,9 +869,9 @@ const Layout: React.FC<LayoutProps> = ({
             )}
             {children}
 
-            <div className="fixed bottom-4 right-4">
+            {/* <div className="fixed bottom-4 right-4">
               <ModeToggle side="top" />
-            </div>
+            </div> */}
           </div>
         </main>
       </LayoutContext.Provider>

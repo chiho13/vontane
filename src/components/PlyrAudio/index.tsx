@@ -117,7 +117,7 @@ export const PlyrAudioPlayer = ({ audioURL, content, isPreview = false }) => {
 
   return (
     <div className="relative">
-      {content.length > 40 && (
+      {!isPreview && content.length > 40 && (
         <div className="pb-1 text-xs"> Listen to this article</div>
       )}
       <StyledPlyr

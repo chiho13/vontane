@@ -8,8 +8,14 @@ import { Export } from "../Export";
 
 import { FontStyle } from "../FontStyle";
 import { Button } from "../ui/button";
+import { useTheme } from "next-themes";
+import { Icons } from "@/components/Icons";
+import { Laptop } from "lucide-react";
 
 export const WorkspaceSetting = () => {
+  const { theme, setTheme } = useTheme();
+
+  console.log(theme);
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -25,9 +31,56 @@ export const WorkspaceSetting = () => {
         className="w-[320px] border border-gray-300  bg-background p-0 dark:border-gray-700 dark:bg-secondary"
       >
         <FontStyle />
-        {/* <div className="border-t p-3  dark:border-gray-700">
-          <Export />
-        </div> */}
+        <div className="border-t p-3  dark:border-gray-700">
+          {/* <Export /> */}
+
+          <h4 className="text-sm font-bold text-foreground">Appearance</h4>
+
+          <div className="grid grid-cols-3 gap-2 pt-4">
+            <Button
+              variant="outline"
+              onClick={() => setTheme("light")}
+              className={`flex h-[80px] flex-col items-center justify-center border-0  
+              ${
+                theme === "light"
+                  ? "ring-2 ring-brand"
+                  : "ring-1 ring-muted-foreground"
+              }
+              `}
+            >
+              <Icons.sun className="h-6 w-6 grow text-foreground" />
+              <span className="text-foreground">Light</span>
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setTheme("dark")}
+              className={`flex h-[80px] flex-col items-center justify-center border-0
+              ${
+                theme === "dark"
+                  ? "ring-2 ring-brand"
+                  : "ring-1 ring-muted-foreground"
+              }
+              `}
+            >
+              <Icons.moon className="h-6 w-6 grow text-foreground" />
+              <span className="text-foreground">Dark</span>
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setTheme("system")}
+              className={`flex h-[80px] flex-col items-center justify-center border-0 
+              ${
+                theme === "system"
+                  ? "ring-2 ring-brand"
+                  : "ring-1 ring-muted-foreground"
+              }
+              `}
+            >
+              <Laptop className="h-6 w-6 grow text-foreground" />
+              <span className="text-foreground">System</span>
+            </Button>
+          </div>
+        </div>
       </PopoverContent>
     </Popover>
   );

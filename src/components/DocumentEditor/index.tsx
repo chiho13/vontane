@@ -200,6 +200,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
     const { upgrade, ...rest } = router.query;
     const { isLocked } = useContext(LayoutContext);
 
+    const sideBarOffset = isLocked ? 240 : 0;
+
     const { syncStatus } = syncStatusStore();
 
     const {
@@ -355,8 +357,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
     const openMiniDropdown = useCallback(
       (path: Path) => {
         const currentpathString = JSON.stringify(path);
-
-        // const sideBarOffset = isLocked ? -240 : 0;
 
         console.log(path);
         setActivePath(currentpathString);
@@ -2027,24 +2027,29 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
       }
     }, [editor.children]);
 
+    const [selectionRect, setSelectionRect] = useState(null);
+    const [mouseDown, setMouseDown] = useState(false);
+
+    const onMouseDown = (e) => {
+      setMouseDown(true);
+      setSelectionRect({ x: e.clientX, y: e.clientY, width: 0, height: 0 });
+    };
+
+    const onMouseMove = (e) => {
+      if (!mouseDown) return;
+      setSelectionRect((rect) => ({
+        ...rect,
+        width: e.clientX - rect.x,
+        height: e.clientY - rect.y,
+      }));
+    };
+
+    const onMouseUp = () => {
+      setMouseDown(false);
+    };
+
     return (
-      <div
-        className="relative mx-auto mt-[50px] lg:max-w-[1000px] xl:max-w-[1400px]"
-        style={{
-          width:
-            windowSize.width > breakpoints.xl
-              ? `${rightSideBarWidth + 790}px`
-              : "95vw",
-        }}
-      >
-        {/* <button
-        onClick={() => {
-          textEditorRef.current.scrollTop = 0;
-        }}
-      >
-        {" "}
-        scroll to slide
-      </button> */}
+      <div className="relative mx-auto mt-[50px] flex justify-center lg:max-w-[1000px] xl:max-w-[1400px]">
         <Portal>
           <button
             className="group fixed right-[30px] top-[25px] z-0 hidden rounded  border-gray-300 p-1 transition duration-300 hover:border-brand dark:border-accent dark:hover:border-foreground dark:hover:bg-muted lg:block"
@@ -2070,17 +2075,27 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
                       ? -(rightSideBarWidth / 2)
                       : 0
                     : 0,
-                maxWidth: "740px",
-                width:
-                  windowSize.width > breakpoints.lg
-                    ? showRightSidebar
-                      ? "50vw"
-                      : "100vw"
-                    : "95vw",
+                width: showRightSidebar
+                  ? `calc(100vw - ${rightSideBarWidth + 145 + sideBarOffset}px)`
+                  : `calc(100vw - ${145 + sideBarOffset}px)`,
+
                 height: "calc(100svh - 100px)",
                 transition: "right 0.3s ease-in-out, width 0.3s ease-in-out",
               }}
+              // onMouseDown={onMouseDown}
+              // onMouseMove={onMouseMove}
+              // onMouseUp={onMouseUp}
             >
+              {/* <div
+                style={{
+                  position: "absolute",
+                  left: `${selectionRect?.x}px`,
+                  top: `${selectionRect?.y}px`,
+                  width: `${selectionRect?.width}px`,
+                  height: `${selectionRect?.height}px`,
+                  backgroundColor: "rgba(0, 0, 255, 0.5)",
+                }}
+              /> */}
               <div className="absolute -top-[40px] left-0 flex w-full items-center justify-between ">
                 <div className="flex items-center">
                   {/* <Dialog open={openUpgrade} onOpenChange={onOpenChangeUpgrade}>
@@ -2103,17 +2118,17 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
                     <Upgrade />
                   </DialogContent>
                 </Dialog> */}
-                  <span className="rounded-md  px-2 py-1 text-sm dark:border-white">
+                  {/* <span className="rounded-md  px-2 py-1 text-sm dark:border-white">
                     Credits:
                   </span>
                   <span className="text-sm font-bold">
                     {" "}
                     {credits && String(credits)}
-                  </span>
+                  </span> */}
                 </div>
               </div>
 
-              <div className="absolute right-2 top-2 z-10 flex items-center gap-2 rounded-md border border-gray-300  bg-gray-100 px-2  py-1 text-xs text-slate-500 dark:border-gray-600 dark:bg-accent dark:text-slate-200">
+              <div className="absolute right-2 top-2 z-10 flex items-center gap-2 rounded-md border border-gray-300 bg-gray-100  px-2 py-1  text-xs text-slate-500 dark:border-gray-600 dark:bg-accent dark:text-slate-200">
                 <div
                   className={`h-2 w-2 rounded-full transition duration-200 
                 ${syncStatus === "syncing" ? "bg-yellow-500" : "bg-green-500"}
@@ -2140,7 +2155,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
                       <div
                         ref={textEditorRef}
                         tabIndex={0}
-                        className="scrollbar relative z-0 mx-auto block overflow-y-auto  overflow-x-hidden rounded-md pb-4  pt-4 focus:outline-none  focus-visible:border-gray-300"
+                        className="scrollbar relative z-0 flex overflow-y-auto overflow-x-hidden  pb-4 pt-4  focus:outline-none focus-visible:border-gray-300  lg:justify-center"
                       >
                         <Slate
                           key={currentSlateKey}
@@ -2156,6 +2171,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
                             <Editable
                               className="relative"
                               style={{
+                                width: "740px",
                                 height: "calc(100svh - 140px)",
                               }}
                               decorate={decorate}

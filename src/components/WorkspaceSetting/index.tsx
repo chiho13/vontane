@@ -25,9 +25,9 @@ export const WorkspaceSetting = () => {
         className="w-[320px] border border-gray-300  bg-background p-0 dark:border-gray-700 dark:bg-secondary"
       >
         <FontStyle />
-        <div className="border-t p-3  dark:border-gray-700">
+        {/* <div className="border-t p-3  dark:border-gray-700">
           <Export />
-        </div>
+        </div> */}
       </PopoverContent>
     </Popover>
   );

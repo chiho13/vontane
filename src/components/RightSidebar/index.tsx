@@ -230,7 +230,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
               {SlateElement.isElement(rootNode) &&
                 rootNode?.type == "tts" &&
                 (audioData && audioData.file_name ? (
-                  <div className=" mt-3 bg-brand/20 p-3 dark:bg-gray-800">
+                  <div className=" mt-3 bg-brand/20 p-2 dark:bg-gray-800">
                     <h3 className="mb-2 mt-4 text-sm font-bold   ">
                       Text to MP3
                     </h3>

@@ -62,12 +62,11 @@ import { Export } from "../Export";
 import { LayoutContext } from "../Layouts/AccountLayout";
 import { DownloadButton } from "../DownloadButton";
 import { PlyrAudioPlayer } from "../PlyrAudio";
-import { WorkspaceSetting } from "../WorkspaceSetting";
+import { WorkspaceSetting, WorkspaceSettingInside } from "../WorkspaceSetting";
 import { EmbedVideoSettings } from "../EmbedVideoSettings";
 import { DataVisSettings } from "../DataVisSettings";
 import { splitIntoSlides } from "@/utils/renderHelpers";
 interface RightSideBarProps {
-  setRightSideBarWidth: any;
   showRightSidebar: boolean;
   rightSideBarWidth: number;
 }
@@ -77,7 +76,6 @@ interface AudioNode {
 }
 
 export const RightSideBar: React.FC<RightSideBarProps> = ({
-  setRightSideBarWidth,
   showRightSidebar,
   rightSideBarWidth,
 }) => {
@@ -112,9 +110,9 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
       showRightSidebar ? "0px" : `${rightSideBarWidth * 0.8}px`
     })`,
     height: `calc(100svh - 100px)`,
-    flexBasis: "390px",
+    flexBasis: "320px",
     opacity: showRightSidebar ? "1" : "0",
-    maxWidth: "390px",
+    maxWidth: "320px",
     flexGrow: 0,
     flexShrink: 0,
     pointerEvents: showRightSidebar ? "auto" : "none",
@@ -158,11 +156,18 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     }
   }, [slides.length]);
 
+  const isElementSelected =
+    SlateElement.isElement(rootNode) &&
+    ((rootNode?.type == "datavis" && elementData) ||
+      (rootNode?.type == "image" && elementData) ||
+      (rootNode?.type == "embed" && elementData) ||
+      (rootNode?.type == "map" && elementData) ||
+      (rootNode?.type == "tts" && elementData));
+
   return (
     <AudioManagerProvider>
       <Portal>
         <div className="fixed right-[80px] top-[25px] flex gap-2">
-          <WorkspaceSetting />
           {/* <Export /> */}
           <PublishButton />
         </div>
@@ -180,25 +185,18 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
               )}
             >
               <TabsTrigger
-                value="properties"
-                className={` text-xs data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-gray-400 dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
-              >
-                Properties
-              </TabsTrigger>
-
-              {slides.length > 0 && (
-                <TabsTrigger
-                  value="bookView"
-                  className={` text-xs data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-gray-400 dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
-                >
-                  Slides View
-                </TabsTrigger>
-              )}
-              <TabsTrigger
-                value="docsView"
+                value="workspaceSettings"
                 className={` text-xs data-[state=active]:bg-brand data-[state=active]:text-white dark:text-gray-400 dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
               >
-                Preview
+                Config
+              </TabsTrigger>
+
+              <TabsTrigger
+                value="properties"
+                className={` text-xs data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-gray-400 dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
+                disabled={!isElementSelected}
+              >
+                Properties
               </TabsTrigger>
             </TabsList>
 
@@ -300,20 +298,9 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                   </div>
                 ))}
             </TabsContent>
-            {slides.length > 0 && (
-              <TabsContent
-                value="bookView"
-                className="scrollbar relative overflow-y-auto pb-5 outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
-                style={{
-                  top: -8,
-                  height: `calc(100svh - ${openChat ? "460" : "200"}px)`,
-                }}
-              >
-                <SlidesPreview />
-              </TabsContent>
-            )}
+
             <TabsContent
-              value="docsView"
+              value="workspaceSettings"
               className="scrollbar relative overflow-y-auto pb-5"
               style={{
                 top: -8,
@@ -330,7 +317,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                   </button>
                 )}
               </div> */}
-              <DocsPreview />
+              <WorkspaceSettingInside />
             </TabsContent>
           </Tabs>
         </div>

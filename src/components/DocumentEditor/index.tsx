@@ -1944,10 +1944,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
     const { showRightSidebar, setShowRightSidebar, scrolltoSlide, tab } =
       useTextSpeech();
 
-    const [rightSideBarWidth, setRightSideBarWidth] = useLocalStorage(
-      "sidebarWidth",
-      390
-    );
+    const rightSideBarWidth = 320;
 
     const minSidebarWidth = 390;
     const maxSidebarWidth = 570;
@@ -1960,15 +1957,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
         JSON.stringify(showRightSidebar)
       );
     }, [showRightSidebar]);
-
-    useEffect(() => {
-      localStorage.setItem("sidebarWidth", elementWidth);
-      if (windowSize.width > breakpoints.xl) {
-        setRightSideBarWidth(elementWidth);
-      } else {
-        setRightSideBarWidth(390);
-      }
-    }, [elementWidth, windowSize]);
 
     const slides = splitIntoSlides(slatevalue);
     useLayoutEffect(() => {
@@ -2049,7 +2037,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
     };
 
     return (
-      <div className="relative mx-auto mt-[50px] flex justify-center lg:max-w-[1000px] xl:max-w-[1400px]">
+      <div className="relative mx-auto mt-[50px] flex justify-center lg:max-w-[1000px]  xl:max-w-[1400px]">
         <Portal>
           <button
             className="group fixed right-[30px] top-[25px] z-0 hidden rounded  border-gray-300 p-1 transition duration-300 hover:border-brand dark:border-accent dark:hover:border-foreground dark:hover:bg-muted lg:block"
@@ -2067,7 +2055,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
         <div className="flex  gap-4 lg:justify-center xl:px-4">
           <div className="mx-auto block">
             <div
-              className="relative  z-0   rounded-md  border border-gray-300  bg-white px-2 dark:border-accent dark:bg-muted dark:text-foreground lg:min-w-[600px] lg:px-0 xl:min-w-[740px]"
+              className="relative  z-0   min-w-[90vw]  rounded-md border  border-gray-300 bg-white px-2 dark:border-accent dark:bg-muted dark:text-foreground lg:min-w-[500px]  lg:px-0 xl:min-w-[740px]"
               style={{
                 right:
                   windowSize.width > breakpoints.lg
@@ -2169,9 +2157,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
                         >
                           <Droppable>
                             <Editable
-                              className="relative"
+                              className="relative w-full lg:w-[500px] xl:w-[740px]"
                               style={{
-                                width: "740px",
                                 height: "calc(100svh - 140px)",
                               }}
                               decorate={decorate}
@@ -2450,7 +2437,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
           </div>
 
           <RightSideBar
-            setRightSideBarWidth={setRightSideBarWidth}
             showRightSidebar={showRightSidebar}
             rightSideBarWidth={rightSideBarWidth}
           />

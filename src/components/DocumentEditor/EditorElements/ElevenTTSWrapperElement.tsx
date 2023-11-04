@@ -90,6 +90,7 @@ const ElevenTTSWrapperBase = (props: {
     setAudioData,
     showRightSidebar,
     setShowRightSidebar,
+    tab,
     setTab,
   } = useTextSpeech();
 
@@ -134,6 +135,14 @@ const ElevenTTSWrapperBase = (props: {
           ? " bg-brand/20 dark:bg-gray-800"
           : "bg-neutral-100 dark:bg-neutral-900"
       }`}
+      onClick={() => {
+        if (!showRightSidebar) {
+          setShowRightSidebar(true);
+        }
+        if (tab !== "properties") {
+          setTab("properties");
+        }
+      }}
     >
       <div className="mb-5 ml-[49px] mt-4" contentEditable={false}>
         <TextSpeech

@@ -1944,7 +1944,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
     const { showRightSidebar, setShowRightSidebar, scrolltoSlide, tab } =
       useTextSpeech();
 
-    const rightSideBarWidth = 320;
+    const rightSideBarWidth = 280;
 
     const minSidebarWidth = 390;
     const maxSidebarWidth = 570;
@@ -2274,7 +2274,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
                     <motion.div
                       // {...y_animation_props}
                       {...slightbouncey}
-                      className="fixed left-[120px] z-10 mx-auto mt-2 block w-[320px]"
+                      className="fixed left-[120px] z-10 mx-auto mt-2 block w-[280px]"
                       style={{
                         transformOrigin: "top left",
                         top: `${dropdownTop}px`,

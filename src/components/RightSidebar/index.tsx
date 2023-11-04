@@ -110,9 +110,9 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
       showRightSidebar ? "0px" : `${rightSideBarWidth * 0.8}px`
     })`,
     height: `calc(100svh - 100px)`,
-    flexBasis: "320px",
+    flexBasis: "280px",
     opacity: showRightSidebar ? "1" : "0",
-    maxWidth: "320px",
+    maxWidth: "280px",
     flexGrow: 0,
     flexShrink: 0,
     pointerEvents: showRightSidebar ? "auto" : "none",
@@ -248,12 +248,13 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                           isPreview={true}
                         />
                       </div>
-                      <div className="flex items-center pr-3 ">
-                        <DownloadButton
-                          url={audioData.audio_url}
-                          fileName={audioData.file_name}
-                        />
-                      </div>
+                    </div>
+
+                    <div className="flex items-center pb-2 pr-3 ">
+                      <DownloadButton
+                        url={audioData.audio_url}
+                        fileName={audioData.file_name}
+                      />
                     </div>
 
                     <div className=" truncate  rounded-md border border-gray-300 bg-white p-2 pl-3 dark:border-accent dark:bg-muted">

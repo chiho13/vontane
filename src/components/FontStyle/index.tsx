@@ -3,22 +3,6 @@ import { useTextSpeech } from "@/contexts/TextSpeechContext";
 import { api } from "@/utils/api";
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
-import { HexColorPicker, HexColorInput } from "react-colorful";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { ChevronDown } from "lucide-react";
-import { debounce } from "lodash";
 
 export const FontStyle = () => {
   const router = useRouter();
@@ -75,12 +59,12 @@ export const FontStyle = () => {
   return (
     <div className="p-3">
       <h4 className="text-sm font-bold text-foreground">Workspace Style</h4>
-      <div className="mt-4 grid w-[240px] grid-cols-3 gap-2 ">
+      <div className="mt-4 grid grid-cols-3 gap-2 ">
         <label
-          className={`cursor-pointer  rounded-lg border-2  p-2 text-center transition duration-200 hover:bg-gray-200  dark:hover:bg-accent ${
+          className={`cursor-pointer  rounded-lg border-2  p-2 text-center transition duration-200  ${
             fontStyle === "font-sans"
-              ? " border-brand bg-gray-200 text-brand dark:bg-accent"
-              : " border-transparent text-gray-800 dark:text-gray-200"
+              ? " border-brand  text-brand"
+              : " border-transparent text-gray-800 hover:bg-accent dark:text-gray-200"
           }`}
         >
           <input
@@ -95,10 +79,10 @@ export const FontStyle = () => {
           <div className="pt-1 text-sm text-muted-foreground">Default</div>
         </label>
         <label
-          className={`cursor-pointer  rounded-lg  border-2 p-2 text-center transition duration-200 hover:bg-gray-200 dark:hover:bg-accent ${
+          className={`cursor-pointer  rounded-lg  border-2 p-2 text-center transition duration-200 ${
             fontStyle === "font-serif"
-              ? "border-brand bg-gray-200 text-brand dark:bg-accent"
-              : "border-transparent text-gray-800 dark:text-gray-200"
+              ? "border-brand  text-brand"
+              : " border-transparent text-gray-800 hover:bg-accent dark:text-gray-200"
           }`}
         >
           <input
@@ -113,10 +97,10 @@ export const FontStyle = () => {
           <div className="pt-1 text-sm text-muted-foreground">Serif</div>
         </label>
         <label
-          className={`cursor-pointer rounded-lg border-2 p-2 text-center transition duration-200 hover:bg-gray-200 dark:hover:bg-accent ${
+          className={`cursor-pointer rounded-lg border-2 p-2 text-center transition duration-200  ${
             fontStyle === "font-mono"
-              ? "border-brand bg-gray-200 text-brand dark:bg-accent"
-              : "border-transparent text-gray-800 dark:text-gray-200"
+              ? " border-brand  text-brand"
+              : " border-transparent text-gray-800 hover:bg-accent dark:text-gray-200"
           }`}
         >
           <input

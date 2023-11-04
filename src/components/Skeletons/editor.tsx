@@ -15,7 +15,7 @@ export const EditorSkeleton = () => {
     JSON.parse(localStorage.getItem("showRightSidebar") || "true")
   );
 
-  const rightSideBarWidth = 280;
+  const rightSideBarWidth = 300;
   const { isLocked } = useContext(LayoutContext);
 
   const sideBarOffset = isLocked ? 240 : 0;
@@ -77,7 +77,7 @@ export const EditorSkeleton = () => {
               className=" hidden grow rounded-md border border-gray-300 bg-white dark:border-accent  dark:bg-muted/70  lg:block  lg:w-[400px]"
               style={{
                 height: "calc(100svh - 100px)",
-                width: "280px",
+                width: "300px",
                 opacity: 1,
                 transition:
                   "width 0.3s ease-in-out, opacity 0.4s ease-in-out, transform 0.3s ease-in-out",

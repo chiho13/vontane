@@ -399,7 +399,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
           topOffset = -(
             dropdownHeight -
             targetRect.height +
-            (isEmpty ? 2 : -40)
+            (isEmpty ? -40 : -80)
           );
           showDropdownAbove = true;
         }
@@ -2274,7 +2274,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
                     <motion.div
                       // {...y_animation_props}
                       {...slightbouncey}
-                      className="fixed left-[120px] z-10 mx-auto mt-2 block w-[280px]"
+                      className="fixed left-[120px] z-10 mx-auto mt-2 block w-[320px]"
                       style={{
                         transformOrigin: "top left",
                         top: `${dropdownTop}px`,

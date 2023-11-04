@@ -218,7 +218,7 @@ const DraggableRadioGroupItem = React.memo(
       id,
       path
     );
-
+    const { setElementData, setShowRightSidebar, setTab } = useTextSpeech();
     console.log(element.type);
 
     const HotspotIcon = element.type ? Icons[element.type] : Icons["CircleDot"];
@@ -240,6 +240,8 @@ const DraggableRadioGroupItem = React.memo(
         }}
         onClick={() => {
           setAudioPointData(element.id);
+          setShowRightSidebar(true);
+          setTab("properties");
         }}
       >
         <Hotspot colour={element.colour} iconFill={element.iconbgcolour}>

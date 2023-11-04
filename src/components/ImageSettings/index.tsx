@@ -109,6 +109,7 @@ export const ImageSettings = ({ element }) => {
       console.log("iconbg", activeAudioPoint.iconbgcolour);
       setIconBackgroundColor(activeAudioPoint.iconbgcolour);
     }
+
     // Cleanup: Reset audioURL when the component unmounts or dependencies change
     return () => {
       setAudioURL("");
@@ -291,13 +292,13 @@ export const ImageSettings = ({ element }) => {
                 key="lol1"
                 color={hotspotColor}
                 onChange={onChangeHotspotColour}
-                label="Icon Color"
+                label="Stroke"
               />
               <ColorPicker
                 key="lol2"
                 color={iconBackgroundColor}
                 onChange={onChangeIconBGColour}
-                label="Icon Fill Color"
+                label="Fill"
               />
             </div>
           </div>

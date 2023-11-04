@@ -37,6 +37,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio";
 import { Hotspot } from "@/utils/renderHelpers";
 import * as Icons from "lucide-react";
+
 import {
   Popover,
   PopoverContent,
@@ -257,6 +258,8 @@ export const ImageElement = React.memo(
     const { setElementData, setShowRightSidebar, setTab } = useTextSpeech();
 
     // const { setElementData }: any = sideBarStore((state) => state);
+
+    const { setAudioPointData } = sideBarStore();
     const {
       showEditBlockPopup,
       selectedElementID,
@@ -300,6 +303,11 @@ export const ImageElement = React.memo(
       }
     }, [selected]);
 
+    useEffect(() => {
+      if (!selected) {
+        setAudioPointData(null);
+      }
+    }, [router, selected]);
     return (
       <div
         data-id={element.id}

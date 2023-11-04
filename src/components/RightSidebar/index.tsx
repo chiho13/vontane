@@ -110,9 +110,9 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
       showRightSidebar ? "0px" : `${rightSideBarWidth * 0.8}px`
     })`,
     height: `calc(100svh - 100px)`,
-    flexBasis: "280px",
+    flexBasis: "300px",
     opacity: showRightSidebar ? "1" : "0",
-    maxWidth: "280px",
+    maxWidth: "300px",
     flexGrow: 0,
     flexShrink: 0,
     pointerEvents: showRightSidebar ? "auto" : "none",

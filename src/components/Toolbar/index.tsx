@@ -94,6 +94,8 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 
   const toolbarRef = useRef(null);
 
+  const [isToggling, setIsToggling] = useState(false);
+
   useEffect(() => {
     if (editor.selection && !Range.isCollapsed(editor.selection)) {
       const element = Node.get(editor, JSON.parse(activePath));

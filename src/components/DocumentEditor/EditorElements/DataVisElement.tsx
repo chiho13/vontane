@@ -304,7 +304,7 @@ export const DataVisBlock = React.memo(
                     value="preview"
                     className={`  text-xs data-[state=active]:bg-brand  data-[state=active]:text-white dark:text-gray-400 dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background `}
                   >
-                    Preview
+                    Chart
                   </TabsTrigger>
 
                   <TabsTrigger

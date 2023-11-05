@@ -27,7 +27,7 @@ export const WorkspaceSettingInside = () => {
           <Button
             variant="outline"
             onClick={() => setTheme("light")}
-            className={`flex h-[80px] flex-col items-center justify-center border-0  
+            className={`flex h-[80px] flex-col items-center justify-center border-0   focus:outline-none focus-visible:ring-2 focus-visible:ring-muted-foreground
               ${
                 theme === "light"
                   ? "ring-2 ring-brand hover:bg-transparent"
@@ -42,7 +42,7 @@ export const WorkspaceSettingInside = () => {
           <Button
             variant="outline"
             onClick={() => setTheme("dark")}
-            className={`flex h-[80px] flex-col items-center justify-center border-0
+            className={`flex h-[80px] flex-col items-center justify-center border-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-muted-foreground
             ${theme === "dark" ? "ring-2 ring-brand hover:bg-transparent" : ""}
               `}
             aria-label="Switch theme to dark"
@@ -53,7 +53,7 @@ export const WorkspaceSettingInside = () => {
           <Button
             variant="outline"
             onClick={() => setTheme("system")}
-            className={`flex h-[80px] flex-col items-center justify-center border-0 
+            className={`flex h-[80px] flex-col items-center justify-center border-0  focus:outline-none focus-visible:ring-2 focus-visible:ring-muted-foreground
             ${
               theme === "system" ? "ring-2 ring-brand hover:bg-transparent" : ""
             }

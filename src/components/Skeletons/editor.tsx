@@ -40,9 +40,9 @@ export const EditorSkeleton = () => {
       </Portal>
 
       <div className="flex justify-center">
-        <div className="block">
+        <div className="">
           <div
-            className="relative z-0  block w-[90vw] rounded-md  border border-gray-300 bg-white  px-2 dark:border-accent  dark:bg-muted/70 lg:px-0 "
+            className="relative z-0   w-[90vw]  rounded-md  border border-gray-300 bg-white  px-2 dark:border-accent  dark:bg-muted/70 lg:px-0 "
             style={{
               height: "calc(100svh - 100px)",
               // width: "1190px",
@@ -52,15 +52,15 @@ export const EditorSkeleton = () => {
               transition: "right 0.3s ease-in-out",
             }}
           >
-            <div className="mt-2 p-4 ">
-              <div className="   ml-[48px] h-[40px] w-[50%] animate-pulse rounded-lg bg-gray-200 dark:bg-muted-foreground/50"></div>
-              <div className="  ml-[48px] mt-6 h-[25px] w-[90%] animate-pulse rounded-md bg-gray-200 dark:bg-muted-foreground/50"></div>
-              <div className="  ml-[48px] mt-2 h-[25px] w-[90%] animate-pulse rounded-md bg-gray-200 dark:bg-muted-foreground/50"></div>
-              <div className="  ml-[48px] mt-2 h-[25px] w-[90%] animate-pulse rounded-md bg-gray-200 dark:bg-muted-foreground/50"></div>
-              <div className="  ml-[48px] mt-2 h-[25px] w-[90%] animate-pulse rounded-md bg-gray-200 dark:bg-muted-foreground/50"></div>
+            <div className="mx-auto  mt-2 block   max-w-[650px] p-4">
+              <div className="   h-[40px] w-[50%] animate-pulse rounded-lg bg-gray-200 dark:bg-muted-foreground/50"></div>
+              <div className="   mt-6 h-[25px] animate-pulse rounded-md bg-gray-200 dark:bg-muted-foreground/50"></div>
+              <div className="  mt-3 h-[25px]  animate-pulse rounded-md bg-gray-200 dark:bg-muted-foreground/50"></div>
+              <div className="  mt-3 h-[25px] animate-pulse rounded-md bg-gray-200 dark:bg-muted-foreground/50"></div>
+              <div className="  mt-3 h-[25px] max-w-[648px] animate-pulse rounded-md bg-gray-200 dark:bg-muted-foreground/50"></div>
 
-              <div className="  ml-[48px] mt-6 h-[25px] w-[90%] animate-pulse rounded-md bg-gray-200 dark:bg-muted-foreground/50"></div>
-              <div className="  ml-[48px] mt-2 h-[25px] w-[60%] animate-pulse rounded-md bg-gray-200 dark:bg-muted-foreground/50"></div>
+              <div className=" mt-6 h-[25px]  animate-pulse rounded-md bg-gray-200 dark:bg-muted-foreground/50"></div>
+              <div className=" mt-3 h-[25px] animate-pulse rounded-md bg-gray-200 dark:bg-muted-foreground/50"></div>
             </div>
           </div>
         </div>

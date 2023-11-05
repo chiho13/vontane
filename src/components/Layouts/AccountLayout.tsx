@@ -298,12 +298,18 @@ const Layout: React.FC<LayoutProps> = ({
       // }
     }
   }, []);
-
   useEffect(() => {
     if (folderWorkspaceData) {
       const response = folderWorkspaceData;
 
-      setWorkspacesFolders(response.folders);
+      // Sort folders by created_at
+      const sortedFolders = response.folders.sort((a, b) => {
+        return (
+          new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+        );
+      });
+
+      setWorkspacesFolders(sortedFolders);
       setWorkspaces(response.rootLevelworkspaces);
       console.log(response);
     }
@@ -1171,7 +1177,6 @@ const FolderWorkspaceItem = ({
   const handleInputChange = (e) => {
     setErrorMessage(null);
     setChangeFolderName(e.target.value);
-    debouncedRenameFolder(e.target.value);
   };
 
   return (
@@ -1223,9 +1228,10 @@ const FolderWorkspaceItem = ({
                   type="text"
                   value={changeFolderName}
                   onChange={handleInputChange}
-                  onBlur={() => {
+                  onBlur={(e) => {
                     setEditFolderName(false);
                     // Possibly send the update to the server here
+                    debouncedRenameFolder(e.target.value);
                   }}
                   className={cn(
                     `rounded-sm  py-px text-sm text-darkergray outline-none focus:ring-2 focus:ring-brand/70 focus:ring-offset-2  dark:text-foreground ${

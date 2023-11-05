@@ -106,13 +106,25 @@ export const isFormatActive = (editor: any, format: string) => {
   return isActive;
 };
 
+let isToggling = false;
+
 export const toggleFormat = (editor: any, format: string) => {
+  if (isToggling) return;
+
+  isToggling = true;
+
   const isActive = isFormatActive(editor, format);
+
   Transforms.setNodes(
     editor,
     { [format]: isActive ? null : true },
     { match: (n) => Text.isText(n), split: true }
   );
+
+  // Use setTimeout to allow the UI to update before unlocking
+  setTimeout(() => {
+    isToggling = false;
+  }, 0);
 };
 
 export const wrapWithTTS = (editor: any, element?: any) => {

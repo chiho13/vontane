@@ -1944,7 +1944,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
     const { showRightSidebar, setShowRightSidebar, scrolltoSlide, tab } =
       useTextSpeech();
 
-    const rightSideBarWidth = 280;
+    const rightSideBarWidth = 300;
 
     const minSidebarWidth = 390;
     const maxSidebarWidth = 570;
@@ -2086,26 +2086,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
               /> */}
               <div className="absolute -top-[40px] left-0 flex w-full items-center justify-between ">
                 <div className="flex items-center">
-                  {/* <Dialog open={openUpgrade} onOpenChange={onOpenChangeUpgrade}>
-                  <DialogTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="xs"
-                      className=" border px-1 ring-brand focus-visible:ring-2 dark:ring-white"
-                    >
-                      <span className=" ml-1 mr-2 text-xs text-foreground  dark:text-foreground ">
-                        Shop Credits
-                      </span>
-                      <span className="flex h-[18px] w-[18px] items-center justify-center rounded-[4px] bg-orange-400">
-                        <Zap className="w-[12px] fill-white text-orange-100" />{" "}
-                      </span>
-                    </Button>
-                  </DialogTrigger>
-
-                  <DialogContent className="absolute max-h-[650px]  overflow-y-auto overflow-x-hidden p-0 sm:max-w-[990px]">
-                    <Upgrade />
-                  </DialogContent>
-                </Dialog> */}
                   {/* <span className="rounded-md  px-2 py-1 text-sm dark:border-white">
                     Credits:
                   </span>

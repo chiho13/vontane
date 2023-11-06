@@ -2123,7 +2123,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
                       <div
                         ref={textEditorRef}
                         tabIndex={0}
-                        className="scrollbar relative z-0 flex overflow-y-auto overflow-x-hidden  pb-4 pt-4  focus:outline-none focus-visible:border-gray-300  lg:justify-center"
+                        className="scrollbar relative z-0 flex overflow-y-auto overflow-x-hidden  pb-4  focus:outline-none focus-visible:border-gray-300  lg:justify-center"
                       >
                         <Slate
                           key={currentSlateKey}

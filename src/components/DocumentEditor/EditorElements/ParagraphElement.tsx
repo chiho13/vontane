@@ -32,88 +32,82 @@ const ParagraphStyle = styled.div<ParagraphElementProps>`
   }
 `;
 
-export const ParagraphElement = memo(
-  (prop: ParagraphProp) => {
-    const editorContext = useContext(EditorContext);
-    const { showEditBlockPopup, selectedElementID, setSelectedElementID } =
-      useMemo(() => editorContext, [editorContext]);
-    const { editor } = useContext(SlateEditorContext);
+export const ParagraphElement = memo((prop: ParagraphProp) => {
+  const editorContext = useContext(EditorContext);
+  const { showEditBlockPopup, selectedElementID, setSelectedElementID } =
+    useMemo(() => editorContext, [editorContext]);
+  const { editor } = useContext(SlateEditorContext);
 
-    const { attributes, children, element, type } = prop;
+  const { attributes, children, element, type } = prop;
 
-    const path = ReactEditor.findPath(editor, element);
-    const [isVisible, setIsVisible] = useState(false);
-    const focused = useFocused();
-    const selected = useSelected();
-    const paragraphRef = useRef(null);
+  const path = ReactEditor.findPath(editor, element);
+  const [isVisible, setIsVisible] = useState(false);
+  const focused = useFocused();
+  const selected = useSelected();
+  const paragraphRef = useRef(null);
 
-    const { fontStyle } = useTextSpeech();
+  const { fontStyle } = useTextSpeech();
 
-    const { setElementData, showRightSidebar } = useTextSpeech();
+  const { setElementData, showRightSidebar } = useTextSpeech();
 
-    useEffect(() => {
-      if (editor && path) {
-        const isFirstElement = Path.equals(path, [0]);
-        const hasSingleElement = editor.children.length === 1;
-        const isEmpty =
-          element.children.length === 1 && element.children[0].text === "";
+  useEffect(() => {
+    if (editor && path) {
+      const isFirstElement = Path.equals(path, [0]);
+      const hasSingleElement = editor.children.length === 1;
+      const isEmpty =
+        element.children.length === 1 && element.children[0].text === "";
 
-        setIsVisible(isFirstElement && hasSingleElement && isEmpty);
-      }
-    }, [editor, path, children, focused]);
-
-    useEffect(() => {
-      if (!focused && !selected) {
-        setSelectedElementID("");
-      }
-    }, [focused, selected]);
-
-    let shouldShowPlaceholder =
-      (isVisible && (!focused || (focused && editor.children.length === 1))) ||
-      (focused &&
-        selected &&
-        element.children.every((child) => {
-          return Text.isText(child) && child.text === "";
-        }) &&
-        editor.selection &&
-        Range.isCollapsed(editor.selection));
-
-    let placeholder = "Press '/' for options";
-    const isFirstNode = path[path.length - 1] === 0;
-
-    // Check if the node is empty
-    const isEmpty =
-      element.children.length === 1 && element.children[0].text === "";
-
-    if (isParentMCQ(editor)) {
-      shouldShowPlaceholder = isFirstNode && isEmpty;
+      setIsVisible(isFirstElement && hasSingleElement && isEmpty);
     }
+  }, [editor, path, children, focused]);
 
-    return (
-      <ParagraphStyle isParentMCQ={isParentMCQ(editor)} type={type}>
-        <p
-          ref={paragraphRef}
-          className={`paragraph-element  text-${
-            alignMap[element.align] || element.align
-          }
+  useEffect(() => {
+    if (!focused && !selected) {
+      setSelectedElementID("");
+    }
+  }, [focused, selected]);
+
+  let shouldShowPlaceholder =
+    (isVisible && (!focused || (focused && editor.children.length === 1))) ||
+    (focused &&
+      selected &&
+      element.children.every((child) => {
+        return Text.isText(child) && child.text === "";
+      }) &&
+      editor.selection &&
+      Range.isCollapsed(editor.selection));
+
+  let placeholder = "Press '/' for options";
+  const isFirstNode = path[path.length - 1] === 0;
+
+  // Check if the node is empty
+  const isEmpty =
+    element.children.length === 1 && element.children[0].text === "";
+
+  // if (isParentMCQ(editor)) {
+  //   shouldShowPlaceholder = isFirstNode && isEmpty;
+  // }
+
+  return (
+    <ParagraphStyle isParentMCQ={isParentMCQ(editor)} type={type}>
+      <p
+        ref={paragraphRef}
+        className={`paragraph-element  text-${
+          alignMap[element.align] || element.align
+        }
         dark:text-gray-200
         ${fontStyle}
         ${fontStyle === "font-mono" ? "text-sm" : ""}
         `}
-          {...attributes}
-          {...(type !== "block-quote" && {
-            "data-id": element.id,
-            "data-path": JSON.stringify(path),
-          })}
-          data-placeholder={shouldShowPlaceholder ? placeholder : ""}
-        >
-          {children}
-        </p>
-      </ParagraphStyle>
-    );
-  },
-  (prevProps, nextProps) => {
-    // Only re-render if the node has changed
-    return prevProps.element === nextProps.element;
-  }
-);
+        {...attributes}
+        {...(type !== "block-quote" && {
+          "data-id": element.id,
+          "data-path": JSON.stringify(path),
+        })}
+        data-placeholder={shouldShowPlaceholder ? placeholder : ""}
+      >
+        {children}
+      </p>
+    </ParagraphStyle>
+  );
+});

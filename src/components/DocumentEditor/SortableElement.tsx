@@ -14,6 +14,7 @@ import { Editor, Range } from "slate";
 import { useNewColumn } from "@/contexts/NewColumnContext";
 import { useLocalStorage } from "usehooks-ts";
 import { debounce } from "lodash";
+import { findPathById } from "./helpers/createColumns";
 
 export function SortableElement({
   attributes,
@@ -56,6 +57,18 @@ export function SortableElement({
   const [isTyping, setIsTyping] = useState(false);
 
   const setIsTypingFalse = debounce(() => setIsTyping(false), 1000);
+
+  console.log(index);
+
+  const [prevIndex, setPrevIndex] = useState(index);
+
+  const initialIndex = useRef(0);
+  useEffect(() => {
+    setPrevIndex(index);
+  }, [index]);
+
+  const isDraggingDown = index > prevIndex;
+  const isDraggingUp = index < prevIndex;
 
   useEffect(() => {
     const onKeyDown = (event) => {
@@ -100,7 +113,7 @@ export function SortableElement({
       >
         {isTyping ? (
           <div
-            className={`group flex h-[24px] w-[46px] justify-end ${
+            className={`group flex h-[24px] w-[48px] justify-end ${
               element.type === "tts" && " absolute -left-4 top-2"
             }`}
             style={{
@@ -109,7 +122,7 @@ export function SortableElement({
           ></div>
         ) : (
           <div
-            className={`group flex h-[24px] w-[46px] justify-end ${
+            className={`group flex h-[24px] w-[48px] justify-end ${
               element.type === "tts" && " absolute -left-4 top-2"
             }`}
             style={{
@@ -150,9 +163,10 @@ export function SortableElement({
           className={classNames(
             classes.elementWrapper,
             over?.id === element.id && !creatingNewColumn
-              ? index > activeIndex
-                ? classes.insertAfter
-                : classes.insertBefore
+              ? insertDirection === "down" && classes.insertAfter
+              : undefined,
+            over?.id === element.id && !creatingNewColumn
+              ? insertDirection === "up" && classes.insertBefore
               : undefined,
             over?.id === element.id &&
               creatingNewColumn &&

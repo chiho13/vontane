@@ -12,6 +12,7 @@ import {
 import { ReactEditor } from "slate-react";
 import { genNodeId } from "@/hoc/withID";
 import { CustomElement } from "@/components/DocumentEditor";
+import { debounce } from "lodash";
 
 const LIST_TYPES = [
   "numbered-list",
@@ -106,25 +107,38 @@ export const isFormatActive = (editor: any, format: string) => {
   return isActive;
 };
 
-let isToggling = false;
+let toggleQueue = Promise.resolve();
 
-export const toggleFormat = (editor: any, format: string) => {
-  if (isToggling) return;
+export const toggleFormat = (editor, format) => {
+  // Wrap the toggle operation in a function that returns a Promise
+  const performToggle = () => {
+    return new Promise<void>((resolve) => {
+      // Check if the format is currently active
+      const isActive = isFormatActive(editor, format);
 
-  isToggling = true;
+      // Apply the formatting change
+      Transforms.setNodes(
+        editor,
+        { [format]: isActive ? null : true },
+        { match: (n) => Text.isText(n), split: true }
+      );
 
-  const isActive = isFormatActive(editor, format);
+      // Use requestAnimationFrame to wait for the browser to complete any re-rendering
+      requestAnimationFrame(() => {
+        // Normalize the editor after the changes to ensure consistency
+        Editor.normalize(editor);
+        // Resolve the promise to indicate the operation is complete
+        resolve();
+      });
+    });
+  };
 
-  Transforms.setNodes(
-    editor,
-    { [format]: isActive ? null : true },
-    { match: (n) => Text.isText(n), split: true }
-  );
-
-  // Use setTimeout to allow the UI to update before unlocking
-  setTimeout(() => {
-    isToggling = false;
-  }, 0);
+  // Add the new toggle operation to the end of the queue
+  toggleQueue = toggleQueue
+    .then(performToggle) // Chain the new operation
+    .catch((error) => {
+      console.error("Error during toggle operation:", error);
+    });
 };
 
 export const wrapWithTTS = (editor: any, element?: any) => {

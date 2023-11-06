@@ -148,7 +148,6 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = memo(
 
     const handleTextChange = useCallback(
       (value: any[]) => {
-        setInitialSlateValue(value);
         updateWorkspace(value);
         setUpdatedWorkspace({
           title: value[0].children[0].text,

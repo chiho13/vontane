@@ -6,6 +6,10 @@ import styled from "styled-components";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 
 const TitleStyle = styled.div`
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
   h1 {
     font-size: 24px;
     font-weight: bold;
@@ -17,11 +21,12 @@ const TitleStyle = styled.div`
     opacity: 0.333;
     user-select: none;
     position: absolute;
-    top: 0;
+    top: 16px;
   }
 
-  margin-left: 48px;
-  margin-bottom: 12px;
+  padding-left: 48px;
+  padding-bottom: 12px;
+  padding-top: 16px;
 `;
 
 export function TitleElement(props) {
@@ -49,7 +54,9 @@ export function TitleElement(props) {
     element.children.length === 1 && element.children[0].text === "";
 
   return (
-    <TitleStyle className={`${fontStyle} dark:text-gray-200`}>
+    <TitleStyle
+      className={`${fontStyle} bg-white dark:bg-muted dark:text-gray-200`}
+    >
       <h1
         ref={paragraphRef}
         {...attributes}

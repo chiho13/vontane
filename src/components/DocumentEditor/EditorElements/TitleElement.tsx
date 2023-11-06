@@ -6,8 +6,8 @@ import styled from "styled-components";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 
 const TitleStyle = styled.div`
-  position: sticky;
-  top: 0;
+  position: fixed;
+  top: 5px;
   z-index: 1000;
 
   h1 {
@@ -54,9 +54,7 @@ export function TitleElement(props) {
     element.children.length === 1 && element.children[0].text === "";
 
   return (
-    <TitleStyle
-      className={`${fontStyle} bg-white dark:bg-muted dark:text-gray-200`}
-    >
+    <TitleStyle className={`${fontStyle} dark:text-gray-200 lg:w-[680px]`}>
       <h1
         ref={paragraphRef}
         {...attributes}

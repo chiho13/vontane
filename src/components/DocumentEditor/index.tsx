@@ -1526,13 +1526,23 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
 
             if (
               SlateElement.isElement(activeNode) &&
-              (activeNode.type === "slide" || activeNode.type === "tts")
+              activeNode.type === "slide"
             ) {
               setCreatingNewColumn(false);
               setInsertDirection(null);
               return;
             }
+            const cursorY = event.delta.y;
 
+            if (cursorY > 0) {
+              // If dragging downwards
+              setCreatingNewColumn(false);
+              setInsertDirection("down");
+            } else if (cursorY < 0) {
+              // If dragging downwards
+              setCreatingNewColumn(false);
+              setInsertDirection("up");
+            }
             if (isNearRoot) {
               const overElement = document.querySelector(
                 `[data-id="${over.id}"]`
@@ -1554,21 +1564,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
               console.log("overRect width", overRect.width * 0.7);
 
               if (isCloseToRight) {
-                console.log(
-                  "Setting creatingNewColumn to true, direction right"
-                );
                 setCreatingNewColumn(true);
                 setInsertDirection("right");
               } else if (isCloseToLeft) {
-                console.log(
-                  "Setting creatingNewColumn to true, direction left"
-                );
                 setCreatingNewColumn(true);
                 setInsertDirection("left");
               } else {
-                console.log(
-                  "Setting creatingNewColumn and insertDirection to null"
-                );
                 setCreatingNewColumn(false);
                 setInsertDirection(null);
               }
@@ -2131,6 +2132,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
                           value={slatevalue}
                           onChange={(newValue) => {
                             if (!isEqual(slatevalue, newValue)) {
+                              setValue(newValue);
                               debouncedSetSlateValue(newValue);
                             }
                           }}

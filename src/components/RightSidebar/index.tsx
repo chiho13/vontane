@@ -141,14 +141,14 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     });
   };
 
-  useEffect(() => {
-    if (showRightSidebar) {
-      setTimeout(() => {
-        setIsOpen(false);
-        setIsLocked(false);
-      }, 400);
-    }
-  }, [showRightSidebar]);
+  // useEffect(() => {
+  //   if (showRightSidebar) {
+  //     setTimeout(() => {
+  //       setIsOpen(false);
+  //       setIsLocked(false);
+  //     }, 400);
+  //   }
+  // }, [showRightSidebar]);
 
   useEffect(() => {
     if (slides.length === 0) {

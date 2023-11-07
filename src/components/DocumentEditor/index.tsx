@@ -1865,7 +1865,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
 
                   // Calculate mini toolbar position
                   let initialX = firstRect.left - textEditorLeft;
-                  const toolbarWidth = 450; // Your toolbar width
+                  const toolbarWidth = 490; // Your toolbar width
                   // Access the alignment of the current element and adjust initialX based on the alignment
                   if (startNode.align) {
                     switch (startNode.align) {

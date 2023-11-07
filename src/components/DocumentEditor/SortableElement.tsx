@@ -60,16 +60,6 @@ export function SortableElement({
 
   console.log(index);
 
-  const [prevIndex, setPrevIndex] = useState(index);
-
-  const initialIndex = useRef(0);
-  useEffect(() => {
-    setPrevIndex(index);
-  }, [index]);
-
-  const isDraggingDown = index > prevIndex;
-  const isDraggingUp = index < prevIndex;
-
   useEffect(() => {
     const onKeyDown = (event) => {
       // Check if the key pressed is not an arrow key
@@ -163,10 +153,12 @@ export function SortableElement({
           className={classNames(
             classes.elementWrapper,
             over?.id === element.id && !creatingNewColumn
-              ? insertDirection === "down" && classes.insertAfter
+              ? index > activeIndex
+                ? classes.insertAfter
+                : classes.insertBefore
               : undefined,
             over?.id === element.id && !creatingNewColumn
-              ? insertDirection === "up" && classes.insertBefore
+              ? insertDirection === "down" && classes.insertAfterOverride
               : undefined,
             over?.id === element.id &&
               creatingNewColumn &&

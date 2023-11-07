@@ -1510,6 +1510,19 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
       useDndMonitor({
         onDragOver(event) {
           const { active, over } = event;
+          const cursorY = event.delta.y;
+
+          console.log("drag", cursorY);
+          if (cursorY > 0) {
+            // If dragging downwards
+            setCreatingNewColumn(false);
+            setInsertDirection("down");
+          } else if (cursorY < 0) {
+            // If dragging downwards
+            setCreatingNewColumn(false);
+            setInsertDirection("up");
+          }
+
           if (!over) {
             setCreatingNewColumn(false);
             setInsertDirection(null);
@@ -1532,17 +1545,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
               setInsertDirection(null);
               return;
             }
-            const cursorY = event.delta.y;
 
-            if (cursorY > 0) {
-              // If dragging downwards
-              setCreatingNewColumn(false);
-              setInsertDirection("down");
-            } else if (cursorY < 0) {
-              // If dragging downwards
-              setCreatingNewColumn(false);
-              setInsertDirection("up");
-            }
             if (isNearRoot) {
               const overElement = document.querySelector(
                 `[data-id="${over.id}"]`

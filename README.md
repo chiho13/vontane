@@ -46,6 +46,7 @@ currently under development (April)
 - [x] ai integration (wip)
 - [x] hotspot in image
 - [x] data visualisation - bar chart, pie, scatter
+- [] geospatial
 
 ## Next phase - requirements
 

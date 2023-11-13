@@ -165,7 +165,7 @@ export const WorkspaceContainer: React.FC<WorkspaceProps> = memo(
           refetchWorkspaceData={refetchWorkspaceData}
           isTrashed={isTrashed}
         >
-          <EditorSkeleton />;
+          <EditorSkeleton />
         </Layout>
       );
     }

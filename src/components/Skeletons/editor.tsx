@@ -28,7 +28,7 @@ export const EditorSkeleton = () => {
     setShowRightSidebar(sidebar);
   }, []);
   return (
-    <div className="max-[1400px] relative mx-auto mt-[50px] px-4" style={{}}>
+    <div className="relative mx-auto mt-[50px] px-4">
       <Portal>
         <button className="group fixed right-[30px] top-[30px] z-0 hidden rounded  border-gray-300 p-1 transition duration-300 hover:border-brand dark:border-accent dark:hover:border-foreground dark:hover:bg-muted xl:block">
           {!showRightSidebar ? (

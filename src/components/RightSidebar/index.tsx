@@ -18,6 +18,7 @@ import * as marked from "marked";
 import { alignMap } from "../DocumentEditor/helpers/toggleBlock";
 import { ReactGrid, TextCell, CellChange } from "@silevis/reactgrid";
 
+import { SyncStatusIndicator } from "@/components/SaveStatus";
 import {
   Element as SlateElement,
   Descendant,
@@ -167,8 +168,9 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
   return (
     <AudioManagerProvider>
       <Portal>
-        <div className="fixed right-[80px] top-[25px] flex gap-2">
+        <div className="fixed right-[80px] top-[25px] flex gap-3">
           {/* <Export /> */}
+          <SyncStatusIndicator />
           <PublishButton />
         </div>
       </Portal>

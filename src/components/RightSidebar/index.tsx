@@ -169,7 +169,6 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
     <AudioManagerProvider>
       <Portal>
         <div className="fixed right-[80px] top-[25px] flex gap-3">
-          {/* <Export /> */}
           <SyncStatusIndicator />
           <PublishButton />
         </div>
@@ -182,8 +181,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
           <Tabs value={tab} onValueChange={handleTabChange} className="mb-0">
             <TabsList
               className={cn(
-                `ring-gray ring-red  z-10  grid h-10 w-full  rounded-none rounded-t-md  bg-gray-200 dark:bg-accent`,
-                slides.length > 0 ? "grid-cols-3" : "grid-cols-2"
+                `ring-gray ring-red  z-10  grid h-10 w-full  grid-cols-2 rounded-none  rounded-t-md bg-gray-200 dark:bg-accent`
               )}
             >
               <TabsTrigger

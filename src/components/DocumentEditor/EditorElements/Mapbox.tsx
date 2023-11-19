@@ -94,6 +94,7 @@ export function Mapbox(props) {
           width: blockWidth,
           maxWidth: 680,
           height: blockHeight,
+          userSelect: "none",
         }}
         ref={ref}
         data-id={element.id}

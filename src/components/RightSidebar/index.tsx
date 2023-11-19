@@ -272,7 +272,7 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                       />
                     </div> */}
 
-                    <h3 className="text-bold mb-2 mt-4 text-sm">Share Audio</h3>
+                    <h3 className="mb-2 mt-4 text-sm font-bold">Share Audio</h3>
                     <div className="relative flex items-center">
                       <Link className="absolute left-3 w-4 dark:stroke-gray-300 " />
 

@@ -64,12 +64,12 @@ export const CreateNewFolder = ({ refetchFolderWorkspaceData }) => {
     <Fragment>
       <Dialog open={openCreateFolder} onOpenChange={onOpenChange}>
         <DialogTrigger asChild>
-          <button className="flex h-[36px] w-full items-center  px-2 px-[24px] py-[8px] transition duration-200 hover:bg-gray-200 dark:hover:bg-accent">
+          <button className="flex h-[36px] w-full items-center gap-4  px-2 px-[24px] py-[8px] transition duration-200 hover:bg-gray-200 dark:hover:bg-accent">
             <FolderPlus
               className="text-darkergray  dark:text-foreground"
-              width={22}
+              width={18}
             />{" "}
-            <span className="ml-2 text-sm text-darkergray  dark:text-foreground">
+            <span className=" text-sm text-darkergray  dark:text-foreground">
               New Folder
             </span>
           </button>

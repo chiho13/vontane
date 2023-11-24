@@ -747,12 +747,12 @@ const Layout: React.FC<LayoutProps> = ({
                 <SidebarItem className="truncate">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button className="flex h-[36px] w-full items-center  px-[24px] py-[8px] hover:bg-gray-200  dark:hover:bg-accent">
+                      <button className="flex h-[36px] w-full items-center gap-4  px-[24px] py-[8px] hover:bg-gray-200  dark:hover:bg-accent">
                         <Trash
                           className="text-darkergray  dark:text-foreground"
                           width={18}
                         />{" "}
-                        <span className="ml-4 truncate text-sm  text-darkergray dark:text-foreground">
+                        <span className="truncate text-sm  text-darkergray dark:text-foreground">
                           Bin
                         </span>
                       </button>

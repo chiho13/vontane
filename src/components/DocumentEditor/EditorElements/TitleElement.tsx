@@ -6,10 +6,6 @@ import styled from "styled-components";
 import { useTextSpeech } from "@/contexts/TextSpeechContext";
 
 const TitleStyle = styled.div`
-  position: fixed;
-  top: 5px;
-  z-index: 1000;
-
   h1 {
     font-size: 24px;
     font-weight: bold;

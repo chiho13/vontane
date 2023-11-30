@@ -280,7 +280,7 @@ export const ImageSettings = ({ element }) => {
             {/* <div className="text-gray-500">ID: {audioPointData}</div> */}
 
             <label className="block pb-2  text-sm  font-bold text-gray-500 dark:text-gray-400">
-              Customise Hotspot Icon
+              Hotspot Icon
             </label>
 
             <IconPicker

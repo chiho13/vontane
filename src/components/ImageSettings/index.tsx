@@ -15,7 +15,6 @@ import { ToastContainer, toast } from "react-toastify";
 import { Transforms, Node } from "slate";
 import { useContext, useEffect, useState } from "react";
 import { EditorContext, SlateEditorContext } from "@/contexts/EditorContext";
-import LoadingSpinner from "@/icons/LoadingSpinner";
 import { Button } from "../ui/button";
 import { Plus, Search, Trash } from "lucide-react";
 import { ReactEditor } from "slate-react";
@@ -25,13 +24,6 @@ import { LayoutContext } from "../Layouts/AccountLayout";
 import { useRouter } from "next/router";
 import { useWorkspaceTitleUpdate } from "@/contexts/WorkspaceTitleContext";
 import Link from "next/link";
-import { HexColorPicker, HexColorInput } from "react-colorful";
-import * as Icons from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { sideBarStore } from "@/store/sidebar";
 import { IconPicker, Beacon } from "../IconPicker";
 import { ColorPicker } from "./ColourPicker";

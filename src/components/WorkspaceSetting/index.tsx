@@ -6,18 +6,16 @@ import {
 import { MoreHorizontal } from "lucide-react";
 import { Export } from "../Export";
 
-import { FontStyle } from "../FontStyle";
 import { Button } from "../ui/button";
 import { useTheme } from "next-themes";
 import { Icons } from "@/components/Icons";
 import { Laptop } from "lucide-react";
 
-export const WorkspaceSettingInside = () => {
+export const SetTheme = () => {
   const { theme, setTheme } = useTheme();
 
   return (
     <div>
-      <FontStyle />
       <div className="border-t p-3  dark:border-gray-700">
         {/* <Export /> */}
 

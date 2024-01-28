@@ -63,7 +63,7 @@ import { Export } from "../Export";
 import { LayoutContext } from "../Layouts/AccountLayout";
 import { DownloadButton } from "../DownloadButton";
 import { PlyrAudioPlayer } from "../PlyrAudio";
-import { WorkspaceSetting, WorkspaceSettingInside } from "../WorkspaceSetting";
+import { WorkspaceSetting, SetTheme } from "../WorkspaceSetting";
 import { EmbedVideoSettings } from "../EmbedVideoSettings";
 import { DataVisSettings } from "../DataVisSettings";
 import { splitIntoSlides } from "@/utils/renderHelpers";
@@ -317,7 +317,8 @@ export const RightSideBar: React.FC<RightSideBarProps> = ({
                   </button>
                 )}
               </div> */}
-              <WorkspaceSettingInside />
+              <FontStyle />
+              <SetTheme />
             </TabsContent>
           </Tabs>
         </div>

@@ -82,7 +82,7 @@ export const WorkspaceSetting = () => {
         sideOffset={10}
         className="w-[320px] border border-gray-300  bg-background p-0 dark:border-gray-700 dark:bg-secondary"
       >
-        <WorkspaceSettingInside />
+        {/* <WorkspaceSettingInside /> */}
       </PopoverContent>
     </Popover>
   );

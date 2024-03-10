@@ -92,3 +92,4 @@ Follow our deployment guides for [Vercel]
 
 - [] - custom trading chart component?
 - [] - add date for trade journal
+- [] - add shadcn drawer ?

@@ -1,14 +1,15 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { TRPCError } from "@trpc/server";
-import { Configuration, OpenAIApi } from "openai";
+import OpenAI from "openai";
+("openai");
 import { uploadImage, uploadImageBlob } from "@/server/lib/uploadImage";
 import { nanoid } from "nanoid";
 import { rateLimiterMiddleware } from "@/server/api/trpc";
-const configuration = new Configuration({
+
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-const openai = new OpenAIApi(configuration);
 
 const base64ToBlob = (base64) => {
   // Convert base64 to raw binary data held in a string

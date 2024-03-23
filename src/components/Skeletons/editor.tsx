@@ -46,6 +46,7 @@ export const EditorSkeleton = () => {
             style={{
               height: "calc(100svh - 100px)",
               // width: "1190px",
+              maxWidth: 740,
               width: showRightSidebar
                 ? `calc(100vw - ${rightSideBarWidth + 145 + sideBarOffset}px)`
                 : `calc(100vw - ${145 + sideBarOffset}px)`,

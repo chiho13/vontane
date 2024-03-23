@@ -320,7 +320,7 @@ export const ImageElement = React.memo(
           <>
             <div
               tabIndex={-1}
-              className={`hover:bg-gray-muted relative  flex  cursor-pointer items-center rounded-md bg-gray-100 p-2 transition dark:bg-secondary dark:hover:bg-background/70 
+              className={`hover:bg-gray-muted relative flex  w-[98%]  cursor-pointer items-center rounded-md bg-gray-100 p-2 transition dark:bg-secondary dark:hover:bg-background/70 
       hover:dark:bg-accent
       `}
               contentEditable={false}
@@ -358,9 +358,9 @@ export const ImageElement = React.memo(
               )}
 
               {children}
-            </div>
-            <div className="absolute  right-1 top-1 z-10 flex opacity-0 group-hover:opacity-100 ">
-              <OptionMenu element={element} />
+              <div className="absolute  right-1 top-1 z-10 flex opacity-0 group-hover:opacity-100 ">
+                <OptionMenu element={element} />
+              </div>
             </div>
           </>
         ) : (
@@ -825,7 +825,7 @@ export const ImageEmbedLink = () => {
     <>
       <Tabs defaultValue={tab} onValueChange={handleTabChange}>
         <TabsList
-          className={`ring-gray ring-red mb-3 grid h-10 w-full grid-cols-3 rounded-md bg-lightgray dark:bg-accent`}
+          className={`ring-gray ring-red mb-3 grid h-10 w-full grid-cols-2 rounded-md bg-lightgray dark:bg-accent`}
         >
           <TabsTrigger
             value="upload"
@@ -840,12 +840,12 @@ export const ImageEmbedLink = () => {
           >
             Embed Link
           </TabsTrigger>
-          <TabsTrigger
+          {/* <TabsTrigger
             value="aiimage"
             className={` data-[state=active]:bg-brand  data-[state=active]:text-white  dark:text-muted-foreground dark:data-[state=active]:bg-foreground dark:data-[state=active]:text-background  `}
           >
             AI Image
-          </TabsTrigger>
+          </TabsTrigger> */}
         </TabsList>
 
         <TabsContent value="upload">
@@ -918,7 +918,7 @@ export const ImageEmbedLink = () => {
             </form>
           </Form>
         </TabsContent>
-        <TabsContent value="aiimage">
+        {/* <TabsContent value="aiimage">
           <Form {...aiImageForm}>
             <form
               onSubmit={aiImageForm.handleSubmit(createImage)}
@@ -1022,7 +1022,7 @@ export const ImageEmbedLink = () => {
                 ))}
             </div>
           </Form>
-        </TabsContent>
+        </TabsContent> */}
       </Tabs>
       <ToastContainer />
     </>

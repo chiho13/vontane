@@ -2,7 +2,6 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 import OpenAI from "openai";
-("openai");
 import { uploadImage, uploadImageBlob } from "@/server/lib/uploadImage";
 import { nanoid } from "nanoid";
 import { rateLimiterMiddleware } from "@/server/api/trpc";
@@ -56,7 +55,8 @@ export const GPTRouter = createTRPCRouter({
       // Perform tasks in a transaction
       try {
         // Try to generate the image
-        response = await openai.createImage({
+        response = await openai.images.generate({
+          model: "dall-e-3",
           prompt: prompt,
           n: 3,
           size: "1024x1024",
@@ -191,7 +191,7 @@ export const GPTRouter = createTRPCRouter({
     .query(async ({ input }) => {
       const { equationName } = input;
       try {
-        const completion = await openai.createChatCompletion({
+        const completion = await openai.chat.completions.create({
           model: "gpt-3.5-turbo",
           messages: [
             {
@@ -210,9 +210,10 @@ export const GPTRouter = createTRPCRouter({
           ],
           max_tokens: 500,
           temperature: 0.2,
+          stream: false,
         });
 
-        const data = completion?.data?.choices?.[0]?.message?.content;
+        const data = completion?.choices?.[0]?.message?.content;
 
         return data;
       } catch (err) {
@@ -246,7 +247,7 @@ export const GPTRouter = createTRPCRouter({
       }
 
       try {
-        const completion = await openai.createChatCompletion({
+        const completion = await openai.chat.completions.create({
           model: "gpt-4",
           messages: [
             {
@@ -262,7 +263,7 @@ export const GPTRouter = createTRPCRouter({
           temperature: 0.9,
         });
 
-        const data = completion?.data?.choices?.[0]?.message?.content;
+        const data = completion?.choices?.[0]?.message?.content;
 
         // If successful, decrement the credits
         const updatedUser = await ctx.prisma.user.update({
@@ -303,7 +304,7 @@ export const GPTRouter = createTRPCRouter({
       }
 
       try {
-        const completion = await openai.createChatCompletion({
+        const completion = await openai.chat.completions.create({
           model: "gpt-4",
           messages: [
             {
@@ -319,7 +320,7 @@ export const GPTRouter = createTRPCRouter({
           temperature: 0.9,
         });
 
-        const data = completion?.data?.choices?.[0]?.message?.content;
+        const data = completion?.choices?.[0]?.message?.content;
 
         // If successful, decrement the credits
         const updatedUser = await ctx.prisma.user.update({
@@ -361,7 +362,7 @@ export const GPTRouter = createTRPCRouter({
       }
 
       try {
-        const completion = await openai.createChatCompletion({
+        const completion = await openai.chat.completions.create({
           model: "gpt-4",
           messages: [
             {
@@ -397,7 +398,7 @@ export const GPTRouter = createTRPCRouter({
           temperature: 0.9,
         });
 
-        const data = completion?.data?.choices?.[0]?.message?.content;
+        const data = completion?.choices?.[0]?.message?.content;
 
         // If successful, decrement the credits
         const updatedUser = await ctx.prisma.user.update({
@@ -438,7 +439,7 @@ export const GPTRouter = createTRPCRouter({
       }
 
       try {
-        const completion = await openai.createChatCompletion({
+        const completion = await openai.chat.completions.create({
           model: "gpt-4",
           messages: [
             {
@@ -477,7 +478,7 @@ export const GPTRouter = createTRPCRouter({
           temperature: 0.9,
         });
 
-        const data = completion?.data?.choices?.[0]?.message?.content;
+        const data = completion?.choices?.[0]?.message?.content;
 
         // If successful, decrement the credits
         const updatedUser = await ctx.prisma.user.update({
@@ -518,7 +519,7 @@ export const GPTRouter = createTRPCRouter({
       }
 
       try {
-        const completion = await openai.createChatCompletion({
+        const completion = await openai.chat.completions.create({
           model: "gpt-4",
           messages: [
             {
@@ -534,7 +535,7 @@ export const GPTRouter = createTRPCRouter({
           temperature: 0.9,
         });
 
-        const data = completion?.data?.choices?.[0]?.message?.content;
+        const data = completion?.choices?.[0]?.message?.content;
 
         // If successful, decrement the credits
         const updatedUser = await ctx.prisma.user.update({
@@ -634,7 +635,7 @@ export const GPTRouter = createTRPCRouter({
     .query(async ({ input }) => {
       const { katex } = input;
       try {
-        const completion = await openai.createChatCompletion({
+        const completion = await openai.chat.completions.create({
           model: "gpt-3.5-turbo",
           messages: [
             {
@@ -648,7 +649,7 @@ export const GPTRouter = createTRPCRouter({
           temperature: 0.7,
         });
 
-        const data = completion?.data?.choices?.[0]?.message?.content;
+        const data = completion?.choices?.[0]?.message?.content;
 
         return data;
       } catch (err) {
@@ -669,7 +670,7 @@ export const GPTRouter = createTRPCRouter({
     .query(async ({ input }) => {
       const { mathQuestions } = input;
       try {
-        const completion = await openai.createChatCompletion({
+        const completion = await openai.chat.completions.create({
           model: "gpt-4",
           messages: [
             {
@@ -703,7 +704,7 @@ export const GPTRouter = createTRPCRouter({
           temperature: 0.2,
         });
 
-        const data = completion?.data?.choices?.[0]?.message?.content;
+        const data = completion?.choices?.[0]?.message?.content;
 
         return data;
       } catch (err) {
@@ -723,7 +724,7 @@ export const GPTRouter = createTRPCRouter({
     .query(async ({ input }) => {
       const { englishQuestions } = input;
       try {
-        const completion = await openai.createChatCompletion({
+        const completion = await openai.chat.completions.create({
           model: "gpt-4",
           messages: [
             {
@@ -768,7 +769,7 @@ export const GPTRouter = createTRPCRouter({
           temperature: 0.2,
         });
 
-        const data = completion?.data?.choices?.[0]?.message?.content;
+        const data = completion?.choices?.[0]?.message?.content;
 
         return data;
       } catch (err) {

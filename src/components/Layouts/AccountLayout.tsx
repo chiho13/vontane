@@ -1233,6 +1233,15 @@ const FolderWorkspaceItem = ({
                     // Possibly send the update to the server here
                     debouncedRenameFolder(e.target.value);
                   }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setEditFolderName(false);
+                      debouncedRenameFolder(
+                        (e.target as HTMLInputElement).value
+                      );
+                      e.preventDefault(); // Prevent the default action to avoid form submission if it's part of a form
+                    }
+                  }}
                   className={cn(
                     `rounded-sm  py-px text-sm text-darkergray outline-none focus:ring-2 focus:ring-brand/70 focus:ring-offset-2  dark:text-foreground ${
                       errorMessage && "rounded-b-none focus:ring-red-700"

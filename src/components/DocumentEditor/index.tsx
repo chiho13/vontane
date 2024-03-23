@@ -2371,7 +2371,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
                         {showEditBlockPopup.element === "image" && (
                           <div
                             ref={editBlockDropdownRef}
-                            className="z-100 h-[270px] rounded-lg border border-gray-400 bg-background p-2 shadow-md dark:border-accent  dark:border-accent dark:bg-muted dark:text-foreground lg:w-[400px]  lg:w-[500px]"
+                            className="z-100 h-[180px] rounded-lg border border-gray-400 bg-background p-2 shadow-md dark:border-accent  dark:border-accent dark:bg-muted dark:text-foreground lg:w-[400px]  lg:w-[500px]"
                           >
                             <ImageEmbedLink />
                           </div>

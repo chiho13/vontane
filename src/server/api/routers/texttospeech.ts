@@ -4,7 +4,7 @@ import { TRPCError } from "@trpc/server";
 import { uploadAudioToSupabase } from "@/server/lib/uploadAudio";
 import { nanoid } from "nanoid";
 
-import { Configuration, OpenAIApi } from "openai";
+import OpenAPI from "openai";
 import { rateLimiterMiddleware } from "@/server/api/trpc";
 import axios from "axios";
 import stream from "stream";
@@ -14,10 +14,9 @@ import { Deepgram } from "@deepgram/sdk";
 
 const deepgram = new Deepgram(process.env.DEEPGRAM_SECRET || "");
 
-const configuration = new Configuration({
+const openai = new OpenAPI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-const openai = new OpenAIApi(configuration);
 
 const secretkey = process.env.ELEVENLABS_APIKEY;
 const userId = process.env.PLAYHT_USERID;

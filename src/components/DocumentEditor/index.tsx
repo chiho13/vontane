@@ -2041,7 +2041,15 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
     };
 
     return (
-      <div className="relative mx-auto mt-[50px] flex justify-center lg:max-w-[1000px]  xl:max-w-[1400px]">
+      <div
+        className="relative mx-auto mt-[50px] flex justify-center lg:max-w-[1000px]  xl:max-w-[1400px]"
+        style={{
+          width:
+            windowSize.width > breakpoints.xl
+              ? `${rightSideBarWidth + 790}px`
+              : "95vw",
+        }}
+      >
         <Portal>
           <button
             className="group fixed right-[30px] top-[25px] z-0 hidden rounded  border-gray-300 p-1 transition duration-300 hover:border-brand dark:border-accent dark:hover:border-foreground dark:hover:bg-muted lg:block"
@@ -2067,10 +2075,13 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = memo(
                       ? -(rightSideBarWidth / 2)
                       : 0
                     : 0,
-                width: showRightSidebar
-                  ? `calc(100vw - ${rightSideBarWidth + 145 + sideBarOffset}px)`
-                  : `calc(100vw - ${145 + sideBarOffset}px)`,
-
+                maxWidth: "740px",
+                width:
+                  windowSize.width > breakpoints.lg
+                    ? showRightSidebar
+                      ? "50vw"
+                      : "100vw"
+                    : "95vw",
                 height: "calc(100svh - 100px)",
                 transition: "right 0.3s ease-in-out, width 0.3s ease-in-out",
               }}

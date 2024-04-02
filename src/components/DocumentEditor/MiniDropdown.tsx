@@ -98,16 +98,16 @@ export const MiniDropdown = forwardRef<HTMLDivElement, MiniDropdownProps>(
           </div>
         ),
       },
-      {
-        name: "Text to MP3",
-        description: "Ultra-realistic AI Text to Speech",
-        action: () => addBlockHandler("tts"),
-        icon: (
-          <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
-            <BsSoundwave className="h-[30px] w-[30px] text-darkergray dark:text-darkergray" />
-          </div>
-        ),
-      },
+      // {
+      //   name: "Text to MP3",
+      //   description: "Ultra-realistic AI Text to Speech",
+      //   action: () => addBlockHandler("tts"),
+      //   icon: (
+      //     <div className=" flex h-[44px] w-[44px] items-center justify-center rounded-md border border-gray-300 bg-white p-1 dark:opacity-80">
+      //       <BsSoundwave className="h-[30px] w-[30px] text-darkergray dark:text-darkergray" />
+      //     </div>
+      //   ),
+      // },
       {
         name: "Image",
         description: "Embed with a link",

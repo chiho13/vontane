@@ -67,13 +67,13 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
     const path = ReactEditor.findPath(editor, element);
 
     let optionMenuElements: any = [
-      {
-        name: "Text to MP3",
-        action: () => wrapElementWithTTS(editor, element),
-        icon: (
-          <BsSoundwave className="mr-4 h-5 w-4  stroke-darkergray dark:stroke-foreground" />
-        ),
-      },
+      // {
+      //   name: "Text to MP3",
+      //   action: () => wrapElementWithTTS(editor, element),
+      //   icon: (
+      //     <BsSoundwave className="mr-4 h-5 w-4  stroke-darkergray dark:stroke-foreground" />
+      //   ),
+      // },
       {
         name: "Duplicate",
         action: duplicateBlock,
@@ -98,20 +98,6 @@ export const OptionDropdown = forwardRef<HTMLDivElement, OptionMenuProps>(
         // Exclude "Duplicate" option if element type is "tts"
         if (element.type === "tts" && item.name === "Duplicate") {
           return false;
-        }
-
-        if (item.name === "Text to MP3") {
-          if (
-            element.type === "datavis" ||
-            element.type === "tts" ||
-            element.type === "slide" ||
-            element.type === "image" ||
-            element.type === "map" ||
-            element.type === "embed" ||
-            isParentTTS(editor, element)
-          ) {
-            return false;
-          }
         }
       }
       // Otherwise, include the option

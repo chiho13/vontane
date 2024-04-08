@@ -145,7 +145,7 @@ export const PublishButton = () => {
               </Button>
             </div>
 
-            <h3 className="text-bold mb-2 mt-4 text-sm dark:text-gray-200">
+            {/* <h3 className="text-bold mb-2 mt-4 text-sm dark:text-gray-200">
               Embed
             </h3>
             <div className="relative mb-4 flex items-center">
@@ -164,7 +164,7 @@ export const PublishButton = () => {
                   {iframeCopied ? "Copied!" : "Copy Code"}
                 </p>
               </Button>
-            </div>
+            </div> */}
             <div className="grid w-full grid-cols-2 gap-4 ">
               <button
                 className="flex  h-[36px] grow cursor-pointer items-center justify-center rounded-md border border-gray-300 dark:border-gray-500 hover:dark:bg-accent"

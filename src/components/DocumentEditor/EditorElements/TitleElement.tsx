@@ -57,7 +57,7 @@ export function TitleElement(props) {
         data-id={element.id}
         data-path={JSON.stringify(path)}
         data-element={element.type}
-        data-placeholder={shouldShowPlaceholder ? "Untitled Workspace" : ""}
+        data-placeholder={shouldShowPlaceholder ? "Untitled Widget" : ""}
       >
         {children}
       </h1>

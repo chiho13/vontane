@@ -154,4 +154,6 @@ export const rateLimiterMiddleware = createTRPCUpstashLimiter({
 //   .use(rateLimiterMiddleware);
 
 export const publicProcedure = t.procedure;
-export const protectedProcedure = t.procedure.use(isAuthed);
+export const protectedProcedure = t.procedure
+  .use(isAuthed)
+  .use(rateLimiterMiddleware);

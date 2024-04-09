@@ -703,7 +703,7 @@ const Layout: React.FC<LayoutProps> = ({
                         width={22}
                       />{" "}
                       <span className="ml-2 truncate text-sm  text-darkergray dark:text-foreground">
-                        New Document
+                        New Widget
                       </span>
                     </button>
                   </SidebarItem>
@@ -983,7 +983,7 @@ const WorkspacePopover: React.FC<WorkspacePopoverProps> = ({
                   setPopoverVisible(false);
                 }}
               >
-                New Document
+                New Widget
               </button>
               <button
                 className="flex w-full cursor-pointer items-center gap-4 rounded-md px-4 py-2 text-left text-sm text-gray-700 transition duration-200 hover:bg-accent hover:text-gray-900 focus:outline-none dark:text-foreground dark:hover:bg-neutral-800"
